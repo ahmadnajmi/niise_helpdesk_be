@@ -12,7 +12,6 @@ return new class extends Migration
      */
     public function up(): void
     {
-
         // Scalar Function
         DB::statement("
             CREATE FUNCTION dbo.find_idle_period

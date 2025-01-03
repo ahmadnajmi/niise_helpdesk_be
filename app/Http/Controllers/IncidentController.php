@@ -2,16 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\ResponseTrait;
+use App\Models\Incident;
 use Illuminate\Http\Request;
 
 class IncidentController extends Controller
 {
+    use ResponseTrait;
+
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if(isset($request->perPage)) {
+            $perPage = $request->perPage;
+        } else {
+            $perPage = 10;
+        }
+
+        $incidents = Incident::orderBy('cm_log_no')->paginate($perPage);
+
+        return $this->success('Success', $incidents);
     }
 
     /**

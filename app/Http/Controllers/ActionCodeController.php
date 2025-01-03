@@ -20,7 +20,7 @@ class ActionCodeController extends Controller
         if(isset($request->perPage)) {
             $perPage = $request->perPage;
         } else {
-            $perPage = 2;
+            $perPage = 10;
         }
 
         $actionCodes = ActionCode::orderBy('ac_status_rec')->paginate($perPage);
