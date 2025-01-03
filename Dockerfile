@@ -1,11 +1,8 @@
 # Base image
-FROM php:8.3-bookworm
+FROM php:8.3.15-bullseye
 
 # Set working directory
 WORKDIR /app
-
-# Import missing keys
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0E98404D386FA1D9 6ED0E7B82643E131 F8D2585B8783D481 54404762BBB6E853 BDE6D2B9216EC7A8
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
