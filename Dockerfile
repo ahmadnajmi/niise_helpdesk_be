@@ -34,6 +34,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 # Copy project files
 COPY . .
+COPY .env.example .env
 
 # Install PHP dependencies (Laravel)
 RUN composer install --no-interaction --optimize-autoloader
