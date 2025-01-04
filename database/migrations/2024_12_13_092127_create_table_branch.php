@@ -26,7 +26,7 @@ return new class extends Migration
             $table->char('cb_country',3)->nullable();  // -- 10
             $table->string('cb_general_line', 20)->nullable(); // -- 11
             $table->char('cb_Hol_Code',4)->nullable(); // -- 12
-            $table->char('col_bizhour_code',4)->nullable();// -- 13
+            $table->char('cb_bizhour_code',4)->nullable();// -- 13
             $table->char('cb_nearest_node',10)->nullable(); // -- 14
             $table->integer('cb_node_distance')->nullable(); // -- 15
             $table->char('cb_connected_node',10)->nullable(); // -- 16
@@ -55,7 +55,7 @@ return new class extends Migration
         DB::statement('ALTER TABLE branch ALTER COLUMN cb_country CHAR(3)');
         DB::statement('ALTER TABLE branch ALTER COLUMN cb_general_line VARCHAR(20)');
         DB::statement('ALTER TABLE branch ALTER COLUMN cb_Hol_Code CHAR(4)');
-        DB::statement('ALTER TABLE branch ALTER COLUMN col_bizhour_code CHAR(4)');
+        DB::statement('ALTER TABLE branch ALTER COLUMN cb_bizhour_code CHAR(4)');
         DB::statement('ALTER TABLE branch ALTER COLUMN cb_nearest_node CHAR(10)');
         DB::statement('ALTER TABLE branch ALTER COLUMN cb_connected_node CHAR(10)');
         DB::statement('ALTER TABLE branch ALTER COLUMN cb_is_critical CHAR(1)');

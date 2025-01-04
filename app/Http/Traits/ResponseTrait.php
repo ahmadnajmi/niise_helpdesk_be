@@ -10,6 +10,7 @@ trait ResponseTrait {
 
         $response = [
             'status' => true,
+            'status_code' => $status,
             'message' => $message,
         ];
 
@@ -21,10 +22,11 @@ trait ResponseTrait {
 
     }
 
-    protected function failure(string $message, $errors = [], int $status = 500) {
+    protected function error(string $message, $errors = [], int $status = 500) {
 
         $response = [
             'status' => false,
+            'status_code' => $status,
             'message' => $message
         ];
 
@@ -47,10 +49,11 @@ trait ResponseTrait {
     }
 
 
-    protected function forbidden(string $message = null, int $status = 200) {
+    protected function forbidden(string $message = null, int $status = 403) {
 
         $response = [
             'status' => false,
+            'status_code' => $status,
             'message' => $message == null ? "Forbidden request." : $message,
         ];
 
@@ -58,4 +61,3 @@ trait ResponseTrait {
     }
 
 }
- 

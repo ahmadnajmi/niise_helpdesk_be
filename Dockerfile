@@ -52,6 +52,19 @@ RUN php artisan key:generate
 # Set up Passport keys (uncomment if you use Passport)
 # RUN php artisan passport:keys --force
 
+# Git init repo
+ARG ACCESS_TOKEN
+ARG TOKEN_NAME
+
+RUN git init
+RUN git config --global --add safe.directory /app
+RUN git remote remove origin
+RUN git remote add origin https://$TOKEN_NAME:$ACCESS_TOKEN@scm.htpdevops.com/finsolutions/ifics-niise/ificsbe-niise.git
+RUN git fetch origin
+RUN git checkout master
+RUN git config pull.ff only
+
+
 # Expose port
 EXPOSE 8000
 
