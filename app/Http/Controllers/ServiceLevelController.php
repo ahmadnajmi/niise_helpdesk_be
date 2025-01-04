@@ -1,17 +1,31 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use App\Models\ServiceLevel;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use App\Http\Traits\ResponseTrait;
 
 class ServiceLevelController extends Controller
 {
+    use ResponseTrait;
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if(isset($request->perPage)) {
+            $perPage = $request->perPage;
+        } else {
+            $perPage = 2;
+        }
+            $SLA = (new ServiceLevel())->getSlaIndex()->paginate($perPage);
+        
+        log::info($SLA);
+
+        return $this->success('Success', $SLA);
     }
 
     /**

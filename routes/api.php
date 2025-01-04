@@ -64,10 +64,13 @@ Route::middleware(["api"])->group(function () {
 
     // --- # Known Errors
     Route::resource('known-error', KnownErrorController::class);
-
+    Route::get('read-known-error/{id}', [KnownErrorController::class,'show']);
+    Route::get('edit-known-error', [KnownErrorController::class,'edit']);
+    Route::delete('delete-known-error/{id}', [KnownErrorController::class,'destroy']);
     // # 4. Service Levels
     // --- # Listings
     Route::resource('service-level', ServiceLevelController::class);
+    Route::post('getSlaIndex', [ServiceLevelController::class,'index']);
 
     // --- # Templates
     Route::resource('service-level-template', ServiceLevelTemplateController::class);
