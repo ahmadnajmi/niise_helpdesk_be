@@ -85,6 +85,8 @@ RUN git config pull.ff only
 # Expose port
 EXPOSE 8000
 
+RUN php artisan config:cache
+
 # Build frontend assets
 RUN npm run build
 
