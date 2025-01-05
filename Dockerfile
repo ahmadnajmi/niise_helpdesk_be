@@ -31,10 +31,11 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/truste
 ENV PATH=$PATH:/opt/mssql-tools18/bin
 
 # Install PHP extensions
-RUN pecl install sqlsrv pdo_sqlsrv \
-    && docker-php-ext-enable sqlsrv pdo_sqlsrv \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN pecl install sqlsrv pdo_sqlsrv
+RUN docker-php-ext-enable sqlsrv
+RUN pdo_sqlsrv && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Node.js and npm from NodeSource
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
