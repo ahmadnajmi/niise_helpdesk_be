@@ -5,7 +5,7 @@ FROM php:8.3.15-bullseye
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
     wget \
@@ -20,22 +20,21 @@ RUN apt-get update && apt-get install -y \
     apt-transport-https \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Microsoft ODBC Driver for SQL Server
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-    && curl https://packages.microsoft.com/microsoft-prod.list > /etc/apt/sources.list.d/microsoft-prod.list \
-    && apt-get update \
-    && apt-get install -y msodbcsql18 \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Add GPG keys for Microsoft ODBC Driver for SQL Server (Specific for Debian 11 and ODBC 18) - https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver16&tabs=debian18-install%2Calpine17-install%2Cdebian8-install%2Credhat7-13-install%2Crhel7-offline#driver-files
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc && \
+    curl https://packages.microsoft.com/config/debian/11/prod.list | tee /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update && \
+    ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install the sqlsrv and pdo_sqlsrv extensions
-RUN apt-get update && apt-get install -y \
-    php-pear \
-    php-dev \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Update PATH for mssql-tools
+ENV PATH=$PATH:/opt/mssql-tools18/bin
 
-# Install sqlsrv and pdo_sqlsrv using pecl
+# Install PHP extensions
 RUN pecl install sqlsrv pdo_sqlsrv \
-    && docker-php-ext-enable sqlsrv pdo_sqlsrv
+    && docker-php-ext-enable sqlsrv pdo_sqlsrv \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js and npm from NodeSource
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
