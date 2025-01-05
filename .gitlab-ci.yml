@@ -1,0 +1,23 @@
+image: docker:stable
+
+stages:
+  - Build image
+
+variables:
+  IMAGE_VERSION: $CI_BUILD_TAG
+  TOKEN_NAME: $TOKEN_NAME
+  ACCESS_TOKEN: $ACCESS_TOKEN
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+
+docker build:
+  stage: Build image
+  script:
+  - echo $CI_REGISTRY_IMAGE
+  - echo $CI_BUILD_TAG
+  - docker info
+  - docker build --no-cache --no-cache --build-arg ACCESS_TOKEN=$ACCESS_TOKEN --build-arg TOKEN_NAME=$TOKEN_NAME -t $CI_REGISTRY_IMAGE:$IMAGE_VERSION .
+  - docker push $CI_REGISTRY_IMAGE:$IMAGE_VERSION
+  only:
+    - tags

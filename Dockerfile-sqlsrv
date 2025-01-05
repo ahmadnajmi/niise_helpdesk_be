@@ -1,0 +1,16 @@
+# Use official Microsoft SQL Server image as base
+FROM mcr.microsoft.com/mssql/server:2022-latest
+
+# Set environment variables for SQL Server setup
+ENV ACCEPT_EULA=Y
+ENV SA_PASSWORD=StrongPassword!12345
+ENV MSSQL_PID=Express
+
+# Set sqlcmd in PATH (to use sqlcmd in subsequent layers or while running container)
+ENV PATH=$PATH:/opt/mssql-tools18/bin
+
+# Expose the SQL Server port
+EXPOSE 1433
+
+# Start SQL Server (this will be the main process in the container)
+CMD ["/opt/mssql/bin/sqlservr"]

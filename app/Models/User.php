@@ -13,15 +13,26 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 
+    public $timestamps = false;
+
+    public $incrementing = false;
+
+    protected $table = 'com_user_profiles';
+
+    protected $primaryKey = 'ID';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        // 'name',
+        // 'email',
+        // 'password',
+        'ID',
+        'PWD',
+        'NICK_NAME',
     ];
 
     /**
@@ -30,7 +41,8 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        // 'password',
+        'PWD',
         'remember_token',
     ];
 
@@ -43,7 +55,34 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            // 'password' => 'hashed',
+            'PWD' => 'hashed',
         ];
+    }
+
+    // Edit here for Auth --------------------------------
+
+    /**
+     * Get the password for the user.
+     *
+     * @return string
+     */
+    public function getAuthPassword(): string
+    {
+        return $this->PWD;
+    }
+
+    /**
+     * Get the unique identifier for the user.
+     *
+     * @return mixed
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'ID';
+    }
+
+    public function getAuthIdentifier() {
+        return $this->ID;
     }
 }

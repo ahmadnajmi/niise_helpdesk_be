@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('comtemplateemail', function (Blueprint $table) {
+        Schema::create('comtemplatemail', function (Blueprint $table) {
 
             $table->bigIncrements('ID')->primary(); // -- 1
             $table->string('name', 50); // -- 2
@@ -30,12 +30,12 @@ return new class extends Migration
             $table->softDeletes();
         });
 
-        DB::statement('ALTER TABLE comtemplateemail ALTER COLUMN name VARCHAR(50)');
-        DB::statement('ALTER TABLE comtemplateemail ALTER COLUMN sender VARCHAR(50)');
-        DB::statement('ALTER TABLE comtemplateemail ALTER COLUMN sender_name VARCHAR(50)');
-        DB::statement('ALTER TABLE comtemplateemail ALTER COLUMN template VARCHAR(25)');
-        DB::statement('ALTER TABLE comtemplateemail ALTER COLUMN created_by VARCHAR(25)');
-        DB::statement('ALTER TABLE comtemplateemail ALTER COLUMN updated_by VARCHAR(25)');
+        DB::statement('ALTER TABLE comtemplatemail ALTER COLUMN name VARCHAR(50)');
+        DB::statement('ALTER TABLE comtemplatemail ALTER COLUMN sender VARCHAR(50)');
+        DB::statement('ALTER TABLE comtemplatemail ALTER COLUMN sender_name VARCHAR(50)');
+        DB::statement('ALTER TABLE comtemplatemail ALTER COLUMN template VARCHAR(25)');
+        DB::statement('ALTER TABLE comtemplatemail ALTER COLUMN created_by VARCHAR(25)');
+        DB::statement('ALTER TABLE comtemplatemail ALTER COLUMN updated_by VARCHAR(25)');
 
 
     }
@@ -45,6 +45,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('comtemplateemail');
+        Schema::dropIfExists('comtemplatemail');
     }
 };

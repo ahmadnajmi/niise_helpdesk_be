@@ -27,6 +27,4 @@ class ActionCode extends Model
     }
 
 
-
-
 }

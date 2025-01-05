@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ActionCodeController;
 use App\Http\Controllers\AuditTrailController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\BusinessHourController;
 use App\Http\Controllers\CallerController;
@@ -34,6 +35,9 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware(["api"])->group(function () {
+
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('logout', [AuthController::class, 'logout']);
 
     // # 1. Dashboard
     Route::resource('dashboard', DashboardController::class);
