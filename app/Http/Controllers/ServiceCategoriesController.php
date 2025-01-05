@@ -48,7 +48,9 @@ class ServiceCategoriesController extends Controller
      */
     public function show(string $id)
     {
-        //
+            $data = (new ServiceCategory())->getCategory($id);
+
+        return $this->success('Success', $data);
     }
 
     /**

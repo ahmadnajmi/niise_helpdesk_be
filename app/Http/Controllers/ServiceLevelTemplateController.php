@@ -68,7 +68,9 @@ class ServiceLevelTemplateController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $data = (new ServiceLevelTemplate())->getTemplate($id);
+
+        return $this->success('Success', $data);
     }
 
     /**

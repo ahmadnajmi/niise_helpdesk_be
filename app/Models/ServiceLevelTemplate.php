@@ -35,5 +35,8 @@ class ServiceLevelTemplate extends Model
         }
     }
 
-
+    public function getTemplate($id){
+        return $this->where('st_code',$id)
+                    ->get();
+    }
 }

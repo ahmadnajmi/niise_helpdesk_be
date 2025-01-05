@@ -50,7 +50,6 @@ class KnownErrorController extends Controller
      */
     public function show( string $id)
     {
-        log::info($id);
         if(isset($request->perPage)) {
             $perPage = $request->perPage;
         } else {
