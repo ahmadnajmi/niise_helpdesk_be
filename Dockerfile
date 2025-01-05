@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Add GPG keys for Microsoft ODBC Driver for SQL Server (Specific for Debian 11 and ODBC 18) - https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver16&tabs=debian18-install%2Calpine17-install%2Cdebian8-install%2Credhat7-13-install%2Crhel7-offline#driver-files
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc && \
     curl https://packages.microsoft.com/config/debian/11/prod.list | tee /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get install -y unixodbc-dev && \
     apt-get update && \
     ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
