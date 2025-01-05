@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
     gnupg2 \
     software-properties-common \
     apt-transport-https \
-    docker-php-ext-install pdo pdo_pgsql mysqli zip
+    docker-php-ext-install pdo pdo_pgsql mysqli zip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Microsoft ODBC Driver for SQL Server

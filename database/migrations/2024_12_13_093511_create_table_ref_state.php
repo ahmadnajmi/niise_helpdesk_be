@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->string('st_state_code',3);  // -- 1
             $table->string('st_state_desc',50); // -- 2
-            $table->string('st_zone',20)->nullable(); // -- 3
+            $table->string('st_state_zone',20)->nullable(); // -- 3
             $table->string('st_create_id',20)->nullable(); // -- 4
             $table->datetime('st_create_date')->nullable(); // -- 5
             $table->string('st_update_id',20)->nullable(); // -- 6
