@@ -31,9 +31,10 @@ RUN curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/truste
 ENV PATH=$PATH:/opt/mssql-tools18/bin
 
 # Install PHP extensions
-RUN pecl install sqlsrv pdo_sqlsrv
+RUN pecl install sqlsrv
+RUN pecl install pdo_sqlsrv
 RUN docker-php-ext-enable sqlsrv
-RUN pdo_sqlsrv && \
+RUN docker-php-ext-enable pdo_sqlsrv && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
