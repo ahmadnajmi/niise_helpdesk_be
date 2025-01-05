@@ -28,7 +28,7 @@ return new class extends Migration
             $table->integer('sl_bypass_timeframe')->nullable(); // -- 12
             $table->integer('sl_due_date_timeframe')->nullable(); // -- 13
             $table->decimal('sl_service_lvl', 5, 2)->nullable(); // -- 14
-            $table->datetime('sl_ext_start_end')->nullable(); // -- 15
+            $table->datetime('sl_ext_start_date')->nullable(); // -- 15
             $table->datetime('sl_ext_end_date')->nullable(); // -- 16
             $table->string('sl_create_id',20); // -- 17
             $table->datetime('sl_create_date'); // -- 18

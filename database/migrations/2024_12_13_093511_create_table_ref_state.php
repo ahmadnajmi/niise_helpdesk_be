@@ -29,7 +29,7 @@ return new class extends Migration
 
         DB::statement('ALTER TABLE refState ALTER COLUMN st_state_code VARCHAR(3)');
         DB::statement('ALTER TABLE refState ALTER COLUMN st_state_desc VARCHAR(50)');
-        DB::statement('ALTER TABLE refState ALTER COLUMN st_zone VARCHAR(20)');
+        DB::statement('ALTER TABLE refState ALTER COLUMN st_state_zone VARCHAR(20)');
         DB::statement('ALTER TABLE refState ALTER COLUMN st_create_id VARCHAR(20)');
         DB::statement('ALTER TABLE refState ALTER COLUMN st_update_id VARCHAR(20)');
         DB::statement('ALTER TABLE refState ALTER COLUMN st_status_rec VARCHAR(1)');

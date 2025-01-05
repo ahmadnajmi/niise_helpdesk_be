@@ -18,9 +18,24 @@ RUN apt-get update && apt-get install -y \
     gnupg2 \
     software-properties-common \
     apt-transport-https \
+    pdo_mysql \
+    mysql
+    unixodbc-dev \
+    # Install Microsoft's ODBC Driver for SQL Server
+    # && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    # && curl https://packages.microsoft.com/microsoft-prod.list > /etc/apt/sources.list.d/microsoft-prod.list \
+    && apt-get update \
+    # && apt-get install -y msodbcsql18
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+    # Copy your sqlsrv and pdo_sqlsrv DLLs to the PHP extension folder
+# COPY ./extensions/sqlsrv/8.3/php_sqlsrv.dll /usr/local/lib/php/extensions/no-debug-non-zts-20230832/
+# COPY ./extensions/sqlsrv/8.3/php_pdo_sqlsrv.dll /usr/local/lib/php/extensions/no-debug-non-zts-20230832/
+
+# Enable the extensions by adding them to the php.ini
+# RUN echo "extension=php_sqlsrv.dll" >> /usr/local/etc/php/conf.d/30_sqlsrv.ini && \
+#     echo "extension=php_pdo_sqlsrv.dll" >> /usr/local/etc/php/conf.d/30_sqlsrv.ini
 
 # Install Node.js and npm from NodeSource
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
