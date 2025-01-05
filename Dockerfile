@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y \
     apt-transport-https \
     pdo_mysql \
     mysql
-    unixodbc-dev \
+    # unixodbc-dev \
     # Install Microsoft's ODBC Driver for SQL Server
     # && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
     # && curl https://packages.microsoft.com/microsoft-prod.list > /etc/apt/sources.list.d/microsoft-prod.list \
