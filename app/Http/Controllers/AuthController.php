@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Traits\ResponseTrait;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -23,12 +24,16 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        if(Auth::attempt(['ID' => $username, 'password' => $password])) {
+        $user = User::where('ID', $username)->first();
 
+        // if(Auth::attempt(['ID' => $username, 'password' => $password])) {
+        if($user != null) {
+            // Auth::login($user);
             // $token = Auth::user()->createToken('authToken')->accessToken;
 
             $data = [
-                'user' => Auth::user(),
+                // 'user' => Auth::user(),
+                'user' => $user,
                 // 'token' => $token,
             ];
 

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('cu_account_mgr',10)->nullable(); // -- 4
             $table->string('cu_account_mgr_phone',50)->nullable(); // -- 5
             $table->string('cu_account_mgr_email',50)->nullable(); // -- 6
-            $table->string('cu_mgsp_code',15)->nullable(); // -- 7
+            $table->string('cu_msgp_code',15)->nullable(); // -- 7
             $table->string('cu_web_site',30)->nullable(); // -- 8
             $table->string('cu_create_id',20)->nullable(); // -- 9
             $table->datetime('cu_create_date'); // -- 10
@@ -42,7 +42,7 @@ return new class extends Migration
         DB::statement('ALTER TABLE HD_Customer_Master ALTER COLUMN cu_account_mgr VARCHAR(10)');
         DB::statement('ALTER TABLE HD_Customer_Master ALTER COLUMN cu_account_mgr_phone VARCHAR(50)');
         DB::statement('ALTER TABLE HD_Customer_Master ALTER COLUMN cu_account_mgr_email VARCHAR(50)');
-        DB::statement('ALTER TABLE HD_Customer_Master ALTER COLUMN cu_mgsp_code VARCHAR(15)');
+        DB::statement('ALTER TABLE HD_Customer_Master ALTER COLUMN cu_msgp_code VARCHAR(15)');
         DB::statement('ALTER TABLE HD_Customer_Master ALTER COLUMN cu_web_site VARCHAR(30)');
         DB::statement('ALTER TABLE HD_Customer_Master ALTER COLUMN cu_create_id VARCHAR(20)');
         DB::statement('ALTER TABLE HD_Customer_Master ALTER COLUMN cu_update_id VARCHAR(20)');

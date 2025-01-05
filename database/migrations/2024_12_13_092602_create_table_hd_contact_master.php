@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('co_description',50); // -- 2
             $table->string('co_customer_id',10); // -- 3
             $table->string('co_state_code',3); // -- 4
-            $table->string('co_cone',10); // -- 5
+            $table->string('co_zone',10); // -- 5
             $table->string('co_create_id',20); // -- 6
             $table->datetime('co_create_date'); // -- 7
             $table->string('co_update_id',20)->nullable(); // -- 8
@@ -33,7 +33,7 @@ return new class extends Migration
         DB::statement('ALTER TABLE HD_Contact_Master ALTER COLUMN co_description VARCHAR(50)');
         DB::statement('ALTER TABLE HD_Contact_Master ALTER COLUMN co_customer_id VARCHAR(10)');
         DB::statement('ALTER TABLE HD_Contact_Master ALTER COLUMN co_state_code VARCHAR(3)');
-        DB::statement('ALTER TABLE HD_Contact_Master ALTER COLUMN co_cone VARCHAR(10)');
+        DB::statement('ALTER TABLE HD_Contact_Master ALTER COLUMN co_zone VARCHAR(10)');
         DB::statement('ALTER TABLE HD_Contact_Master ALTER COLUMN co_create_id VARCHAR(20)');
         DB::statement('ALTER TABLE HD_Contact_Master ALTER COLUMN co_update_id VARCHAR(20)');
         DB::statement('ALTER TABLE HD_Contact_Master ALTER COLUMN co_active_sts VARCHAR(3)');

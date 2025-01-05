@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('cb_general_line',20)->nullable(); // -- 11
             $table->string('cb_Hol_Code',50)->nullable(); // -- 12
             $table->string('cb_bizhour_code',50)->nullable(); // -- 13
-            $table->string('cb_nearest_code',50)->nullable(); // -- 14
+            $table->string('cb_nearest_node',50)->nullable(); // -- 14
             $table->integer('cb_node_distance')->nullable(); // -- 15
             $table->string('cb_connected_node',50)->nullable(); // -- 16
             $table->string('cb_is_critical',50)->nullable(); // -- 17
@@ -57,7 +57,7 @@ return new class extends Migration
         DB::statement('ALTER TABLE HD_Customer_Branch ALTER COLUMN cb_general_line VARCHAR(20)');
         DB::statement('ALTER TABLE HD_Customer_Branch ALTER COLUMN cb_Hol_Code VARCHAR(50)');
         DB::statement('ALTER TABLE HD_Customer_Branch ALTER COLUMN cb_bizhour_code VARCHAR(50)');
-        DB::statement('ALTER TABLE HD_Customer_Branch ALTER COLUMN cb_nearest_code VARCHAR(50)');
+        DB::statement('ALTER TABLE HD_Customer_Branch ALTER COLUMN cb_nearest_node VARCHAR(50)');
         DB::statement('ALTER TABLE HD_Customer_Branch ALTER COLUMN cb_connected_node VARCHAR(50)');
         DB::statement('ALTER TABLE HD_Customer_Branch ALTER COLUMN cb_is_critical VARCHAR(50)');
         DB::statement('ALTER TABLE HD_Customer_Branch ALTER COLUMN cb_create_id VARCHAR(20)');
