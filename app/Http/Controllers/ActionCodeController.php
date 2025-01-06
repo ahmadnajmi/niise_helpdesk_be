@@ -72,7 +72,9 @@ class ActionCodeController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $actionCode = ActionCode::where('ac_code', $id)->first();
+
+        return $this->success('Action code fetched successfully.', $actionCode);
     }
 
     /**

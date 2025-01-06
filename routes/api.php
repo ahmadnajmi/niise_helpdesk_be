@@ -59,6 +59,7 @@ Route::middleware(["api"])->group(function () {
     Route::resource('business-hour', BusinessHourController::class);
     Route::resource('service-category', ServiceCategoriesController::class);
     Route::resource('case-status', CaseStatusController::class);
+    Route::get('read-action-code/{id}', [ActionCodeController::class,'show']);
     Route::resource('action-code', ActionCodeController::class);
     Route::resource('document-type', DocumentTypeController::class);
 
