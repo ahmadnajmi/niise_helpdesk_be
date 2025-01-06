@@ -62,6 +62,7 @@ Route::middleware(["api"])->group(function () {
     Route::get('edit-service-category', [ServiceCategoriesController::class,'edit']);
     Route::delete('delete-service-category/{id}', [ServiceCategoriesController::class,'destroy']);
     Route::resource('case-status', CaseStatusController::class);
+    Route::get('read-action-code/{id}', [ActionCodeController::class,'show']);
     Route::resource('action-code', ActionCodeController::class);
     Route::resource('document-type', DocumentTypeController::class);
 

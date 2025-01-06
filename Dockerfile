@@ -5,7 +5,7 @@ FROM php:8.3.15-bullseye
 WORKDIR /app
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
     wget \
@@ -18,9 +18,26 @@ RUN apt-get update && apt-get install -y \
     gnupg2 \
     software-properties-common \
     apt-transport-https \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Add GPG keys for Microsoft ODBC Driver for SQL Server (Specific for Debian 11 and ODBC 18) - https://learn.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-ver16&tabs=debian18-install%2Calpine17-install%2Cdebian8-install%2Credhat7-13-install%2Crhel7-offline#driver-files
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc && \
+    curl https://packages.microsoft.com/config/debian/11/prod.list | tee /etc/apt/sources.list.d/mssql-release.list && \
+    apt-get update && \
+    ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 && \
+    apt-get install -y unixodbc-dev && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Update PATH for mssql-tools
+ENV PATH=$PATH:/opt/mssql-tools18/bin
+
+# Install PHP extensions
+RUN pecl install sqlsrv
+RUN pecl install pdo_sqlsrv
+RUN docker-php-ext-enable sqlsrv
+RUN docker-php-ext-enable pdo_sqlsrv && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Node.js and npm from NodeSource
 RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
@@ -67,6 +84,8 @@ RUN git config pull.ff only
 
 # Expose port
 EXPOSE 8000
+
+RUN php artisan config:cache
 
 # Build frontend assets
 RUN npm run build

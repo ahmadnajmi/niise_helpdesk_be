@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->string('rcg_log_no',15);  // -- 1
             $table->string('rcg_check_group',10); // -- 2
-            $table->char('rcg_categor_code',50)->nullable(); // -- 3
+            $table->char('rcg_category_code',50)->nullable(); // -- 3
             $table->unsignedBigInteger('ID'); // -- 4
             // ----------------------
             $table->timestamps();
@@ -25,7 +25,7 @@ return new class extends Migration
 
         DB::statement('ALTER TABLE HD_RelCategory_Group ALTER COLUMN rcg_log_no VARCHAR(15)');
         DB::statement('ALTER TABLE HD_RelCategory_Group ALTER COLUMN rcg_check_group VARCHAR(10)');
-        DB::statement('ALTER TABLE HD_RelCategory_Group ALTER COLUMN rcg_categor_code CHAR(50)');
+        DB::statement('ALTER TABLE HD_RelCategory_Group ALTER COLUMN rcg_category_code CHAR(50)');
     }
 
     /**

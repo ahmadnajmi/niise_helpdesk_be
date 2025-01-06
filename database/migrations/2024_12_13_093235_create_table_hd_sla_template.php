@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('st_feedback_b4bypass')->nullable(); // -- 6
             $table->integer('st_feedback_afterbypass')->nullable(); // -- 7
             $table->integer('st_bypass_timeframe')->nullable(); // -- 8
-            $table->integer('st_dua_date_timeframe')->nullable(); // -- 9
+            $table->integer('st_due_date_timeframe')->nullable(); // -- 9
             $table->decimal('st_service_lvl', 3, 0)->nullable(); // -- 10
             $table->string('st_create_id',20)->nullable(); // -- 11
             $table->datetime('st_create_date')->nullable(); // -- 12
