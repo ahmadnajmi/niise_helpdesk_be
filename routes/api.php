@@ -58,6 +58,9 @@ Route::middleware(["api"])->group(function () {
     Route::resource('holiday', HolidayController::class);
     Route::resource('business-hour', BusinessHourController::class);
     Route::resource('service-category', ServiceCategoriesController::class);
+    Route::get('read-service-category/{id}', [ServiceCategoriesController::class,'show']);
+    Route::get('edit-service-category', [ServiceCategoriesController::class,'edit']);
+    Route::delete('delete-service-category/{id}', [ServiceCategoriesController::class,'destroy']);
     Route::resource('case-status', CaseStatusController::class);
     Route::get('read-action-code/{id}', [ActionCodeController::class,'show']);
     Route::resource('action-code', ActionCodeController::class);
@@ -79,6 +82,7 @@ Route::middleware(["api"])->group(function () {
 
     // --- # Templates
     Route::resource('service-level-template', ServiceLevelTemplateController::class);
+    Route::get('read-service-level-template/{id}', [ServiceLevelTemplateController::class,'show']);
 
     // # 5. Reporting
     Route::resource('report', ReportController::class);
