@@ -24,7 +24,7 @@ class KnownErrorController extends Controller
             $perPage = 2;
         }
             $knownError = (new KnownError())->getAllKnownError()->paginate($perPage);
-        
+
 
         return $this->success('Success', $knownError);
     }
@@ -48,7 +48,7 @@ class KnownErrorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show( string $id)
+    public function show(string $id, Request $request)
     {
         if(isset($request->perPage)) {
             $perPage = $request->perPage;
@@ -56,7 +56,7 @@ class KnownErrorController extends Controller
             $perPage = 2;
         }
             $data = (new KnownError())->getKnownError($id);
-        
+
 
         return $this->success('Success', $data);
     }
