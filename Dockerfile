@@ -81,7 +81,6 @@ RUN git fetch origin
 RUN git checkout master
 RUN git config pull.ff only
 
-
 # Expose port
 EXPOSE 8000
 

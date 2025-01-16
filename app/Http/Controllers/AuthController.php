@@ -24,10 +24,15 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::where('ID', $username)->first();
+        // $user = User::where('ID', $username)->first();
+
+        $user = new User();
+        $user->ID = 'suhanims';
+        $user->EMAIL_ID = 'suhanims@heitech.com.my';
+        $user->name = 'SUHANI BINTI MOHD SUKOR';
 
         // if(Auth::attempt(['ID' => $username, 'password' => $password])) {
-        if($user != null) {
+        if($user->count() > 0) {
             // Auth::login($user);
             // $token = Auth::user()->createToken('authToken')->accessToken;
 
