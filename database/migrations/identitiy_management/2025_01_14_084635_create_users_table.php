@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name',100)->nullable(); 
             $table->string('position',100)->nullable(); 
-            $table->string('location')->nullable(); 
+            $table->unsignedBigInteger('branch_id')->nullable(); 
             $table->string('email',100)->nullable(); 
             $table->string('phone_no',20)->nullable(); 
             $table->string('category_office',100)->nullable();

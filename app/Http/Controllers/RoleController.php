@@ -2,63 +2,66 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\ResponseTrait;
 use Illuminate\Http\Request;
+use App\Http\Resources\RoleCollection;
+use App\Http\Requests\RoleRequest;
+use App\Models\Role;
 
 class RoleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    use ResponseTrait;
+
     public function index()
     {
-        //
+        $data =  RoleCollection::collection(Role::paginate(15));
+
+        return $this->success('Success', $data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(RoleRequest $request)
     {
-        //
+        try {
+            $data = $request->all();
+            
+            $create = Role::create($data);
+           
+            $data = new RoleCollection($create);
+
+            return $this->success('Success', $data);
+          
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage());
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function show(Role $Role)
     {
-        //
+        $data = new RoleCollection($Role);
+
+        return $this->success('Success', $data);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(RoleRequest $request, Role $role)
     {
-        //
+        try {
+            $data = $request->all();
+
+            $update = $role->update($data);
+
+            $data = new RoleCollection($role);
+
+            return $this->success('Success', $data);
+          
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage());
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function destroy(Role $role)
     {
-        //
-    }
+        $role->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return $this->success('Success', null);
     }
 }
