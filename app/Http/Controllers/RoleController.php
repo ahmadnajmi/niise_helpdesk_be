@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\RoleCollection;
 use App\Http\Requests\RoleRequest;
 use App\Models\Role;
+use App\Models\Permission;
 
 class RoleController extends Controller
 {
@@ -23,9 +24,11 @@ class RoleController extends Controller
     {
         try {
             $data = $request->all();
-            
+
             $create = Role::create($data);
            
+            $create_permission = $this->createPermission($data,$create);
+
             $data = new RoleCollection($create);
 
             return $this->success('Success', $data);
@@ -49,6 +52,10 @@ class RoleController extends Controller
 
             $update = $role->update($data);
 
+            $delete_old_data = Permission::where('role_id',$role->id)->delete();
+
+            $create_permission = $this->createPermission($data,$role);
+
             $data = new RoleCollection($role);
 
             return $this->success('Success', $data);
@@ -62,6 +69,22 @@ class RoleController extends Controller
     {
         $role->delete();
 
+        $delete_old_data = Permission::where('role_id',$role->id)->delete();
+
         return $this->success('Success', null);
+    }
+
+    public function createPermission($data,$create)
+    {
+        if(isset($data['permission'])){
+
+            foreach($data['permission'] as $idx => $permission){
+
+                $permission['role_id'] = $create->id;
+
+                $create_permission = Permission::create($permission);
+            }
+        }
+        return true;
     }
 }

@@ -19,6 +19,7 @@ class RoleCollection extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'is_active' => $this->is_active,
+            'permission'=> PermisssionCollection::collection($this->permission),
             'created_at' => $this->created_at->format('d-m-Y'),
             'updated_at' => $this->updated_at->format('d-m-Y'),
         ];

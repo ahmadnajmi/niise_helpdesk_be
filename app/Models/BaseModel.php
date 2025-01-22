@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 
 class BaseModel extends Model
 {
@@ -23,6 +24,10 @@ class BaseModel extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope('orderByUpdatedAt', function (Builder $builder) {
+            $builder->orderBy('updated_at', 'desc');
+        });
 
      
         static::creating(function ($model) {

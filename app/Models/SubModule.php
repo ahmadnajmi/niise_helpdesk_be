@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubModule extends BaseModel
 {
-    protected $table = 'sub_module';
+  protected $table = 'sub_module';
 
-    protected $fillable = [ 
-      'name',
-      'module_id',
-    ];
+  protected $fillable = [ 
+    'name',
+    'module_id',
+  ];
 }

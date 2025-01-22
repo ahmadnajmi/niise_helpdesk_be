@@ -52,6 +52,10 @@ class ModuleController extends Controller
 
             $update = $module->update($data);
 
+            $delete_old_data = SubModule::where('module_id',$module->id)->delete();
+
+            $create_submodule = $this->crateSubModule($data,$module);
+
             $data = new ModuleCollection($module);
 
             return $this->success('Success', $data);
@@ -64,6 +68,8 @@ class ModuleController extends Controller
     public function destroy(Module $module)
     {
         $module->delete();
+
+        $delete_old_data = SubModule::where('module_id',$module->id)->delete();
 
         return $this->success('Success', null);
     }
@@ -79,8 +85,6 @@ class ModuleController extends Controller
                 $create_sub_module = SubModule::create($sub_module);
             }
         }
-
         return true;
-
     }
 }
