@@ -4,13 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Role extends BaseModel
+class SubModule extends BaseModel
 {
-    protected $table = 'role';
+    protected $table = 'sub_module';
 
     protected $fillable = [ 
       'name',
-      'description',
-      'is_active',
+      'module_id',
     ];
 }

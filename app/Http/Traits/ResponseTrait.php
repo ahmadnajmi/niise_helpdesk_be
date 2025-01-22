@@ -47,6 +47,7 @@ trait ResponseTrait {
 
         return response()->json($response, $status);
     }
+    
 
 
     protected function forbidden(string $message = null, int $status = 403) {
