@@ -2,7 +2,7 @@
 
 // use App\Http\Controllers\ActionCodeController;
 // use App\Http\Controllers\AuditTrailController;
-// use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AuthController;
 // use App\Http\Controllers\BranchController;
 // use App\Http\Controllers\BusinessHourController;
 // use App\Http\Controllers\CallerController;
