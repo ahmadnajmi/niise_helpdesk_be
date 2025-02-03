@@ -123,4 +123,9 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'url_application' => [
+        'fe_ifics' => env('URL_FE_IFICS'),
+        'fe_am' => env('URL_FE_AM'),
+    ],
+
 ];

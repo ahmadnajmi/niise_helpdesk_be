@@ -10,7 +10,7 @@ use App\Http\Controllers\AuthController;
 // use App\Http\Controllers\ConfigCodeController;
 // use App\Http\Controllers\ContactPersonController;
 // use App\Http\Controllers\CustomerController;
-// use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DashboardController;
 // use App\Http\Controllers\DocumentTypeController;
 // use App\Http\Controllers\GlobalStatusController;
 // use App\Http\Controllers\GroupController;
@@ -44,7 +44,7 @@ Route::middleware(["api"])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
     // // # 1. Dashboard
-    // Route::resource('dashboard', DashboardController::class);
+    Route::resource('dashboard', DashboardController::class);
 
     // // # 2. Administration
     // // --- # People
