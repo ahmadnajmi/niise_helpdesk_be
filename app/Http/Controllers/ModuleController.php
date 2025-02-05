@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Http\Resources\ModuleCollection;
 use App\Http\Requests\ModuleRequest;
 use App\Models\Module;
-use App\Models\SubModule;
 
 class ModuleController extends Controller
 {
@@ -52,8 +51,6 @@ class ModuleController extends Controller
 
             $update = $module->update($data);
 
-            $delete_old_data = SubModule::where('module_id',$module->id)->delete();
-
             $create_submodule = $this->crateSubModule($data,$module);
 
             $data = new ModuleCollection($module);
@@ -69,7 +66,11 @@ class ModuleController extends Controller
     {
         $module->delete();
 
-        $delete_old_data = SubModule::where('module_id',$module->id)->delete();
+        $sub_module = Module::where('module_id',$module->id);
+
+        Module::whereIn('module_id',$sub_module->pluck('id'))->delete();
+
+        $sub_module->delete();
 
         return $this->success('Success', null);
     }
@@ -82,7 +83,7 @@ class ModuleController extends Controller
 
                 $sub_module['module_id'] = $create->id;
 
-                $create_sub_module = SubModule::create($sub_module);
+                $create_sub_module = Module::create($sub_module);
             }
         }
         return true;

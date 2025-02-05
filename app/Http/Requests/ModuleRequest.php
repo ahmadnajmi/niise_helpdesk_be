@@ -30,6 +30,7 @@ class ModuleRequest extends FormRequest
             'name' => 'required',
             'description' => 'nullable',
             'is_active' =>'nullable',
+            'module_id' => 'nullable',
             'sub_module.*.name' => 'required|string',
         ];
     }

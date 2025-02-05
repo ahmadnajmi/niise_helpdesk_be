@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Schema; 
 
 class BaseModel extends Model
 {
@@ -26,27 +27,36 @@ class BaseModel extends Model
         parent::boot();
 
         static::addGlobalScope('orderByUpdatedAt', function (Builder $builder) {
-            $builder->orderBy('updated_at', 'desc');
+            $model = new static; 
+            
+            // if (Schema::hasColumn($model->getTable(), 'updated_at')) {
+            //     $builder->orderBy($model->getTable()'.updated_at', 'desc');
+            // }
         });
 
      
         static::creating(function ($model) {
-            if (auth()->check()) {
-                $model->created_by = auth()->user()->id;
-                $model->updated_by = auth()->user()->id;
+            if(Schema::hasColumn($model->getTable(), 'created_by') && Schema::hasColumn($model->getTable(), 'updated_by')){
+                if (auth()->check()) {
+                    $model->created_by = auth()->user()->id;
+                    $model->updated_by = auth()->user()->id;
+                }
+                else{
+                    $model->created_by = 1;
+                    $model->updated_by = 1;
+                }
             }
-            else{
-                $model->created_by = 1;
-                $model->updated_by = 1;
-            }
+            
         });
 
         static::updating(function ($model) {
-            if (auth()->check()) {
-                $model->updated_by = auth()->user()->id;
-            }
-            else{
-                $model->updated_by = 2;
+            if(Schema::hasColumn($model->getTable(), 'updated_by')){
+                if (auth()->check()) {
+                    $model->updated_by = auth()->user()->id;
+                }
+                else{
+                    $model->updated_by = 2;
+                }
             }
         });
     }

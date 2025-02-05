@@ -14,12 +14,13 @@ class RoleCollection extends JsonResource
      */
     public function toArray(Request $request): array
     {
+
         return [
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
             'is_active' => $this->is_active,
-            'permission'=> PermisssionCollection::collection($this->permission),
+            'modules' => ModuleCollection::collection($this->modules->pluck('module')->unique()) ,
             'created_at' => $this->created_at->format('d-m-Y'),
             'updated_at' => $this->updated_at->format('d-m-Y'),
         ];

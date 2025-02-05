@@ -8,6 +8,8 @@ use Faker\Factory as Faker;
 use Illuminate\Support\Facades\DB;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\RolePermission;
+use App\Models\Module;
 
 class RoleSeeder extends Seeder
 {
@@ -17,620 +19,212 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         DB::table('role')->truncate();
-        DB::table('permissions')->truncate();
+        DB::table('role_permissions')->truncate();
         DB::statement("ALTER SEQUENCE ROLE_ID_SEQ RESTART START WITH 1");
-        DB::statement("ALTER SEQUENCE PERMISSIONS_ID_SEQ RESTART START WITH 1");
 
         $faker = Faker::create('ms_My');
 
         $roles = [
             [
                 'name' => 'Kakitangan JIM yang berkelayakan (Pengadu)',
-                'permission' => [
+                'permission' =>  [
                     [
-                        'sub_module' => 'Pengurusan Individu (Person)',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Kumpulan',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Peranan',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Kalendar',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Masa Operasi',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Kategori',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Format Email',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Tetapan Templat',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Tetapan SLA',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pratetap data',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Kod Tindakan',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Modul',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
+                        'module' => 'Insiden',
+                        'permission' => ['index','create','view']
+                    ]
                 ]
             ],
             [
                 'name' => 'NOC /SOC / AOC (2nd Lvl)',
-                'permission' => [
+                'permission' =>  [
                     [
-                        'sub_module' => 'Pengurusan Individu (Person)',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
+                        'module' => 'Insiden',
+                        'permission' =>['index','view','update']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Kumpulan',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
+                        'module' => 'Jejak Audit',
+                        'permission' =>['index','view']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Peranan',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Kalendar',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Masa Operasi',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Kategori',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Format Email',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Tetapan Templat',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Tetapan SLA',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pratetap data',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Kod Tindakan',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Modul',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
+                        'module' => 'Knowledge base',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                 ]
             ],
             [
                 'name' => 'Jurutera HDS ICT Frontliner',
-                'permission' => [
+                'permission' =>  [
                     [
-                        'sub_module' => 'Pengurusan Individu (Person)',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Insiden',
+                        'permission' =>['index','create','view','update']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Kumpulan',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
+                        'module' => 'Jejak Audit',
+                        'permission' =>['index','view']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Peranan',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Kalendar',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Masa Operasi',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Kategori',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Format Email',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Tetapan Templat',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Tetapan SLA',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pratetap data',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Kod Tindakan',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Modul',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
+                        'module' => 'Knowledge base',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                 ]
             ],
             [
                 'name' => 'Penyelia Helpdesk ICT',
-                'permission' => [
+                'permission' =>  [
                     [
-                        'sub_module' => 'Pengurusan Individu (Person)',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pengurusan Individu (Person)',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Kumpulan',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pengurusan Kumpulan',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Peranan',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pengurusan Peranan',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Kalendar',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pengurusan Kalendar',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Masa Operasi',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pengurusan Masa Operasi',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Kategori',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pengurusan Kategori',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Format Email',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pengurusan Format Email',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Tetapan Templat',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Tetapan Templat',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Tetapan SLA',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Tetapan SLA',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Pratetap data',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pratetap data',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Kod Tindakan',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Kod Tindakan',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Modul',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Modul',
+                        'permission' =>['index','create','view','update','delete']
+                    ],
+                    [
+                        'module' =>'Insiden',
+                        'permission' =>['index','create','view','update','delete']
+                    ],
+                    [
+                        'module' => 'Jejak Audit',
+                        'permission' =>['index','create','view','update','delete']
+                    ],
+                    [
+                        'module' => 'Laporan',
+                        'permission' =>['index','view']
+                    ],
+                    [
+                        'module' =>'Knowledge base',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                 ]
             ],
             [
                 'name' => 'Pentadbir Helpdesk Sistem (BTMR)',
-                'permission' => [
+                'permission' =>  [
                     [
-                        'sub_module' => 'Pengurusan Individu (Person)',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pengurusan Individu (Person)',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Kumpulan',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pengurusan Kumpulan',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Peranan',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pengurusan Peranan',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Kalendar',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pengurusan Kalendar',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Masa Operasi',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pengurusan Masa Operasi',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Kategori',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pengurusan Kategori',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Format Email',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pengurusan Format Email',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Tetapan Templat',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Tetapan Templat',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Tetapan SLA',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Tetapan SLA',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Pratetap data',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Pratetap data',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Kod Tindakan',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Kod Tindakan',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                     [
-                        'sub_module' => 'Modul',
-                        'allowed_list' =>  1,
-                        'allowed_create' => 1,
-                        'allowed_view' =>  1,
-                        'allowed_update' => 1,
-                        'allowed_delete' => 1,
+                        'module' => 'Modul',
+                        'permission' =>['index','create','view','update','delete']
+                    ],
+                    [
+                        'module' =>'Insiden',
+                        'permission' =>['index','create','view','update','delete']
+                    ],
+                    [
+                        'module' => 'Jejak Audit',
+                        'permission' =>['index','create','view','update','delete']
+                    ],
+                    [
+                        'module' => 'Laporan',
+                        'permission' =>['index','view']
+                    ],
+                    [
+                        'module' =>'Knowledge base',
+                        'permission' =>['index','create','view','update','delete']
                     ],
                 ]
             ],
             [
                 'name' => 'Kontraktor',
-                'permission' => [
+                'permission' =>  [
                     [
-                        'sub_module' => 'Pengurusan Individu (Person)',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
+                        'module' => 'Insiden',
+                        'permission' =>['index','view','update']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Kumpulan',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
+                        'module' => 'Jejak Audit',
+                        'permission' =>['index','view']
                     ],
                     [
-                        'sub_module' => 'Pengurusan Peranan',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Kalendar',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Masa Operasi',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Kategori',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pengurusan Format Email',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Tetapan Templat',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Tetapan SLA',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Pratetap data',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Kod Tindakan',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
-                    ],
-                    [
-                        'sub_module' => 'Modul',
-                        'allowed_list' =>  0,
-                        'allowed_create' => 0,
-                        'allowed_view' =>  0,
-                        'allowed_update' => 0,
-                        'allowed_delete' => 0,
+                        'module' => 'Laporan',
+                        'permission' =>['index','view']
                     ],
                 ]
             ],
         ];
+
 
         foreach($roles as $role){
 
@@ -642,15 +236,26 @@ class RoleSeeder extends Seeder
             if(isset($role['permission'])){
                 foreach($role['permission'] as $permission){
 
-                    $data_permission['sub_module_id'] = 1;
-                    $data_permission['role_id'] = $create->id;
-                    $data_permission['allowed_list'] = $permission['allowed_list'];
-                    $data_permission['allowed_create'] = $permission['allowed_create'];
-                    $data_permission['allowed_view'] = $permission['allowed_view'];
-                    $data_permission['allowed_update'] = $permission['allowed_update'];
-                    $data_permission['allowed_delete'] = $permission['allowed_delete'];
-                    
-                    $create_permission = Permission::create($data_permission);
+                    $module = Module::where('name',$permission['module'])->first();
+
+                    $data_role_permission['role_id'] = $create->id;
+
+                    foreach($permission['permission'] as $access_permission){
+                        $get_permission = Permission::where('module_id',$module->id)->where('name',$access_permission)->first();
+
+                        if(!$get_permission)dd($get_permission,$module->name,$create->name,$access_permission);
+
+                        $data_role_permission['permission_id'] = $get_permission->id;
+
+                        $create_permission = RolePermission::create($data_role_permission);
+
+                    }
+
+
+
+
+
+
                 }
             }
         }

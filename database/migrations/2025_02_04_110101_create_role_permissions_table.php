@@ -11,11 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sub_module', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('module_id')->index();
-            $table->string('name');
-            $table->log();
+        Schema::create('role_permissions', function (Blueprint $table) {
+            $table->unsignedBigInteger('role_id');
+            $table->unsignedBigInteger('permission_id');
         });
     }
 
@@ -24,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sub_module');
+        Schema::dropIfExists('role_permissions');
     }
 };
