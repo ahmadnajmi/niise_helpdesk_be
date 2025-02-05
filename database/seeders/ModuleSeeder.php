@@ -26,9 +26,11 @@ class ModuleSeeder extends Seeder
         $modules = [
             [
                 'module' => 'Pentadbiran Sistem',
+                'permission' => ['index'],
                 'sub_module' => [
                     [
                         'name' =>'Pengurusan Orang',
+                        'permission' => ['index'],
                         'lower_sub_module' => [ 
                             [
                                 'name' => 'Pengurusan Individu (Person)',
@@ -47,6 +49,7 @@ class ModuleSeeder extends Seeder
         
                     [
                         'name' =>'Pengurusan Operasi',
+                        'permission' => ['index'],
                         'lower_sub_module' => [
                             [
                                 'name' => 'Pengurusan Kalendar',
@@ -69,6 +72,7 @@ class ModuleSeeder extends Seeder
         
                     [
                         'name' =>'Pengurusan SLA',
+                        'permission' => ['index'],
                         'lower_sub_module' => [
                             [
                                 'name' => 'Tetapan Templat',
@@ -83,6 +87,7 @@ class ModuleSeeder extends Seeder
         
                     [
                         'name' =>'Konfgurasi sistem',
+                        'permission' => ['index'],
                         'lower_sub_module' => [
                             [
                                 'name' => 'Pratetap data',
@@ -103,6 +108,7 @@ class ModuleSeeder extends Seeder
 
             [
                 'module' => 'Pengurusan Insiden',
+                'permission' => ['index'],
                 'sub_module' => [
                     [
                         'name' =>'Insiden',
@@ -122,6 +128,7 @@ class ModuleSeeder extends Seeder
 
             [
                 'module' => 'Knowledgebase',
+                'permission' => ['index'],
                 'sub_module' => [
                     [
                         'name' =>'Knowledge base',

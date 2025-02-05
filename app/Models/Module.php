@@ -15,10 +15,10 @@ class Module extends BaseModel
     'is_active',
   ];
 
-  // public function subModule()
-  // {
-  //   return $this->hasMany(SubModule::class, 'module_id');
-  // }
+  public function subModule()
+  {
+    return $this->hasMany(Module::class, 'module_id','id');
+  }
 
   public function permissions()
   {

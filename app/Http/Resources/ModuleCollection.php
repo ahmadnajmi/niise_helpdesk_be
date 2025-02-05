@@ -14,15 +14,18 @@ class ModuleCollection extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        $return =  [
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
             'is_active' => $this->is_active,
-            // 'permissions' => PermisssionCollection::collection($this->permissions) ,
-
-            // 'created_at' => $this->created_at->format('d-m-Y'),
-            // 'updated_at' => $this->updated_at->format('d-m-Y'),
         ];
+
+        if($request->route()->getName() == 'role.show'){
+            $return['permissions'] = PermisssionCollection::collection($this->permissions);
+            $return['sub_modules'] = ModuleCollection::collection($this->submodule);
+        }
+
+        return $return;
     }
 }

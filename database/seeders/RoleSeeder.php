@@ -233,31 +233,47 @@ class RoleSeeder extends Seeder
             
             $create = Role::create($data_role);
 
+            $data_role_permission['role_id'] = $create->id;
+
+
             if(isset($role['permission'])){
                 foreach($role['permission'] as $permission){
 
                     $module = Module::where('name',$permission['module'])->first();
 
-                    $data_role_permission['role_id'] = $create->id;
+                    if($module->module_id){
 
-                    foreach($permission['permission'] as $access_permission){
-                        $get_permission = Permission::where('module_id',$module->id)->where('name',$access_permission)->first();
+                        $get_sub_module = Module::where('id',$module->module_id)->first();
 
-                        if(!$get_permission)dd($get_permission,$module->name,$create->name,$access_permission);
+                        $this->createPermissionRole($module->module_id,'index',$data_role_permission);
 
-                        $data_role_permission['permission_id'] = $get_permission->id;
-
-                        $create_permission = RolePermission::create($data_role_permission);
-
+                        if($get_sub_module->module_id) {
+                            $this->createPermissionRole($get_sub_module->module_id,'index',$data_role_permission);
+                        }
                     }
 
-
-
-
-
-
+                    foreach($permission['permission'] as $access_permission){
+                        $this->createPermissionRole($module->id,$access_permission,$data_role_permission);
+                    }
                 }
             }
         }
+    }
+
+    public function createPermissionRole($module_id,$access_permission,$data_role_permission){
+
+        $get_permission = Permission::where('module_id',$module_id)->where('name',$access_permission)->first();
+
+        if(!$get_permission)dd($module_id,$access_permission);
+
+        $data_role_permission['permission_id'] = $get_permission->id;
+
+        $check_role_permission = RolePermission::where('permission_id',$data_role_permission['permission_id'])->where('role_id',$data_role_permission['role_id'])->exists();
+
+        if(!$check_role_permission){
+            $create_permission = RolePermission::create($data_role_permission);
+        }
+
+
     }
 }
