@@ -105,9 +105,11 @@ Route::middleware(["api"])->group(function () {
     // Route::resource('mail-template', MailTemplateController::class);
 
     Route::apiResource('module', ModuleController::class);
-    Route::apiResource('sub_module', SubModuleController::class);
     Route::apiResource('permission', PermissionController::class);
     Route::apiResource('role', RoleController::class);
+    Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');
+    Route::get('navigation', [ModuleController::class,'index'])->name('navigation.index');
+
 
 });
 

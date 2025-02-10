@@ -11,6 +11,7 @@ class Module extends BaseModel
   protected $fillable = [ 
     'module_id',
     'name',
+    'name_en',
     'description',
     'is_active',
   ];
@@ -22,6 +23,30 @@ class Module extends BaseModel
 
   public function permissions()
   {
-      return $this->hasMany(Permission::class);
+    return $this->hasMany(Permission::class);
+  }
+
+  public function getTotalSubModuleCountAttribute()
+  {
+    return $this->subModule->sum(fn($sub) => 1 + $sub->total_sub_module_count);
+  }
+
+  public function getTranslatedNameAttribute()
+  {
+    $locale = request()->header('Accept-Language', 'en');
+    
+    return $this->{"name_{$locale}"} ?? $this->name;
+  }
+
+  public function roles()
+  {
+    return $this->hasManyThrough(
+      RolePermission::class, 
+      Permission::class,     
+      'module_id',           
+      'permission_id',       
+      'id',                  
+      'id'                   
+    );
   }
 }

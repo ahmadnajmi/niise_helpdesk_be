@@ -2,15 +2,14 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Http\Traits\ResponseTrait;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ModuleRequest extends FormRequest
+class RolePermissionRequest extends FormRequest
 {
     use ResponseTrait;
-
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -27,12 +26,8 @@ class ModuleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'name_en' => 'nullable',
-            'description' => 'nullable',
-            'is_active' =>'nullable',
-            'module_id' => 'nullable',
-            'sub_module.*.name' => 'required|string',
+            'role_id' => 'required',
+            'permission_id' => 'required',
         ];
     }
 

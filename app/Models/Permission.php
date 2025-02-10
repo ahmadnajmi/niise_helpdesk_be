@@ -13,6 +13,7 @@ class Permission extends BaseModel
   protected $fillable = [ 
     'module_id',
     'name',
+    'description'
   ];
   
 

@@ -6,8 +6,10 @@ use App\Http\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use App\Http\Resources\RoleCollection;
 use App\Http\Requests\RoleRequest;
+use App\Http\Requests\RolePermissionRequest;
 use App\Models\Role;
 use App\Models\Permission;
+use App\Models\RolePermission;
 
 class RoleController extends Controller
 {
@@ -86,5 +88,27 @@ class RoleController extends Controller
             }
         }
         return true;
+    }
+
+    public function updateRolePermission(RolePermissionRequest $request){
+
+        try {
+            $data = $request->all();
+
+            $exits = RolePermission::where('permission_id',$data['permission_id'])->where('role_id',$data['role_id'])->exists();
+            
+            if(!$exits){
+                $create = RolePermission::create($data);
+            }
+            else{
+                $create = true;
+            }
+           
+            return $this->success('Success', $create);
+          
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage());
+        }
+
     }
 }

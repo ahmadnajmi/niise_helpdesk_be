@@ -31,7 +31,11 @@ class RoleSeeder extends Seeder
                     [
                         'module' => 'Insiden',
                         'permission' => ['index','create','view']
-                    ]
+                    ],
+                    [
+                        'module' => 'Papan Pemuka',
+                        'permission' =>['index']
+                    ],
                 ]
             ],
             [
@@ -49,6 +53,10 @@ class RoleSeeder extends Seeder
                         'module' => 'Knowledge base',
                         'permission' =>['index','create','view','update','delete']
                     ],
+                    [
+                        'module' => 'Papan Pemuka',
+                        'permission' =>['index']
+                    ],
                 ]
             ],
             [
@@ -65,6 +73,10 @@ class RoleSeeder extends Seeder
                     [
                         'module' => 'Knowledge base',
                         'permission' =>['index','create','view','update','delete']
+                    ],
+                    [
+                        'module' => 'Papan Pemuka',
+                        'permission' =>['index']
                     ],
                 ]
             ],
@@ -135,6 +147,10 @@ class RoleSeeder extends Seeder
                         'module' =>'Knowledge base',
                         'permission' =>['index','create','view','update','delete']
                     ],
+                    [
+                        'module' => 'Papan Pemuka',
+                        'permission' =>['index']
+                    ],
                 ]
             ],
             [
@@ -204,6 +220,10 @@ class RoleSeeder extends Seeder
                         'module' =>'Knowledge base',
                         'permission' =>['index','create','view','update','delete']
                     ],
+                    [
+                        'module' => 'Papan Pemuka',
+                        'permission' =>['index']
+                    ],
                 ]
             ],
             [
@@ -220,6 +240,10 @@ class RoleSeeder extends Seeder
                     [
                         'module' => 'Laporan',
                         'permission' =>['index','view']
+                    ],
+                    [
+                        'module' => 'Papan Pemuka',
+                        'permission' =>['index']
                     ],
                 ]
             ],
@@ -241,6 +265,7 @@ class RoleSeeder extends Seeder
 
                     $module = Module::where('name',$permission['module'])->first();
 
+                    if(!isset($module))dd($permission);
                     if($module->module_id){
 
                         $get_sub_module = Module::where('id',$module->module_id)->first();
@@ -264,7 +289,7 @@ class RoleSeeder extends Seeder
 
         $get_permission = Permission::where('module_id',$module_id)->where('name',$access_permission)->first();
 
-        if(!$get_permission)dd($module_id,$access_permission);
+        // if(!$get_permission)dd($module_id,$access_permission);
 
         $data_role_permission['permission_id'] = $get_permission->id;
 

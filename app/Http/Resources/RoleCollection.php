@@ -14,15 +14,24 @@ class RoleCollection extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
-        return [
+        $return  = [
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
             'is_active' => $this->is_active,
-            'modules' => ModuleCollection::collection($this->modules->pluck('module')->unique()) ,
             'created_at' => $this->created_at->format('d-m-Y'),
             'updated_at' => $this->updated_at->format('d-m-Y'),
         ];
+
+        if($request->route()->getName() == 'role.index'){
+            $return['modules'] = $this->modules->pluck('module')->unique()->pluck('name');
+        }
+        elseif($request->route()->getName() == 'role.show'){
+            $return['modules'] = ModuleCollection::collection($this->modules->pluck('module')->unique());
+        }
+
+        
+
+        return $return;
     }
 }

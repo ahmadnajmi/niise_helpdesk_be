@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('module_id')->index();
             $table->string('name')->index();
+            $table->string('description')->nullable();
         });
     }
 

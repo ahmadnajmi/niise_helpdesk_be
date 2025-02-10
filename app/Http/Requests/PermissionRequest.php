@@ -7,7 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Http\Traits\ResponseTrait;
 
-class ModuleRequest extends FormRequest
+class PermissionRequest extends FormRequest
 {
     use ResponseTrait;
 
@@ -28,11 +28,8 @@ class ModuleRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'name_en' => 'nullable',
+            'module_id' => 'required',
             'description' => 'nullable',
-            'is_active' =>'nullable',
-            'module_id' => 'nullable',
-            'sub_module.*.name' => 'required|string',
         ];
     }
 

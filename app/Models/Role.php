@@ -25,25 +25,4 @@ class Role extends BaseModel
           $query->whereNull('module_id'); 
       })->with('module');
   }
-
-  // public function modules()
-  // {
-  //     return $this->permissions()->with(['module' => function($query)  {
-  //       // Query the name field in status table
-  //       $query->where('module_id',null); // '=' is optional
-  //   }]);
-  // }
- 
-  // public function modules()
-  //   {
-  //       return $this->permissions()->with('module');
-        
-  //   }
-
-  
-
-    // public function modules()
-    // {
-    //     return $this->hasManyThrough(Module::class, Permission::class, 'id', 'id', 'id', 'module_id');
-    // }
 }
