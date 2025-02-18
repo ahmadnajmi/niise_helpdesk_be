@@ -21,8 +21,8 @@ class Role extends BaseModel
 
   public function modules()
   {
-      return $this->permissions()->whereHas('module', function ($query) {
-          $query->whereNull('module_id'); 
-      })->with('module');
+    return $this->permissions()->whereHas('module', function ($query) {
+        $query->whereNull('module_id'); 
+    })->with('module');
   }
 }

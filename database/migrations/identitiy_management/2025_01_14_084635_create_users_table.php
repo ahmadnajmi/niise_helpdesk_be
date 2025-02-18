@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::connection('oracle_identity_management')->create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name',100)->nullable(); 
+            $table->string('password')->nullable(); 
             $table->string('position',100)->nullable(); 
             $table->unsignedBigInteger('branch_id')->nullable(); 
             $table->string('email',100)->nullable(); 

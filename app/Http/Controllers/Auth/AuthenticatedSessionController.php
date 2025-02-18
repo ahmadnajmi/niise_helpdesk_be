@@ -27,7 +27,7 @@ class AuthenticatedSessionController extends Controller
         $request->name = 'najmi';
         // $request->authenticate();
 
-        $request->session()->regenerate();
+        $request->session()->regenerate(false);
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
@@ -41,7 +41,7 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->invalidate();
 
-        $request->session()->regenerateToken();
+        $request->session()->regenerateToken(false);
 
         return redirect('/');
     }

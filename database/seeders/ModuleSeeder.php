@@ -16,6 +16,7 @@ class ModuleSeeder extends Seeder
      */
     public function run(): void
     {
+        // DB::setDefaultConnection('oracle');
         DB::table('module')->truncate();
         DB::statement("ALTER SEQUENCE MODULE_ID_SEQ RESTART START WITH 1");
         DB::table('permissions')->truncate();
@@ -27,7 +28,9 @@ class ModuleSeeder extends Seeder
             [
                 'module' => 'Papan Pemuka',
                 'name_en' =>'Dashboard',
-                'permission' =>['index']
+                'permission' =>['dashboard.index'],
+                'svg_path' => '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+
             ],
             [
                 'module' => 'Pentadbiran Sistem',
@@ -52,7 +55,7 @@ class ModuleSeeder extends Seeder
                             [
                                 'name' => 'Pengurusan Peranan',
                                 'name_en' => 'Role Management',
-                                'permission' =>['index','create','view','update','delete']
+                                'permission' =>['role.index','create','view','update','delete']
                             ],
                         ]
                     ],
@@ -121,7 +124,7 @@ class ModuleSeeder extends Seeder
                             [
                                 'name' => 'Modul',
                                 'name_en' =>'Module',
-                                'permission' =>['index','create','view','update','delete']
+                                'permission' =>['module.index','create','view','update','delete']
                             ],
                         ]
                     ],
@@ -132,11 +135,12 @@ class ModuleSeeder extends Seeder
                 'module' => 'Pengurusan Insiden',
                 'name_en' =>'Incident Management',
                 'permission' => ['index'],
+                'svg_path' => '<path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />',
                 'sub_module' => [
                     [
                         'name' =>'Insiden',
                         'name_en' =>'Incident',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>['incident.index','create','view','update','delete']
                     ],
                 ]
             ],
@@ -149,7 +153,7 @@ class ModuleSeeder extends Seeder
             [
                 'module' => 'Laporan',
                 'name_en' =>'Report',
-                'permission' =>['index','view']
+                'permission' =>['report.index','view']
             ],
 
             [
@@ -171,8 +175,10 @@ class ModuleSeeder extends Seeder
             $data_module['name'] = $module['module'];
             $data_module['name_en'] = $module['name_en'];
             $data_module['description'] = $faker->realText(100);
-            
-            
+            $data_module['svg_path'] =  isset($module['svg_path']) ? $module['svg_path'] : null;
+            $data_module['created_by'] = 1;
+            $data_module['updated_by'] =  2;
+
             $create = Module::create($data_module);
 
             if(isset($module['permission'])) $this->createPermission($create->id,$module['permission']);
@@ -184,6 +190,8 @@ class ModuleSeeder extends Seeder
                     $data_sub_module['name_en'] = $sub_module['name_en'];
                     $data_sub_module['module_id'] = $create->id;
                     $data_sub_module['description'] = $faker->realText(100);
+                    $data_sub_module['created_by'] = 1;
+                    $data_sub_module['updated_by'] =  2;
 
                     $create_sub_module = Module::create($data_sub_module);
 
@@ -197,7 +205,9 @@ class ModuleSeeder extends Seeder
                             $data_lower_sub_module['name_en'] = $lower_sub_module['name_en'];
                             $data_lower_sub_module['module_id'] = $create_sub_module->id;
                             $data_lower_sub_module['description'] = $faker->realText(100);
-        
+                            $data_lower_sub_module['created_by'] = 1;
+                            $data_lower_sub_module['updated_by'] =  2;
+
                             $create_lower_sub_module = Module::create($data_lower_sub_module);
 
                             if(isset($lower_sub_module['permission'])) $this->createPermission($create_lower_sub_module->id,$lower_sub_module['permission']);

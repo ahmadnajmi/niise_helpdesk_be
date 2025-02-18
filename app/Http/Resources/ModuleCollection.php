@@ -18,6 +18,7 @@ class ModuleCollection extends JsonResource
             'id' => $this->id,
             'name' => $this->translated_name,
             'description' => $this->description,
+            'svg_path' => $this->svg_path,
             'is_active' => $this->is_active,
         ];
 

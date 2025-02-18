@@ -10,6 +10,8 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Models\RolePermission;
 use App\Models\Module;
+use App\Models\UserRole;
+use App\Models\IdentityManagement\User;
 
 class RoleSeeder extends Seeder
 {
@@ -30,11 +32,11 @@ class RoleSeeder extends Seeder
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
-                        'permission' => ['index','create','view']
+                        'permission' => ['incident.index','create','view']
                     ],
                     [
                         'module' => 'Papan Pemuka',
-                        'permission' =>['index']
+                        'permission' =>['dashboard.index']
                     ],
                 ]
             ],
@@ -43,7 +45,7 @@ class RoleSeeder extends Seeder
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
-                        'permission' =>['index','view','update']
+                        'permission' =>['incident.index','view','update']
                     ],
                     [
                         'module' => 'Jejak Audit',
@@ -55,7 +57,7 @@ class RoleSeeder extends Seeder
                     ],
                     [
                         'module' => 'Papan Pemuka',
-                        'permission' =>['index']
+                        'permission' =>['dashboard.index']
                     ],
                 ]
             ],
@@ -64,7 +66,7 @@ class RoleSeeder extends Seeder
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
-                        'permission' =>['index','create','view','update']
+                        'permission' =>['incident.index','create','view','update']
                     ],
                     [
                         'module' => 'Jejak Audit',
@@ -76,7 +78,7 @@ class RoleSeeder extends Seeder
                     ],
                     [
                         'module' => 'Papan Pemuka',
-                        'permission' =>['index']
+                        'permission' =>['dashboard.index']
                     ],
                 ]
             ],
@@ -93,7 +95,7 @@ class RoleSeeder extends Seeder
                     ],
                     [
                         'module' => 'Pengurusan Peranan',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>['role.index','create','view','update','delete']
                     ],
                     [
                         'module' => 'Pengurusan Kalendar',
@@ -129,11 +131,11 @@ class RoleSeeder extends Seeder
                     ],
                     [
                         'module' => 'Modul',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>['module.index','create','view','update','delete']
                     ],
                     [
                         'module' =>'Insiden',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>['incident.index','create','view','update','delete']
                     ],
                     [
                         'module' => 'Jejak Audit',
@@ -141,7 +143,7 @@ class RoleSeeder extends Seeder
                     ],
                     [
                         'module' => 'Laporan',
-                        'permission' =>['index','view']
+                        'permission' =>['report.index','view']
                     ],
                     [
                         'module' =>'Knowledge base',
@@ -149,7 +151,7 @@ class RoleSeeder extends Seeder
                     ],
                     [
                         'module' => 'Papan Pemuka',
-                        'permission' =>['index']
+                        'permission' =>['dashboard.index']
                     ],
                 ]
             ],
@@ -166,7 +168,7 @@ class RoleSeeder extends Seeder
                     ],
                     [
                         'module' => 'Pengurusan Peranan',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>['role.index','create','view','update','delete']
                     ],
                     [
                         'module' => 'Pengurusan Kalendar',
@@ -202,11 +204,11 @@ class RoleSeeder extends Seeder
                     ],
                     [
                         'module' => 'Modul',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>['module.index','create','view','update','delete']
                     ],
                     [
                         'module' =>'Insiden',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>['incident.index','create','view','update','delete']
                     ],
                     [
                         'module' => 'Jejak Audit',
@@ -214,7 +216,7 @@ class RoleSeeder extends Seeder
                     ],
                     [
                         'module' => 'Laporan',
-                        'permission' =>['index','view']
+                        'permission' =>['report.index','view']
                     ],
                     [
                         'module' =>'Knowledge base',
@@ -222,7 +224,7 @@ class RoleSeeder extends Seeder
                     ],
                     [
                         'module' => 'Papan Pemuka',
-                        'permission' =>['index']
+                        'permission' =>['dashboard.index']
                     ],
                 ]
             ],
@@ -231,7 +233,7 @@ class RoleSeeder extends Seeder
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
-                        'permission' =>['index','view','update']
+                        'permission' =>['incident.index','view','update']
                     ],
                     [
                         'module' => 'Jejak Audit',
@@ -239,11 +241,11 @@ class RoleSeeder extends Seeder
                     ],
                     [
                         'module' => 'Laporan',
-                        'permission' =>['index','view']
+                        'permission' =>['report.index','view']
                     ],
                     [
                         'module' => 'Papan Pemuka',
-                        'permission' =>['index']
+                        'permission' =>['dashboard.index']
                     ],
                 ]
             ],
@@ -254,9 +256,11 @@ class RoleSeeder extends Seeder
 
             $data_role['name'] = $role['name'];
             $data_role['description'] = $faker->realText(100);
-            
+
             $create = Role::create($data_role);
 
+            $this->createRoleUser($create->id);
+            
             $data_role_permission['role_id'] = $create->id;
 
 
@@ -289,7 +293,7 @@ class RoleSeeder extends Seeder
 
         $get_permission = Permission::where('module_id',$module_id)->where('name',$access_permission)->first();
 
-        // if(!$get_permission)dd($module_id,$access_permission);
+        if(!$get_permission)dd($module_id,$access_permission);
 
         $data_role_permission['permission_id'] = $get_permission->id;
 
@@ -298,7 +302,17 @@ class RoleSeeder extends Seeder
         if(!$check_role_permission){
             $create_permission = RolePermission::create($data_role_permission);
         }
+    }
 
+    public function createRoleUser($role_id){
+       
+        $users = User::inRandomOrder()->limit(rand(1,30))->pluck('id');
 
+        foreach($users as $user){
+            $data['user_id'] = $user;
+            $data['role_id'] = $role_id;
+
+            $create = UserRole::create($data);
+        }
     }
 }

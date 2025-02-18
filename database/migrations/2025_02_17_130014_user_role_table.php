@@ -11,13 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('oracle_identity_management')->create('branch', function (Blueprint $table) {
-            $table->id();
-            $table->string('name')->nullable(); 
-            $table->string('state')->nullable(); 
-            $table->string('location')->nullable(); 
-
-            $table->timestamps();
+        Schema::create('user_role', function (Blueprint $table) {
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('role_id');
         });
     }
 
@@ -26,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('branch');
+        Schema::dropIfExists('user_role');
     }
 };

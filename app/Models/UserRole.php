@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Models;
+
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+
+class UserRole extends BaseModel
+{
+    protected $table = 'user_role';
+    protected $primaryKey = null;
+
+    public $timestamps = false;
+    public $incrementing = false;
+
+    protected $fillable = [ 
+        'role_id',
+        'user_id',
+    ];
+
+    public function roleDetails(){
+        return $this->hasOne(Role::class,'id','role_id');
+    }
+
+
+    public static  function getUserDetails(){
+        $data = self::select('role_id')
+                    ->with(['roleDetails' => function ($query) {
+                        $query->select('id', 'name');
+                    }])
+                    ->where('user_id',Auth::user()->id)
+                    ->get();
+
+        return $data;
+    }
+
+}

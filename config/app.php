@@ -127,5 +127,11 @@ return [
         'fe_ifics' => env('URL_FE_IFICS'),
         'fe_am' => env('URL_FE_AM'),
     ],
+    
+    'passport_token' => [
+        'login_url' => env('PASSPORT_LOGIN_URL'),
+        'client_id' => env('PASSPORT_CLIENT_ID'),
+        'client_secret' => env('PASSPORT_CLIENT_SECRET')
+    ]
 
 ];

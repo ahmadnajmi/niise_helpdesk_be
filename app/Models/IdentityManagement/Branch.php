@@ -8,6 +8,7 @@ class Branch extends Model
 {
     //
     protected $connection = 'oracle_identity_management'; 
+    protected $table = 'branch';
 
     protected $fillable = [
         'name',

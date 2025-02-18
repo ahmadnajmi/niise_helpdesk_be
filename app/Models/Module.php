@@ -2,51 +2,75 @@
 
 namespace App\Models;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Module extends BaseModel
 {
-  protected $table = 'module';
+    protected $table = 'niise.module';
 
-  protected $fillable = [ 
-    'module_id',
-    'name',
-    'name_en',
-    'description',
-    'is_active',
-  ];
+    public $timestamps = false;
 
-  public function subModule()
-  {
-    return $this->hasMany(Module::class, 'module_id','id');
-  }
+    protected $fillable = [ 
+       'module_id',
+        'name',
+        'name_en',
+        'svg_path',
+        'description',
+        'is_active',
+    ];
 
-  public function permissions()
-  {
-    return $this->hasMany(Permission::class);
-  }
+    public function subModule(){
+        return $this->hasMany(Module::class, 'module_id','id');
+    }
 
-  public function getTotalSubModuleCountAttribute()
-  {
-    return $this->subModule->sum(fn($sub) => 1 + $sub->total_sub_module_count);
-  }
+    public function permissions(){
+        return $this->hasMany(Permission::class);
+    }
 
-  public function getTranslatedNameAttribute()
-  {
-    $locale = request()->header('Accept-Language', 'en');
+    public function roles(){
+        return $this->hasManyThrough(RolePermission::class,Permission::class,'module_id','permission_id','id','id');
+    }
+
+    public function route(){
+        return $this->hasOne(Permission::class,'module_id','id')->where('name', 'like', '%index%');
+    }
+
+    public function getTotalSubModuleCountAttribute(){
+        return $this->subModule->sum(fn($sub) => 1 + $sub->total_sub_module_count);
+    }
+
+    public function getTranslatedNameAttribute(){
+        $locale = request()->header('Accept-Language', 'en');
+        
+        return $this->{"name_{$locale}"} ?? $this->name;
+    }
     
-    return $this->{"name_{$locale}"} ?? $this->name;
-  }
+    public static  function getUserDetails(){
 
-  public function roles()
-  {
-    return $this->hasManyThrough(
-      RolePermission::class, 
-      Permission::class,     
-      'module_id',           
-      'permission_id',       
-      'id',                  
-      'id'                   
-    );
-  }
+        $get_permission = Permission::getUserDetails('module_id');
+
+        $data = self::select('id','module_id','name','name_en','svg_path')
+                    ->with(['subModule' => function ($query) {
+                        $query->select('id','module_id', 'name','name_en','svg_path')
+                            ->with(['subModule' => function ($query) {
+                                $query->select('id','module_id', 'name','name_en','svg_path')
+                                    ->with(['route' => function ($query) {
+                                        $query->select('id','module_id', 'name');
+                                }]);
+                            }])
+                            ->with(['route' => function ($query) {
+                                $query->select('id','module_id', 'name');
+                        }]);
+                    }])
+                    ->with(['route' => function ($query) {
+                        $query->select('id','module_id', 'name');
+                    }])
+                    ->whereIn('id',$get_permission)
+                    ->whereNull('module_id')
+                    ->get();
+    
+        return $data;
+    }
 }
