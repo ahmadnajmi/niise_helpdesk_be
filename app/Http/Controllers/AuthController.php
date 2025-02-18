@@ -77,6 +77,9 @@ class AuthController extends Controller
             $data = [
                 'user' => $user,
                 'token' => $token['data']->access_token,
+                'role' => UserRole::getUserDetails(),
+                'permission' => Permission::getUserDetails(),
+                'module' => Module::getUserDetails(),
             ];
 
             return $this->success('Success', $data);
