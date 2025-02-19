@@ -20,6 +20,7 @@ class ModuleCollection extends JsonResource
             'description' => $this->description,
             'svg_path' => $this->svg_path,
             'is_active' => $this->is_active,
+            'route_name' =>  $this->route?->name
         ];
 
         if($request->route()->getName() == 'module.index'){
@@ -27,7 +28,7 @@ class ModuleCollection extends JsonResource
             $return['total_roles_can_access'] = $this->roles->count();
             $return['total_users_can_access'] = rand(5,10);
             $return['sub_modules'] = $this->submodule->pluck('name');
-            $return['permissions'] = PermissionCollection::collection($this->permissions);
+            // $return['permissions'] = PermissionCollection::collection($this->permissions);
 
         }
         elseif($request->route()->getName() == 'role.show' || $request->route()->getName() == 'module.show'){
@@ -40,6 +41,9 @@ class ModuleCollection extends JsonResource
         if($request->route()->getName() == 'navigation.index'){
             $return['permissions'] = new PermissionCollection($this->permissions->where('name','index')->first());
             $return['sub_modules'] = ModuleCollection::collection($this->submodule);
+        }
+        if($request->route()->getName() == 'module.show'){
+            $return['permissions'] = PermissionCollection::collection($this->permissions);
         }
       
         return $return;

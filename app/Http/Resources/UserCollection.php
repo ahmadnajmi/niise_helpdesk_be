@@ -21,8 +21,8 @@ class UserCollection extends JsonResource
             'branch' => $this->branch,
             'email' => $this->email,
             'phone_no' => $this->phone_no,
-            'created_at' => $this->created_at->format('d-m-Y'),
-            'updated_at' => $this->updated_at->format('d-m-Y'),
+            'created_at' => $this->created_at?->format('d-m-Y'),
+            'updated_at' => $this->updated_at?->format('d-m-Y'),
         ];
         return $return;
     }

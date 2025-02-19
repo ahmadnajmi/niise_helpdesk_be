@@ -21,7 +21,7 @@ class AuthController extends Controller
 {
     use ResponseTrait;
 
-    public function logout(Request $request)
+    public function logoutWeb(Request $request)
     {
         Auth::logout();
         $request->session()->flush();
@@ -88,6 +88,16 @@ class AuthController extends Controller
             return $this->error('Login failed. Invalid credentials.');
         }
     }
+
+    public function logout()
+    {
+        Auth::user()->tokens->each(function ($token, $key){
+            $token->delete();
+        });
+
+        return $this->success('Success', null);
+    }
+
 
     public function generateToken($credentials){
         $client = new Client();

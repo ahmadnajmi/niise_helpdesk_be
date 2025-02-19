@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use App\Models\IdentityManagement\User;
 
 class UserRole extends BaseModel
 {
@@ -23,6 +24,9 @@ class UserRole extends BaseModel
         return $this->hasOne(Role::class,'id','role_id');
     }
 
+    public function userDetails(){
+        return $this->hasOne(User::class,'id','user_id');
+    }
 
     public static  function getUserDetails(){
         $data = self::select('role_id')

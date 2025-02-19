@@ -28,6 +28,7 @@ class RolePermissionRequest extends FormRequest
         return [
             'role_id' => 'required',
             'permission_id' => 'required',
+            'is_allow' => 'nullable',
         ];
     }
 

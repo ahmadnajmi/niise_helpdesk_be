@@ -14,7 +14,7 @@ class ModuleController extends Controller
 
     public function index()
     {
-        $data =  ModuleCollection::collection(Module::paginate(15));
+        $data =  ModuleCollection::collection(Module::whereNull('module_id')->paginate(15));
 
         return $this->success('Success', $data);
     }

@@ -22,7 +22,7 @@ Route::middleware('web')->group(function () {
     Route::post('login', [AuthController::class, 'loginweb'])->name('loginweb');
 
     Route::middleware('auth')->group(function () {
-        Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+        Route::post('logout', [AuthController::class, 'logoutWeb'])->name('logoutweb');
         Route::get('niise/am', [AuthController::class, 'loginAssetManagement'])->name('niise.asset_management');
         Route::get('niise/hd', [AuthController::class, 'loginHelpDesk'])->name('niise.helpdesk');
         Route::get('dashboard', [AuthController::class, 'dashboard'])->name('dashboard');

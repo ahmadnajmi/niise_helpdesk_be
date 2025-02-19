@@ -94,16 +94,20 @@ class RoleController extends Controller
 
         try {
             $data = $request->all();
-
             $exits = RolePermission::where('permission_id',$data['permission_id'])->where('role_id',$data['role_id'])->exists();
-            
-            if(!$exits){
-                $create = RolePermission::create($data);
+
+            if($data['is_allow'] == true){
+                if(!$exits){
+                    $create = RolePermission::create($data);
+                }
+                else{
+                    $create = true;
+                }
             }
             else{
+                $delete = RolePermission::where('permission_id',$data['permission_id'])->where('role_id',$data['role_id'])->delete();
                 $create = true;
             }
-           
             return $this->success('Success', $create);
           
         } catch (\Throwable $th) {

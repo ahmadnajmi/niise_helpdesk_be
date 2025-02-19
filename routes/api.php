@@ -12,9 +12,9 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout']);
 
 Route::middleware(['api','auth:api'])->group(function () {
+    Route::post('logout', [AuthController::class, 'logout']);
 
     Route::resource('dashboard', DashboardController::class);
 

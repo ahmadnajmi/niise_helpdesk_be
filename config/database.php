@@ -126,7 +126,7 @@ return [
         ],
 
         'oracle_identity_management' => [
-            'driver' => 'oracle',
+            'driver' => env('DB_CONNECTION'),
             'host' => env('DB_HOST'),
             'port' => env('DB_PORT'),
             'database' => env('DB_DATABASE'),
