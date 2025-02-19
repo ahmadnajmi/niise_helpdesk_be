@@ -30,6 +30,8 @@ class RoleRequest extends FormRequest
             'description' => 'nullable',
             'is_active' =>'nullable',
             'permission.*.sub_module_id' => 'required|exists:sub_module,id',
+            'permission_id' => 'nullable',
+            'is_allow' => 'nullable',
         ];
     }
 

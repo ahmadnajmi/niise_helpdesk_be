@@ -29,8 +29,6 @@ class RoleController extends Controller
 
             $create = Role::create($data);
            
-            $create_permission = $this->createPermission($data,$create);
-
             $data = new RoleCollection($create);
 
             return $this->success('Success', $data);
@@ -53,10 +51,19 @@ class RoleController extends Controller
             $data = $request->all();
 
             $update = $role->update($data);
+            
+            if($data['is_allow'] == true){
+                $exits = RolePermission::where('permission_id',$data['permission_id'])->where('role_id',$role->id)->exists();
 
-            $delete_old_data = Permission::where('role_id',$role->id)->delete();
+                if(!$exits){
+                    $data['role_id'] = $role->id;
 
-            $create_permission = $this->createPermission($data,$role);
+                    $create = RolePermission::create($data);
+                }
+            }
+            else{
+                $delete = RolePermission::where('permission_id',$data['permission_id'])->where('role_id',$role->id)->delete();
+            }
 
             $data = new RoleCollection($role);
 
@@ -76,19 +83,6 @@ class RoleController extends Controller
         return $this->success('Success', null);
     }
 
-    public function createPermission($data,$create)
-    {
-        if(isset($data['permission'])){
-
-            foreach($data['permission'] as $idx => $permission){
-
-                $permission['role_id'] = $create->id;
-
-                $create_permission = Permission::create($permission);
-            }
-        }
-        return true;
-    }
 
     public function updateRolePermission(RolePermissionRequest $request){
 
