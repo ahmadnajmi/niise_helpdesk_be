@@ -33,10 +33,8 @@ class ModuleCollection extends JsonResource
         }
         elseif($request->route()->getName() == 'role.show' || $request->route()->getName() == 'module.show'){
             $return['sub_modules'] = ModuleCollection::collection($this->submodule);
-        }
-        elseif($request->route()->getName() == 'role.show'){
-            $return['permissions'] = PermissionCollection::collection($this->permissions->where('name','index')->first());
-            $return['sub_modules'] = ModuleCollection::collection($this->submodule);
+            $return['permissions'] = PermissionCollection::collection($this->permissions);
+
         }
         if($request->route()->getName() == 'navigation.index'){
             $return['permissions'] = new PermissionCollection($this->permissions->where('name','index')->first());
