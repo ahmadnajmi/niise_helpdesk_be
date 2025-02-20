@@ -20,6 +20,8 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
+        DB::setDefaultConnection('oracle');
+
         DB::table('role')->truncate();
         DB::table('role_permissions')->truncate();
         DB::table('user_role')->truncate();
@@ -284,7 +286,7 @@ class RoleSeeder extends Seeder
             $data_role['description'] = $faker->realText(100);
 
             $create = Role::create($data_role);
-
+            
             $this->createRoleUser($create->id);
             
             $data_role_permission['role_id'] = $create->id;
@@ -331,10 +333,7 @@ class RoleSeeder extends Seeder
     }
 
     public function createRoleUser($role_id){
-       
-        $users = User::inRandomOrder()->limit(rand(1,30))->pluck('id');
-
-        foreach($users as $user){
+        foreach(range(1,104) as $user){
             $data['user_id'] = $user;
             $data['role_id'] = $role_id;
 

@@ -12,7 +12,7 @@ class User extends Authenticatable
     use HasApiTokens;
     protected $connection = 'oracle_identity_management'; 
 
-    protected $table = 'users';
+    protected $table = 'user';
 
     protected $fillable = [
         'id',

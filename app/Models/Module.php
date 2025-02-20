@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class Module extends BaseModel
 {
-    protected $table = 'niise.module';
+    protected $table = 'module';
 
     public $timestamps = false;
 
