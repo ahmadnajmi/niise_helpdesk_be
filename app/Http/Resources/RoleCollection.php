@@ -36,7 +36,7 @@ class RoleCollection extends JsonResource
             $user_role = UserRole::where('role_id',$this->id)->pluck('user_id');
 
             $return['modules'] = ModuleCollection::collection($this->modules->pluck('module')->unique());
-            $return['permissions_allowed'] = $this->permissions->pluck('name');
+            $return['permissions'] = $this->permissions;
             // $return['list_user'] = UserCollection::collection(User::whereIn('id',$user_role)->get());
 
         }
