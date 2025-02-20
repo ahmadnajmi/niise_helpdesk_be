@@ -168,8 +168,22 @@ class ModuleSeeder extends Seeder
                     ],
                 ]
             ],
-        ];
 
+            [
+                'module' => 'Notifikasi',
+                'name_en' =>'Notification',
+                'permission' => ['index'],
+                'sub_module' => [
+                    [
+                        'name' =>'Notifikasi Aplikasi',
+                        'name_en' =>'Application Notification',
+                        'permission' =>['index']
+                    ],
+                ]
+            ],
+            
+        ];
+        
         foreach($modules as $module){
 
             $data_module['name'] = $module['module'];

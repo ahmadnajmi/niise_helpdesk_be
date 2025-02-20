@@ -40,6 +40,10 @@ class RoleSeeder extends Seeder
                         'module' => 'Papan Pemuka',
                         'permission' =>['dashboard.index']
                     ],
+                    [
+                        'module' => 'Notifikasi Aplikasi',
+                        'permission' =>['index']
+                    ],
                 ]
             ],
             [
@@ -61,6 +65,10 @@ class RoleSeeder extends Seeder
                         'module' => 'Papan Pemuka',
                         'permission' =>['dashboard.index']
                     ],
+                    [
+                        'module' => 'Notifikasi Aplikasi',
+                        'permission' =>['index']
+                    ],
                 ]
             ],
             [
@@ -81,6 +89,10 @@ class RoleSeeder extends Seeder
                     [
                         'module' => 'Papan Pemuka',
                         'permission' =>['dashboard.index']
+                    ],
+                    [
+                        'module' => 'Notifikasi Aplikasi',
+                        'permission' =>['index']
                     ],
                 ]
             ],
@@ -155,6 +167,10 @@ class RoleSeeder extends Seeder
                         'module' => 'Papan Pemuka',
                         'permission' =>['dashboard.index']
                     ],
+                    [
+                        'module' => 'Notifikasi Aplikasi',
+                        'permission' =>['index']
+                    ],
                 ]
             ],
             [
@@ -228,6 +244,10 @@ class RoleSeeder extends Seeder
                         'module' => 'Papan Pemuka',
                         'permission' =>['dashboard.index']
                     ],
+                    [
+                        'module' => 'Notifikasi Aplikasi',
+                        'permission' =>['index']
+                    ],
                 ]
             ],
             [
@@ -248,6 +268,10 @@ class RoleSeeder extends Seeder
                     [
                         'module' => 'Papan Pemuka',
                         'permission' =>['dashboard.index']
+                    ],
+                    [
+                        'module' => 'Notifikasi Aplikasi',
+                        'permission' =>['index']
                     ],
                 ]
             ],
