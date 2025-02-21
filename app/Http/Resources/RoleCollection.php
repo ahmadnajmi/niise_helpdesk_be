@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\UserRole;
+use  App\Models\Module;
 use App\Models\IdentityManagement\User;
 
 class RoleCollection extends JsonResource
@@ -35,10 +36,9 @@ class RoleCollection extends JsonResource
 
             $user_role = UserRole::where('role_id',$this->id)->pluck('user_id');
 
-            $return['modules'] = ModuleCollection::collection($this->modules->pluck('module')->unique());
+            $return['modules'] = ModuleCollection::collection(Module::whereNull('module_id')->get());
             $return['permissions'] = $this->permissions;
             // $return['list_user'] = UserCollection::collection(User::whereIn('id',$user_role)->get());
-
         }
 
         

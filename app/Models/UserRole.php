@@ -34,7 +34,7 @@ class UserRole extends BaseModel
                         $query->select('id', 'name');
                     }])
                     ->where('user_id',Auth::user()->id)
-                    ->get();
+                    ->first();
 
         return $data;
     }
