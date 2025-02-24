@@ -31,3 +31,5 @@ Route::middleware(['api','auth:api'])->group(function () {
 
 });
 
+Route::apiResource('testing', UserController::class)->only('index','show');
+
