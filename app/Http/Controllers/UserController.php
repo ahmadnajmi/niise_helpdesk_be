@@ -25,5 +25,12 @@ class UserController extends Controller
         return $this->success('Success', $data);
     }
 
+    public function testingJasper(){
+        $data =  UserCollection::collection(User::paginate(15));
+
+        return json_encode($data);
+        return $this->success('Success', $data);
+    }
+
 
 }
