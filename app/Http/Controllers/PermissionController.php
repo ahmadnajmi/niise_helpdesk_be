@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Traits\ResponseTrait;
-use App\Http\Resources\PermissionCollection;
+use App\Http\Resources\PermissionResources;
+use App\Http\Collection\PermissionCollection;
 use App\Http\Requests\PermissionRequest;
 use App\Models\Permission;
 
@@ -12,11 +13,13 @@ use App\Models\Permission;
 class PermissionController extends Controller
 {
     use ResponseTrait;
-    public function index()
+    public function index(Request $request)
     {
-        $data =  PermissionCollection::collection(Permission::paginate(15));
+        $limit = $request->limit ? $request->limit : 15;
 
-        return $this->success('Success', $data);
+        $data =  Permission::paginate($limit);
+
+        return new PermissionCollection($data);
     }
 
     public function store(PermissionRequest $request)
@@ -26,7 +29,7 @@ class PermissionController extends Controller
 
             $create = Permission::create($data);
            
-            $data = new PermissionCollection($create);
+            $data = new PermissionResources($create);
 
             return $this->success('Success', $data);
           
@@ -37,7 +40,7 @@ class PermissionController extends Controller
 
     public function show(Permission $permission)
     {
-        $data = new PermissionCollection($permission);
+        $data = new PermissionResources($permission);
 
         return $this->success('Success', $data);
     }
@@ -49,7 +52,7 @@ class PermissionController extends Controller
 
             $update = $permission->update($data);
 
-            $data = new PermissionCollection($permission);
+            $data = new PermissionResources($permission);
 
             return $this->success('Success', $data);
           

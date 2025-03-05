@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Traits\ResponseTrait;
 use Illuminate\Http\Request;
-use App\Http\Resources\RoleCollection;
+use App\Http\Resources\RoleResources;
+use App\Http\Collection\RoleCollection;
 use App\Http\Requests\RoleRequest;
 use App\Http\Requests\RolePermissionRequest;
 use App\Models\Role;
@@ -15,11 +16,13 @@ class RoleController extends Controller
 {
     use ResponseTrait;
 
-    public function index()
+    public function index(Request $request)
     {
-        $data =  RoleCollection::collection(Role::paginate(15));
+        $limit = $request->limit ? $request->limit : 15;
 
-        return $this->success('Success', $data);
+        $data =  Role::paginate($limit);
+
+        return new RoleCollection($data);
     }
 
     public function store(RoleRequest $request)
@@ -29,7 +32,7 @@ class RoleController extends Controller
 
             $create = Role::create($data);
            
-            $data = new RoleCollection($create);
+            $data = new RoleResources($create);
 
             return $this->success('Success', $data);
           
@@ -40,7 +43,7 @@ class RoleController extends Controller
 
     public function show(Role $Role)
     {
-        $data = new RoleCollection($Role);
+        $data = new RoleResources($Role);
 
         return $this->success('Success', $data);
     }
@@ -65,7 +68,7 @@ class RoleController extends Controller
                 $delete = RolePermission::where('permission_id',$data['permission_id'])->where('role_id',$role->id)->delete();
             }
 
-            $data = new RoleCollection($role);
+            $data = new RoleResources($role);
 
             return $this->success('Success', $data);
           

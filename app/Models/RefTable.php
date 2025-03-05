@@ -15,4 +15,14 @@ class RefTable extends BaseModel
         'name_en',
         'name',
     ];
+
+
+    public function scopeFilter($query){
+
+        if (request('code_category')) {
+            $query->whereIn('code_category',request('code_category'));
+        }
+
+        return $query;
+    }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ModuleCollection extends JsonResource
+class ModuleResources extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -28,20 +28,20 @@ class ModuleCollection extends JsonResource
             $return['total_roles_can_access'] = $this->roles->count();
             $return['total_users_can_access'] = rand(5,10);
             $return['sub_modules'] = $this->submodule->pluck('name');
-            // $return['permissions'] = PermissionCollection::collection($this->permissions);
+            // $return['permissions'] = PermissionResources::collection($this->permissions);
 
         }
         elseif($request->route()->getName() == 'role.show' || $request->route()->getName() == 'module.show'){
-            $return['sub_modules'] = ModuleCollection::collection($this->submodule);
-            $return['permissions'] = PermissionCollection::collection($this->permissions);
+            $return['sub_modules'] = ModuleResources::collection($this->submodule);
+            $return['permissions'] = PermissionResources::collection($this->permissions);
 
         }
         if($request->route()->getName() == 'navigation.index'){
-            $return['permissions'] = new PermissionCollection($this->permissions->where('name','index')->first());
-            $return['sub_modules'] = ModuleCollection::collection($this->submodule);
+            $return['permissions'] = new PermissionResources($this->route);
+            $return['sub_modules'] = ModuleResources::collection($this->submodule);
         }
         if($request->route()->getName() == 'module.show'){
-            $return['permissions'] = PermissionCollection::collection($this->permissions);
+            $return['permissions'] = PermissionResources::collection($this->permissions);
         }
       
         return $return;

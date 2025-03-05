@@ -8,7 +8,7 @@ use App\Models\UserRole;
 use  App\Models\Module;
 use App\Models\IdentityManagement\User;
 
-class RoleCollection extends JsonResource
+class RoleResources extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -36,7 +36,7 @@ class RoleCollection extends JsonResource
 
             $user_role = UserRole::where('role_id',$this->id)->pluck('user_id');
 
-            $return['modules'] = ModuleCollection::collection(Module::whereNull('module_id')->get());
+            $return['modules'] = ModuleResources::collection(Module::whereNull('module_id')->get());
             $return['permissions'] = $this->permissions;
             // $return['list_user'] = UserCollection::collection(User::whereIn('id',$user_role)->get());
         }

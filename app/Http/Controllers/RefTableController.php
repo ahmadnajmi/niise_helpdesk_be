@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Traits\ResponseTrait;
-use App\Http\Resources\RefTableCollection;
+use App\Http\Collection\RefTableCollection;
+use App\Http\Resources\RefTableResources;
+
 use App\Http\Requests\RefTableRequest;
 use App\Models\RefTable;
 
@@ -12,11 +14,13 @@ class RefTableController extends Controller
 {
     use ResponseTrait;
 
-    public function index()
+    public function index(Request $request)
     {
-        $data =  RefTableCollection::collection(RefTable::paginate(15));
+        $limit = $request->limit ? $request->limit : 15;
+        
+        $data =  RefTable::filter()->paginate($limit);
 
-        return $this->success('Success', $data);
+        return new RefTableCollection($data);
     }
 
     public function store(RefTableRequest $request)
@@ -26,7 +30,7 @@ class RefTableController extends Controller
 
             $create = RefTable::create($data);
            
-            $data = new RefTableCollection($create);
+            $data = new RefTableResources($create);
 
             return $this->success('Success', $data);
           
@@ -37,7 +41,7 @@ class RefTableController extends Controller
 
     public function show(RefTable $ref_table)
     {
-        $data = new RefTableCollection($ref_table);
+        $data = new RefTableResources($ref_table);
 
         return $this->success('Success', $data);
     }
@@ -49,7 +53,7 @@ class RefTableController extends Controller
 
             $update = $ref_table->update($data);
 
-            $data = new RefTableCollection($ref_table);
+            $data = new RefTableResources($ref_table);
 
             return $this->success('Success', $data);
           

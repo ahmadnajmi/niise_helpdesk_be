@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Traits\ResponseTrait;
 use Illuminate\Http\Request;
-use App\Http\Resources\ModuleCollection;
+use App\Http\Collection\ModuleCollection;
+use App\Http\Resources\ModuleResources;
 use App\Http\Requests\ModuleRequest;
 use App\Models\Module;
 
@@ -12,11 +13,13 @@ class ModuleController extends Controller
 {
     use ResponseTrait;
 
-    public function index()
+    public function index(Request $request)
     {
-        $data =  ModuleCollection::collection(Module::whereNull('module_id')->paginate(15));
+        $limit = $request->limit ? $request->limit : 15;
+        // $data =  ModuleCollection::collection(Module::whereNull('module_id')->paginate(15));
+        $data =  Module::whereNull('module_id')->paginate($limit);
 
-        return $this->success('Success', $data);
+        return new ModuleCollection($data);
     }
 
     public function store(ModuleRequest $request)
@@ -28,7 +31,7 @@ class ModuleController extends Controller
 
             $create_submodule = $this->crateSubModule($data,$create);
            
-            $data = new ModuleCollection($create);
+            $data = new ModuleResources($create);
 
             return $this->success('Success', $data);
           
@@ -39,7 +42,7 @@ class ModuleController extends Controller
 
     public function show(Module $module)
     {
-        $data = new ModuleCollection($module);
+        $data = new ModuleResources($module);
 
         return $this->success('Success', $data);
     }
@@ -53,7 +56,7 @@ class ModuleController extends Controller
 
             $create_submodule = $this->crateSubModule($data,$module);
 
-            $data = new ModuleCollection($module);
+            $data = new ModuleResources($module);
 
             return $this->success('Success', $data);
           
