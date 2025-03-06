@@ -23,6 +23,12 @@ class RefTableController extends Controller
         return new RefTableCollection($data);
     }
 
+    public function dropdownIndex(){
+        $data = RefTable::groupBy('code_category')->pluck('code_category');
+
+        return $this->success('Success', $data);
+    }
+
     public function store(RefTableRequest $request)
     {
         try {

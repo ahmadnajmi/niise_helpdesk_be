@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('module', function (Blueprint $table) {
+        Schema::create('action_codes', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('module_id')->nullable();
-            $table->string('name')->nullable();
-            $table->string('name_en')->nullable();
-            $table->string('svg_path',500)->nullable();
+            $table->string('name');
+            $table->smallInteger('category')->nullable();
+            $table->string('abbreviation',20)->nullable();
             $table->string('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->log();
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('module');
+        Schema::dropIfExists('action_codes');
     }
 };
