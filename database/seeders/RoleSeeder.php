@@ -141,7 +141,11 @@ class RoleSeeder extends Seeder
                     ],
                     [
                         'module' => 'Emel',
-                        'permission' =>['index']
+                        'permission' =>[
+                            'email-notification.index',
+                            'email-notification.view',
+                            'email-notification.receive'
+                        ]
                     ],
                 ]
             ],
@@ -149,7 +153,7 @@ class RoleSeeder extends Seeder
                 'name' => 'Penyelia Helpdesk ICT',
                 'permission' =>  [
                     [
-                        'module' => 'Pengurusan Individu (Person)',
+                        'module' => 'Pengurusan Individu',
                         'permission' =>[
                             'individual.index',
                             'individual.create',
@@ -325,7 +329,7 @@ class RoleSeeder extends Seeder
                 'name' => 'Pentadbir Helpdesk Sistem (BTMR)',
                 'permission' =>  [
                     [
-                        'module' => 'Pengurusan Individu (Person)',
+                        'module' => 'Pengurusan Individu',
                         'permission' =>[
                             'individual.index',
                             'individual.create',

@@ -56,13 +56,13 @@ class ModuleSeeder extends Seeder
             [
                 'module' => 'Pentadbiran Sistem',
                 'name_en' => 'System Administration',
-                'permission' => [],
+                'permission' => ['index'],
                 'svg_path' => '<path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />',
                 'sub_module' => [
                     [
                         'name' =>'Pengurusan Orang',
                         'name_en' => 'People Management',
-                        'permission' => [],
+                        'permission' => ['index'],
                         'svg_path' => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
                         'lower_sub_module' => [
                             [
@@ -104,7 +104,7 @@ class ModuleSeeder extends Seeder
                     [
                         'name' =>'Pengurusan Operasi',
                         'name_en' =>'Operations Management',
-                        'permission' => [],
+                        'permission' => ['index'],
                         'svg_path' => '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />',
                         'lower_sub_module' => [
                             [
@@ -157,7 +157,7 @@ class ModuleSeeder extends Seeder
                     [
                         'name' =>'Pengurusan SLA',
                         'name_en' =>'SLA management',
-                        'permission' => [],
+                        'permission' => ['index'],
                         'svg_path' => '<rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
                         'lower_sub_module' => [
                             [
@@ -188,7 +188,7 @@ class ModuleSeeder extends Seeder
                     [
                         'name' =>'Konfigurasi Sistem',
                         'name_en' =>'System Configuration',
-                        'permission' => [],
+                        'permission' => ['index'],
                         'svg_path' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />',
                         'lower_sub_module' => [
                             [
@@ -232,7 +232,7 @@ class ModuleSeeder extends Seeder
             [
                 'module' => 'Pengurusan Insiden',
                 'name_en' =>'Incident Management',
-                'permission' => [],
+                'permission' => ['index'],
                 'svg_path' => '<path stroke-linecap="round" stroke-linejoin="round" d="m3.75 13.5 10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75Z" />',
                 'sub_module' => [
                     [
@@ -276,7 +276,7 @@ class ModuleSeeder extends Seeder
             [
                 'module' => 'Knowledge Base',
                 'name_en' =>'Knowledge Base',
-                'permission' => [],
+                'permission' => ['index'],
                 'svg_path' => '<path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25Zm.75-12h9v9h-9v-9Z" />',
                 'sub_module' => [
                     [
@@ -296,7 +296,7 @@ class ModuleSeeder extends Seeder
             [
                 'module' => 'Notifikasi',
                 'name_en' =>'Notifications',
-                'permission' => [],
+                'permission' => ['index'],
                 'svg_path' => '<path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />',
                 'sub_module' => [
                     [
