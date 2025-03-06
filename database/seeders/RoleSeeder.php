@@ -36,15 +36,29 @@ class RoleSeeder extends Seeder
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
-                        'permission' => ['incident.index','create','view']
+                        'permission' => [
+                            'incident.index.self',
+                            'incident.create',
+                            'incident.view',
+                        ]
                     ],
                     [
-                        'module' => 'Papan Pemuka',
-                        'permission' =>['dashboard.index']
+                        'module' => 'Halaman Utama',
+                        'permission' =>[
+                            'dashboard.index',
+
+                            'dashboard.card.total-incidents',
+                            'dashboard.card.total-sla',
+                            'dashboard.card.total-reports',
+                        ]
                     ],
                     [
-                        'module' => 'Notifikasi Aplikasi',
-                        'permission' =>['index']
+                        'module' => 'Emel',
+                        'permission' =>[
+                            'email-notification.index',
+                            'email-notification.view',
+                            'email-notification.receive'
+                        ]
                     ],
                 ]
             ],
@@ -53,23 +67,42 @@ class RoleSeeder extends Seeder
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
-                        'permission' =>['incident.index','view','update']
+                        'permission' =>[
+                            'incident.index.self',
+                            'incident.create',
+                            'incident.view',
+                        ]
                     ],
                     [
                         'module' => 'Jejak Audit',
-                        'permission' =>['index','view']
+                        'permission' =>[
+                            'audit-trail.index',
+                            'audit-trail.view',
+                        ]
                     ],
                     [
-                        'module' => 'Knowledge base',
-                        'permission' =>['index','create','view','update','delete']
+                        'module' => 'Knowledge Entries',
+                        'permission' =>[
+                            'knowledge-base.index',
+                            'knowledge-base.create',
+                            'knowledge-base.view',
+                            'knowledge-base.update',
+                            'knowledge-base.delete',
+                        ]
                     ],
                     [
-                        'module' => 'Papan Pemuka',
-                        'permission' =>['dashboard.index']
+                        'module' => 'Halaman Utama',
+                        'permission' =>[
+                            'dashboard.index'
+                        ]
                     ],
                     [
-                        'module' => 'Notifikasi Aplikasi',
-                        'permission' =>['index']
+                        'module' => 'Emel',
+                        'permission' =>[
+                            'email-notification.index',
+                            'email-notification.view',
+                            'email-notification.receive'
+                        ]
                     ],
                 ]
             ],
@@ -78,23 +111,41 @@ class RoleSeeder extends Seeder
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
-                        'permission' =>['incident.index','create','view','update']
+                        'permission' =>[
+                            'incident.index.all',
+                            'incident.create',
+                            'incident.view',
+                            'incident.update',
+                        ]
                     ],
                     [
                         'module' => 'Jejak Audit',
-                        'permission' =>['index','view']
+                        'permission' =>[
+                            'audit-trail.index',
+                            'audit-trail.view',
+                        ]
                     ],
                     [
-                        'module' => 'Knowledge base',
-                        'permission' =>['index','create','view','update','delete']
+                        'module' => 'Knowledge Entries',
+                        'permission' =>[
+                            'knowledge-base.index',
+                            'knowledge-base.create',
+                            'knowledge-base.view',
+                            'knowledge-base.update',
+                            'knowledge-base.delete',
+                        ]
                     ],
                     [
-                        'module' => 'Papan Pemuka',
+                        'module' => 'Halaman Utama',
                         'permission' =>['dashboard.index']
                     ],
                     [
-                        'module' => 'Notifikasi Aplikasi',
-                        'permission' =>['index']
+                        'module' => 'Emel',
+                        'permission' =>[
+                            'email-notification.index',
+                            'email-notification.view',
+                            'email-notification.receive'
+                        ]
                     ],
                 ]
             ],
@@ -102,76 +153,175 @@ class RoleSeeder extends Seeder
                 'name' => 'Penyelia Helpdesk ICT',
                 'permission' =>  [
                     [
-                        'module' => 'Pengurusan Individu (Person)',
-                        'permission' =>['index','create','view','update','delete']
+                        'module' => 'Pengurusan Individu',
+                        'permission' =>[
+                            'individual.index',
+                            'individual.create',
+                            'individual.view',
+                            'individual.update',
+                            'individual.delete',
+                        ]
                     ],
                     [
                         'module' => 'Pengurusan Kumpulan',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'group.index',
+                            'group.create',
+                            'group.view',
+                            'group.update',
+                            'group.delete',
+                        ]
                     ],
                     [
                         'module' => 'Pengurusan Peranan',
-                        'permission' =>['role.index','create','view','update','delete']
+                        'permission' =>[
+                            'role.index',
+                            // 'role.create',
+                            'role.view',
+                            // 'role.update',
+                            // 'role.delete',
+                        ]
                     ],
                     [
                         'module' => 'Pengurusan Kalendar',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'calendar.index',
+                            'calendar.create',
+                            'calendar.view',
+                            'calendar.update',
+                            'calendar.delete',
+                        ]
                     ],
                     [
                         'module' => 'Pengurusan Masa Operasi',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'operation-time.index',
+                            'operation-time.create',
+                            'operation-time.view',
+                            'operation-time.update',
+                            'operation-time.delete',
+                        ]
                     ],
                     [
                         'module' => 'Pengurusan Kategori',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'category.index',
+                            'category.create',
+                            'category.view',
+                            'category.update',
+                            'category.delete',
+                        ]
                     ],
                     [
                         'module' => 'Pengurusan Format Email',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'email-format.index',
+                            'email-format.create',
+                            'email-format.view',
+                            'email-format.update',
+                            'email-format.delete',
+                        ]
                     ],
                     [
                         'module' => 'Tetapan Templat',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'sla-template.index',
+                            'sla-template.create',
+                            'sla-template.view',
+                            'sla-template.update',
+                            'sla-template.delete',
+                        ]
                     ],
                     [
                         'module' => 'Tetapan SLA',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'sla.index',
+                            'sla.create',
+                            'sla.view',
+                            'sla.update',
+                            'sla.delete',
+                        ]
                     ],
                     [
-                        'module' => 'Pratetap data',
-                        'permission' =>['index','create','view','update','delete']
+                        'module' => 'Tetapan Global',
+                        'permission' =>[
+                            'global-setting.index',
+                            'global-setting.create',
+                            'global-setting.view',
+                            'global-setting.update',
+                            'global-setting.delete',
+                        ]
                     ],
                     [
                         'module' => 'Kod Tindakan',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'action-code.index',
+                            'action-code.create',
+                            'action-code.view',
+                            'action-code.update',
+                            'action-code.delete',
+                        ]
                     ],
                     [
                         'module' => 'Modul',
-                        'permission' =>['module.index','create','view','update','delete']
+                        'permission' =>[
+                            'module.index',
+                            // 'module.create',
+                            'module.view',
+                            'module.update',
+                            // 'module.delete',
+                        ]
                     ],
                     [
                         'module' =>'Insiden',
-                        'permission' =>['incident.index','create','view','update','delete']
+                        'permission' =>[
+                            'incident.index.all',
+                            'incident.index.self',
+                            'incident.create',
+                            'incident.view',
+                            'incident.update',
+                            // 'incident.delete',
+                        ]
                     ],
                     [
                         'module' => 'Jejak Audit',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'audit-trail.index',
+                            // 'audit-trail.create',
+                            'audit-trail.view',
+                            // 'audit-trail.update',
+                            // 'audit-trail.delete',
+                        ]
                     ],
                     [
                         'module' => 'Laporan',
-                        'permission' =>['report.index','view']
+                        'permission' =>[
+                            'report.index',
+                            'report.generate',
+                            // -- more from report --
+                        ]
                     ],
                     [
-                        'module' =>'Knowledge base',
-                        'permission' =>['index','create','view','update','delete']
+                        'module' =>'Knowledge Entries',
+                        'permission' =>[
+                            'knowledge-base.index',
+                            'knowledge-base.create',
+                            'knowledge-base.view',
+                            'knowledge-base.update',
+                            'knowledge-base.delete',
+                        ]
                     ],
                     [
-                        'module' => 'Papan Pemuka',
+                        'module' => 'Halaman Utama',
                         'permission' =>['dashboard.index']
                     ],
                     [
-                        'module' => 'Notifikasi Aplikasi',
-                        'permission' =>['index']
+                        'module' => 'Emel',
+                        'permission' =>[
+                            'email-notification.index',
+                            'email-notification.view',
+                            'email-notification.receive'
+                        ]
                     ],
                 ]
             ],
@@ -179,101 +329,217 @@ class RoleSeeder extends Seeder
                 'name' => 'Pentadbir Helpdesk Sistem (BTMR)',
                 'permission' =>  [
                     [
-                        'module' => 'Pengurusan Individu (Person)',
-                        'permission' =>['index','create','view','update','delete']
+                        'module' => 'Pengurusan Individu',
+                        'permission' =>[
+                            'individual.index',
+                            'individual.create',
+                            'individual.view',
+                            'individual.update',
+                            'individual.delete',
+                        ]
                     ],
                     [
                         'module' => 'Pengurusan Kumpulan',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'group.index',
+                            'group.create',
+                            'group.view',
+                            'group.update',
+                            'group.delete',
+                        ]
                     ],
                     [
                         'module' => 'Pengurusan Peranan',
-                        'permission' =>['role.index','create','view','update','delete']
+                        'permission' =>[
+                            'role.index',
+                            // 'role.create',
+                            'role.view',
+                            // 'role.update',
+                            // 'role.delete',
+                        ]
                     ],
                     [
                         'module' => 'Pengurusan Kalendar',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'calendar.index',
+                            'calendar.create',
+                            'calendar.view',
+                            'calendar.update',
+                            'calendar.delete',
+                        ]
                     ],
                     [
                         'module' => 'Pengurusan Masa Operasi',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'operation-time.index',
+                            'operation-time.create',
+                            'operation-time.view',
+                            'operation-time.update',
+                            'operation-time.delete',
+                        ]
                     ],
                     [
                         'module' => 'Pengurusan Kategori',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'category.index',
+                            'category.create',
+                            'category.view',
+                            'category.update',
+                            'category.delete',
+                        ]
                     ],
                     [
                         'module' => 'Pengurusan Format Email',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'email-format.index',
+                            'email-format.create',
+                            'email-format.view',
+                            'email-format.update',
+                            'email-format.delete',
+                        ]
                     ],
                     [
                         'module' => 'Tetapan Templat',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'sla-template.index',
+                            'sla-template.create',
+                            'sla-template.view',
+                            'sla-template.update',
+                            'sla-template.delete',
+                        ]
                     ],
                     [
                         'module' => 'Tetapan SLA',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'sla.index',
+                            'sla.create',
+                            'sla.view',
+                            'sla.update',
+                            'sla.delete',
+                        ]
                     ],
                     [
-                        'module' => 'Pratetap data',
-                        'permission' =>['index','create','view','update','delete']
+                        'module' => 'Tetapan Global',
+                        'permission' =>[
+                            'global-setting.index',
+                            'global-setting.create',
+                            'global-setting.view',
+                            'global-setting.update',
+                            'global-setting.delete',
+                        ]
                     ],
                     [
                         'module' => 'Kod Tindakan',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'action-code.index',
+                            'action-code.create',
+                            'action-code.view',
+                            'action-code.update',
+                            'action-code.delete',
+                        ]
                     ],
                     [
                         'module' => 'Modul',
-                        'permission' =>['module.index','create','view','update','delete']
+                        'permission' =>[
+                            'module.index',
+                            // 'module.create',
+                            'module.view',
+                            'module.update',
+                            // 'module.delete',
+                        ]
                     ],
                     [
                         'module' =>'Insiden',
-                        'permission' =>['incident.index','create','view','update','delete']
+                        'permission' =>[
+                            'incident.index.all',
+                            'incident.index.self',
+                            'incident.create',
+                            'incident.view',
+                            'incident.update',
+                            // 'incident.delete',
+                        ]
                     ],
                     [
                         'module' => 'Jejak Audit',
-                        'permission' =>['index','create','view','update','delete']
+                        'permission' =>[
+                            'audit-trail.index',
+                            // 'audit-trail.create',
+                            'audit-trail.view',
+                            // 'audit-trail.update',
+                            // 'audit-trail.delete',
+                        ]
                     ],
                     [
                         'module' => 'Laporan',
-                        'permission' =>['report.index','view']
+                        'permission' =>[
+                            'report.index',
+                            'report.generate',
+                            // -- more from report --
+                        ]
                     ],
                     [
-                        'module' =>'Knowledge base',
-                        'permission' =>['index','create','view','update','delete']
+                        'module' =>'Knowledge Entries',
+                        'permission' =>[
+                            'knowledge-base.index',
+                            'knowledge-base.create',
+                            'knowledge-base.view',
+                            'knowledge-base.update',
+                            'knowledge-base.delete',
+                        ]
                     ],
                     [
-                        'module' => 'Papan Pemuka',
+                        'module' => 'Halaman Utama',
                         'permission' =>['dashboard.index']
                     ],
                     [
-                        'module' => 'Notifikasi Aplikasi',
-                        'permission' =>['index']
+                        'module' => 'Emel',
+                        'permission' =>[
+                            'email-notification.index',
+                            'email-notification.view',
+                            'email-notification.receive'
+                        ]
                     ],
                 ]
             ],
+
             [
                 'name' => 'Kontraktor',
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
-                        'permission' =>['incident.index','view','update']
+                        'permission' =>[
+                            'incident.index.self',
+                            'incident.create',
+                            'incident.view',
+                        ]
                     ],
                     [
                         'module' => 'Jejak Audit',
-                        'permission' =>['index','view']
+                        'permission' =>[
+                            'audit-trail.index',
+                            'audit-trail.view',
+
+                        ]
                     ],
                     [
                         'module' => 'Laporan',
-                        'permission' =>['report.index','view']
+                        'permission' =>[
+                            'report.index',
+                            'report.generate',
+                            // -- more from report --
+                        ]
                     ],
                     [
-                        'module' => 'Papan Pemuka',
+                        'module' => 'Halaman Utama',
                         'permission' =>['dashboard.index']
                     ],
                     [
-                        'module' => 'Notifikasi Aplikasi',
-                        'permission' =>['index']
+                        'module' => 'Emel',
+                        'permission' =>[
+                            'email-notification.index',
+                            'email-notification.view',
+                            'email-notification.receive'
+                        ]
                     ],
                 ]
             ],
@@ -286,9 +552,9 @@ class RoleSeeder extends Seeder
             $data_role['description'] = $faker->realText(100);
 
             $create = Role::create($data_role);
-            
+
             $this->createRoleUser($create->id);
-            
+
             $data_role_permission['role_id'] = $create->id;
 
 
