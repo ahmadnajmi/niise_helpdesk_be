@@ -23,6 +23,8 @@ class ModuleCollection extends BaseResource
                 'svg_path' => $query->svg_path,
                 'is_active' => $query->is_active,
                 'route_name' =>  $query->route?->name,
+                'created_by' => $query->createdBy->name,
+                'updated_by' => $query->createdBy->name,
             ];
 
             if($request->route()->getName() == 'module.index'){

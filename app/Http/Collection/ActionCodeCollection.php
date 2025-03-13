@@ -22,6 +22,8 @@ class ActionCodeCollection extends BaseResource
                 'abbreviation' => $query->abbreviation,
                 'description' => $query->description,
                 'is_active' => $query->is_active,
+                'created_by' => $query->createdBy->name,
+                'updated_by' => $query->updatedBy->name,
                 'created_at' => $query->created_at->format('d-m-Y'),
                 'updated_at' => $query->updated_at->format('d-m-Y'),
             ];

@@ -333,6 +333,8 @@ class ModuleSeeder extends Seeder
                     $data_sub_module['name_en'] = $sub_module['name_en'];
                     $data_sub_module['module_id'] = $create->id;
                     $data_sub_module['description'] = $faker->realText(100);
+                    $data_sub_module['svg_path'] =  isset($sub_module['svg_path']) ? $sub_module['svg_path'] : null;
+
                     $data_sub_module['created_by'] = 1;
                     $data_sub_module['updated_by'] =  2;
 
@@ -348,6 +350,7 @@ class ModuleSeeder extends Seeder
                             $data_lower_sub_module['name_en'] = $lower_sub_module['name_en'];
                             $data_lower_sub_module['module_id'] = $create_sub_module->id;
                             $data_lower_sub_module['description'] = $faker->realText(100);
+                            $data_lower_sub_module['svg_path'] =  isset($lower_sub_module['svg_path']) ? $lower_sub_module['svg_path'] : null;
                             $data_lower_sub_module['created_by'] = 1;
                             $data_lower_sub_module['updated_by'] =  2;
 

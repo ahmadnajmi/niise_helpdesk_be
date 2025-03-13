@@ -6,7 +6,7 @@ use App\Http\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use App\Http\Collection\UserCollection;
 use App\Http\Resources\UserResources;
-use App\Models\IdentityManagement\User;
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -16,7 +16,7 @@ class UserController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
 
-        $data =  User::filter()->paginate($limit);
+        $data =  User::paginate($limit);
 
         return new UserCollection($data);
     }

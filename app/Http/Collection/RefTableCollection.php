@@ -20,6 +20,8 @@ class RefTableCollection extends BaseResource
                 'ref_code' => $query->ref_code,
                 'name_en' => $query->name_en,
                 'name' => $query->name,
+                'created_by' => $query->createdBy->name,
+                'updated_by' => $query->updatedBy->name,
                 'created_at' => $query->created_at->format('d-m-Y'),
                 'updated_at' => $query->updated_at->format('d-m-Y'),
             ];

@@ -5,7 +5,7 @@ namespace App\Http\Collection;
 use Illuminate\Http\Request;
 use App\Models\UserRole;
 use App\Models\Module;
-use App\Models\IdentityManagement\User;
+use App\Models\User;
 use App\Http\Resources\ModuleResources;
 
 class RoleCollection extends BaseResource
@@ -26,6 +26,8 @@ class RoleCollection extends BaseResource
                 'modules' => $query->modules->pluck('module')->unique()->pluck('name'),
                 'total_permission' => $query->permissions->count(),
                 'total_user' => $query->userRole->count(),
+                'created_by' => $query->createdBy->name,
+                'updated_by' => $query->updatedBy->name,
                 'created_at' => $query->created_at->format('d-m-Y'),
                 'updated_at' => $query->updated_at->format('d-m-Y'),
             ];

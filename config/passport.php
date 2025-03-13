@@ -41,7 +41,7 @@ return [
     |
     */
 
-    'connection' => 'oracle_identity_management',
+    'connection' => 'oracle',
 
     /*
     |--------------------------------------------------------------------------

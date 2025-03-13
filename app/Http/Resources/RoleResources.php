@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Models\UserRole;
 use  App\Models\Module;
-use App\Models\IdentityManagement\User;
+use App\Models\User;
 
 class RoleResources extends JsonResource
 {

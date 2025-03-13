@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Models\IdentityManagement;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Branch extends Model
 {
     //
-    protected $connection = 'oracle_identity_management'; 
     protected $table = 'branch';
 
     protected $fillable = [

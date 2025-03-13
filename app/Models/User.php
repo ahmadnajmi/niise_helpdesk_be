@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\IdentityManagement;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Passport\HasApiTokens;
@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 class User extends Authenticatable
 {
     use HasApiTokens;
-    protected $connection = 'oracle_identity_management'; 
 
     protected $table = 'user';
 
@@ -48,5 +47,4 @@ class User extends Authenticatable
 
         return $data;
     }
-
 }

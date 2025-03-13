@@ -37,6 +37,14 @@ class Module extends BaseModel
         return $this->hasOne(Permission::class,'module_id','id')->where('name', 'like', '%index%');
     }
 
+    public function createdBy(){
+        return $this->hasOne(User::class,'id','created_by');
+    }
+
+    public function updatedBy(){
+        return $this->hasOne(User::class,'id','updated_by');
+    }
+
     public function getTotalSubModuleCountAttribute(){
         return $this->subModule->sum(fn($sub) => 1 + $sub->total_sub_module_count);
     }

@@ -11,7 +11,7 @@ use App\Models\Role;
 use App\Models\RolePermission;
 use App\Models\Module;
 use App\Models\UserRole;
-use App\Models\IdentityManagement\User;
+use App\Models\User;
 
 class RoleSeeder extends Seeder
 {

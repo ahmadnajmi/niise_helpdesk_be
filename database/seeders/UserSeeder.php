@@ -15,12 +15,11 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::connection('oracle_identity_management')->table('branch')->truncate();
-        DB::connection('oracle_identity_management')->table('user')->truncate();
+        DB::table('branch')->truncate();
+        DB::table('user')->truncate();
         
-        DB::connection('oracle_identity_management')->statement("ALTER SEQUENCE BRANCH_ID_SEQ RESTART START WITH 1");
-        DB::connection('oracle_identity_management')->statement("ALTER SEQUENCE USER_ID_SEQ RESTART START WITH 1");
-        DB::setDefaultConnection('oracle_identity_management');
+        DB::statement("ALTER SEQUENCE BRANCH_ID_SEQ RESTART START WITH 1");
+        DB::statement("ALTER SEQUENCE USER_ID_SEQ RESTART START WITH 1");
 
         Excel::import(new BranchImport, 'database/seeders/excel/branch_niise.xlsx');
         Excel::import(new UsersImport, 'database/seeders/excel/user_niise_baru.xlsx');

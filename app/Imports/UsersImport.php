@@ -2,8 +2,8 @@
 
 namespace App\Imports;
 
-use App\Models\IdentityManagement\User;
-use App\Models\IdentityManagement\Branch;
+use App\Models\User;
+use App\Models\Branch;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
 

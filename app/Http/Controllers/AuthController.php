@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Traits\ResponseTrait;
-use App\Models\IdentityManagement\User;
+use App\Models\User;
 use App\Models\UserRole;
 use App\Models\Permission;
 use App\Models\Module;

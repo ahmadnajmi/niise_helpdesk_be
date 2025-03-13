@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('module_id')->nullable();
             $table->string('name')->nullable();
             $table->string('name_en')->nullable();
-            $table->string('svg_path',500)->nullable();
+            $table->string('svg_path',1200)->nullable();
             $table->string('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->log();

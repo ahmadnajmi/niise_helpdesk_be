@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\IdentityManagement\Branch;
+use App\Models\Branch;
 use Maatwebsite\Excel\Concerns\ToModel;
 
 class BranchImport implements ToModel
