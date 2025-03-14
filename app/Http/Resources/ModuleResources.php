@@ -20,7 +20,9 @@ class ModuleResources extends JsonResource
             'description' => $this->description,
             'svg_path' => $this->svg_path,
             'is_active' => $this->is_active,
-            'route_name' =>  $this->route?->name
+            'route_name' =>  $this->route?->name,
+            'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
+            'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
         ];
 
         if($request->route()->getName() == 'module.index'){
