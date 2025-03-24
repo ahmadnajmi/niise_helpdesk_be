@@ -5,9 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema; 
+use OwenIt\Auditing\Contracts\Auditable;
+use App\Models\User;
 
-class BaseModel extends Model
+class BaseModel extends Model implements Auditable
 {
+    use \OwenIt\Auditing\Auditable;
+
     protected $commonFillable = ['created_by', 'updated_by'];
 
     public function __construct(array $attributes = [])
@@ -20,6 +24,14 @@ class BaseModel extends Model
     public function mergeFillable(array $fields)
     {
         $this->fillable = array_merge($this->fillable, $fields);
+    }
+
+    public function createdBy(){
+        return $this->hasOne(User::class,'id','created_by');
+    }
+
+    public function updatedBy(){
+        return $this->hasOne(User::class,'id','updated_by');
     }
 
     protected static function boot()

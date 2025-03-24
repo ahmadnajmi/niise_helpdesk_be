@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use App\Models\BaseModel;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ActionCode extends BaseModel
+class ActionCode extends BaseModel 
 {
     protected $table = 'action_codes';
 
@@ -17,16 +17,10 @@ class ActionCode extends BaseModel
         'description',
         'is_active',
     ];
+    
 
     public function categoryDescription(){
         return $this->hasOne(RefTable::class,'ref_code','category')->where('code_category', 'action_code_category');
     }
 
-    public function createdBy(){
-        return $this->hasOne(User::class,'id','created_by');
-    }
-
-    public function updatedBy(){
-        return $this->hasOne(User::class,'id','updated_by');
-    }
 }

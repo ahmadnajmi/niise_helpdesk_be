@@ -9,6 +9,8 @@ use App\Http\Controllers\SubModuleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\RefTableController;
 use App\Http\Controllers\ActionCodeController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\GroupController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,7 +28,9 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('ref_table', RefTableController::class);
     Route::apiResource('action_code', ActionCodeController::class);
     Route::apiResource('user', UserController::class)->only('index','show');
-    
+    Route::apiResource('category', CategoryController::class);
+    Route::apiResource('group_management', GroupController::class);
+
 
     Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');
     Route::get('navigation', [ModuleController::class,'index'])->name('navigation.index');
