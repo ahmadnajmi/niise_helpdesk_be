@@ -25,6 +25,8 @@ class RefTableController extends Controller
 
     public function dropdownIndex(){
         $data = RefTable::groupBy('code_category')->pluck('code_category');
+            
+        $data = count($data) > 0 ? $data : ['state','action_code_category','issue_level']; 
 
         return $this->success('Success', $data);
     }
