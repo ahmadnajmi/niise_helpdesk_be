@@ -30,9 +30,6 @@ class RefTableRequest extends FormRequest
             'ref_code' => 'nullable',
             'name_en' => 'nullable',
             'name' => 'nullable',
-            'received_by' => 'nullable',
-            'is_active' => 'nullable',
-            'branch_type' => 'nullable'
         ];
     }
 

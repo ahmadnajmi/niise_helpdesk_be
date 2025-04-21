@@ -4,8 +4,6 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
-use App\Enums\RefTableReceivedBy;
-use App\Enums\RefTableBranchType;
 
 class RefTable extends BaseModel
 {
@@ -16,14 +14,6 @@ class RefTable extends BaseModel
         'ref_code',
         'name_en',
         'name',
-        'received_by',
-        'is_active',
-        'branch_type'
-    ];
-
-    protected $casts = [
-        'received_by' => RefTableReceivedBy::class, 
-        'branch_type' => RefTableBranchType::class,
     ];
 
     public function createdBy(){
@@ -33,15 +23,6 @@ class RefTable extends BaseModel
     public function updatedBy(){
         return $this->hasOne(User::class,'id','updated_by');
     }
-
-    public function getReceivedByDescriptionAttribute(): string{
-        return $this->received_by?->label() ?? null;
-    }
-
-    public function getBranchTypeDescriptionAttribute(): string{
-        return $this->branch_type?->label() ?? null;
-    }
-
 
     public function scopeFilter($query){
 
