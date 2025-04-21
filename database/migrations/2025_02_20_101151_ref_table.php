@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('ref_code')->nullable();
             $table->string('name')->nullable();
             $table->string('name_en')->nullable();
+            $table->smallInteger('branch_type')->nullable();
+            $table->smallInteger('received_by')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->log();
         });
     }
