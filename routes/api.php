@@ -33,7 +33,6 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('category', CategoryController::class);
     Route::apiResource('group_management', GroupController::class);
     Route::apiResource('calendar', CalendarController::class);
-    Route::apiResource('branch', BranchController::class)->only('index','show');
 
 
     Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');
@@ -42,6 +41,7 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::get('ref_table_dropdown', [RefTableController::class, 'dropdownIndex'])->name('ref_table.dropdown');
 
 });
+Route::apiResource('branch', BranchController::class)->only('index','show');
 
 Route::get('testing', [UserController::class,'testingJasper']);
 
