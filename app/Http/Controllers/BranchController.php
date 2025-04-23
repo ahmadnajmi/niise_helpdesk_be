@@ -16,9 +16,10 @@ class BranchController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
 
-        $data =  Branch::paginate($limit);
-
-        return new BranchCollection($data);
+        $data = Branch::select('id as branch_code','state','name','category','location')->get()->groupBy('state');
+        
+        return($data);
+        // return new BranchCollection($data);
     }
 
     public function show(Branch $Branch)
