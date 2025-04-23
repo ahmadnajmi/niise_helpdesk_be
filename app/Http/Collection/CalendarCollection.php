@@ -1,0 +1,36 @@
+<?php
+
+namespace App\Http\Collection;
+
+use Illuminate\Http\Request;
+use App\Http\Resources\ModuleResources;
+use App\Http\Resources\PermissionResources;
+
+class CalendarCollection extends BaseResource
+{
+    /**
+     * Transform the resource collection into an array.
+     *
+     * @return array<int|string, mixed>
+     */
+    public function toArray(Request $request)
+    {
+        return $this->collection->transform(function ($query) use($request){
+            $return =  [
+                'id' => $query->id,
+                'name' => $query->name,
+                'start_date' => $query->start_date,
+                'end_date' => $query->end_date,
+                'state' => $query->state,
+                'state_desc' => $query->stateDescription?->name,
+                'description' => $query->description,
+                'is_active' => $query->is_active,
+                'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
+                'updated_by' => $query->updatedBy->name .' - '. $query->updatedBy->email ,
+            ];
+            return $return;
+        });
+    }                
+
+}
+

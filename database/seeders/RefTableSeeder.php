@@ -15,7 +15,6 @@ class RefTableSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::setDefaultConnection('oracle');
 
         DB::table('ref_table')->truncate();
         

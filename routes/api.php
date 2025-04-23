@@ -11,6 +11,8 @@ use App\Http\Controllers\RefTableController;
 use App\Http\Controllers\ActionCodeController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\BranchController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,6 +32,8 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('user', UserController::class)->only('index','show');
     Route::apiResource('category', CategoryController::class);
     Route::apiResource('group_management', GroupController::class);
+    Route::apiResource('calendar', CalendarController::class);
+    Route::apiResource('branch', BranchController::class)->only('index','show');
 
 
     Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');

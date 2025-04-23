@@ -20,8 +20,6 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::setDefaultConnection('oracle');
-
         DB::table('role')->truncate();
         DB::table('role_permissions')->truncate();
         DB::table('user_role')->truncate();

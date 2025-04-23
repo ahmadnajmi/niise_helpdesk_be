@@ -16,7 +16,6 @@ class ModuleSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::setDefaultConnection('oracle');
 
         DB::table('module')->truncate();
         DB::statement("ALTER SEQUENCE MODULE_ID_SEQ RESTART START WITH 1");
