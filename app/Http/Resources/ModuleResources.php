@@ -16,7 +16,8 @@ class ModuleResources extends JsonResource
     {
         $return =  [
             'id' => $this->id,
-            'name' => $this->translated_name,
+            'name' => $this->name,
+            'name_en' => $this->name_en,
             'description' => $this->description,
             'svg_path' => $this->svg_path,
             'is_active' => $this->is_active,
@@ -29,7 +30,7 @@ class ModuleResources extends JsonResource
             $return['total_permissions'] = $this->permissions->count()  + $this->getTotalSubModuleCountAttribute();
             $return['total_roles_can_access'] = $this->roles->count();
             $return['total_users_can_access'] = rand(5,10);
-            $return['sub_modules'] = $this->submodule->pluck('name');
+            $return['sub_modules'] = $this->submodule->map->translated_name; 
             // $return['permissions'] = PermissionResources::collection($this->permissions);
 
         }

@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('email_templates', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('name')->nullable();
+            $table->string('sender_name')->nullable();
+            $table->string('sender_email')->nullable();
+            $table->string('notes')->nullable();
+            $table->log();
+
         });
     }
 

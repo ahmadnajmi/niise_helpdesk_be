@@ -4,62 +4,67 @@ namespace App\Http\Controllers;
 
 use App\Models\EmailTemplate;
 use Illuminate\Http\Request;
+use App\Http\Traits\ResponseTrait;
+use App\Http\Collection\EmailTemplateCollection;
+use App\Http\Resources\EmailTemplateResources;
+use App\Http\Requests\EmailTemplateRequest;
 
 class EmailTemplateController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    use ResponseTrait;
+
+    public function index(Request $request)
     {
-        //
+        $limit = $request->limit ? $request->limit : 15;
+        
+        $data =  EmailTemplate::paginate($limit);
+
+        return new EmailTemplateCollection($data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(EmailTemplateRequest $request)
     {
-        //
+        try {
+            $data = $request->all();
+
+            $create = EmailTemplate::create($data);
+           
+            $data = new EmailTemplateResources($create);
+
+            return $this->success('Success', $data);
+          
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage());
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function show(EmailTemplate $email_template)
     {
-        //
+        $data = new EmailTemplateResources($email_template);
+
+        return $this->success('Success', $data);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(EmailTemplate $emailTemplate)
+    public function update(EmailTemplateRequest $request, EmailTemplate $email_template)
     {
-        //
+        try {
+            $data = $request->all();
+
+            $update = $email_template->update($data);
+
+            $data = new EmailTemplateResources($email_template);
+
+            return $this->success('Success', $data);
+          
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage());
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(EmailTemplate $emailTemplate)
+    public function destroy(EmailTemplate $email_template)
     {
-        //
-    }
+        $email_template->delete();
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, EmailTemplate $emailTemplate)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(EmailTemplate $emailTemplate)
-    {
-        //
+        return $this->success('Success', null);
     }
 }

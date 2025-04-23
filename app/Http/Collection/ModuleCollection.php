@@ -31,7 +31,7 @@ class ModuleCollection extends BaseResource
                 $return['total_permissions'] = $query->permissions->count()  + $query->getTotalSubModuleCountAttribute();
                 $return['total_roles_can_access'] = $query->roles->count();
                 $return['total_users_can_access'] = rand(5,10);
-                $return['sub_modules'] = $query->submodule->pluck('name');    
+                $return['sub_modules'] = $query->submodule->map->translated_name;    
             }
 
             if($request->route()->getName() == 'navigation.index'){

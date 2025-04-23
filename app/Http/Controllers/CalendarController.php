@@ -8,7 +8,6 @@ use App\Http\Traits\ResponseTrait;
 use App\Http\Collection\CalendarCollection;
 use App\Http\Resources\CalendarResources;
 use App\Http\Requests\CalendarRequest;
-use Holiday\MalaysiaHoliday;
 
 class CalendarController extends Controller
 {
@@ -16,11 +15,6 @@ class CalendarController extends Controller
 
     public function index(Request $request)
     {
-        $holiday = new MalaysiaHoliday;
-
-        $result = $holiday->fromState(MalaysiaHoliday::$region_array,2025)->get();
-
-        return $result;
         $limit = $request->limit ? $request->limit : 15;
         
         $data =  Calendar::paginate($limit);

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\ModuleResources;
 use App\Http\Resources\PermissionResources;
 
-class BranchCollection extends BaseResource
+class EmailTemplateCollection extends BaseResource
 {
     /**
      * Transform the resource collection into an array.
@@ -19,13 +19,13 @@ class BranchCollection extends BaseResource
             $return =  [
                 'id' => $query->id,
                 'name' => $query->name,
-                'category' => $query->category,
-                'state' => $query->state,
-                'location' => $query->location,
+                'sender_name' => $query->sender_name,
+                'sender_email' => $query->sender_email,
+                'notes' => $query->notes,
+                'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
+                'updated_by' => $query->updatedBy->name .' - '. $query->updatedBy->email ,
             ];
             return $return;
         });
-    }                
-
+    }
 }
-

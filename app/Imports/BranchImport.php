@@ -13,6 +13,8 @@ class BranchImport implements ToModel
             'name'     => $row[1],
             'state'    => $row[0],
             'location' => $row[2],
+            'category' => $row[3],
+
         ]);
     }
 }
