@@ -28,7 +28,6 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('module', ModuleController::class);
     Route::apiResource('permission', PermissionController::class);
     Route::apiResource('role', RoleController::class);
-    Route::apiResource('ref_table', RefTableController::class);
     Route::apiResource('action_code', ActionCodeController::class);
     Route::apiResource('user', UserController::class)->only('index','show');
     Route::apiResource('category', CategoryController::class);
@@ -44,6 +43,7 @@ Route::middleware(['api','auth:api'])->group(function () {
 
 });
 Route::apiResource('branch', BranchController::class)->only('index','show');
+Route::apiResource('ref_table', RefTableController::class);
 
 Route::get('testing', [UserController::class,'testingJasper']);
 
