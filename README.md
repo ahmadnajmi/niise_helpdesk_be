@@ -66,19 +66,14 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
 
 
-## Command to create file
-
-- php artisan make:model {nama db} -mcr    
-- php artisan make:request {nama db}Request 
-- php artisan make:resource {nama db}Resource 
-- php artisan make:resource {nama db}Collection --collection  
-
+## Command to create all file
+- php artisan make:full {Nama DB}
 
 Ex: 
+- php artisan make:full OperatingTime
+
+## php artisan make:full will run this command
 - php artisan make:model OperatingTime -mcr 
 - php artisan make:request OperatingTimeRequest 
 - php artisan make:resource OperatingTimeResource 
 - php artisan make:resource OperatingTimeCollection --collection 
-
-
-lepas create semua command amik file collection dalam folder resource pindah ke folder collection 
