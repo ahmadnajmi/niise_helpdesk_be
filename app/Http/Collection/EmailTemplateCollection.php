@@ -3,8 +3,6 @@
 namespace App\Http\Collection;
 
 use Illuminate\Http\Request;
-use App\Http\Resources\ModuleResources;
-use App\Http\Resources\PermissionResources;
 
 class EmailTemplateCollection extends BaseResource
 {

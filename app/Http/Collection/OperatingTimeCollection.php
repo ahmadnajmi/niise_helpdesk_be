@@ -4,7 +4,7 @@ namespace App\Http\Collection;
 
 use Illuminate\Http\Request;
 
-class {{ class }} extends BaseResource
+class OperatingTimeCollection extends BaseResource
 {
     /**
      * Transform the resource collection into an array.
@@ -16,7 +16,13 @@ class {{ class }} extends BaseResource
         return $this->collection->transform(function ($query) use($request){
             $return =  [
                 'id' => $query->id,
-               
+                'day' => $query->day,
+                'day_desc' => $query->dayDescription?->name,
+                'duration' => $query->duration,
+                'duration_desc' => $query->durationDescription?->name,
+                'operation_start' => $query->operation_start,
+                'operation_end' => $query->operation_end,
+                'is_active' => $query->is_active,
                 'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
                 'updated_by' => $query->updatedBy->name .' - '. $query->updatedBy->email ,
             ];

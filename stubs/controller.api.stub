@@ -3,47 +3,70 @@
 namespace {{ namespace }};
 
 use {{ rootNamespace }}Http\Controllers\Controller;
+
 use Illuminate\Http\Request;
+use App\Models\{{ class_name }};
+use App\Http\Traits\ResponseTrait;
+use App\Http\Collection\{{ class_name }}Collection;
+use App\Http\Resources\{{ class_name }}Resources;
+use App\Http\Requests\{{ class_name }}Request;
 
 class {{ class }} extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    use ResponseTrait;
+
+    public function index(Request $request)
     {
-        //
+        $limit = $request->limit ? $request->limit : 15;
+        
+        $data =  {{ class_name }}::paginate($limit);
+
+        return new {{ class_name }}Collection($data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store({{ class_name }}Request $request)
     {
-        //
+        try {
+            $data = $request->all();
+
+            $create = {{ class_name }}::create($data);
+           
+            $data = new {{ class_name }}Resources($create);
+
+            return $this->success('Success', $data);
+          
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage());
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show({{ class_name }} ${{ snake_class_name }})
     {
-        //
+        $data = new {{ class_name }}Resources(${{ snake_class_name }});
+
+        return $this->success('Success', $data);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update({{ class_name }}Request $request, {{ class_name }} ${{ snake_class_name }})
     {
-        //
+        try {
+            $data = $request->all();
+
+            $update = ${{ snake_class_name }}->update($data);
+
+            $data = new {{ class_name }}Resources(${{ snake_class_name }});
+
+            return $this->success('Success', $data);
+          
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage());
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy({{ class_name }} ${{ snake_class_name }})
     {
-        //
+        ${{ snake_class_name }}->delete();
+
+        return $this->success('Success', null);
     }
 }

@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('{{ table }}', function (Blueprint $table) {
+        Schema::create('operating_times', function (Blueprint $table) {
             $table->id();
-
-
+            $table->smallInteger('day')->nullable();
+            $table->smallInteger('duration')->nullable();
+            $table->dateTime('operation_start')->nullable();
+            $table->dateTime('operation_end')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->log();
         });
     }
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('{{ table }}');
+        Schema::dropIfExists('operating_times');
     }
 };

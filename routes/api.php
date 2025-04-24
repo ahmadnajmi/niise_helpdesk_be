@@ -14,6 +14,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\EmailTemplateController;
+use App\Http\Controllers\OperatingTimeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,7 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('group_management', GroupController::class);
     Route::apiResource('calendar', CalendarController::class);
     Route::apiResource('email_template', EmailTemplateController::class);
+    Route::apiResource('operating_time', OperatingTimeController::class);
 
 
     Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');
