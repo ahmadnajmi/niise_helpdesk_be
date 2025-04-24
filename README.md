@@ -64,3 +64,18 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+## Command to create file
+php artisan make:model {nama db} -mcr    
+php artisan make:request {nama db}Request
+php artisan make:resource {nama db}Resource
+php artisan make:resource {nama db}Collection --collection
+
+Ex:
+php artisan make:model OperatingTime -mcr
+php artisan make:request OperatingTimeRequest
+php artisan make:resource OperatingTimeResource
+php artisan make:resource OperatingTimeCollection --collection
+
+lepas create semua command amik file collection dalam folder resource pindah ke folder collection
