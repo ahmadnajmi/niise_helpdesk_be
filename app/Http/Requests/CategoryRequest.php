@@ -25,8 +25,10 @@ class CategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'abbreviation' => 'required',
-            'issue_level' => 'required|integer',
+            'name' => 'required',
+            'level' => 'required|integer',
+            'code' => 'required|integer',
+            'category_id' => 'nullable',
             'description' => 'nullable',
             'is_active' => 'nullable'
         ];

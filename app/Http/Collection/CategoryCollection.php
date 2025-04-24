@@ -18,11 +18,12 @@ class CategoryCollection extends BaseResource
         return $this->collection->transform(function ($query) use($request){
             $return =  [
                 'id' => $query->id,
-                'abbreviation' => $query->abbreviation,
-                'issue_level' => $query->issue_level,
-                'issue_level_desc' => $query->issueLevelDescription?->name,
+                'name' => $query->name,
+                'level' => $query->level,
+                'code' => $query->code,
                 'description' => $query->description,
                 'is_active' => $query->is_active,
+                'category_id' => $query->category_id,
                 'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
                 'updated_by' => $query->updatedBy->name .' - '. $query->updatedBy->email ,
             ];

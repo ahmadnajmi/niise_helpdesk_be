@@ -10,13 +10,11 @@ class Category extends BaseModel
     protected $table = 'categories';
 
     protected $fillable = [ 
-        'abbreviation',
-        'issue_level',
+        'category_id',
+        'name',
+        'level',
+        'code',
         'description',
         'is_active',
     ];
-
-    public function issueLevelDescription(){
-        return $this->hasOne(RefTable::class,'ref_code','issue_level')->where('code_category', 'issue_level');
-    }
 }

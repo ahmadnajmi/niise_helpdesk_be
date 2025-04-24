@@ -13,8 +13,10 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('abbreviation',20)->nullable();
-            $table->smallInteger('issue_level')->nullable();
+            $table->unsignedBigInteger('category_id')->nullable();
+            $table->string('name')->nullable();
+            $table->integer('level')->nullable();
+            $table->string('code',20)->nullable();
             $table->string('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->log();

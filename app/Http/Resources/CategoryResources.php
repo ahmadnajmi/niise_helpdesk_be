@@ -16,11 +16,12 @@ class CategoryResources extends JsonResource
     {
         return [
             'id' => $this->id,
-            'abbreviation' => $this->abbreviation,
-            'issue_level' => $this->issue_level,
-            'issue_level_desc' => $this->issueLevelDescription?->name,
+            'name' => $this->name,
+            'level' => $this->level,
+            'code' => $this->code,
             'description' => $this->description,
             'is_active' => $this->is_active,
+            'category_id' => $this->category_id,
             'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
             'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
         ];

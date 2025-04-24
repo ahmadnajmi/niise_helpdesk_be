@@ -7,6 +7,7 @@ use App\Http\Traits\ResponseTrait;
 use App\Http\Collection\CategoryCollection;
 use App\Http\Resources\CategoryResources;
 use App\Http\Requests\CategoryRequest;
+use App\Http\Services\CategoryServices;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -27,7 +28,7 @@ class CategoryController extends Controller
         try {
             $data = $request->all();
 
-            $create = Category::create($data);
+            $create = CategoryServices::create($data);
            
             $data = new CategoryResources($create);
 
@@ -50,7 +51,10 @@ class CategoryController extends Controller
         try {
             $data = $request->all();
 
-            $update = $category->update($data);
+            // $update = $category->update($data);
+
+            $update = CategoryServices::update($category,$data);
+
 
             $data = new CategoryResources($category);
 
@@ -66,5 +70,12 @@ class CategoryController extends Controller
         $category->delete();
 
         return $this->success('Success', null);
+    }
+    
+    public function dropdownIndex(){
+
+        $data = Category::select('id','name','level','code')->where('is_active',true)->get();
+            
+        return $this->success('Success', $data);
     }
 }
