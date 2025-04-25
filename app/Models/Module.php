@@ -22,7 +22,7 @@ class Module extends BaseModel
     ];
 
     public function subModule(){
-        return $this->hasMany(Module::class, 'module_id','id');
+        return $this->hasMany(Module::class, 'module_id','id')->where('is_active',true);
     }
 
     public function permissions(){
@@ -69,6 +69,7 @@ class Module extends BaseModel
                     }])
                     ->whereIn('id',$get_permission)
                     ->whereNull('module_id')
+                    ->where('is_active',true)
                     ->get();
     
         return $data;
