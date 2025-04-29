@@ -20,6 +20,7 @@ class RoleResources extends JsonResource
         $return  = [
             'id' => $this->id,
             'name' => $this->name,
+            'name_en' => $this->name_en,
             'description' => $this->description,
             'is_active' => $this->is_active,
             'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,

@@ -27,6 +27,7 @@ class RoleRequest extends FormRequest
     {
         return [
             'name' => 'required',
+            'name_en' => 'nullable',
             'description' => 'nullable',
             'is_active' =>'nullable',
             'permission.*.sub_module_id' => 'required|exists:sub_module,id',

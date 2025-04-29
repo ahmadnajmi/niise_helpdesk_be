@@ -11,6 +11,7 @@ class Role extends BaseModel
 
     protected $fillable = [ 
         'name',
+        'name_en',
         'description',
         'is_active',
     ];
@@ -27,5 +28,11 @@ class Role extends BaseModel
     
     public function userRole(){
         return $this->hasMany(UserRole::class, 'role_id','id');
+    }
+
+    public function getTranslatedNameAttribute(){
+        $locale = request()->header('Accept-Language', 'en');
+        
+        return $this->{"name_{$locale}"} ?? $this->name;
     }
 }

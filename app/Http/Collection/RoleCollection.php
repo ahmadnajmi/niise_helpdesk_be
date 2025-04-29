@@ -20,7 +20,7 @@ class RoleCollection extends BaseResource
         return $this->collection->transform(function ($query) use($request){
             $return  = [
                 'id' => $query->id,
-                'name' => $query->name,
+                'name' => $query->translated_name,
                 'description' => $query->description,
                 'is_active' => $query->is_active,
                 'modules' => $query->modules->pluck('module')->unique()->pluck('name'),
