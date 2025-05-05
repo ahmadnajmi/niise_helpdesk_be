@@ -28,12 +28,11 @@ class Permission extends BaseModel
 
     public static  function getUserDetails($colum = 'name'){
         $user_role = UserRole::where('user_id',Auth::user()->id)->pluck('role_id');
-    
         $data = self::whereHas('roles', function ($query)use($user_role) {
-                      $query->whereIn('id',$user_role); 
+                      $query->whereIn('role.id',$user_role); 
                     })
                     ->pluck($colum);
-    
+
         return $data;
     }
 }
