@@ -52,10 +52,12 @@ class Module extends BaseModel
         $get_permission = Permission::getUserDetails('module_id');
 
         $data = self::select('id','module_id','name','name_en','svg_path')
-                    ->with(['subModule' => function ($query) {
+                    ->with(['subModule' => function ($query)use($get_permission) {
                         $query->select('id','module_id', 'name','name_en','svg_path')
-                            ->with(['subModule' => function ($query) {
+                            ->whereIn('id',$get_permission)
+                            ->with(['subModule' => function ($query)use($get_permission) {
                                 $query->select('id','module_id', 'name','name_en','svg_path')
+                                    ->whereIn('id',$get_permission)
                                     ->with(['route' => function ($query) {
                                         $query->select('id','module_id', 'name');
                                 }]);

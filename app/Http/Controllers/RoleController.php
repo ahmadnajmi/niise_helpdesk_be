@@ -11,6 +11,7 @@ use App\Http\Requests\RolePermissionRequest;
 use App\Models\Role;
 use App\Models\Permission;
 use App\Models\RolePermission;
+use App\Models\Module;
 
 class RoleController extends Controller
 {
@@ -102,16 +103,54 @@ class RoleController extends Controller
                 else{
                     $create = true;
                 }
+
+                $this->updateParentModulePermission($data['permission_id'],$data['role_id'],true);
             }
             else{
                 $delete = RolePermission::where('permission_id',$data['permission_id'])->where('role_id',$data['role_id'])->delete();
                 $create = true;
+
+                $this->updateParentModulePermission($data['permission_id'],$data['role_id']);
+
             }
+
+            
             return $this->success('Success', $create);
           
         } catch (\Throwable $th) {
             return $this->error($th->getMessage());
         }
+
+    }
+    
+    public function updateParentModulePermission($permission_id,$role_id,$action = null){
+
+        $get_module = Permission::where('id',$permission_id)->first();
+
+        $check_parent_module = Module::where('id',$get_module->module_id)->first();
+
+        if($check_parent_module->module_id){
+
+            $permission_parent  = Permission::where('module_id',$check_parent_module->module_id)->where('name','index')->first();
+            if($permission_parent->id == 66) dd($permission_parent->id);
+            $this->updateParentModulePermission($permission_parent->id,$role_id,$action);
+
+            $check_permission_exist = RolePermission::where('permission_id',$permission_parent->id)->where('role_id',$role_id)->first();
+
+
+            if($check_permission_exist && !$action){
+                $check_permission_exist->delete();
+            }
+            elseif(!$check_permission_exist && $action){
+
+                $data_parent['permission_id'] = $permission_parent->id;
+                $data_parent['role_id'] = $role_id;
+
+                RolePermission::create($data_parent);
+            }
+        }
+
+        return true;
 
     }
 }

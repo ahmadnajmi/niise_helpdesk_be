@@ -22,7 +22,6 @@ class RoleSeeder extends Seeder
     {
         DB::table('role')->truncate();
         DB::table('role_permissions')->truncate();
-        DB::table('user_role')->truncate();
 
         DB::statement("ALTER SEQUENCE ROLE_ID_SEQ RESTART START WITH 1");
 
@@ -558,7 +557,7 @@ class RoleSeeder extends Seeder
 
             $create = Role::create($data_role);
 
-            $this->createRoleUser($create->id);
+            // $this->createRoleUser($create->id);
 
             $data_role_permission['role_id'] = $create->id;
 

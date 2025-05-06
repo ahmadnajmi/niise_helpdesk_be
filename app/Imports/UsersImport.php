@@ -4,6 +4,8 @@ namespace App\Imports;
 
 use App\Models\User;
 use App\Models\Branch;
+use App\Models\Role;
+use App\Models\UserRole;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
 
@@ -22,6 +24,13 @@ class UsersImport implements ToModel
         $data['category_office'] =   $row[5];
 
         $create = User::create($data);
+
+        $role = Role::inRandomOrder()->first();
+
+        $data_userrole['user_id'] = $create->id;
+        $data_userrole['role_id'] = $role->id;
+
+        $create = UserRole::create($data_userrole);
       
     }
 }

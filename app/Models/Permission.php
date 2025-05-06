@@ -35,4 +35,17 @@ class Permission extends BaseModel
 
         return $data;
     }
+
+    public static function getParentUserDetails(){
+        $user_role = UserRole::where('user_id',Auth::user()->id)->pluck('role_id');
+
+        $data = self::whereHas('roles', function ($query)use($user_role) {
+                      $query->whereIn('role.id',$user_role); 
+                    })
+                    ->pluck('module_id');
+        
+        $data = Module::whereNull('module_id')->whereIn('id',$data)->pluck('id');
+                    // dd($data);
+        return $data;
+    }
 }
