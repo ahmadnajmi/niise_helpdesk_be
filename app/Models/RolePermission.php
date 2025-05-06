@@ -13,4 +13,8 @@ class RolePermission extends BaseModel
         'role_id',
         'permission_id',
     ];
+
+    public function permission(){
+        return $this->hasOne(Permission::class,'id','permission_id');
+    }
 }

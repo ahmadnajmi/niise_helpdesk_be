@@ -132,14 +132,21 @@ class RoleController extends Controller
         if($check_parent_module->module_id){
 
             $permission_parent  = Permission::where('module_id',$check_parent_module->module_id)->where('name','index')->first();
-            if($permission_parent->id == 66) dd($permission_parent->id);
+
             $this->updateParentModulePermission($permission_parent->id,$role_id,$action);
 
             $check_permission_exist = RolePermission::where('permission_id',$permission_parent->id)->where('role_id',$role_id)->first();
 
 
             if($check_permission_exist && !$action){
-                $check_permission_exist->delete();
+
+                $check_other_sub_module = RolePermission::where('role_id',$role_id)
+                                                        ->whereHas('permission', function ($query)use($check_parent_module) {
+                                                            $query->where('module_id',$check_parent_module->module_id); 
+                                                        })
+                                                        ->exists();
+
+                if(!$check_other_sub_module) $check_permission_exist->delete();
             }
             elseif(!$check_permission_exist && $action){
 
