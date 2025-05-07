@@ -17,6 +17,8 @@ use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\OperatingTimeController;
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\KnowledgeBaseController;
+use App\Http\Controllers\GeneralController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -41,6 +43,7 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('audit', AuditController::class)->only('index','show');
     Route::apiResource('knowledge_base', KnowledgeBaseController::class);
 
+    Route::get('dynamic_option', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option');
 
 
     Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');
@@ -51,6 +54,7 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::get('category_dropdown', [CategoryController::class, 'dropdownIndex'])->name('category.dropdown');
     Route::get('user_search', [UserController::class, 'searchIcNo'])->name('user.search');
 
+    
 });
 Route::apiResource('branch', BranchController::class)->only('index','show');
 Route::apiResource('ref_table', RefTableController::class);
