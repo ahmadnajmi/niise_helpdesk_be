@@ -27,8 +27,16 @@ class RefTable extends BaseModel
     public function scopeFilter($query){
 
         if (request('code_category')) {
-            $query->whereIn('code_category',request('code_category'));
+            $codeCategory = request('code_category');
+
+            if (is_array($codeCategory)) {
+                $query->whereIn('code_category', $codeCategory);
+            } else {
+                $query->where('code_category', $codeCategory);
+            }
         }
+
+      
 
         return $query;
     }

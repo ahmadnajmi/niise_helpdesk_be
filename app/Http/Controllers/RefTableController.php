@@ -76,4 +76,11 @@ class RefTableController extends Controller
 
         return $this->success('Success', null);
     }
+
+    public function dropdownValueIndex(){
+
+        $data = RefTable::select('ref_code','code_category','name_en','name')->filter()->get();
+            
+        return $this->success('Success', $data);
+    }
 }

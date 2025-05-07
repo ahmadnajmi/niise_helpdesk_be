@@ -42,6 +42,7 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::get('navigation', [ModuleController::class,'index'])->name('navigation.index');
     Route::get('auth/details', [AuthController::class, 'authDetails'])->name('auth.details');
     Route::get('ref_table_dropdown', [RefTableController::class, 'dropdownIndex'])->name('ref_table.dropdown');
+    Route::get('ref_table_dropdown_value', [RefTableController::class, 'dropdownValueIndex'])->name('ref_table.dropdown_value');
     Route::get('category_dropdown', [CategoryController::class, 'dropdownIndex'])->name('category.dropdown');
 
 
