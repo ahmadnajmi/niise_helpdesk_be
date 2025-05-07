@@ -16,12 +16,14 @@ class UsersImport implements ToModel
         $get_branch = Branch::select('id')->where('name',$row[2])->first();
         
         $data['name']  = $row[0];
+        $data['nickname']  = $row[0];
         $data['password']  = Hash::make('P@ssw0rd');
         $data['position']    = $row[1];
         $data['branch_id'] = $get_branch ? $get_branch->id : null;
         $data['email'] =   $row[3];
         $data['phone_no'] =   $row[4];
         $data['category_office'] =   $row[5];
+        $data['ic_no'] =   $this->generateDummyIC();
 
         $create = User::create($data);
 
@@ -32,5 +34,16 @@ class UsersImport implements ToModel
 
         $create = UserRole::create($data_userrole);
       
+    }
+
+    private function generateDummyIC()
+    {
+        $date = now()->subYears(rand(20, 50))->format('ymd');
+
+        $state = str_pad(rand(1, 21), 2, '0', STR_PAD_LEFT);
+
+        $last4 = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+
+        return $date.$state.$last4;
     }
 }

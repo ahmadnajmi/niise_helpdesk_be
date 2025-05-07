@@ -15,6 +15,8 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\OperatingTimeController;
+use App\Http\Controllers\AuditController;
+use App\Http\Controllers\KnowledgeBaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,12 +32,15 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('permission', PermissionController::class);
     Route::apiResource('role', RoleController::class);
     Route::apiResource('action_code', ActionCodeController::class);
-    Route::apiResource('user', UserController::class)->only('index','show');
+    Route::apiResource('user', UserController::class);
     Route::apiResource('category', CategoryController::class);
     Route::apiResource('group_management', GroupController::class);
     Route::apiResource('calendar', CalendarController::class);
     Route::apiResource('email_template', EmailTemplateController::class);
     Route::apiResource('operating_time', OperatingTimeController::class);
+    Route::apiResource('audit', AuditController::class)->only('index','show');
+    Route::apiResource('knowledge_base', KnowledgeBaseController::class);
+
 
 
     Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');
@@ -44,7 +49,7 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::get('ref_table_dropdown', [RefTableController::class, 'dropdownIndex'])->name('ref_table.dropdown');
     Route::get('ref_table_dropdown_value', [RefTableController::class, 'dropdownValueIndex'])->name('ref_table.dropdown_value');
     Route::get('category_dropdown', [CategoryController::class, 'dropdownIndex'])->name('category.dropdown');
-
+    Route::get('user_search', [UserController::class, 'searchIcNo'])->name('user.search');
 
 });
 Route::apiResource('branch', BranchController::class)->only('index','show');

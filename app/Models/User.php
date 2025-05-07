@@ -14,14 +14,16 @@ class User extends Authenticatable
     protected $table = 'user';
 
     protected $fillable = [
-        'id',
+        'ic_no',
         'name',
+        'nickname',
         'password',
         'position',
         'branch_id',
         'email',
         'phone_no',
-        'category_office'
+        'category_office',
+        'is_active',
     ];
 
     public function branch(){
@@ -34,6 +36,32 @@ class User extends Authenticatable
     
     public static function findForPassport($email){
         return static::where('email', $email)->first();
+    }
+
+    public function scopeFilter($query){
+
+        $query->when(request('ic_no'), function ($query){
+            $query->where('ic_no', request('ic_no')); 
+        });
+
+        return $query;
+    }
+
+    public function transformAudit(array $data): array {
+        switch ($data['event']) {
+            case 'created':
+                $data['custom_label'] = 'Daftar User';
+                break;
+
+            case 'updated':
+                $data['custom_label'] = 'Kemaskini User';
+                break;
+
+            case 'deleted':
+                $data['custom_label'] = 'Padam User';
+                break;
+        }
+        return $data;
     }
     
     

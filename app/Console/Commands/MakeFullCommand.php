@@ -44,7 +44,7 @@ class MakeFullCommand extends Command
 
     public function createController($name){
         $className = ucfirst($name);
-        $snake_class_name = Str::snake('OperatingTime');
+        $snake_class_name = Str::snake($name);
 
 
         $this->callSilent('make:controller', [
