@@ -3,6 +3,9 @@
 namespace App\Http\Services;
 use App\Models\Role;
 use App\Models\Category;
+use App\Models\Group;
+use App\Models\SlaTemplate;
+use App\Models\Branch;
 
 class GeneralServices
 {
@@ -17,7 +20,22 @@ class GeneralServices
 
             if($code == 'category'){
                 $data['category'] = Category::select('id','name','level','code')->where('is_active',true)->get();
-    
+            }
+
+            if($code == 'branch'){
+                $data['branch'] = Branch::select('id','name','category','state')->get();
+            }
+
+            if($code == 'sla_template'){
+                $data['sla_template'] = SlaTemplate::select('id','severity_id','service_level')
+                                                    ->with(['severityDescription' => function ($query) {
+                                                        $query->select('ref_code','name');
+                                                    }])
+                                                    ->get();
+            }
+
+            if($code == 'group'){
+                $data['group'] = Group::select('id','name','description')->where('is_active',true)->get();
             }
         }
         return $data;

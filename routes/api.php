@@ -18,6 +18,8 @@ use App\Http\Controllers\OperatingTimeController;
 use App\Http\Controllers\AuditController;
 use App\Http\Controllers\KnowledgeBaseController;
 use App\Http\Controllers\GeneralController;
+use App\Http\Controllers\SlaTemplateController;
+use App\Http\Controllers\SlaController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +44,8 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('operating_time', OperatingTimeController::class);
     Route::apiResource('audit', AuditController::class)->only('index','show');
     Route::apiResource('knowledge_base', KnowledgeBaseController::class);
+    Route::apiResource('sla', SlaController::class);
+    Route::apiResource('sla_template', SlaTemplateController::class);
 
     Route::get('dynamic_option', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option');
 

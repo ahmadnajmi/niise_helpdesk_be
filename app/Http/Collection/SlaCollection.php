@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Http\Collection;
+
+use Illuminate\Http\Request;
+
+class SlaCollection extends BaseResource
+{
+    /**
+     * Transform the resource collection into an array.
+     *
+     * @return array<int|string, mixed>
+     */
+    public function toArray(Request $request)
+    {
+        return $this->collection->transform(function ($query) use($request){
+            $return =  [
+                'id' => $query->id,
+                'state_id'=> $query->state_id,
+                'state_desc' => $query->stateDescription?->name,
+                'branch_id'=> $query->branch_id,
+                'branch_name' => $query->branch?->name,
+                'start_date'=> $query->start_date,
+                'end_date'=> $query->end_date,
+                'sla_template_id'=> $query->sla_template_id,
+                'group_id'=> $query->group_id,
+                'group_name' => $query->group?->name,
+                'is_active' => $query->is_active,
+                'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
+                'updated_by' => $query->updatedBy->name .' - '. $query->updatedBy->email ,
+            ];
+            return $return;
+        });
+    }
+}

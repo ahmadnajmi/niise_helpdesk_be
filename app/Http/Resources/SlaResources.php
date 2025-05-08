@@ -1,0 +1,33 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class SlaResources extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+         return [
+            'id' => $this->id,
+            'state_id'=> $this->state_id,
+            'state_desc' => $this->stateDescription?->name,
+            'branch_id'=> $this->branch_id,
+            'branch_name' => $this->branch?->name,
+            'start_date'=> $this->start_date,
+            'end_date'=> $this->end_date,
+            'sla_template_id'=> $this->sla_template_id,
+            'group_id'=> $this->group_id,
+            'group_name' => $this->group?->name,
+            'is_active' => $this->is_active,
+            'created_at' => $this->created_at->format('d-m-Y'),
+            'updated_at' => $this->updated_at->format('d-m-Y'),
+        ];
+    }
+}
