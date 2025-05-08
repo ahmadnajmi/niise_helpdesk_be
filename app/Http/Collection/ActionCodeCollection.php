@@ -17,7 +17,7 @@ class ActionCodeCollection extends BaseResource
             return [
                 'id' => $query->id,
                 'name' => $query->name,
-                'nickname' => $query->name,
+                'nickname' => $query->nickname,
                 'send_email' => $query->send_email,
                 'email_recipient' => $query->email_recipient_id,
                 'email_recipient_desc' => $query->emailRecipientDescription?->name,
