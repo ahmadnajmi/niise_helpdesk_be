@@ -23,8 +23,19 @@ class User extends Authenticatable
         'email',
         'phone_no',
         'category_office',
+        'address',
+        'postcode',
+        'city',
+        'state_id',
+        'fax_no',
         'is_active',
     ];
+
+    // protected $auditEvents = [
+    //     'created' => 'Daftar User',
+    //     'updated' => 'Kemaskini Use',
+    //     'deleted' => 'Padam User'
+    // ];
 
     public function branch(){
         return $this->hasOne(Branch::class,'id','branch_id');
@@ -32,6 +43,10 @@ class User extends Authenticatable
 
     public function role(){
         return $this->hasMany(UserRole::class,'user_id','id');
+    }
+
+    public function stateDescription(){
+        return $this->hasOne(RefTable::class,'ref_code','state_id')->where('code_category', 'state');
     }
     
     public static function findForPassport($email){

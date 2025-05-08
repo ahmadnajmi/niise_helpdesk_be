@@ -35,7 +35,13 @@ class UserRequest extends FormRequest
             'position' => 'nullable',
             'branch_id' =>'nullable',
             'is_active' => 'nullable',
-            'group_user' => 'array|nullable'
+            'address' => 'nullable',
+            'postcode' => 'nullable',
+            'city' => 'nullable',
+            'state_id' => 'nullable',
+            'fax_no' => 'nullable',
+            'group_user' => 'array|nullable',
+            'role' => 'required',
         ];
     }
 

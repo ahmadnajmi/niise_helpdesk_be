@@ -71,11 +71,5 @@ class CategoryController extends Controller
 
         return $this->success('Success', null);
     }
-    
-    public function dropdownIndex(){
 
-        $data = Category::select('id','name','level','code')->where('is_active',true)->get();
-            
-        return $this->success('Success', $data);
-    }
 }

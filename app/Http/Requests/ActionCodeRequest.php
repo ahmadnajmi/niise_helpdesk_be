@@ -26,11 +26,11 @@ class ActionCodeRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'category' => 'nullable',
-            'abbreviation' => 'nullable',
+            'nickname' => 'required',
+            'send_email' => 'nullable',
+            'email_recipient_id' =>  'nullable',
             'description' => 'nullable',
             'is_active' => 'nullable'
-
         ];
     }
 

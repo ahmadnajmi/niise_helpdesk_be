@@ -17,9 +17,10 @@ class ActionCodeCollection extends BaseResource
             return [
                 'id' => $query->id,
                 'name' => $query->name,
-                'category' => $query->category,
-                'category_desc' => $query->categoryDescription?->name,
-                'abbreviation' => $query->abbreviation,
+                'nickname' => $query->name,
+                'send_email' => $query->send_email,
+                'email_recipient' => $query->email_recipient_id,
+                'email_recipient_desc' => $query->emailRecipientDescription?->name,
                 'description' => $query->description,
                 'is_active' => $query->is_active,
                 'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,

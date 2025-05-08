@@ -21,7 +21,7 @@ class CalendarCollection extends BaseResource
                 'name' => $query->name,
                 'start_date' => $query->start_date,
                 'end_date' => $query->end_date,
-                'state' => $query->state,
+                'state_id' => $query->state_id,
                 'state_desc' => $query->stateDescription?->name,
                 'description' => $query->description,
                 'is_active' => $query->is_active,

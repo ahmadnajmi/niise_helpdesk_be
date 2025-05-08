@@ -21,6 +21,11 @@ return new class extends Migration
             $table->unsignedBigInteger('branch_id')->nullable(); 
             $table->string('email',100)->nullable(); 
             $table->string('phone_no',20)->nullable(); 
+            $table->string('address',255)->nullable(); 
+            $table->integer('postcode')->nullable(); 
+            $table->string('city',100)->nullable(); 
+            $table->integer('state_id')->nullable(); 
+            $table->string('fax_no',100)->nullable(); 
             $table->string('category_office',100)->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();

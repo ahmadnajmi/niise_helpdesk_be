@@ -19,7 +19,7 @@ class CalendarResources extends JsonResource
             'name' => $this->name,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'state' => $this->state,
+            'state_id' => $this->state_id,
             'state_desc' => $this->stateDescription?->name,
             'description' => $this->description,
             'is_active' => $this->is_active,

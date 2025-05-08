@@ -12,15 +12,14 @@ class ActionCode extends BaseModel
 
     protected $fillable = [ 
         'name',
-        'category',
-        'abbreviation',
+        'nickname',
         'description',
         'is_active',
+        'send_email',
+        'email_recipient_id'
     ];
-    
 
-    public function categoryDescription(){
-        return $this->hasOne(RefTable::class,'ref_code','category')->where('code_category', 'action_code_category');
+    public function emailRecipientDescription(){
+        return $this->hasOne(RefTable::class,'ref_code','email_recipient_id')->where('code_category', 'action_code_email_recipient');
     }
-
 }

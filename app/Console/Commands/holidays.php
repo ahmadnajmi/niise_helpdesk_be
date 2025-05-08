@@ -56,7 +56,7 @@ class holidays extends Command
 
                     // if(!$get_state) dd($get_state,$states['regional']);
 
-                    $data_calendar['state'] = $get_state->ref_code;
+                    $data_calendar['state_id'] = $get_state->ref_code;
 
                     foreach($states['collection'] as $year){
 

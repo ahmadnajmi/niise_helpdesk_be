@@ -17,9 +17,10 @@ class ActionCodeResources extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'category' => $this->category,
-            'category_desc' => $this->categoryDescription?->name,
-            'abbreviation' => $this->abbreviation,
+            'nickname' => $this->name,
+            'send_email' => $this->send_email,
+            'email_recipient' => $this->email_recipient_id,
+            'email_recipient_desc' => $this->emailRecipientDescription?->name,
             'description' => $this->description,
             'is_active' => $this->is_active,
             'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,

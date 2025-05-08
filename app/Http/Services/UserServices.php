@@ -4,17 +4,27 @@ namespace App\Http\Services;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\UserGroup;
+use App\Models\UserRole;
+
 
 class UserServices
 {
     public static function create($data){
-
         $data['password'] = Hash::make('P@ssw0rd');
 
         $create = User::create($data);
 
-        $data = self::groupUser($data,$create->id);
+        $group_user = self::groupUser($data,$create->id);
 
+        if($data['role']){
+            $user_role['user_id'] = $create->id;
+            $user_role['role_id'] = $data['role'];
+
+            UserRole::disableAuditing();
+
+            UserRole::create($user_role);
+        }
+        
         return $create;
     }
 

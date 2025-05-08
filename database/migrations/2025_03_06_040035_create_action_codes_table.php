@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('action_codes', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->smallInteger('category')->nullable();
-            $table->string('abbreviation',20)->nullable();
+            $table->string('nickname');
             $table->string('description')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->boolean('send_email')->default(true);
+            $table->smallInteger('email_recipient_id')->nullable();
             $table->log();
         });
     }

@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
-            $table->smallInteger('state')->nullable();
+            $table->smallInteger('state_id')->nullable();
             $table->string('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->log();

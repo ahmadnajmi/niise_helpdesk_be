@@ -11,12 +11,12 @@ class Calendar extends BaseModel
         'name',
         'start_date',
         'end_date',
-        'state',
+        'state_id',
         'description',
         'is_active',
     ];
 
     public function stateDescription(){
-        return $this->hasOne(RefTable::class,'ref_code','state')->where('code_category', 'state');
+        return $this->hasOne(RefTable::class,'ref_code','state_id')->where('code_category', 'state');
     }
 }
