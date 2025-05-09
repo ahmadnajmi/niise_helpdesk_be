@@ -31,12 +31,6 @@ class User extends Authenticatable
         'is_active',
     ];
 
-    // protected $auditEvents = [
-    //     'created' => 'Daftar User',
-    //     'updated' => 'Kemaskini Use',
-    //     'deleted' => 'Padam User'
-    // ];
-
     public function branch(){
         return $this->hasOne(Branch::class,'id','branch_id');
     }

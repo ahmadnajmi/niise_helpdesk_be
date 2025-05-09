@@ -72,4 +72,102 @@ class BaseModel extends Model implements Auditable
             }
         });
     }
+
+    public function transformAudit(array $data): array {
+
+        $class = null;
+        
+        switch ($data['auditable_type']) {
+            case UserGroup::class:
+                $class = 'Kumpulan Individu';
+                break;
+
+            case ActionCode::class:
+                $class = 'Kod Tindakan';
+                break;
+
+            case Calendar::class:
+                $class = 'Kalendar';
+                break;
+
+            case Category::class:
+                $class = 'Kategori';
+                break;
+
+            case EmailTemplate::class:
+                $class = 'Templat Emel';
+                break;
+
+            case Group::class:
+                $class = 'Kumpulan';
+                break;
+
+            case KnowledgeBase::class:
+                $class = 'Knowledge Base';
+                break;
+
+            case Module::class:
+                $class = 'Modul';
+                break;
+
+            case OperatingTime::class:
+                $class = 'Waktu Operasi';
+                break;
+
+            case Permission::class:
+                $class = 'Kebenaran';
+                break;
+
+            case RefTable::class:
+                $class = 'Tetapan Global';
+                break;
+
+            case Role::class:
+                $class = 'Peranan';
+                break;
+
+            case RolePermission::class:
+                $class = 'Pernanan Kebenaran';
+                break;
+
+            case Sla::class:
+                $class = 'Sla';
+                break;
+
+            case SlaCategory::class:
+                $class = 'SLA Kategori';
+                break;
+
+            case SlaTemplate::class:
+                $class = 'Templat SLA';
+                break;
+
+            case User::class:
+                $class = 'Individu';
+                break;
+
+            case UserRole::class:
+                $class = 'Peranan Individu';
+                break;
+        }
+
+
+        switch ($data['event']) {
+            case 'created':
+                $action = 'Daftar ';
+                break;
+
+            case 'updated':
+                $action = 'Kemaskini ';
+                break;
+
+            case 'deleted':
+                $action = 'Padam ';
+                break;
+        }
+
+        $data['event'] = $action.$class;
+        
+        return $data;
+    }
 }
