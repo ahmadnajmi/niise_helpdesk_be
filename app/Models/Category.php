@@ -17,4 +17,8 @@ class Category extends BaseModel
         'description',
         'is_active',
     ];
+
+      public function mainCategory(){
+        return $this->hasOne(Category::class, 'id','category_id');
+    }
 }

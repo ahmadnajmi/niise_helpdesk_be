@@ -35,8 +35,11 @@ class SlaTemplateResources extends JsonResource
             'response_time_location_type' => $this->response_time_location_type,
             'response_time_location_type_desc' => $this->locationTypeDescription?->name,
             'notes' => $this->notes,
+            'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
+            'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
             'created_at' => $this->created_at->format('d-m-Y'),
             'updated_at' => $this->updated_at->format('d-m-Y'),
+            
         ];
     }
 }
