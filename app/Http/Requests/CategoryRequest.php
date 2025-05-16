@@ -26,8 +26,8 @@ class CategoryRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'level' => 'required|integer',
-            'code' => 'required|integer',
+            'level' => 'nullable|integer',
+            'code' => 'nullable|integer',
             'category_id' => 'nullable',
             'description' => 'nullable',
             'is_active' => 'nullable'
