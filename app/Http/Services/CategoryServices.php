@@ -23,6 +23,32 @@ class CategoryServices
         return $create;
     }
 
+     public static function delete(Category $category){
+
+        $child_id = Category::where('category_id',$category->id)->pluck('id');
+
+        if(count($child_id) > 0){
+
+            self::deleteChild($child_id);
+        }
+
+        $category->delete();
+
+        return true;
+    }
+
+
+    public static function deleteChild($child_id){
+        $grand_child_id = Category::whereIn('category_id',$child_id)->pluck('id');
+
+        if(count($grand_child_id) > 0){
+
+            self::deleteChild($grand_child_id);
+        }
+
+        Category::whereIn('id',$child_id)->delete();
+    }
+
     public static function getCode($data = null,$old_code = null){
 
         if($data){
