@@ -16,8 +16,6 @@ class CategoryServices
 
     public static function update(Category $category,$data){
 
-        $data = self::processData($data);
-
         $create = $category->update($data);
 
         return $create;
