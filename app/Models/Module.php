@@ -10,8 +10,6 @@ class Module extends BaseModel
 {
     protected $table = 'module';
 
-    public $timestamps = false;
-
     protected $fillable = [ 
        'module_id',
         'name',
