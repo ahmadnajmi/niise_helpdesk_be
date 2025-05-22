@@ -19,6 +19,7 @@ class GroupResources extends JsonResource
             'name' => $this->name,
             'description' => $this->description,
             'is_active' => $this->is_active,
+            'user_group' => UserGroupResources::collection($this->UserGroup),
             'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
             'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
             'created_at' => $this->created_at->format('d-m-Y'),

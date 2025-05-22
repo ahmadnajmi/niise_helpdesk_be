@@ -13,4 +13,8 @@ class UserGroup extends BaseModel
         'groups_id',
         'user_id',
     ];
+
+     public function userDetails(){
+        return $this->hasOne(User::class,'id','user_id');
+    }
 }

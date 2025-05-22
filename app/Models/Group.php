@@ -14,4 +14,8 @@ class Group extends BaseModel
         'description',
         'is_active',
     ];
+
+    public function userGroup(){
+        return $this->hasMany(UserGroup::class,'groups_id','id');
+    }
 }
