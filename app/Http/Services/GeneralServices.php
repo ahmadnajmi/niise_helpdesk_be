@@ -37,6 +37,10 @@ class GeneralServices
             if($code == 'group'){
                 $data['group'] = Group::select('id','name','description')->where('is_active',true)->get();
             }
+
+            if($code == 'user'){
+                $data['user'] = User::select('id','name','nickname')->where('is_active',true)->get();
+            }
         }
         return $data;
     }
