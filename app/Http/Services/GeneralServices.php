@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Group;
 use App\Models\SlaTemplate;
 use App\Models\Branch;
+use App\Models\User;
 
 class GeneralServices
 {
