@@ -16,7 +16,7 @@ class CategoryServices
 
     public static function update(Category $category,$data){
 
-        if(isset($data['category_id'])){
+        if(isset($data['category_id']) && $category->category_id != $data['category_id']){
             $data = self::processData($data);
         }
 
