@@ -19,7 +19,7 @@ class UserGroupAccessResources extends JsonResource
             'user_id' => $this->id,
         ];
 
-        if($request->route()->getName() == 'group.show'){
+        if($request->route()->getName() == 'group_management.show'){
             $return['user_details'] = $this->userDetails ? new UserResources($this->userDetails) : null ;
         }
 

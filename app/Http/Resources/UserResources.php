@@ -30,11 +30,14 @@ class UserResources extends JsonResource
             'state_desc' => $this->stateDescription?->name,
             'fax_no' => $this->fax_no,
             'is_active' => $this->is_active,
-            'group' =>  UserGroupResources::collection($this->group),
-            'group_access' =>  UserGroupAccessResources::collection($this->groupAccess),
             'created_at' => $this->created_at?->format('d-m-Y'),
             'updated_at' => $this->updated_at?->format('d-m-Y'),
         ];
+
+        if($request->route()->getName() != 'group_management.show'){
+            $return['group'] = UserGroupResources::collection($this->group) ;
+            $return['group_access'] = UserGroupAccessResources::collection($this->groupAccess);
+        }
         return $return;
     }
 }
