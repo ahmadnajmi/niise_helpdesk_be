@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\UserGroup;
 use App\Models\UserRole;
-
+use App\Models\UserGroupAccess;
 
 class UserServices
 {
@@ -46,6 +46,16 @@ class UserServices
                 $data_group_user['groups_id'] = $group_id;
     
                 UserGroup::create($data_group_user);
+            }
+        }
+
+        if(isset($data['group_user_access'])){
+            foreach($data['group_user_access'] as $access_group_id){
+
+                $data_group_user_access['user_id'] = $user_id;
+                $data_group_user_access['groups_id'] = $access_group_id;
+    
+                UserGroupAccess::create($data_group_user_access);
             }
         }
 

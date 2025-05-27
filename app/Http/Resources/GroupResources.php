@@ -14,16 +14,23 @@ class GroupResources extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        $return =  [
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
             'is_active' => $this->is_active,
-            'user_group' => UserGroupResources::collection($this->UserGroup),
             'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
             'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
             'created_at' => $this->created_at->format('d-m-Y'),
             'updated_at' => $this->updated_at->format('d-m-Y'),
         ];
+
+        if($request->route()->getName() != 'user.show'){
+            $return['user_group'] = UserGroupResources::collection($this->UserGroup);
+            $return['user_group_access'] = UserGroupAccessResources::collection($this->userGroupAccess);
+
+        }
+
+        return $return;
     }
 }

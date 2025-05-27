@@ -41,6 +41,7 @@ class UserRequest extends FormRequest
             'state_id' => 'nullable',
             'fax_no' => 'nullable',
             'group_user' => 'array|nullable',
+            'group_user_access' => 'array|nullable',
             'role' => 'required',
         ];
     }

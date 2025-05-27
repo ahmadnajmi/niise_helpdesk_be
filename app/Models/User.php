@@ -47,6 +47,14 @@ class User extends Authenticatable
         return static::where('email', $email)->first();
     }
 
+    public function group(){
+        return $this->hasMany(UserGroup::class,'user_id','id');
+    }
+
+    public function groupAccess(){
+        return $this->hasMany(UserGroupAccess::class,'user_id','id');
+    }
+
     public function scopeFilter($query){
 
         $query->when(request('ic_no'), function ($query){

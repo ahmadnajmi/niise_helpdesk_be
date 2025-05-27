@@ -5,9 +5,9 @@ namespace App\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 
-class UserGroup extends BaseModel
+class UserGroupAccess extends BaseModel
 {
-    protected $table = 'user_groups';
+    protected $table = 'user_group_access';
 
     protected $fillable = [ 
         'groups_id',
