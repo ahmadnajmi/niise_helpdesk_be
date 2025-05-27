@@ -27,7 +27,7 @@ class Role extends BaseModel
     }
     
     public function userRole(){
-        return $this->hasMany(UserRole::class, 'role_id','id');
+        return $this->hasOne(UserRole::class, 'role_id','id');
     }
 
     public function getTranslatedNameAttribute(){

@@ -92,4 +92,13 @@ class User extends Authenticatable
 
         return $data;
     }
+
+    public static function getUserRole($id){
+        $get_role = Role::whereHas('userRole', function ($query)use($id) {
+                      $query->where('user_id',$id); 
+                    })
+                    ->first();
+
+        return $get_role?->name;
+    }
 }

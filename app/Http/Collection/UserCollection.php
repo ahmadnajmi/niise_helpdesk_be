@@ -3,6 +3,7 @@
 namespace App\Http\Collection;
 
 use Illuminate\Http\Request;
+use App\Models\User;
 
 class UserCollection extends BaseResource
 {
@@ -30,6 +31,7 @@ class UserCollection extends BaseResource
                 'state_desc' => $query->stateDescription?->name,
                 'fax_no' => $query->fax_no,
                 'is_active' => $query->is_active,
+                'role' => User::getUserRole($query->id),
                 'created_at' => $query->created_at?->format('d-m-Y'),
                 'updated_at' => $query->updated_at?->format('d-m-Y'),
             ];
