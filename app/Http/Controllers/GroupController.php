@@ -68,7 +68,12 @@ class GroupController extends Controller
 
     public function destroy(Group $group_management)
     {
+        $group_management->userGroup()->delete();
+
+        $group_management->userGroupAccess()->delete();
+
         $group_management->delete();
+
 
         return $this->success('Success', null);
     }
