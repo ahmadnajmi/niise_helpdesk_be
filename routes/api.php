@@ -20,7 +20,7 @@ use App\Http\Controllers\KnowledgeBaseController;
 use App\Http\Controllers\GeneralController;
 use App\Http\Controllers\SlaTemplateController;
 use App\Http\Controllers\SlaController;
-
+use App\Http\Controllers\CompanyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +46,7 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('knowledge_base', KnowledgeBaseController::class);
     Route::apiResource('sla', SlaController::class);
     Route::apiResource('sla_template', SlaTemplateController::class);
+    Route::apiResource('company', CompanyController::class);
 
     Route::get('dynamic_option', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option');
 
