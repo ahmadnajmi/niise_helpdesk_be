@@ -29,10 +29,8 @@ class SlaController extends Controller
         try {
             $data = $request->all();
 
-            $create = SlaServices::create($data);
+            $data = SlaServices::create($data);
            
-            $data = new SlaResources($create);
-
             return $this->success('Success', $data);
           
         } catch (\Throwable $th) {
@@ -52,9 +50,7 @@ class SlaController extends Controller
         try {
             $data = $request->all();
 
-            $update = SlaServices::update($sla,$data);
-
-            $data = new SlaResources($sla);
+            $data = SlaServices::update($sla,$data);
 
             return $this->success('Success', $data);
           

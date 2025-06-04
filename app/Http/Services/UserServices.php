@@ -25,8 +25,10 @@ class UserServices
 
             UserRole::create($user_role);
         }
-        
-        return $create;
+
+        $return = new UserResources($create);
+
+        return $return;
     }
 
     public static function update(User $user,$data){
@@ -35,7 +37,9 @@ class UserServices
 
         $data = self::groupUser($data,$user->id);
 
-        return $update;
+        $return = new UserResources($user);
+
+        return $return;
     }
 
     public static function groupUser($data,$user_id){
@@ -79,9 +83,9 @@ class UserServices
                         $query->where('name', 'Kontraktor'); 
                     })->first();
                     
-        $data = $user ? new UserResources($user) : null;
+        $return = $user ? new UserResources($user) : null;
 
-        return $data;
+        return $return;
     }
 
      

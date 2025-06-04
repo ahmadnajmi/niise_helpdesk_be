@@ -28,10 +28,8 @@ class CategoryController extends Controller
         try {
             $data = $request->all();
 
-            $create = CategoryServices::create($data);
+            $data = CategoryServices::create($data);
            
-            $data = new CategoryResources($create);
-
             return $this->success('Success', $data);
           
         } catch (\Throwable $th) {
@@ -51,12 +49,7 @@ class CategoryController extends Controller
         try {
             $data = $request->all();
 
-            // $update = $category->update($data);
-
-            $update = CategoryServices::update($category,$data);
-
-
-            $data = new CategoryResources($category);
+            $data = CategoryServices::update($category,$data);
 
             return $this->success('Success', $data);
           

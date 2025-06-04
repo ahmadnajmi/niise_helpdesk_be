@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 use App\Models\Category;
+use App\Http\Resources\CategoryResources;
 
 class CategoryServices
 {
@@ -11,7 +12,9 @@ class CategoryServices
 
         $create = Category::create($data);
 
-        return $create;
+        $return = new CategoryResources($create);
+
+        return $return;
     }
 
     public static function update(Category $category,$data){
@@ -22,7 +25,9 @@ class CategoryServices
 
         $create = $category->update($data);
 
-        return $create;
+        $return = new CategoryResources($category);
+
+        return $return;
     }
 
      public static function delete(Category $category){

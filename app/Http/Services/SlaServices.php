@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 use App\Models\Sla;
 use App\Models\SlaCategory;
+use App\Http\Resources\SlaResources;
 
 class SlaServices
 {
@@ -12,7 +13,9 @@ class SlaServices
 
         $data = self::slaCategory($data,$create->id);
 
-        return $create;
+        $return = new SlaResources($create);
+
+        return $return;
     }
 
     public static function update(Sla $sla,$data){
@@ -21,7 +24,10 @@ class SlaServices
 
         $data = self::slaCategory($data,$sla->id);
 
-        return $update;
+        $return = new SlaResources($sla);
+
+
+        return $return;
     }
 
     public static function delete(Sla $sla){

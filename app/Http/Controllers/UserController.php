@@ -28,10 +28,8 @@ class UserController extends Controller
         try {
             $data = $request->all();
 
-            $create = UserServices::create($data);
+            $data = UserServices::create($data);
            
-            $data = new UserResources($create);
-
             return $this->success('Success', $data);
           
         } catch (\Throwable $th) {
@@ -51,9 +49,7 @@ class UserController extends Controller
         try {
             $data = $request->all();
 
-            $update = UserServices::update($user,$data);
-
-            $data = new UserResources($user);
+            $data = UserServices::update($user,$data);
 
             return $this->success('Success', $data);
           
@@ -74,7 +70,6 @@ class UserController extends Controller
         $data = UserServices::searchIcNo($request);
 
         return $this->success('Success', $data);
-
     }
 
 }
