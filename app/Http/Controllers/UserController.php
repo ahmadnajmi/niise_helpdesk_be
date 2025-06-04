@@ -71,7 +71,7 @@ class UserController extends Controller
 
     public function searchIcNo(Request $request){
 
-        $data = User::filter()->first();
+        $data = UserServices::searchIcNo($request);
 
         return $this->success('Success', $data);
 

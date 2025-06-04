@@ -97,6 +97,17 @@ class ModuleSeeder extends Seeder
                                     // 'role.delete',
                                 ]
                             ],
+                            [
+                                'name' => 'Pengurusan Kontraktor',
+                                'name_en' => 'Contractor Management',
+                                'permission' =>[
+                                    'contractor.index',
+                                    'contractor.create',
+                                    'contractor.view',
+                                    'contractor.update',
+                                    'contractor.delete',
+                                ]
+                            ],
                         ]
                     ],
 

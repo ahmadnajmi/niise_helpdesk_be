@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\UserGroup;
 use App\Models\UserRole;
 use App\Models\UserGroupAccess;
+use App\Http\Resources\UserResources;
 
 class UserServices
 {
@@ -71,4 +72,17 @@ class UserServices
         return true;
 
     }
+
+    public static function searchIcNo($request){
+        $user = User::filter()
+                    ->whereHas('roles', function ($query) {
+                        $query->where('name', 'Kontraktor'); 
+                    })->first();
+                    
+        $data = $user ? new UserResources($user) : null;
+
+        return $data;
+    }
+
+     
 }

@@ -351,6 +351,16 @@ class RoleSeeder extends Seeder
                         ]
                     ],
                     [
+                        'module' => 'Pengurusan Kontraktor',
+                        'permission' =>[
+                            'contractor.index',
+                            'contractor.create',
+                            'contractor.view',
+                            'contractor.update',
+                            'contractor.delete',
+                        ]
+                    ],
+                    [
                         'module' => 'Pengurusan Peranan',
                         'permission' =>[
                             'role.index',

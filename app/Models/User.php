@@ -35,8 +35,8 @@ class User extends Authenticatable
         return $this->hasOne(Branch::class,'id','branch_id');
     }
 
-    public function role(){
-        return $this->hasMany(UserRole::class,'user_id','id');
+    public function roles(){
+        return $this->belongsToMany(Role::class, 'user_role');
     }
 
     public function stateDescription(){
