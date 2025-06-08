@@ -3,6 +3,7 @@
 namespace App\Http\Collection;
 
 use Illuminate\Http\Request;
+use App\Http\Resources\SlaTemplateResources;
 
 class SlaCollection extends BaseResource
 {
@@ -23,6 +24,7 @@ class SlaCollection extends BaseResource
                 'start_date'=> $query->start_date,
                 'end_date'=> $query->end_date,
                 'sla_template_id'=> $query->sla_template_id,
+                'sla_template_details' => new SlaTemplateResources($query->slaTemplate),
                 'group_id'=> $query->group_id,
                 'group_name' => $query->group?->name,
                 'is_active' => $query->is_active,
