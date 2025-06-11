@@ -10,6 +10,7 @@ class Sla extends BaseModel
     protected $table = 'sla';
 
     protected $fillable = [ 
+        'code',
         'state_id',
         'branch_id',
         'start_date',

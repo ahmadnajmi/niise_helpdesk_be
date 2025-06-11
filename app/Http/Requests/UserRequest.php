@@ -28,7 +28,7 @@ class UserRequest extends FormRequest
         return [
             'name' => 'required',
             'nickname' => 'nullable',
-            'ic_no' => 'required|integer',
+            'ic_no' => 'required|string',
             'email' => 'required',
             'phone_no' => 'required',
             'category_office' => 'nullable',
