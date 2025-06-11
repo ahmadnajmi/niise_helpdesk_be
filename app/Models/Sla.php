@@ -36,4 +36,8 @@ class Sla extends BaseModel
     public function group(){
         return $this->hasOne(Group::class,'id','group_id');
     }
+
+     public function category(){
+        return $this->hasOne(Category::class,'id','category_id');
+    }
 }

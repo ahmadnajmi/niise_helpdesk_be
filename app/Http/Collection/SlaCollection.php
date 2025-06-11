@@ -19,6 +19,7 @@ class SlaCollection extends BaseResource
                 'id' => $query->id,
                 'code' => $query->code,
                 'category_id' => $query->category_id,
+                'category_desc' => $query->category->name,
                 'state_id'=> $query->state_id,
                 'state_desc' => $query->stateDescription?->name,
                 'branch_id'=> $query->branch_id,
