@@ -11,6 +11,7 @@ class Sla extends BaseModel
 
     protected $fillable = [ 
         'code',
+        'category_id',
         'state_id',
         'branch_id',
         'start_date',

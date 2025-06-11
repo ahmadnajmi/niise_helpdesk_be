@@ -17,6 +17,8 @@ class SlaCollection extends BaseResource
         return $this->collection->transform(function ($query) use($request){
             $return =  [
                 'id' => $query->id,
+                'code' => $query->code,
+                'category_id' => $query->category_id,
                 'state_id'=> $query->state_id,
                 'state_desc' => $query->stateDescription?->name,
                 'branch_id'=> $query->branch_id,

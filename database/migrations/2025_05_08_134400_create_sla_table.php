@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('sla', function (Blueprint $table) {
             $table->id();
             $table->string('code')->nullable();
+            $table->unsignedBigInteger('category_id')->nullable(); 
             $table->smallInteger('state_id')->nullable();
             $table->unsignedBigInteger('branch_id')->nullable(); 
             $table->date('start_date')->nullable();

@@ -16,6 +16,7 @@ class SlaResources extends JsonResource
     {
          return [
             'id' => $this->id,
+            'category_id' => $this->category_id,
             'code' => $this->code,
             'state_id'=> $this->state_id,
             'state_desc' => $this->stateDescription?->name,
