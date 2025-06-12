@@ -16,8 +16,10 @@ class OperatingTimeCollection extends BaseResource
         return $this->collection->transform(function ($query) use($request){
             $return =  [
                 'id' => $query->id,
-                'day' => $query->day,
-                'day_desc' => $query->dayDescription?->name,
+                'day_start' => $query->day_start,
+                'day_start_desc' => $query->daystartDescription?->name,
+                'day_end' => $query->day_end,
+                'day_end_desc' => $query->dayendDescription?->name,
                 'duration' => $query->duration,
                 'duration_desc' => $query->durationDescription?->name,
                 'operation_start' => $query->operation_start,

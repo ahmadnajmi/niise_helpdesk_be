@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('operating_times', function (Blueprint $table) {
-            $table->id();
-            $table->smallInteger('day')->nullable();
+            $table->id();            
+            $table->unsignedBigInteger('branch_id')->nullable(); 
+            $table->smallInteger('day_start')->nullable();
+            $table->smallInteger('day_end')->nullable();
             $table->smallInteger('duration')->nullable();
             $table->dateTime('operation_start')->nullable();
             $table->dateTime('operation_end')->nullable();

@@ -26,7 +26,9 @@ class OperatingTimeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'day' => 'required',
+            'day_start' => 'required',
+            'day_end' => 'required',
+            'branch_id' => 'required',
             'duration' => 'required',
             'operation_start' => 'required',
             'operation_end' => 'required',

@@ -10,15 +10,25 @@ class OperatingTime extends BaseModel
     protected $table = 'operating_times';
 
     protected $fillable = [ 
-        'day',
+        'day_start',
+        'day_end',
+        'branch_id',
         'duration',
         'operation_start',
         'operation_end',
         'is_active',
     ];
 
-    public function dayDescription(){
-        return $this->hasOne(RefTable::class,'ref_code','day')->where('code_category', 'day');
+    public function branch(){
+        return $this->hasOne(Branch::class,'id','branch_id');
+    }
+
+    public function daystartDescription(){
+        return $this->hasOne(RefTable::class,'ref_code','day_start')->where('code_category', 'day');
+    }
+
+    public function dayendDescription(){
+        return $this->hasOne(RefTable::class,'ref_code','day_end')->where('code_category', 'day');
     }
 
     public function durationDescription(){

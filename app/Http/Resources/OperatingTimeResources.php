@@ -16,8 +16,10 @@ class OperatingTimeResources extends JsonResource
     {
          return [
             'id' => $this->id,
-            'day' => $this->day,
-            'day_desc' => $this->dayDescription?->name,
+            'day_start' => $this->day_start,
+            'day_start_desc' => $this->daystartDescription?->name,
+            'day_end' => $this->day_end,
+            'day_end_desc' => $this->dayendDescription?->name,
             'duration' => $this->duration,
             'duration_desc' => $this->durationDescription?->name,
             'operation_start' => $this->operation_start,
