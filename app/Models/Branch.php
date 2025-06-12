@@ -14,6 +14,9 @@ class Branch extends Model
         'state',
         'category',
         'location',
-
     ];
+
+    public function operatingTime(){
+        return $this->hasMany(OperatingTime::class, 'branch_id','id');
+    }
 }

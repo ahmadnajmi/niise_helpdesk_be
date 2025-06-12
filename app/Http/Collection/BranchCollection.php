@@ -5,6 +5,7 @@ namespace App\Http\Collection;
 use Illuminate\Http\Request;
 use App\Http\Resources\ModuleResources;
 use App\Http\Resources\PermissionResources;
+use App\Http\Resources\OperatingTimeResources;
 
 class BranchCollection extends BaseResource
 {
@@ -23,6 +24,12 @@ class BranchCollection extends BaseResource
                 'state' => $query->state,
                 'location' => $query->location,
             ];
+
+            if($request->route()->getName() == 'operating_time.show' || $request->route()->getName() == 'operating_time.index'){
+                $return['operating_times'] = count($query->operatingTime) > 0 ? new OperatingTimeCollection($query->operatingTime) : [] ;
+
+            }
+
             return $return;
         });
     }                

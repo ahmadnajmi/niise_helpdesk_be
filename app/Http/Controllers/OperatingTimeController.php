@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\OperatingTime;
+use App\Models\Branch;
 use App\Http\Traits\ResponseTrait;
 use App\Http\Collection\OperatingTimeCollection;
+use App\Http\Collection\BranchCollection;
 use App\Http\Resources\OperatingTimeResources;
 use App\Http\Requests\OperatingTimeRequest;
 
@@ -18,9 +20,9 @@ class OperatingTimeController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
         
-        $data =  OperatingTime::paginate($limit);
-
-        return new OperatingTimeCollection($data);
+        $data =  Branch::paginate($limit);
+        
+        return new BranchCollection($data);
     }
 
     public function store(OperatingTimeRequest $request)
