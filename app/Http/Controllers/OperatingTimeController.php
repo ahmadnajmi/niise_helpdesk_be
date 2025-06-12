@@ -9,6 +9,7 @@ use App\Models\Branch;
 use App\Http\Traits\ResponseTrait;
 use App\Http\Collection\OperatingTimeCollection;
 use App\Http\Collection\BranchCollection;
+use App\Http\Resources\BranchResources;
 use App\Http\Resources\OperatingTimeResources;
 use App\Http\Requests\OperatingTimeRequest;
 
@@ -69,5 +70,11 @@ class OperatingTimeController extends Controller
         $operating_time->delete();
 
         return $this->success('Success', null);
+    }
+
+    public function operantingTimeBranch(Branch $branch){
+        $data = new BranchResources($branch);
+
+        return $this->success('Success', $data);
     }
 }

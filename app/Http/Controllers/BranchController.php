@@ -12,8 +12,7 @@ class BranchController extends Controller
 {
     use ResponseTrait;
 
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         $limit = $request->limit ? $request->limit : 15;
 
         $data = Branch::select('id as branch_code','state','name','category','location')->get()->groupBy('state');
@@ -22,8 +21,13 @@ class BranchController extends Controller
         // return new BranchCollection($data);
     }
 
-    public function show(Branch $Branch)
-    {
+    public function show(Branch $Branch){
+        $data = new BranchResources($Branch);
+
+        return $this->success('Success', $data);
+    }
+
+    public function branchOperatingTime(Branch $Branch){
         $data = new BranchResources($Branch);
 
         return $this->success('Success', $data);
