@@ -69,7 +69,7 @@ class UserController extends Controller
 
         $data = UserServices::searchIcNo($request);
 
-        return $this->success('Success', $data);
+        return $this->success($data['message'], $data['data']);
     }
 
 }
