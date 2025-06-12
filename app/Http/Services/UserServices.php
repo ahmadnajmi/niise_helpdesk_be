@@ -6,7 +6,7 @@ use App\Models\User;
 use App\Models\UserGroup;
 use App\Models\UserRole;
 use App\Models\UserGroupAccess;
-use App\Models\Reftable;
+use App\Models\RefTable;
 use App\Http\Resources\UserResources;
 use Faker\Factory as Faker;
 
@@ -136,7 +136,7 @@ class UserServices
             $data['postcode'] = $faker->postcode;
             $data['city'] = $faker->city;
             $data['state_id'] = $faker->numberBetween(1,16);
-            $data['stateDescription'] = Reftable::where('code_category','state')->where('ref_code',$data['state_id'])->first();
+            $data['stateDescription'] = RefTable::where('code_category','state')->where('ref_code',$data['state_id'])->first();
 
             $message = 'Ic Number found in IDM & ADM.You may Proceed';
         }
