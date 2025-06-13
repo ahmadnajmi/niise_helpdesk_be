@@ -9,7 +9,8 @@ class SlaTemplate extends BaseModel
 {
     protected $table = 'sla_template';
 
-    protected $fillable = [ 
+    protected $fillable = [
+        'code',
         'severity_id',
         'service_level',
         'timeframe_channeling',

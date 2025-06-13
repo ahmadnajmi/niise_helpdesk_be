@@ -28,7 +28,7 @@ class GeneralServices
             }
 
             if($code == 'sla_template'){
-                $data['sla_template'] = SlaTemplate::select('id','severity_id','service_level')
+                $data['sla_template'] = SlaTemplate::select('id','code','severity_id','service_level')
                                                     ->with(['severityDescription' => function ($query) {
                                                         $query->select('ref_code','name');
                                                     }])

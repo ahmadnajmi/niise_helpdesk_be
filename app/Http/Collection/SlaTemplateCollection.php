@@ -16,6 +16,7 @@ class SlaTemplateCollection extends BaseResource
         return $this->collection->transform(function ($query) use($request){
             $return =  [
                 'id' => $query->id,
+                'code' => $query->code,
                 'severity_id' => $query->severity_id,
                 'severity_desc' => $query->severityDescription?->name,
                 'service_level' => $query->service_level,

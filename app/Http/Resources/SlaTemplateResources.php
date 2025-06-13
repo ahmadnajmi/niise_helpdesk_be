@@ -16,6 +16,7 @@ class SlaTemplateResources extends JsonResource
     {
          return [
             'id' => $this->id,
+            'code' => $this->code,
             'severity_id' => $this->severity_id,
             'severity_desc' => $this->severityDescription?->name,
             'service_level' => $this->service_level,
