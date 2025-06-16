@@ -9,6 +9,7 @@ use App\Models\UserGroupAccess;
 use App\Models\RefTable;
 use App\Http\Resources\UserResources;
 use Faker\Factory as Faker;
+use Illuminate\Support\Facades\Lang;
 
 class UserServices
 {
@@ -90,10 +91,11 @@ class UserServices
 
     public static function searchIcNo($request){
         $user = User::filter()->first();
-        
+        $var = \Lang::get('directory/index.str1');
+
         if($user){
             $return  = [
-                'message' => 'User already exists in system Helpdesk',
+                'message' => __('user.message.user_exists'),
                 'data' => null,
             ]; 
         }
@@ -138,10 +140,10 @@ class UserServices
             $data['state_id'] = $faker->numberBetween(1,16);
             $data['stateDescription'] = RefTable::where('code_category','state')->where('ref_code',$data['state_id'])->first();
 
-            $message = 'Ic Number found in IDM & ADM.You may Proceed';
+            $message =  __('user.message.user_exists_adm');
         }
         else{
-            $message = 'Ic Number not found in IDM & ADM.You cannot Proceed';
+            $message = __('user.message.user_not_exists');
 
             $data = null;
         }

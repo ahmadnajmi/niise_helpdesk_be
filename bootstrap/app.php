@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\LogRequestResponse;
+use App\Http\Middleware\SetLocaleFromHeader;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -17,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->group('api', [
             SubstituteBindings::class,
             LogRequestResponse::class,
+            SetLocaleFromHeader::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
