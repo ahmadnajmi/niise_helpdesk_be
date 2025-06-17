@@ -25,7 +25,7 @@ class RoleCollection extends BaseResource
                 'is_active' => $query->is_active,
                 'modules' => $query->modules->pluck('module')->unique()->map(fn($module) => $module->translated_name)->values(),
                 'total_permission' => $query->permissions->count(),
-                'total_user' => $query->userRole->count(),
+                'total_user' => $query->users->count(),
                 'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
                 'updated_by' => $query->updatedBy->name .' - '. $query->updatedBy->email ,
                 'created_at' => $query->created_at->format('d-m-Y'),
