@@ -30,13 +30,12 @@ class RoleResources extends JsonResource
         ];
 
         if($request->route()->getName() == 'role.index'){
-            $return['modules'] = $this->modules->pluck('module')->unique()->pluck('name');
+            $return['modules'] =  $this->modules->pluck('module')->unique()->map(fn($module) => $module->translated_name)->values();
             $return['total_permission'] = $this->permissions->count();
             $return['total_user'] = $this->userRole->count();
 
         }
         elseif($request->route()->getName() == 'role.show'){
-
             $return['modules'] = ModuleResources::collection(Module::whereNull('module_id')->get());
             $return['permissions'] = $this->permissions;
             // $return['list_user'] = UserCollection::collection(User::whereIn('id',$user_role)->get());

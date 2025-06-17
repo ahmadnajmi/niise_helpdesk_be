@@ -16,10 +16,14 @@ class Group extends BaseModel
     ];
 
     public function userGroup(){
-        return $this->hasMany(UserGroup::class,'groups_id','id');
+        return $this->hasMany(UserGroup::class,'groups_id');
     }
 
     public function userGroupAccess(){
         return $this->hasMany(UserGroupAccess::class,'groups_id','id');
+    }
+
+    public function users(){
+        return $this->hasManyThrough(User::class, UserGroup::class, 'groups_id', 'id', 'id', 'user_id');
     }
 }

@@ -26,9 +26,8 @@ class GroupResources extends JsonResource
         ];
 
         if($request->route()->getName() != 'user.show'){
-            $return['user_group'] = UserGroupResources::collection($this->UserGroup);
-            $return['user_group_access'] = UserGroupAccessResources::collection($this->userGroupAccess);
-
+            $return['user_group'] = UserGroupResources::collection($this->UserGroup()->whereHas('userDetails')->get());
+            $return['user_group_access'] = UserGroupAccessResources::collection($this->userGroupAccess()->whereHas('userDetails')->get());
         }
 
         return $return;

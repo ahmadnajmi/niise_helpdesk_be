@@ -15,10 +15,10 @@ class UserGroup extends BaseModel
     ];
 
     public function userDetails(){
-        return $this->hasOne(User::class,'id','user_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function groupDetails(){
-        return $this->hasOne(Group::class,'id','groups_id');
+        return $this->belongsTo(Group::class, 'groups_id');
     }
 }

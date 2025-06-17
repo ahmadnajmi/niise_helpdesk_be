@@ -48,7 +48,7 @@ class User extends Authenticatable
     }
 
     public function group(){
-        return $this->hasMany(UserGroup::class,'user_id','id');
+        return $this->hasMany(UserGroup::class,'user_id');
     }
 
     public function groupAccess(){
