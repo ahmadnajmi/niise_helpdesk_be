@@ -32,6 +32,8 @@ class UserCollection extends BaseResource
                 'fax_no' => $query->fax_no,
                 'is_active' => $query->is_active,
                 'role' => User::getUserRole($query->id),
+                'company_id' => $query->company_id,
+                'company_name' => $query->company->name,
                 'created_at' => $query->created_at?->format('d-m-Y'),
                 'updated_at' => $query->updated_at?->format('d-m-Y'),
             ];

@@ -125,10 +125,10 @@ class UserServices
         if(in_array($request->ic_no, $dummy_icno)){
 
             $gender = $faker->randomElement(['male', 'female']);
-            $position = $faker->randomElement(['Pengarah Imigresen Negeri', 'Ketua Pejabat','Pegawai Imigresen (PI)','Timb. Pen Pengarah Imigresen (TPPI) ']);
+            $position = $faker->randomElement(['Pengarah Imigresen Negeri', 'Ketua Pejabat','Pegawai Imigresen (PI)','Timb. Pen Pengarah Imigresen (TPPI)']);
 
             $data['ic_no'] = $request->ic_no;
-            $data['name'] = $faker->name($gender);
+            $data['name'] = self::generateMalayName();
             $data['nickname'] = $faker->userName;
             $data['position'] = $position;
             $data['branch'] = $faker->numberBetween(1,59);
@@ -155,6 +155,27 @@ class UserServices
 
         return $return;
     }
+    
 
+   
+
+    public static function generateMalayName()
+    {
+        $firstNames = [
+            'Ahmad', 'Ali', 'Azman', 'Faizal', 'Hafiz', 'Imran', 'Khairul', 'Najmi', 'Shafiq', 'Zul',
+            'Ismail', 'Syazwan', 'Ridzuan', 'Fikri', 'Nizam', 'Firdaus', 'Zaki', 'Hasbullah', 'Roslan', 'Farid',
+            'Siti', 'Aisyah', 'Nur', 'Fatimah', 'Zulaikha', 'Aina', 'Farah', 'Balqis', 'Syafiqah', 'Nadiah',
+            'Raihan', 'Liyana', 'Maisarah', 'Sabrina', 'Marissa', 'Hanis', 'Diyana', 'Amirah', 'Anis', 'Azura'
+        ];
+
+        $lastNames = [
+            'bin Ahmad', 'bin Ismail', 'bin Hassan', 'bin Omar', 'bin Abdullah', 'bin Rahman', 'bin Yusof', 'bin Ibrahim',
+            'bin Saad', 'bin Karim', 'bin Rosli', 'bin Mahmud', 'bin Latif', 'bin Salleh', 'bin Idris',
+            'binti Ahmad', 'binti Ismail', 'binti Hassan', 'binti Omar', 'binti Abdullah', 'binti Rahman', 'binti Yusof', 'binti Ibrahim',
+            'binti Saad', 'binti Karim', 'binti Rosli', 'binti Mahmud', 'binti Latif', 'binti Salleh', 'binti Idris'
+        ];
+
+        return  $firstNames[array_rand($firstNames)] . ' ' . $lastNames[array_rand($lastNames)];
+    }
      
 }

@@ -7,6 +7,7 @@ use App\Models\Group;
 use App\Models\SlaTemplate;
 use App\Models\Branch;
 use App\Models\User;
+use App\Models\Company;
 
 class GeneralServices
 {
@@ -16,7 +17,7 @@ class GeneralServices
         foreach($request->code as $code){
 
             if($code == 'role'){
-                $data['role'] = Role::select('id','name','name_en')->get();
+                $data['role'] = Role::select('id','name','name_en')->where('name','!=','Pentadbir Helpdesk Sistem (BTMR)')->get();
             }
 
             if($code == 'category'){
@@ -41,6 +42,10 @@ class GeneralServices
 
             if($code == 'user'){
                 $data['user'] = User::select('id','name','nickname')->where('is_active',true)->get();
+            }
+
+            if($code == 'company'){
+                $data['company'] = Company::select('id','name','nickname')->where('is_active',true)->get();
             }
         }
         return $data;

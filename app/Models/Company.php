@@ -12,7 +12,6 @@ class Company extends BaseModel
     protected $fillable = [ 
         'name',
         'nickname',
-        'branch_id',
         'email',
         'phone_no',
         'address',

@@ -20,6 +20,7 @@ class User extends Authenticatable
         'password',
         'position',
         'branch_id',
+        'company_id',
         'email',
         'phone_no',
         'category_office',
@@ -33,6 +34,10 @@ class User extends Authenticatable
 
     public function branch(){
         return $this->hasOne(Branch::class,'id','branch_id');
+    }
+
+    public function company(){
+        return $this->hasOne(Company::class,'id','company_id');
     }
 
     public function roles(){
