@@ -57,6 +57,8 @@ class UserServices
     public static function groupUser($data,$user_id){
 
         if(isset($data['group_user'])){
+            UserGroup::where('user_id',$user_id)->delete();
+
             foreach($data['group_user'] as $group_id){
 
                 $data_group_user['user_id'] = $user_id;
@@ -67,6 +69,8 @@ class UserServices
         }
 
         if(isset($data['group_user_access'])){
+            UserGroupAccess::where('user_id',$user_id)->delete();
+
             foreach($data['group_user_access'] as $access_group_id){
 
                 $data_group_user_access['user_id'] = $user_id;
