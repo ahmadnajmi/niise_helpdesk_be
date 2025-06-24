@@ -27,10 +27,16 @@ class UsersImport implements ToModel
 
         $create = User::create($data);
 
-        $role = Role::inRandomOrder()->first();
+        if(isset($row[6])){
+            $role = $row[6];
+        }
+        else{
+            $role = Role::inRandomOrder()->first();
+            $role =  $role->id;
+        }
 
         $data_userrole['user_id'] = $create->id;
-        $data_userrole['role_id'] = $role->id;
+        $data_userrole['role_id'] = $role;
 
         $create = UserRole::create($data_userrole);
       
