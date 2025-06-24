@@ -17,7 +17,7 @@ class GeneralServices
         foreach($request->code as $code){
 
             if($code == 'role'){
-                $data['role'] = Role::select('id','name','name_en')->where('name','!=','Pentadbir Helpdesk Sistem (BTMR)')->get();
+                $data['role'] = Role::select('id','name','name_en')->get();
             }
 
             if($code == 'category'){
