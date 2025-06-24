@@ -29,7 +29,7 @@ class UserResources extends JsonResource
             'state_id' => $this->state_id,
             'state_desc' => $this->stateDescription?->name,
             'company_id' => $this->company_id,
-            'company_name' => $this->company->name,
+            'company_name' => $this->company?->name,
             'fax_no' => $this->fax_no,
             'is_active' => $this->is_active,
             'role' => $this->id ? $this->getUserRole($this->id) : null,
