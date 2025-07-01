@@ -12,7 +12,9 @@ class BaseModel extends Model implements Auditable
 {
     use \OwenIt\Auditing\Auditable;
 
-    protected $commonFillable = ['created_by', 'updated_by'];
+    // protected $commonFillable = ['created_by', 'updated_by'];
+    protected $commonFillable = [];
+
 
     public function __construct(array $attributes = [])
     {

@@ -50,14 +50,14 @@ class RoleSeeder extends Seeder
                             'dashboard.card.total-reports',
                         ]
                     ],
-                    [
-                        'module' => 'Emel',
-                        'permission' =>[
-                            'email-notification.index',
-                            'email-notification.view',
-                            'email-notification.receive'
-                        ]
-                    ],
+                    // [
+                    //     'module' => 'Emel',
+                    //     'permission' =>[
+                    //         'email-notification.index',
+                    //         'email-notification.view',
+                    //         'email-notification.receive'
+                    //     ]
+                    // ],
                 ]
             ],
             [
@@ -95,14 +95,14 @@ class RoleSeeder extends Seeder
                             'dashboard.index'
                         ]
                     ],
-                    [
-                        'module' => 'Emel',
-                        'permission' =>[
-                            'email-notification.index',
-                            'email-notification.view',
-                            'email-notification.receive'
-                        ]
-                    ],
+                    // [
+                    //     'module' => 'Emel',
+                    //     'permission' =>[
+                    //         'email-notification.index',
+                    //         'email-notification.view',
+                    //         'email-notification.receive'
+                    //     ]
+                    // ],
                 ]
             ],
             [
@@ -139,14 +139,14 @@ class RoleSeeder extends Seeder
                         'module' => 'Halaman Utama',
                         'permission' =>['dashboard.index']
                     ],
-                    [
-                        'module' => 'Emel',
-                        'permission' =>[
-                            'email-notification.index',
-                            'email-notification.view',
-                            'email-notification.receive'
-                        ]
-                    ],
+                    // [
+                    //     'module' => 'Emel',
+                    //     'permission' =>[
+                    //         'email-notification.index',
+                    //         'email-notification.view',
+                    //         'email-notification.receive'
+                    //     ]
+                    // ],
                 ]
             ],
             [
@@ -316,14 +316,14 @@ class RoleSeeder extends Seeder
                         'module' => 'Halaman Utama',
                         'permission' =>['dashboard.index']
                     ],
-                    [
-                        'module' => 'Emel',
-                        'permission' =>[
-                            'email-notification.index',
-                            'email-notification.view',
-                            'email-notification.receive'
-                        ]
-                    ],
+                    // [
+                    //     'module' => 'Emel',
+                    //     'permission' =>[
+                    //         'email-notification.index',
+                    //         'email-notification.view',
+                    //         'email-notification.receive'
+                    //     ]
+                    // ],
                 ]
             ],
             [
@@ -503,14 +503,14 @@ class RoleSeeder extends Seeder
                         'module' => 'Halaman Utama',
                         'permission' =>['dashboard.index']
                     ],
-                    [
-                        'module' => 'Emel',
-                        'permission' =>[
-                            'email-notification.index',
-                            'email-notification.view',
-                            'email-notification.receive'
-                        ]
-                    ],
+                    // [
+                    //     'module' => 'Emel',
+                    //     'permission' =>[
+                    //         'email-notification.index',
+                    //         'email-notification.view',
+                    //         'email-notification.receive'
+                    //     ]
+                    // ],
                 ]
             ],
 
@@ -546,14 +546,14 @@ class RoleSeeder extends Seeder
                         'module' => 'Halaman Utama',
                         'permission' =>['dashboard.index']
                     ],
-                    [
-                        'module' => 'Emel',
-                        'permission' =>[
-                            'email-notification.index',
-                            'email-notification.view',
-                            'email-notification.receive'
-                        ]
-                    ],
+                    // [
+                    //     'module' => 'Emel',
+                    //     'permission' =>[
+                    //         'email-notification.index',
+                    //         'email-notification.view',
+                    //         'email-notification.receive'
+                    //     ]
+                    // ],
                 ]
             ],
         ];
