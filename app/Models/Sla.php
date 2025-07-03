@@ -21,6 +21,38 @@ class Sla extends BaseModel
         'is_active'
     ];
 
+    public function scopeSearch($query, $keyword){
+        if (!empty($keyword)) {
+            $query->where(function($q) use ($keyword) {
+                $q->where('code', 'like', "%$keyword%");
+              
+                $q->orWhereHas('category', function ($search) use ($keyword) {
+                    $search->where('name', 'like', "%$keyword%");
+                });
+
+                $q->orWhereHas('branch', function ($search) use ($keyword) {
+                    $search->where('name', 'like', "%$keyword%");
+                });
+
+                $q->orWhereHas('slaTemplate', function ($search) use ($keyword) {
+                    $search->whereHas('severityDescription', function ($search) use ($keyword) {
+                        $search->where('name','like', "%$keyword%");
+                    });
+                });
+            });
+        }
+        return $query;
+    }
+
+    public function scopeSortByField($query, $fields){
+
+        foreach($fields as $field){
+
+        }
+        
+        return $query;
+    }
+
     public function stateDescription(){
         return $this->hasOne(RefTable::class,'ref_code','state_id')->where('code_category', 'state');
     }

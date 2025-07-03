@@ -17,9 +17,9 @@ class SlaController extends Controller
 
     public function index(Request $request)
     {
-        $limit = $request->limit ? $request->limit : 15;
+        $limit = $request->limit ? $request->limit : 25;
         
-        $data =  Sla::paginate($limit);
+        $data =  Sla::search($request->search)->sortByField($request->sort_by, $request->sort_order)->paginate($limit);
 
         return new SlaCollection($data);
     }
