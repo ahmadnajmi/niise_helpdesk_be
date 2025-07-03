@@ -51,17 +51,19 @@ class Sla extends BaseModel
 
     public function scopeSortByField($query, $fields){
 
-        foreach($fields as $column => $order_by){
-            if($column == 'severity_id'){
-                $query->leftJoin('sla_template', 'sla_template.id', '=', 'sla.sla_template_id')
-                    ->leftJoin('ref_table', 'sla_template.severity_id', '=', 'ref_table.ref_code')->where('ref_table.code_category','severity')
-                    ->orderBy('ref_table.name', $order_by);
+        if(isset($fields)){
+            foreach($fields as $column => $order_by){
+                if($column == 'severity_id'){
+                    $query->leftJoin('sla_template', 'sla_template.id', '=', 'sla.sla_template_id')
+                        ->leftJoin('ref_table', 'sla_template.severity_id', '=', 'ref_table.ref_code')->where('ref_table.code_category','severity')
+                        ->orderBy('ref_table.name', $order_by);
+                }
+                else{
+                    $query->orderBy('sla'.$column,$order_by);
+                }
             }
-            else{
-                $query->orderBy('sla'.$column,$order_by);
-            }
-           
         }
+       
         
         return $query;
     }
