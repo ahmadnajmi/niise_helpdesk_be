@@ -59,7 +59,7 @@ class Sla extends BaseModel
                         ->orderBy('ref_table.name', $order_by);
                 }
                 else{
-                    $query->orderBy('sla'.$column,$order_by);
+                    $query->orderBy('sla.'.$column,$order_by);
                 }
             }
         }
