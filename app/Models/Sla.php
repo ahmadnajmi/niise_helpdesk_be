@@ -21,22 +21,27 @@ class Sla extends BaseModel
         'is_active'
     ];
 
+    protected $casts = [
+        'start_date' => 'datetime:Y-m-d',
+        'end_date' => 'datetime:Y-m-d',
+    ];
+
     public function scopeSearch($query, $keyword){
         if (!empty($keyword)) {
             $query->where(function($q) use ($keyword) {
-                $q->where('code', 'like', "%$keyword%");
+                $q->where('sla.code', 'like', "%$keyword%");
               
                 $q->orWhereHas('category', function ($search) use ($keyword) {
-                    $search->where('name', 'like', "%$keyword%");
+                    $search->where('categories.name', 'like', "%$keyword%");
                 });
 
                 $q->orWhereHas('branch', function ($search) use ($keyword) {
-                    $search->where('name', 'like', "%$keyword%");
+                    $search->where('branch.name', 'like', "%$keyword%");
                 });
 
                 $q->orWhereHas('slaTemplate', function ($search) use ($keyword) {
                     $search->whereHas('severityDescription', function ($search) use ($keyword) {
-                        $search->where('name','like', "%$keyword%");
+                        $search->where('ref_table.name','like', "%$keyword%");
                     });
                 });
             });
@@ -46,8 +51,16 @@ class Sla extends BaseModel
 
     public function scopeSortByField($query, $fields){
 
-        foreach($fields as $field){
-
+        foreach($fields as $column => $order_by){
+            if($column == 'severity_id'){
+                $query->leftJoin('sla_template', 'sla_template.id', '=', 'sla.sla_template_id')
+                    ->leftJoin('ref_table', 'sla_template.severity_id', '=', 'ref_table.ref_code')->where('ref_table.code_category','severity')
+                    ->orderBy('ref_table.name', $order_by);
+            }
+            else{
+                $query->orderBy('sla'.$column,$order_by);
+            }
+           
         }
         
         return $query;

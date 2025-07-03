@@ -19,7 +19,7 @@ class SlaController extends Controller
     {
         $limit = $request->limit ? $request->limit : 25;
         
-        $data =  Sla::search($request->search)->sortByField($request->sort_by, $request->sort_order)->paginate($limit);
+        $data =  Sla::select('sla.*')->search($request->search)->sortByField($request->sort_by)->paginate($limit);
 
         return new SlaCollection($data);
     }
