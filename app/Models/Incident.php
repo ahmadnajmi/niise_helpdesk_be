@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Models;
+
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
+
+class Incident extends BaseModel
+{
+    protected $table = 'incidents';
+
+    protected $fillable = [ 
+        'incident_no',
+        'code_sla',
+        'incident_date',
+        'branch_id',
+        'category_id',
+        'complaint_id',
+        'information',
+        'knowledge_base_id',
+        'received_via',
+        'report_no',
+        'incident_asset_type',
+        'date_asset_loss',
+        'date_report_police',
+        'report_police_no',
+        'asset_siri_no',
+        'group_id',
+        'operation_user_id',
+        'appendix_file',
+        'end_date'
+    ];
+
+    protected $casts = [
+        'incident_date' => 'datetime:Y-m-d',
+        'date_asset_loss' => 'datetime:Y-m-d',
+        'date_report_police' => 'datetime:Y-m-d',
+        'end_date' => 'datetime:Y-m-d',
+    ];
+
+    public function receviedViaDescription(){
+        return $this->hasOne(RefTable::class,'ref_code','received_via')->where('code_category', 'received_via');
+    }
+
+    public function incidentAssetTypeDescription(){
+        return $this->hasOne(RefTable::class,'ref_code','incident_asset_type')->where('code_category', 'incident_asset_type');
+    }
+
+    public function complaint(){
+        return $this->hasOne(Complaint::class,'id','complaint_id');
+    }
+
+     public function sla(){
+        return $this->hasOne(Sla::class,'code','code_sla');
+    }
+}
