@@ -13,18 +13,28 @@ class SlaServices
         $sla_id = [];
 
         foreach($data['sla_category'] as $sla_category){
-
-            $data['category_id'] = $sla_category;
-            $data['code'] = self::generateCode($sla_category);
-
-            $create = Sla::create($data);
             
-            $sla_id = $create->id;
+            $check_sla = Sla::where('category_id',$sla_category)->where('branch_id',$data['branch_id'])->exists();
+
+            if(!$check_sla){
+                $data['category_id'] = $sla_category;
+                $data['code'] = self::generateCode($sla_category);
+
+                $create = Sla::create($data);
+                
+                $sla_id[] = $create->id;
+            }
         }
 
-        // $data = self::slaCategory($data,$sla_id);
-
-        $return = new SlaResources($create);
+        if(count($sla_id) > 0){
+            $return = new SlaResources($create);
+        } 
+        else{
+            $return  = [
+                'message' => __('sla.message.sla_exists'),
+                'data' => null,
+            ]; 
+        }
 
         return $return;
     }
