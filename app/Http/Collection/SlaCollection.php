@@ -27,7 +27,7 @@ class SlaCollection extends BaseResource
                 'start_date'=> $query->start_date->format('Y-m-d'),
                 'end_date'=> $query->end_date->format('Y-m-d'),
                 'sla_template_id'=> $query->sla_template_id,
-                'sla_template_details' => new SlaTemplateResources($query->slaTemplate),
+                'sla_template_details' => $query->slaTemplate ? new SlaTemplateResources($query->slaTemplate) : null,
                 'group_id'=> $query->group_id,
                 'group_name' => $query->group?->name,
                 'is_active' => $query->is_active,
