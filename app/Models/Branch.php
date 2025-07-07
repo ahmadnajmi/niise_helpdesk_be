@@ -11,12 +11,16 @@ class Branch extends Model
 
     protected $fillable = [
         'name',
-        'state',
+        'state_id',
         'category',
         'location',
     ];
 
     public function operatingTime(){
         return $this->hasMany(OperatingTime::class, 'branch_id','id');
+    }
+
+    public function stateDescription(){
+        return $this->hasOne(RefTable::class,'ref_code','state_id')->where('code_category', 'state');
     }
 }

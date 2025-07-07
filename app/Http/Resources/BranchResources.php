@@ -19,7 +19,8 @@ class BranchResources extends JsonResource
             'branch_code' => $this->id,
             'name' => $this->name,
             'category' => $this->category,
-            'state' => $this->state,
+            'state_id' => $this->state_id,
+            'state' => $this->stateDescription?->name,
             'location' => $this->location,
             'operating_times' =>  new OperatingTimeCollection($this->operatingTime)
         ];

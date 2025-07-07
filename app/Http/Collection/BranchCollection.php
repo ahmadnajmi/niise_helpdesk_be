@@ -21,8 +21,10 @@ class BranchCollection extends BaseResource
                 'id' => $query->id,
                 'name' => $query->name,
                 'category' => $query->category,
-                'state' => $query->state,
+                'state_id' => $query->state_id,
+                'state' => $query->stateDescription?->name,
                 'location' => $query->location,
+                
             ];
 
             if($request->route()->getName() == 'operating_time.show' || $request->route()->getName() == 'operating_time.index'){

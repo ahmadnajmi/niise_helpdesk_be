@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable(); 
             $table->string('category')->nullable(); 
-            $table->string('state')->nullable(); 
+            $table->smallInteger('state_id')->nullable();
             $table->string('location')->nullable(); 
 
             $table->timestamps();

@@ -15,7 +15,9 @@ class BranchController extends Controller
     public function index(Request $request){
         $limit = $request->limit ? $request->limit : 15;
 
-        $data = Branch::select('id as branch_code','state','name','category','location')->get()->groupBy('state');
+        $data = Branch::select('id as branch_code','state_id','name','category','location')->get()->groupBy(function($item) {
+                            return $item->state_id ? $item->stateDescription->name_en : 'Unknown State';
+                        });;
 
         return $this->success('Success', $data);
         // return new BranchCollection($data);
