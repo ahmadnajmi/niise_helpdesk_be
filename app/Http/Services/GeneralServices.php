@@ -25,7 +25,7 @@ class GeneralServices
             }
 
             if($code == 'branch'){
-                $data['branch'] = Branch::select('id','name','category','state')->get();
+                $data['branch'] = Branch::select('id','name','category','state_id')->get();
             }
 
             if($code == 'sla_template'){
