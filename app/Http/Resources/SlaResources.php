@@ -29,6 +29,8 @@ class SlaResources extends JsonResource
             'group_id'=> $this->group_id,
             'group_name' => $this->group?->name,
             'is_active' => $this->is_active == 1,
+            'loaner' => $this->loaner,
+            'penalty' => $this->penalty,
             'created_at' => $this->created_at->format('d-m-Y'),
             'updated_at' => $this->updated_at->format('d-m-Y'),
             'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,

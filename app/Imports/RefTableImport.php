@@ -13,7 +13,13 @@ class RefTableImport implements ToModel
         $data['code_category']  = $row[0];
         $data['ref_code']  = $row[1];
         $data['name_en']    = $row[2];
-        $data['name'] = $row[2];
+        $data['name'] = $row[3];
+
+        if(isset($row[4]) && isset($row[5])){
+            $get_ref_table = RefTable::where('code_category',$row[4])->where('name_en',$row[5])->first();
+
+            $data['ref_table_id'] = $get_ref_table?->ref_code;
+        }
 
         $create = RefTable::create($data);
       

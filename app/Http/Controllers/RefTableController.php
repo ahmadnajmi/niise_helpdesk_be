@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Traits\ResponseTrait;
 use App\Http\Collection\RefTableCollection;
-use App\Http\Resources\RefTableResources;
-
+use App\Http\Services\RefTableServices;
 use App\Http\Requests\RefTableRequest;
 use App\Models\RefTable;
 
@@ -36,10 +35,8 @@ class RefTableController extends Controller
         try {
             $data = $request->all();
 
-            $create = RefTable::create($data);
+            $data = RefTableServices::create($data);
            
-            $data = new RefTableResources($create);
-
             return $this->success('Success', $data);
           
         } catch (\Throwable $th) {
@@ -59,11 +56,9 @@ class RefTableController extends Controller
         try {
             $data = $request->all();
 
-            $update = $ref_table->update($data);
+            $return = RefTableServices::update($data);
 
-            $data = new RefTableResources($ref_table);
-
-            return $this->success('Success', $data);
+            return $this->success('Success', $return);
           
         } catch (\Throwable $th) {
             return $this->error($th->getMessage());

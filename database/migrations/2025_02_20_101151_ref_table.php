@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('ref_table', function (Blueprint $table) {
             $table->id();
             $table->string('code_category')->nullable();
+            $table->unsignedBigInteger('ref_table_id')->nullable();
             $table->string('ref_code')->nullable();
             $table->string('name')->nullable();
             $table->string('name_en')->nullable();

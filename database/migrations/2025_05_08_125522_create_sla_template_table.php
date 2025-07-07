@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code',50)->nullable();
             $table->smallInteger('severity_id');
-            $table->smallInteger('service_level');
+            $table->string('service_level',50)->nullable();
             $table->string('timeframe_channeling')->nullable();
             $table->string('timeframe_channeling_type')->nullable();
             $table->string('timeframe_incident')->nullable();
