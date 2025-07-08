@@ -14,7 +14,7 @@ class RefTable extends BaseModel
         'ref_code',
         'name_en',
         'name',
-        'ref_table_id',
+        'ref_code_parent',
     ];
 
     public function scopeFilter($query){

@@ -56,7 +56,7 @@ class RefTableController extends Controller
         try {
             $data = $request->all();
 
-            $return = RefTableServices::update($data);
+            $return = RefTableServices::update($ref_table,$data);
 
             return $this->success('Success', $return);
           

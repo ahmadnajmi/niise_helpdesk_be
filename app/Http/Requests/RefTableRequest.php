@@ -30,7 +30,7 @@ class RefTableRequest extends FormRequest
             'ref_code' => 'nullable',
             'name_en' => 'nullable',
             'name' => 'nullable',
-            'ref_table_id' => 'nullable'
+            'ref_code_parent' => 'nullable'
         ];
     }
 
