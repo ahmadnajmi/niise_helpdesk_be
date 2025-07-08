@@ -33,6 +33,7 @@ class SlaRequest extends FormRequest
             'sla_template_id'=> 'required',
             'penalty_id'=> 'nullable',
             'loaner'=> 'nullable',
+            'loaner_type' => 'nullable',
             'group_id'=> 'nullable',
             'is_active' => 'nullable',
             'sla_category' => 'nullable|array'

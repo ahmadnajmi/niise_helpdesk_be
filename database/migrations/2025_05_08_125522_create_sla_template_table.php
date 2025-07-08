@@ -17,15 +17,15 @@ return new class extends Migration
             $table->smallInteger('severity_id');
             $table->string('service_level',50)->nullable();
             $table->string('timeframe_channeling')->nullable();
-            $table->string('timeframe_channeling_type')->nullable();
+            $table->smallInteger('timeframe_channeling_type')->nullable();
             $table->string('timeframe_incident')->nullable();
-            $table->string('timeframe_incident_type')->nullable();
+            $table->smallInteger('timeframe_incident_type')->nullable();
             $table->string('response_time_reply')->nullable();
-            $table->string('response_time_reply_type')->nullable();
+            $table->smallInteger('response_time_reply_type')->nullable();
             $table->string('timeframe_solution')->nullable();
-            $table->string('timeframe_solution_type')->nullable();
+            $table->smallInteger('timeframe_solution_type')->nullable();
             $table->string('response_time_location')->nullable();
-            $table->string('response_time_location_type')->nullable();
+            $table->smallInteger('response_time_location_type')->nullable();
             $table->string('notes')->nullable();
 
             $table->log();
