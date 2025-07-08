@@ -22,7 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('sla_template_id')->nullable(); 
             $table->unsignedBigInteger('group_id')->nullable(); 
             $table->string('loaner',100)->nullable(); 
-            $table->smallInteger('penalty')->nullable(); 
+            $table->smallInteger('penalty_id')->nullable(); 
             $table->boolean('is_active')->default(true);
             $table->log();
         });

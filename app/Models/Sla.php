@@ -19,7 +19,7 @@ class Sla extends BaseModel
         'sla_template_id',
         'group_id',
         'loaner',
-        'penalty',
+        'penalty_id',
         'is_active'
     ];
 
@@ -91,6 +91,6 @@ class Sla extends BaseModel
     }
 
     public function penaltyDescription(){
-        return $this->hasOne(RefTable::class,'ref_code','penalty')->where('code_category', 'penalty_price');
+        return $this->hasOne(RefTable::class,'ref_code','penalty_id')->where('code_category', 'penalty_price');
     }
 }
