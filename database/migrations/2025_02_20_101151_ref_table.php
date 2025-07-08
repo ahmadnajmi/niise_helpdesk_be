@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code_category')->nullable();
             $table->unsignedBigInteger('ref_code_parent')->nullable();
-            $table->string('ref_code')->nullable();
+            $table->smallInteger('ref_code')->nullable();
             $table->string('name')->nullable();
             $table->string('name_en')->nullable();
             $table->log();
