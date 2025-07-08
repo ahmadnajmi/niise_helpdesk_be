@@ -90,7 +90,10 @@ class User extends Authenticatable
     public static  function getUserDetails(){
         $data = self::select('id','name','position','branch_id','email','phone_no','category_office')
                     ->with(['branch' => function ($query) {
-                        $query->select('id', 'name','state','location');
+                        $query->select('id', 'name','state_id','location')
+                            ->with(['stateDescription' => function ($query) {
+                                $query->select('ref_code', 'name','name_en');
+                            }]);
                     }])
                     ->where('id',Auth::user()->id)
                     ->first();
