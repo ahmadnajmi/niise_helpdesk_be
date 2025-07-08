@@ -8,6 +8,7 @@ use App\Models\SlaTemplate;
 use App\Models\Branch;
 use App\Models\User;
 use App\Models\Company;
+use App\Models\Complaint;
 
 class GeneralServices
 {
@@ -61,6 +62,10 @@ class GeneralServices
 
             if($code == 'company'){
                 $data['company'] = Company::select('id','name','nickname')->where('is_active',true)->get();
+            }
+
+            if($code == 'complaint'){
+                $data['complaint'] = Complaint::select('id','name','email')->get();
             }
         }
         return $data;
