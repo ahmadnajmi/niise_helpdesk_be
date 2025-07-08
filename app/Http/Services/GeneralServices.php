@@ -29,9 +29,24 @@ class GeneralServices
             }
 
             if($code == 'sla_template'){
-                $data['sla_template'] = SlaTemplate::select('id','code','severity_id','service_level','timeframe_channeling','timeframe_incident','response_time_reply','timeframe_solution','response_time_location')
+                $data['sla_template'] = SlaTemplate::select('id','code','severity_id','service_level','timeframe_channeling','timeframe_channeling_type','timeframe_incident','timeframe_incident_type','response_time_reply','response_time_reply_type','timeframe_solution','timeframe_solution_type','response_time_location','response_time_location_type')
                                                     ->with(['severityDescription' => function ($query) {
-                                                        $query->select('ref_code','name');
+                                                        $query->select('ref_code','name','name_en');
+                                                    }])
+                                                    ->with(['channelingTypeDescription' => function ($query) {
+                                                        $query->select('ref_code','name','name_en');
+                                                    }])
+                                                    ->with(['incidentTypeDescription' => function ($query) {
+                                                        $query->select('ref_code','name','name_en');
+                                                    }])
+                                                    ->with(['replyTypeDescription' => function ($query) {
+                                                        $query->select('ref_code','name','name_en');
+                                                    }])
+                                                    ->with(['locationTypeDescription' => function ($query) {
+                                                        $query->select('ref_code','name','name_en');
+                                                    }])
+                                                    ->with(['solutionTypeDescription' => function ($query) {
+                                                        $query->select('ref_code','name','name_en');
                                                     }])
                                                     ->get();
             }
