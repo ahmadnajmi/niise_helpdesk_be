@@ -57,7 +57,15 @@ class GeneralServices
             }
 
             if($code == 'user'){
-                $data['user'] = User::select('id','name','nickname')->where('is_active',true)->get();
+                $data['user'] = User::select('id','name','nickname')
+                                    ->when($request->group_id, function ($query) use ($request) {
+                                        return $query->whereHas('group', function ($query)use($request) {
+                                            $query->where('groups_id',$request->group_id); 
+                                        });
+                                    })
+                                    ->where('is_active',true)
+                                    ->orderBy('name','asc')
+                                    ->get();
             }
 
             if($code == 'company'){
