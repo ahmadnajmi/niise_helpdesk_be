@@ -31,7 +31,7 @@ class RefTableServices
     public static function generateRefCode($data){
 
         $old_id = 0;
-        $get_code = RefTable::select('ref_code')->where('code_category',$data['code_category'])->first();
+        $get_code = RefTable::select('ref_code')->where('code_category',$data['code_category'])->orderBy('ref_code','desc')->first();
 
         if($get_code){
             $old_id = $get_code->ref_code;
