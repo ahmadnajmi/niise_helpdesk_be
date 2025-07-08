@@ -7,6 +7,7 @@ use App\Http\Traits\ResponseTrait;
 use App\Http\Collection\RefTableCollection;
 use App\Http\Services\RefTableServices;
 use App\Http\Requests\RefTableRequest;
+use App\Http\Resources\RefTableResources;
 use App\Models\RefTable;
 
 class RefTableController extends Controller
