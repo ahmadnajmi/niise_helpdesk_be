@@ -28,9 +28,12 @@ class RefTable extends BaseModel
                 $query->where('code_category', $codeCategory);
             }
         }
-
-      
-
         return $query;
+    }
+
+    public function getParentDesc($code_category,$refcode){
+        $query = RefTable::where('code_category',$code_category)->where('ref_code',$refcode)->first();
+
+        return $query?->name_en;
     }
 }
