@@ -61,4 +61,33 @@ trait ResponseTrait {
         return response()->json($response, $status);
     }
 
+    // protected function generalResponse(string $message, $data = [], int $status = 200) {
+    protected function generalResponse($response) {
+
+        if($response['status_code'] == 200){
+            $response['status'] = true;
+        }
+        else{
+            $response['status'] = false;
+
+            if (!empty($data)) {
+                $response['data'] = $data;
+
+                if($response['status_code'] == 500){
+                    $formattedErrors = array_map(function ($error) {
+                        if (is_array($error) && isset($error['name']) && isset($error['message'])) {
+                            return $error;
+                        }
+                    throw new InvalidArgumentException('Each error must have "name" and "message" keys.');
+                    }, $errors);
+
+                    $response['errors'] = $formattedErrors;
+                }
+            }
+        }
+
+        return response()->json($response, $response['status_code']);
+
+    }
+
 }

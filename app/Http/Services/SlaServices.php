@@ -27,14 +27,21 @@ class SlaServices
         }
 
         if(count($sla_id) > 0){
-            $return = new SlaResources($create);
+            $data = new SlaResources($create);
+            $message = 'Success';
+            $code = 200;
         } 
         else{
-            $return  = [
-                'message' => __('sla.message.sla_exists'),
-                'data' => null,
-            ]; 
-        }
+            $message =  __('sla.message.sla_exists');
+            $data = null;
+            $code = 500;
+        }   
+
+        $return  = [
+            'status_code' => $code,
+            'message' => $message,
+            'data' => $data,
+        ]; 
 
         return $return;
     }
@@ -43,10 +50,12 @@ class SlaServices
 
         $update = $sla->update($data);
 
-        // $data = self::slaCategory($data,$sla->id);
-
         $return = new SlaResources($sla);
 
+        $return  = [
+            'message' => 'Success',
+            'data' => $data,
+        ]; 
 
         return $return;
     }

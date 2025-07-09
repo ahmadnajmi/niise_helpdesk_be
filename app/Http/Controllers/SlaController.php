@@ -26,16 +26,16 @@ class SlaController extends Controller
 
     public function store(SlaRequest $request)
     {
-        try {
+        // try {
             $data = $request->all();
 
             $data = SlaServices::create($data);
            
-            return $this->success('Success', $data);
+            return $this->generalResponse($data);
           
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        // } catch (\Throwable $th) {
+        //     return $this->error($th->getMessage());
+        // }
     }
 
     public function show(Sla $sla)
@@ -52,8 +52,7 @@ class SlaController extends Controller
 
             $data = SlaServices::update($sla,$data);
 
-            return $this->success('Success', $data);
-          
+            return $this->generalResponse($data);
         } catch (\Throwable $th) {
             return $this->error($th->getMessage());
         }
