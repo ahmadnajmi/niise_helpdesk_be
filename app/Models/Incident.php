@@ -50,7 +50,11 @@ class Incident extends BaseModel
         return $this->hasOne(Complaint::class,'id','complaint_id');
     }
 
-     public function sla(){
+    public function sla(){
         return $this->hasOne(Sla::class,'code','code_sla');
+    }
+
+    public function incidentSolution(){
+        return $this->hasMany(IncidentSolution::class, 'incident_id','id');
     }
 }
