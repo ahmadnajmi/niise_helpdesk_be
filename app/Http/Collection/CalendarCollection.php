@@ -22,7 +22,7 @@ class CalendarCollection extends BaseResource
                 'start_date' => $query->start_date,
                 'end_date' => $query->end_date,
                 'state_id' => $query->state_id,
-                'state_desc' => $query->stateDescription?->name,
+                'state_desc' => $query->state_id == 0 ? 'Semua Negeri' : $query->stateDescription?->name,
                 'description' => $query->description,
                 'is_active' => $query->is_active,
                 'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,

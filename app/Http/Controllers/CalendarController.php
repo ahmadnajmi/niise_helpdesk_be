@@ -8,6 +8,7 @@ use App\Http\Traits\ResponseTrait;
 use App\Http\Collection\CalendarCollection;
 use App\Http\Resources\CalendarResources;
 use App\Http\Requests\CalendarRequest;
+use App\Http\Services\CalenderServices;
 
 class CalendarController extends Controller
 {
@@ -24,18 +25,16 @@ class CalendarController extends Controller
 
     public function store(CalendarRequest $request)
     {
-        try {
+        // try {
             $data = $request->all();
 
-            $create = Calendar::create($data);
+            $data = CalenderServices::create($data);
            
-            $data = new CalendarResources($create);
-
             return $this->success('Success', $data);
           
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        // } catch (\Throwable $th) {
+        //     return $this->error($th->getMessage());
+        // }
     }
 
     public function show(Calendar $calendar)
@@ -50,9 +49,7 @@ class CalendarController extends Controller
         try {
             $data = $request->all();
 
-            $update = $calendar->update($data);
-
-            $data = new CalendarResources($calendar);
+            $data = CalenderServices::update($calendar,$data);
 
             return $this->success('Success', $data);
           
@@ -63,7 +60,7 @@ class CalendarController extends Controller
 
     public function destroy(Calendar $calendar)
     {
-        $calendar->delete();
+        $data = CalenderServices::delete($calendar);
 
         return $this->success('Success', null);
     }

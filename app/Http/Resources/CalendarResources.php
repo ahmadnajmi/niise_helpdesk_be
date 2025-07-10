@@ -20,7 +20,7 @@ class CalendarResources extends JsonResource
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'state_id' => $this->state_id,
-            'state_desc' => $this->stateDescription?->name,
+            'state_desc' => $this->state_id == 0 ? 'Semua Negeri' : $this->stateDescription?->name,
             'description' => $this->description,
             'is_active' => $this->is_active,
             'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
