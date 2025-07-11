@@ -21,8 +21,20 @@ class Calendar extends BaseModel
     }
 
     public function getStateDesc($state_id){
-        $data = RefTable::where('code_category','state')->whereIn('ref_code',json_decode($state_id))->pluck('name');
+        $state_ids = json_decode($state_id, true);  
 
-        return $data;
+        if (is_array($state_ids) && in_array(0, $state_ids)) {
+            return 'Semua Negeri';
+        }
+
+        $data = RefTable::where('code_category', 'state')
+                        ->whereIn('ref_code', $state_ids)
+                        ->pluck('name', 'ref_code');  
+
+        $ordered = collect($state_ids)->map(function($id) use ($data) {
+            return $data[$id] ?? null;
+        })->filter()->values(); 
+        
+        return $ordered;
     }
 }

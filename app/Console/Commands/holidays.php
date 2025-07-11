@@ -31,11 +31,11 @@ class holidays extends Command
     {
         $year = $this->argument('year');
         
-        // DB::table('calendars')->truncate();
+        DB::table('calendars')->truncate();
     
-        // DB::statement("ALTER SEQUENCE CALENDARS_ID_SEQ RESTART START WITH 1");
+        DB::statement("ALTER SEQUENCE CALENDARS_ID_SEQ RESTART START WITH 1");
 
-        // Calendar::truncate();
+        Calendar::truncate();
         try {
             $holiday = new MalaysiaHoliday;
             $result = $holiday->fromState(MalaysiaHoliday::$region_array,$year)->get();
@@ -89,6 +89,18 @@ class holidays extends Command
                     }
                 }
             }
+
+            $calendars = Calendar::whereNotNull('state_id')->get()->filter(function ($calendar) {
+                $state_ids = json_decode($calendar->state_id, true);
+                return is_array($state_ids) && count($state_ids) === 16;
+            });
+
+            foreach($calendars as $calendar){
+                $calendar->update(['state_id' => json_encode([0]) ]);
+            }
+
+           
+
         } 
         catch (Exception $e) {
             
