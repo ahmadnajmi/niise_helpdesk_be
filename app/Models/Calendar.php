@@ -19,4 +19,10 @@ class Calendar extends BaseModel
     public function stateDescription(){
         return $this->hasOne(RefTable::class,'ref_code','state_id')->where('code_category', 'state');
     }
+
+    public function getStateDesc($state_id){
+        $data = RefTable::where('code_category','state')->whereIn('ref_code',json_decode($state_id))->pluck('name');
+
+        return $data;
+    }
 }

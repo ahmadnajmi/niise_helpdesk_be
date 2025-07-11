@@ -28,7 +28,7 @@ class CalendarRequest extends FormRequest
             'name' => 'required',
             'start_date' => 'date',
             'end_date' => 'date',
-            'state_id' => 'required',
+            'state_id' => 'required|array',
             'is_active' => 'nullable'
         ];
     }

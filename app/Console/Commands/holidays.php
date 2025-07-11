@@ -56,17 +56,34 @@ class holidays extends Command
 
                     // if(!$get_state) dd($get_state,$states['regional']);
 
-                    $data_calendar['state_id'] = $get_state->ref_code;
 
                     foreach($states['collection'] as $year){
 
                         foreach($year['data'] as $year){
-                            $data_calendar['name'] = $year['name'];
-                            $data_calendar['start_date'] = $year['date'];
-                            $data_calendar['end_date'] = $year['date'];
-                            $data_calendar['description'] = $year['description'];
+        
+                            $get_calendar = Calendar::where('name',$year['name'])->where('start_date',$year['date'])->first();
 
-                            $create = Calendar::create($data_calendar);
+                            if($get_calendar){
+                                $old_state = json_decode($get_calendar->state_id, true) ?? [];
+
+                                $old_state[] = $get_state->ref_code;
+
+                                $old_state = array_unique($old_state);
+
+                                $get_calendar->update(['state_id' => json_encode($old_state)]);
+
+                            }
+                            else{
+                                $data_calendar['name'] = $year['name'];
+                                $data_calendar['start_date'] = $year['date'];
+                                $data_calendar['end_date'] = $year['date'];
+                                $data_calendar['description'] = $year['description'];
+                                $data_calendar['state_id'] = json_encode([$get_state->ref_code]);
+
+                                $create = Calendar::create($data_calendar);
+                            }
+
+                            
                         }
 
                     }
