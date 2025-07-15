@@ -17,8 +17,7 @@ class OperatingTimeController extends Controller
 {
     use ResponseTrait;
 
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         $limit = $request->limit ? $request->limit : 15;
         
         $data =  Branch::paginate($limit);
@@ -26,8 +25,7 @@ class OperatingTimeController extends Controller
         return new BranchCollection($data);
     }
 
-    public function store(OperatingTimeRequest $request)
-    {
+    public function store(OperatingTimeRequest $request){
         try {
             $data = $request->all();
 
@@ -42,15 +40,13 @@ class OperatingTimeController extends Controller
         }
     }
 
-    public function show(OperatingTime $operating_time)
-    {
+    public function show(OperatingTime $operating_time){
         $data = new OperatingTimeResources($operating_time);
 
         return $this->success('Success', $data);
     }
 
-    public function update(OperatingTimeRequest $request, OperatingTime $operating_time)
-    {
+    public function update(OperatingTimeRequest $request, OperatingTime $operating_time){
         try {
             $data = $request->all();
 
@@ -65,16 +61,23 @@ class OperatingTimeController extends Controller
         }
     }
 
-    public function destroy(OperatingTime $operating_time)
-    {
+    public function destroy(OperatingTime $operating_time){
         $operating_time->delete();
 
         return $this->success('Success', null);
     }
 
-    public function operantingTimeBranch(Branch $branch){
-        $data = new BranchResources($branch);
+    public function operantingTimeBranch(Request $request,$branch_id){
+        $limit = $request->limit ? $request->limit : 15;
 
-        return $this->success('Success', $data);
+        $operating_time = OperatingTime::where('branch_id',$branch_id)->paginate($limit);
+
+        return new OperatingTimeCollection($operating_time);
+    }
+
+    public function operantingTimeBranchDelete($branch_id){
+        OperatingTime::where('branch_id',$branch_id)->delete();
+
+        return $this->success('Success', null);
     }
 }
