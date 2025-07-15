@@ -20,7 +20,10 @@ class OperatingTimeController extends Controller
     public function index(Request $request){
         $limit = $request->limit ? $request->limit : 15;
         
-        $data =  Branch::paginate($limit);
+        $data =  Branch::when($request->branch_id, function ($query) use ($request) {
+                            return $query->where('id',$request->branch_id); 
+                        })
+                        ->paginate($limit);
         
         return new BranchCollection($data);
     }
