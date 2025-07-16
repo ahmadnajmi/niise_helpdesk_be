@@ -25,7 +25,7 @@ class AuditController extends Controller
 
     public function show($id)
     {
-        $data = Audit::find($id);
+        $data = Audit::with('user')->find($id);
 
         // $data = new BranchResources($Branch);
 
