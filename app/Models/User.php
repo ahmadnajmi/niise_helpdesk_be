@@ -109,4 +109,8 @@ class User extends Authenticatable
 
         return $get_role;
     }
+
+    public function getMaskedIcAttribute(){
+        return str_repeat('*', strlen($this->ic_no) - 4) . substr($this->ic_no, -4);
+    }
 }

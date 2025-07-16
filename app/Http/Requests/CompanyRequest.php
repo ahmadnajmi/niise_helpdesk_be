@@ -28,8 +28,8 @@ class CompanyRequest extends FormRequest
         return [
             'name' => 'required',
             'nickname' => 'nullable',
-            'email' => 'required',
-            'phone_no' => 'required',
+            'email' => 'nullable',
+            'phone_no' => 'nullable',
             'category_office' => 'nullable',
             'position' => 'nullable',
             'is_active' => 'nullable',
