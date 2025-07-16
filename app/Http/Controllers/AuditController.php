@@ -16,7 +16,7 @@ class AuditController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
 
-        $data =  Audit::latest()->paginate($limit);
+        $data =  Audit::with('user')->latest()->paginate($limit);
 
         // return new UserCollection($data);
 
