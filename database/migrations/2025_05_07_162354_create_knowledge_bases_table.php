@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('knowledge_bases', function (Blueprint $table) {
             $table->id();
             $table->smallInteger('category_id')->nullable();
-            $table->string('explanation')->nullable();
+            $table->string('explanation',1000)->nullable();
             $table->string('keywords')->nullable();
-            $table->string('solution')->nullable();
+            $table->string('solution',1000)->nullable();
             $table->log();
         });
     }

@@ -17,7 +17,7 @@ class UserCollection extends BaseResource
         return $this->collection->transform(function ($query) use($request){
             $return  = [
                 'id' => $query->id,
-                'ic_no' => $query->masked_ic,
+                'ic_no' => $query->ic_no,
                 'name' => $query->name,
                 'nickname'  =>$query->nickname,
                 'position' => $query->position,

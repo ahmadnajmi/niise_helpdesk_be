@@ -113,26 +113,65 @@ class UserServices
     public static function checkSystemIDM($request){ 
         $faker = Faker::create('ms_My');
 
-        $dummy_icno = [
-            '900101141234', '880202052345', '920303013456', '850404104567', '930505085678',
-            '810606036789', '870707127890', '950808068901', '960909029012', '970101090123',
-            '890202071235', '910303132346', '820404043457', '840505114568', '860606155679',
-            '980707176780', '991212167891', '930909108902', '900808019013', '920101050124',
-            '881010141236', '910911022347', '970707033458', '850505074569', '860909135670',
-            '940101086781', '980202097892', '951010128903', '990101069014', '930505040125',
-            '901212101237', '920404152348', '960303053459', '870707064560', '880808115671',
-            '891010036782', '950505097893', '981212018904', '960707079015', '911212080126',
-            '890101131238', '900202022349', '940303063450', '870404144561', '920505125672',
-            '980606046783', '991010107894', '951212078905', '970202019016', '850101050127'
+        $dummy_users = [
+            '900101141234' => 'Ahmad Najmi Bin Hassan',
+            '880202052345' => 'Tan Wei Jie',
+            '920303013456' => 'Siti Nur Aisyah Binti Rahman',
+            '850404104567' => 'Rajesh Kumar',
+            '930505085678' => 'Lim Mei Ling',
+            '810606036789' => 'Mohd Farhan Bin Zulkifli',
+            '870707127890' => 'Ng Kok Leong',
+            '950808068901' => 'Nurul Huda Binti Ahmad',
+            '960909029012' => 'Arun Prakash',
+            '970101090123' => 'Lee Jia Wen',
+            '890202071235' => 'Azlan Bin Ismail',
+            '910303132346' => 'Chong Wai Mun',
+            '820404043457' => 'Farah Nadia Binti Salleh',
+            '840505114568' => 'Vijay Anand',
+            '860606155679' => 'Wong Siew Mei',
+            '980707176780' => 'Hafiz Bin Abdullah',
+            '991212167891' => 'Tan Li Xian',
+            '930909108902' => 'Sharmila Devi',
+            '900808019013' => 'Muhammad Iqbal Bin Roslan',
+            '920101050124' => 'Chan Yee Hong',
+            '881010141236' => 'Aminah Binti Osman',
+            '910911022347' => 'Teo Kok Seng',
+            '970707033458' => 'Priya Kumari',
+            '850505074569' => 'Khairul Anuar Bin Ramli',
+            '860909135670' => 'Goh Hui Min',
+            '940101086781' => 'Amirul Hakim Bin Yusof',
+            '980202097892' => 'Liew Jian Hao',
+            '951010128903' => 'Kavitha Rani',
+            '990101069014' => 'Mohd Danish Bin Zakaria',
+            '930505040125' => 'Lim Kok Wei',
+            '901212101237' => 'Azizah Binti Halim',
+            '920404152348' => 'Ong Wei Han',
+            '960303053459' => 'Suresh Kumar',
+            '870707064560' => 'Nur Sabrina Binti Latif',
+            '880808115671' => 'Tan Chee Seng',
+            '891010036782' => 'Haziq Bin Rahman',
+            '950505097893' => 'Lee Hui Yee',
+            '981212018904' => 'Balakrishnan',
+            '960707079015' => 'Amirah Binti Saiful',
+            '911212080126' => 'Chia Kok Soon',
+            '890101131238' => 'Rashid Bin Hassan',
+            '900202022349' => 'Ng Wei Xian',
+            '940303063450' => 'Anita Kumari',
+            '870404144561' => 'Shahrul Nizam Bin Fauzi',
+            '920505125672' => 'Koh Jia Hao',
+            '980606046783' => 'Farid Bin Salleh',
+            '991010107894' => 'Tan Hui Min',
+            '951212078905' => 'Manogaran',
+            '970202019016' => 'Zulkifli Bin Hamid',
+            '850101050127' => 'Lau Zhen Wei'
         ];
             
-        if(in_array($request->ic_no, $dummy_icno)){
-
+        if (array_key_exists($request->ic_no, $dummy_users)) {
             $gender = $faker->randomElement(['male', 'female']);
             $position = $faker->randomElement(['Pengarah Imigresen Negeri', 'Ketua Pejabat','Pegawai Imigresen (PI)','Timb. Pen Pengarah Imigresen (TPPI)']);
 
             $data['ic_no'] = $request->ic_no;
-            $data['name'] = self::generateMalayName();
+            $data['name'] = $dummy_users[$request->ic_no];
             $data['nickname'] = $faker->userName;
             $data['position'] = $position;
             $data['branch'] = $faker->numberBetween(1,59);
