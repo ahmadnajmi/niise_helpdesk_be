@@ -29,12 +29,22 @@ class SlaTemplateResources extends JsonResource
             'response_time_reply' => $this->response_time_reply,
             'response_time_reply_type' => $this->response_time_reply_type,
             'response_time_reply_type_desc' => $this->replyTypeDescription?->name,
+            'response_time_reply_penalty' => $this->response_time_reply_penalty,
+            'response_time_reply_penalty_desc' => $this->replyPenaltyDescription?->name,
+
             'timeframe_solution' => $this->timeframe_solution,
             'timeframe_solution_type' => $this->timeframe_solution_type,
             'timeframe_solution_type_desc' => $this->solutionTypeDescription?->name,
+            'timeframe_solution_penalty' => $this->timeframe_solution_penalty,
+            'timeframe_solution_penalty_desc' => $this->solutionPenaltyDescription?->name,
+
             'response_time_location' => $this->response_time_location,
             'response_time_location_type' => $this->response_time_location_type,
             'response_time_location_type_desc' => $this->locationTypeDescription?->name,
+
+            'response_time_location_penalty' => $this->response_time_location_penalty,
+            'response_time_location_penalty_desc' => $this->locationPenaltyDescription?->name,
+
             'notes' => $this->notes,
             'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
             'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,

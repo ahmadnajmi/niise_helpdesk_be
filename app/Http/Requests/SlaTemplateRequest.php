@@ -34,10 +34,13 @@ class SlaTemplateRequest extends FormRequest
             'timeframe_incident_type' => 'nullable',
             'response_time_reply' => 'nullable',
             'response_time_reply_type' => 'nullable',
+            'response_time_reply_penalty' => 'nullable',
             'timeframe_solution' => 'nullable',
             'timeframe_solution_type' => 'nullable',
+            'timeframe_solution_penalty' => 'nullable',
             'response_time_location' => 'nullable',
             'response_time_location_type' => 'nullable',
+            'response_time_location_penalty' => 'nullable',
             'notes' => 'nullable'
         ];
     }

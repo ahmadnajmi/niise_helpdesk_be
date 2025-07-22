@@ -17,12 +17,19 @@ class SlaTemplate extends BaseModel
         'timeframe_channeling_type',
         'timeframe_incident',
         'timeframe_incident_type',
+
         'response_time_reply',
         'response_time_reply_type',
+        'response_time_reply_penalty',
+
         'timeframe_solution',
         'timeframe_solution_type',
+        'timeframe_solution_penalty',
+
         'response_time_location',
         'response_time_location_type',
+        'response_time_location_penalty',
+
         'notes'
     ];
 
@@ -48,5 +55,17 @@ class SlaTemplate extends BaseModel
 
     public function locationTypeDescription(){
         return $this->hasOne(RefTable::class,'ref_code','response_time_location_type')->where('code_category', 'sla_type');
+    }
+    
+    public function replyPenaltyDescription(){
+        return $this->hasOne(RefTable::class,'ref_code','response_time_reply_penalty')->where('code_category', 'penalty_response_time');
+    }
+
+    public function solutionPenaltyDescription(){
+        return $this->hasOne(RefTable::class,'ref_code','timeframe_solution_penalty')->where('code_category', 'penalty_timeframe_solution');
+    }
+
+    public function locationPenaltyDescription(){
+        return $this->hasOne(RefTable::class,'ref_code','response_time_location_penalty')->where('code_category', 'penalty_response_time_location');
     }
 }
