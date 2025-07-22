@@ -14,18 +14,20 @@ class SlaTemplateCollection extends BaseResource
     public function toArray(Request $request)
     {
         return $this->collection->transform(function ($query) use($request){
+            $lang = substr(request()->header('Accept-Language'), 0, 2);
+
             $return =  [
                 'id' => $query->id,
                 'code' => $query->code,
                 'severity_id' => $query->severity_id,
-                'severity_desc' => $query->severityDescription?->name,
+                'severity_desc' => $lang === 'en' ? $query->severityDescription?->name_en  : $query->severityDescription?->name,
                 'service_level' => $query->service_level,
                 'timeframe_channeling' => $query->timeframe_channeling,
                 'timeframe_channeling_type' => $query->timeframe_channeling_type,
-                'timeframe_channeling_type_desc' => $query->channelingTypeDescription?->name,
+                'timeframe_channeling_type_desc' => $lang === 'en' ? $query->channelingTypeDescription?->name_en  : $query->channelingTypeDescription?->name,
                 'timeframe_incident' => $query->timeframe_incident,
                 'timeframe_incident_type' => $query->timeframe_incident_type,
-                'timeframe_incident_type_desc' => $query->incidentTypeDescription?->name,
+                'timeframe_incident_type_desc' => $lang === 'en' ? $query->incidentTypeDescription?->name_en  : $query->incidentTypeDescription?->name,
                 'response_time_reply' => $query->response_time_reply,
                 'response_time_reply_type' => $query->response_time_reply_type,
                 'response_time_reply_type_desc' => $query->replyTypeDescription?->name,

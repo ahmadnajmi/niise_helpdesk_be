@@ -35,15 +35,22 @@ class SlaTemplate extends BaseModel
 
      public function scopeSearch($query, $keyword){
         if (!empty($keyword)) {
-            $query->where(function($q) use ($keyword) {
+            $lang = substr(request()->header('Accept-Language'), 0, 2);
+
+            $query->where(function($q) use ($keyword,$lang) {
                 $q->where('code', 'like', "%$keyword%");
               
                 $q->orWhere('timeframe_channeling','like', "%$keyword%");
 
                 $q->orWhere('service_level','like', "%$keyword%");
 
-                $q->orWhereHas('severityDescription', function ($search) use ($keyword) {
-                    $search->where('ref_table.name','like', "%$keyword%");
+               $q->orWhereHas('severityDescription', function ($search) use ($keyword, $lang) {
+                    $search->when($lang === 'ms', function ($ref_table) use ($keyword) {
+                        $ref_table->where('name', 'like', "%$keyword%");
+                    });
+                    $search->when($lang === 'en', function ($ref_table) use ($keyword) {
+                        $ref_table->where('name_en', 'like', "%$keyword%");
+                    });
                 });
             });
         }
