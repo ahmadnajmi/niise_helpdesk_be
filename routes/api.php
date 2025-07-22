@@ -61,6 +61,7 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::get('ref_table_dropdown', [RefTableController::class, 'dropdownIndex'])->name('ref_table.dropdown');
     Route::get('ref_table_dropdown_value', [RefTableController::class, 'dropdownValueIndex'])->name('ref_table.dropdown_value');
     Route::get('user_search', [UserController::class, 'searchIcNo'])->name('user.search');
+    Route::get('user_search_contractor', [UserController::class, 'searchIcNoContractor'])->name('user.search.contractor');
 
     Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');
 
@@ -68,6 +69,7 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::get('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranch']);
     Route::delete('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranchDelete']);
 
+    Route::delete('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranchDelete']);
 
 });
 

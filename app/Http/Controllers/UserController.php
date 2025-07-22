@@ -72,4 +72,11 @@ class UserController extends Controller
         return $this->success($data['message'], $data['data']);
     }
 
+      public function searchIcNoContractor(Request $request){
+
+        $data = UserServices::searchIcNoContractor($request);
+
+        return $this->success($data['message'], $data['data']);
+    }
+
 }

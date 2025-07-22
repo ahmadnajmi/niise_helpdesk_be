@@ -95,7 +95,6 @@ class UserServices
 
     public static function searchIcNo($request){
         $user = User::filter()->first();
-        $var = \Lang::get('directory/index.str1');
 
         if($user){
             $return  = [
@@ -110,7 +109,7 @@ class UserServices
         return $return;
     }
 
-    public static function checkSystemIDM($request){ 
+    public static function checkSystemIDM($request,$hint = 'contractor'){ 
         $faker = Faker::create('ms_My');
 
         $dummy_users = [
@@ -186,7 +185,7 @@ class UserServices
             $message =  __('user.message.user_exists_adm');
         }
         else{
-            $message = __('user.message.user_not_exists');
+            $message = $hint == 'contractor' ?  __('user.message.user_contractor_exists') :  __('user.message.user_not_exists');
 
             $data = null;
         }
@@ -219,6 +218,22 @@ class UserServices
         ];
 
         return  $firstNames[array_rand($firstNames)] . ' ' . $lastNames[array_rand($lastNames)];
+    }
+
+    public static function searchIcNoContractor($request){
+        $user = User::filter()->first();
+
+        if($user){
+            $return  = [
+                'message' => __('user.message.user_exists'),
+                'data' => $user,
+            ]; 
+        }
+        else{
+            $return = self::checkSystemIDM($request,'contractor');
+        }
+
+        return $return;
     }
      
 }
