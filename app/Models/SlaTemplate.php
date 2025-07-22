@@ -33,6 +33,32 @@ class SlaTemplate extends BaseModel
         'notes'
     ];
 
+     public function scopeSearch($query, $keyword){
+        if (!empty($keyword)) {
+            $query->where(function($q) use ($keyword) {
+                $q->where('code', 'like', "%$keyword%");
+              
+                $q->orWhere('timeframe_channeling','like', "%$keyword%");
+
+                $q->orWhere('service_level','like', "%$keyword%");
+
+                $q->orWhereHas('severityDescription', function ($search) use ($keyword) {
+                    $search->where('ref_table.name','like', "%$keyword%");
+                });
+            });
+        }
+        return $query;
+    }
+
+    public function scopeSortByField($query, $fields){
+        if(isset($fields)){
+            foreach($fields as $column => $order_by){
+                $query->orderBy($column,$order_by);
+            }
+        }
+        return $query;
+    }
+
     public function severityDescription(){
         return $this->hasOne(RefTable::class,'ref_code','severity_id')->where('code_category', 'severity');
     }
