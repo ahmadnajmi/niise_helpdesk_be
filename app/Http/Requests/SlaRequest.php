@@ -26,7 +26,7 @@ class SlaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'state_id'=> 'required',
+            // 'state_id'=> 'required',
             'branch_id'=> 'required',
             'start_date'=> 'required',
             'end_date'=> 'nullable',

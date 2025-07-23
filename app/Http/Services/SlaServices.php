@@ -52,6 +52,8 @@ class SlaServices
 
     public static function update(Sla $sla,$data){
 
+        $data['branch_id'] = json_encode($data['branch_id']);
+
         $update = $sla->update($data);
 
         $return = new SlaResources($sla);
