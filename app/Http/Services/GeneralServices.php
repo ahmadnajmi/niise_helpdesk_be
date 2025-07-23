@@ -9,6 +9,7 @@ use App\Models\Branch;
 use App\Models\User;
 use App\Models\Company;
 use App\Models\Complaint;
+use App\Models\Sla;
 
 class GeneralServices
 {
@@ -74,6 +75,21 @@ class GeneralServices
 
             if($code == 'complaint'){
                 $data['complaint'] = Complaint::select('id','name','email','phone_no','office_phone_no','extension_no')->get();
+            }
+
+            if($code == 'category_sla'){
+                $data['category_sla'] = Sla::select('id','category_id','code','sla_template_id')
+                                            // ->when($request->branch_id, function ($query) use ($request) {
+                                            //     return $query->whereRaw("JSON_TEXTCONTAINS(branch_id, '$', '1')");
+ 
+                                            // })
+                                            ->with(['slaTemplate' => function ($query) {
+                                                $query->select('id','sla_template.code','service_level','severity_id');
+                                            }])
+                                            
+                                            ->get();
+                                    
+
             }
         }
         return $data;
