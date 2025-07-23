@@ -73,10 +73,10 @@ class GeneralServices
             }
 
             if($code == 'complaint'){
-                $data['complaint'] = Complaint::select('id','name','email')->get();
+                $data['complaint'] = Complaint::select('id','name','email','phone_no','office_phone_no','extension_no')->get();
             }
         }
         return $data;
     }
 
-}
+} 
