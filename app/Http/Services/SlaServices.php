@@ -11,6 +11,7 @@ class SlaServices
     public static function create($data){
 
         $sla_id = [];
+        $branch_id = json_encode($data['branch_id']);
 
         foreach($data['sla_category'] as $sla_category){
 
@@ -21,7 +22,7 @@ class SlaServices
             // if(!$check_sla){
                 $data['category_id'] = $sla_category;
                 $data['code'] = self::generateCode($sla_category);
-                $data['branch_id'] = json_encode($data['branch_id']);
+                $data['branch_id'] = $branch_id;
 
                 $create = Sla::create($data);
                 
