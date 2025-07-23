@@ -22,7 +22,7 @@ return new class extends Migration
             $table->unsignedBigInteger('group_id')->nullable(); 
             $table->string('loaner',100)->nullable(); 
             $table->smallInteger('loaner_type')->nullable();
-            $table->smallInteger('penalty_id')->nullable(); 
+            $table->smallInteger('loaner_penalty')->nullable(); 
             $table->boolean('is_active')->default(true);
             $table->log();
         });

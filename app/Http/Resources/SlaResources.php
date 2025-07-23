@@ -32,7 +32,7 @@ class SlaResources extends JsonResource
             'loaner' => $this->loaner,
             'loaner_type' => $this->loaner_type,
             'loaner_type_desc' => $this->loanerTypeDescription?->name,
-            'penalty_id' => $this->penalty_id,
+            'loaner_penalty' => $this->loaner_penalty,
             'penalty_desc' => $this->penaltyDescription?->name,
             'created_at' => $this->created_at->format('d-m-Y'),
             'updated_at' => $this->updated_at->format('d-m-Y'),
