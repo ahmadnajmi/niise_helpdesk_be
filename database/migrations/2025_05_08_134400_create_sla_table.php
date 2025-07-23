@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code',50)->nullable();
             $table->unsignedBigInteger('category_id')->nullable(); 
-            $table->smallInteger('state_id')->nullable();
-            $table->unsignedBigInteger('branch_id')->nullable(); 
+            $table->json('branch_id')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->unsignedBigInteger('sla_template_id')->nullable(); 

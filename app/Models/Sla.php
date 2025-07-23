@@ -12,7 +12,6 @@ class Sla extends BaseModel
     protected $fillable = [ 
         'code',
         'category_id',
-        'state_id',
         'branch_id',
         'start_date',
         'end_date',
@@ -97,5 +96,18 @@ class Sla extends BaseModel
 
     public function loanerTypeDescription(){
         return $this->hasOne(RefTable::class,'ref_code','loaner_type')->where('code_category', 'sla_type');
+    }
+
+    public function getBranchDesc($branch_id){
+        $branch_id = json_decode($branch_id,true);  
+
+        $data = Branch::select('id','state_id','name')
+                        ->with(['stateDescription' => function ($query) {
+                            $query->select('ref_code','name','name_en');
+                        }])
+                        ->whereIn('id', $branch_id)
+                        ->get();  
+
+        return $data;
     }
 }
