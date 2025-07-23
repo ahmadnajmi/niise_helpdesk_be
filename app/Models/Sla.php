@@ -98,7 +98,7 @@ class Sla extends BaseModel
         return $this->hasOne(RefTable::class,'ref_code','loaner_type')->where('code_category', 'sla_type');
     }
 
-    public function getBranchDesc($branch_id){
+    public function getBranchDetails($branch_id){
         $branch_id = json_decode($branch_id,true);  
 
         $data = Branch::select('id','state_id','name')
@@ -107,6 +107,15 @@ class Sla extends BaseModel
                         }])
                         ->whereIn('id', $branch_id)
                         ->get();  
+
+        return $data;
+    }
+
+    public function getBranchDesc($branch_id){
+        $branch_id = json_decode($branch_id,true);  
+
+        $data = Branch::whereIn('id', $branch_id)
+                        ->pluck('name');  
 
         return $data;
     }
