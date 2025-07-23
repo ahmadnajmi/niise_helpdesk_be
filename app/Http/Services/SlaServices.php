@@ -16,9 +16,9 @@ class SlaServices
 
             // $branch_listed = json_encode($data['branch_id']);
 
-            $check_sla = Sla::where('category_id',$sla_category)->exists();
+            // $check_sla = Sla::where('category_id',$sla_category)->exists();
 
-            if(!$check_sla){
+            // if(!$check_sla){
                 $data['category_id'] = $sla_category;
                 $data['code'] = self::generateCode($sla_category);
                 $data['branch_id'] = json_encode($data['branch_id']);
@@ -26,7 +26,7 @@ class SlaServices
                 $create = Sla::create($data);
                 
                 $sla_id[] = $create->id;
-            }
+            // }
         }
 
         if(count($sla_id) > 0){
