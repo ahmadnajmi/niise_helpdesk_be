@@ -22,7 +22,7 @@ class NetIQSocialiteProvider extends AbstractProvider implements ProviderInterfa
 
     protected function getTokenUrl()
     {
-        return env('OIDC_TOKEN_URL');
+        return config('app.netiq.token_url');
     }
 
     protected function getUserByToken($token)
