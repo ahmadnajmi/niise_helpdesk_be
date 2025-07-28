@@ -27,7 +27,9 @@ Route::middleware('web')->group(function () {
         Route::get('niise/hd', [AuthController::class, 'loginHelpDesk'])->name('niise.helpdesk');
         Route::get('dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
     });
+
 });
 
+        Route::get('callback', [AuthController::class, 'dashboard'])->name('dashboard');
 
 require __DIR__.'/auth.php';
