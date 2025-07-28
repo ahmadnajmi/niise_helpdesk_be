@@ -21,6 +21,8 @@ class TestingController extends Controller
         return redirect($provider->getRedirectUrl());
     }
 
+    
+
     public function callback(Request $request){
         $provider = new NetIQSocialiteProvider(
             app()->make('request'), 
@@ -29,9 +31,9 @@ class TestingController extends Controller
             config('app.netiq.redirect_url')
         );
 
-        $token = $provider->getAccessTokenResponse($request->input('code'));
-        $userData = $provider->getUserByToken($token['access_token']);
-        dd($userData,$token);
+        $data = $provider->getUserFromCode($request->input('code'));
+
+        dd($data);
         $user = User::updateOrCreate(
             ['email' => $userData['email']],
             ['name' => $userData['name'] ?? $userData['preferred_username'] ?? 'User']

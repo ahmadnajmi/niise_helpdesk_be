@@ -44,4 +44,11 @@ class NetIQSocialiteProvider extends AbstractProvider implements ProviderInterfa
             'email' => $user['email'] ?? null,
         ]);
     }
+
+    public function getUserFromCode($code){
+        $token = $this->getAccessTokenResponse($code);
+        $user  = $this->getUserByToken($token['access_token']);
+
+        return [$user, $token];
+    }
 }
