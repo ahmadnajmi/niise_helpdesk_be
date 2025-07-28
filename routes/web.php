@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TestingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -30,6 +31,9 @@ Route::middleware('web')->group(function () {
 
 });
 
-        Route::get('callback', [AuthController::class, 'dashboard'])->name('dashboard');
+    // Route::get('callback', [AuthController::class, 'dashboard'])->name('dashboard.testing');
+    Route::get('redirect', [TestingController::class, 'redirect'])->name('netiq.redirect');
+    Route::get('callback', [TestingController::class, 'callback'])->name('netiq.callback');
 
 require __DIR__.'/auth.php';
+

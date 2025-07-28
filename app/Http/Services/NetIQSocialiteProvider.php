@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Http\Services;
+
+use Laravel\Socialite\Two\AbstractProvider;
+use Laravel\Socialite\Two\ProviderInterface;
+use Laravel\Socialite\Two\User;
+
+class NetIQSocialiteProvider extends AbstractProvider implements ProviderInterface
+{
+    protected $scopes = ['openid', 'profile', 'email'];
+
+    protected function getAuthUrl($state)
+    {
+        return $this->buildAuthUrlFromBase( config('app.netiq.auth_url'), $state);
+    }
+
+    public function getRedirectUrl(){
+        $state = uniqid(); 
+        return $this->getAuthUrl($state);
+    }
+
+    protected function getTokenUrl()
+    {
+        return env('OIDC_TOKEN_URL');
+    }
+
+    protected function getUserByToken($token)
+    {
+        $response = $this->getHttpClient()->get(config('app.netiq.userinfo_url'), [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $token,
+            ],
+        ]);
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
+    protected function mapUserToObject(array $user)
+    {
+        return (new User())->setRaw($user)->map([
+            'id'    => $user['sub'] ?? null,
+            'name'  => $user['name'] ?? $user['preferred_username'] ?? null,
+            'email' => $user['email'] ?? null,
+        ]);
+    }
+}

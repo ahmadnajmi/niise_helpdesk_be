@@ -132,6 +132,15 @@ return [
         'login_url' => env('PASSPORT_LOGIN_URL'),
         'client_id' => env('PASSPORT_CLIENT_ID'),
         'client_secret' => env('PASSPORT_CLIENT_SECRET')
-    ]
+    ],
 
+    'netiq' => [
+        'client_id' => env('OIDC_CLIENT_ID'), 
+        'client_secret' => env('OIDC_CLIENT_SECRET'), 
+        'redirect_url' =>  env('OIDC_REDIRECT_URI'),
+        'token_url' => env('OIDC_TOKEN_URL'),
+        'auth_url' => env('OIDC_AUTH_URL'),
+        'userinfo_url' => env('OIDC_USERINFO_URL')
+    ]
+  
 ];
