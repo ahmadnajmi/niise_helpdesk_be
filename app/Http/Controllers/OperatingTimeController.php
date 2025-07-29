@@ -32,6 +32,8 @@ class OperatingTimeController extends Controller
         try {
             $data = $request->all();
 
+            $data['branch_id'] = json_encode($data['branch_id']);
+
             $create = OperatingTime::create($data);
            
             $data = new OperatingTimeResources($create);
@@ -52,6 +54,8 @@ class OperatingTimeController extends Controller
     public function update(OperatingTimeRequest $request, OperatingTime $operating_time){
         try {
             $data = $request->all();
+
+            $data['branch_id'] = json_encode($data['branch_id']);
 
             $update = $operating_time->update($data);
 

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('operating_times', function (Blueprint $table) {
             $table->id();            
-            $table->unsignedBigInteger('branch_id')->nullable(); 
+            $table->json('branch_id')->nullable(); 
             $table->smallInteger('day_start')->nullable();
             $table->smallInteger('day_end')->nullable();
             $table->smallInteger('duration')->nullable();

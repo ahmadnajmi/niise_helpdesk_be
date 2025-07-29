@@ -32,6 +32,7 @@ class UserResources extends JsonResource
             'company_name' => $this->company?->name,
             'fax_no' => $this->fax_no,
             'is_active' => $this->is_active,
+            'user_type' => $this->user_type,
             'role' => $this->id ? $this->getUserRole($this->id) : null,
             'created_at' => $this->created_at?->format('d-m-Y'),
             'updated_at' => $this->updated_at?->format('d-m-Y'),

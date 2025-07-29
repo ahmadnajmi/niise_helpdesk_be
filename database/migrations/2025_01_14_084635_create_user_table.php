@@ -28,6 +28,7 @@ return new class extends Migration
             $table->integer('state_id')->nullable(); 
             $table->string('fax_no',100)->nullable(); 
             $table->string('category_office',100)->nullable();
+            $table->smallInteger('user_type')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });

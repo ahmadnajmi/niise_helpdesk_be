@@ -50,4 +50,8 @@ class OperatingTime extends BaseModel
     public function setOperationEndAttribute($value){
         $this->attributes['operation_end'] = date('Y-m-d H:i:s', strtotime("1970-01-01 $value"));
     }
+
+    public function scopeForBranch($query, $branchId){
+        return $query->whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == ?)')", [$branchId]);
+    }
 }

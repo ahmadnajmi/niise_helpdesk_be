@@ -30,6 +30,7 @@ class User extends Authenticatable
         'state_id',
         'fax_no',
         'is_active',
+        'user_type',
     ];
 
     public function branch(){
