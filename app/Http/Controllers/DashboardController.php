@@ -17,7 +17,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        $trueTotalIncidents = rand(1,100);
+        $trueTotalIncidents = random_int(0,99);
 
         $data = [
             'trueTotalIncidents' => $trueTotalIncidents,

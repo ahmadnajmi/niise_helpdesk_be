@@ -35,5 +35,5 @@ Route::middleware('web')->group(function () {
     Route::get('redirect', [TestingController::class, 'redirect'])->name('netiq.redirect');
     Route::get('callback', [TestingController::class, 'callback'])->name('netiq.callback');
 
-require __DIR__.'/auth.php';
+// require __DIR__.'/auth.php';
 

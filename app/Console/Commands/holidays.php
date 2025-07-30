@@ -7,6 +7,7 @@ use Holiday\MalaysiaHoliday;
 use App\Models\Calendar;
 use App\Models\RefTable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class holidays extends Command
 {
@@ -103,7 +104,8 @@ class holidays extends Command
 
         } 
         catch (Exception $e) {
-            
+            Log::error($e->getMessage());
+
         }
        
     }
