@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ModuleController;
@@ -23,9 +25,7 @@ use App\Http\Controllers\SlaController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\IncidentController;
 use App\Http\Controllers\IncidentSolutionController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\CompanyContractController;
 
 Route::post('login', [AuthController::class, 'login']);
 
@@ -50,6 +50,8 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('sla_template', SlaTemplateController::class);
     Route::apiResource('company', CompanyController::class);
     Route::apiResource('incident_solution', IncidentSolutionController::class);
+    Route::apiResource('company_contract', CompanyContractController::class);
+
 
     Route::get('incident', [IncidentController::class, 'index']);
     Route::get('incident/{incident}', [IncidentController::class, 'show']);

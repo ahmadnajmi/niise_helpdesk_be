@@ -26,8 +26,8 @@ class Company extends BaseModel
         return $this->hasOne(RefTable::class,'ref_code','state_id')->where('code_category', 'state');
     }
 
-    public function contractor(){
-        return $this->hasMany(User::class,'company_id','id');
+    public function contract(){
+        return $this->hasMany(CompanyContract::class,'company_id','id');
     }
     
 }

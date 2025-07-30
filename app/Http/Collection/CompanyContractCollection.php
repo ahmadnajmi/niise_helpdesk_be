@@ -4,7 +4,7 @@ namespace App\Http\Collection;
 
 use Illuminate\Http\Request;
 
-class CompanyCollection extends BaseResource
+class CompanyContractCollection extends BaseResource
 {
     /**
      * Transform the resource collection into an array.
@@ -16,17 +16,11 @@ class CompanyCollection extends BaseResource
         return $this->collection->transform(function ($query) use($request){
             $return =  [
                 'id' => $query->id,
-                'name' => $query->name,
-                'nickname'  =>$query->nickname,
-                'email' => $query->email,
-                'phone_no' => $query->phone_no,
-                'address' => $query->address,
-                'postcode' => $query->postcode,
-                'city' => $query->city,
-                'state_id' => $query->state_id,
-                'state_desc' => $query->stateDescription?->name,
-                'fax_no' => $query->fax_no,
-                'is_active' => $query->is_active,
+                'name'=> $query->name,
+                'start_date'=> $query->start_date?->format('Y-m-d'),
+                'end_date'=> $query->end_date?->format('Y-m-d'),
+                'company_id'=> $query->company_id,
+                'is_active'=> $query->is_active,
                 'created_at' => $query->created_at->format('d-m-Y'),
                 'updated_at' => $query->updated_at->format('d-m-Y'),
                 'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
