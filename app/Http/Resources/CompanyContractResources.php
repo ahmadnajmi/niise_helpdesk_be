@@ -20,7 +20,6 @@ class CompanyContractResources extends JsonResource
             'start_date'=> $this->start_date?->format('Y-m-d'),
             'end_date'=> $this->end_date?->format('Y-m-d'),
             'company_id'=> $this->company_id,
-            'company' => new CompanyResources($this->company) ,
             'is_active'=> $this->is_active,
             'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
             'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,

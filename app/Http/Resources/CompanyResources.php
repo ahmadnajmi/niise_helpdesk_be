@@ -27,7 +27,7 @@ class CompanyResources extends JsonResource
             'state_desc' => $this->stateDescription?->name,
             'fax_no' => $this->fax_no,
             'is_active' => $this->is_active,
-            'contractor' => $this->contractor,
+            'contracts' => CompanyContractResources::collection($this->contract),
             'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
             'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
             'created_at' => $this->created_at->format('d-m-Y'),
