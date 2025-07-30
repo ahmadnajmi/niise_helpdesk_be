@@ -18,6 +18,7 @@ class IncidentResources extends JsonResource
          return [
             'id' => $this->id,
             'code_sla' => $this->code_sla,
+            'incident_no' =>  $this->incident_no,
             'incident_date' => $this->incident_date?->format('d-m-Y'),
             'branch_id' => $this->branch_id,
             'category_id' => $this->category_id,
@@ -35,7 +36,7 @@ class IncidentResources extends JsonResource
             'operation_user_id' => $this->operation_user_id,
             'appendix_file' => $this->appendix_file,
             'incident_solution' => new IncidentSolutionCollection($this->incidentSolution),
-            'complaint' => new ComplaintResources($this->complaint) ,
+            'complainant' => new ComplaintResources($this->complaint) ,
             'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
             'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
             'created_at' => $this->created_at->format('d-m-Y'),

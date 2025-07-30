@@ -30,7 +30,8 @@ return new class extends Migration
             $table->string('asset_siri_no',100)->nullable(); 
             $table->unsignedBigInteger('group_id')->nullable(); 
             $table->unsignedBigInteger('operation_user_id')->nullable(); 
-            $table->string('appendix_file',200)->nullable(); 
+            $table->string('appendix_file',100)->nullable(); 
+            $table->string('asset_file',100)->nullable(); 
             $table->dateTime('end_date')->nullable();
             $table->log();
         });

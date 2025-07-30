@@ -29,7 +29,7 @@ class IncidentController extends Controller
         try {
             $data = $request->all();
 
-            $data = IncidentServices::create($data);
+            $data = IncidentServices::create($data,$request);
 
             return $this->success('Success', $data);
           
@@ -61,7 +61,7 @@ class IncidentController extends Controller
 
     public function destroy(Incident $incident)
     {
-        $incident->delete();
+        $data = IncidentServices::delete($incident);
 
         return $this->success('Success', null);
     }

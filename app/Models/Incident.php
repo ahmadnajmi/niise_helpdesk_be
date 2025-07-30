@@ -28,6 +28,7 @@ class Incident extends BaseModel
         'group_id',
         'operation_user_id',
         'appendix_file',
+        'asset_file',
         'end_date'
     ];
 

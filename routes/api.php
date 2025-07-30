@@ -49,11 +49,13 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('sla', SlaController::class);
     Route::apiResource('sla_template', SlaTemplateController::class);
     Route::apiResource('company', CompanyController::class);
-    Route::apiResource('incident', IncidentController::class);
     Route::apiResource('incident_solution', IncidentSolutionController::class);
 
-    Route::get('dynamic_option', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option');
+    Route::get('incident', [IncidentController::class, 'index']);
+    Route::get('incident/{incident}', [IncidentController::class, 'show']);
+    Route::delete('incident/{incident}', [IncidentController::class, 'destroy']);
 
+    Route::get('dynamic_option', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option');
 
     Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');
     Route::get('navigation', [ModuleController::class,'index'])->name('navigation.index');
@@ -70,7 +72,11 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::delete('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranchDelete']);
 
     Route::delete('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranchDelete']);
+});
 
+Route::middleware(['api'])->group(function () {
+    Route::post('incident', [IncidentController::class, 'store']);
+    Route::put('incident/{incident}', [IncidentController::class, 'update']);
 });
 
 Route::apiResource('branch', BranchController::class)->only('index','show');
