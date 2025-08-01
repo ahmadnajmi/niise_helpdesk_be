@@ -8,7 +8,7 @@ use Laravel\Socialite\Two\User;
 
 class NetIQSocialiteProvider extends AbstractProvider implements ProviderInterface
 {
-    protected $scopes = ['openid', 'profile', 'email'];
+    protected $scopes = ['profile'];
 
     protected function getAuthUrl($state)
     {
