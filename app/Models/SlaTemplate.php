@@ -13,6 +13,8 @@ class SlaTemplate extends BaseModel
         'code',
         'severity_id',
         'service_level',
+        'company_id',
+        'company_contract_id',
 
         'response_time',
         'response_time_type',
@@ -71,6 +73,14 @@ class SlaTemplate extends BaseModel
 
     public function severityDescription(){
         return $this->hasOne(RefTable::class,'ref_code','severity_id')->where('code_category', 'severity');
+    }
+    
+    public function company(){
+        return $this->hasOne(Company::class,'id','company_id');
+    }
+
+    public function companyContract(){
+        return $this->hasOne(CompanyContract::class,'id','company_contract_id');
     }
 
 

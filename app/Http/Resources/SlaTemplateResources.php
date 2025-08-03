@@ -20,6 +20,12 @@ class SlaTemplateResources extends JsonResource
             'severity_id' => $this->severity_id,
             'severity_desc' => $this->severityDescription?->name,
             'service_level' => $this->service_level,
+
+            'company_id' => $this->company_id,
+            'company_name' => $this->company?->name,
+
+            'company_contract_id' => $this->company_contract_id,
+            'company_contract_name' => $this->companyContract?->name,
            
             'response_time' => $this->response_time,
             'response_time_type' => $this->response_time_type,

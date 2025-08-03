@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('sla_template', function (Blueprint $table) {
             $table->id();
+
             $table->string('code',50)->nullable();
             $table->smallInteger('severity_id');
             $table->string('service_level',50)->nullable();
-        
+            $table->unsignedBigInteger('company_id')->nullable();
+            $table->unsignedBigInteger('company_contract_id')->nullable();
+
 
             $table->string('response_time')->nullable();
             $table->smallInteger('response_time_type')->nullable();
