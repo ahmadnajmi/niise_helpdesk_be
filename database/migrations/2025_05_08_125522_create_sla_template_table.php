@@ -16,23 +16,26 @@ return new class extends Migration
             $table->string('code',50)->nullable();
             $table->smallInteger('severity_id');
             $table->string('service_level',50)->nullable();
-            $table->string('timeframe_channeling')->nullable();
-            $table->smallInteger('timeframe_channeling_type')->nullable();
-            $table->string('timeframe_incident')->nullable();
-            $table->smallInteger('timeframe_incident_type')->nullable();
+        
 
-            $table->string('response_time_reply')->nullable();
-            $table->smallInteger('response_time_reply_type')->nullable();
-            $table->smallInteger('response_time_reply_penalty')->nullable();
+            $table->string('response_time')->nullable();
+            $table->smallInteger('response_time_type')->nullable();
+            $table->string('response_time_penalty',20)->nullable();
 
-            $table->string('timeframe_solution')->nullable();
-            $table->smallInteger('timeframe_solution_type')->nullable();
-            $table->smallInteger('timeframe_solution_penalty')->nullable();
+            $table->string('resolution_time')->nullable();
+            $table->smallInteger('resolution_time_type')->nullable();
+            $table->string('resolution_time_penalty',20)->nullable();
 
             $table->string('response_time_location')->nullable();
             $table->smallInteger('response_time_location_type')->nullable();
-            $table->smallInteger('response_time_location_penalty')->nullable();
+            $table->string('response_time_location_penalty',20)->nullable();
 
+            $table->string('temporary_resolution_time')->nullable();
+            $table->smallInteger('temporary_resolution_time_type')->nullable();
+            $table->string('temporary_resolution_time_penalty',20)->nullable();
+
+            $table->string('dispatch_time')->nullable();
+            $table->smallInteger('dispatch_time_type')->nullable();
 
             $table->string('notes')->nullable();
 
