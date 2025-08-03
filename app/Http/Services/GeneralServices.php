@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Company;
 use App\Models\Complaint;
 use App\Models\Sla;
+use App\Models\CompanyContract;
 
 class GeneralServices
 {
@@ -89,6 +90,15 @@ class GeneralServices
                                             
                                             ->get();
                                     
+
+            }
+
+            if($code == 'company_contract'){
+                $data['company'] = CompanyContract::select('id','name','company_id')->where('is_active',true)
+                                            ->when($request->company_id, function ($query) use ($request) {
+                                                return $query->where('company_id',$request->company_id);
+                                            })
+                                            ->get();
 
             }
         }
