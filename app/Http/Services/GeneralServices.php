@@ -20,19 +20,19 @@ class GeneralServices
         foreach($request->code as $code){
 
             if($code == 'role'){
-                $data['role'] = Role::select('id','name','name_en')->get();
+                $data[$code] = Role::select('id','name','name_en')->get();
             }
 
             if($code == 'category'){
-                $data['category'] = Category::select('id','name','level','code')->where('is_active',true)->get();
+                $data[$code] = Category::select('id','name','level','code')->where('is_active',true)->get();
             }
 
             if($code == 'branch'){
-                $data['branch'] = Branch::select('id','name','category','state_id')->get();
+                $data[$code] = Branch::select('id','name','category','state_id')->get();
             }
 
             if($code == 'sla_template'){
-                $data['sla_template'] = SlaTemplate::select('id','code','severity_id','service_level','timeframe_channeling','timeframe_channeling_type','timeframe_incident','timeframe_incident_type','response_time','response_time_type','resolution_time','resolution_time_type','response_time_location','response_time_location_type')
+                $data[$code] = SlaTemplate::select('id','code','severity_id','service_level','timeframe_channeling','timeframe_channeling_type','timeframe_incident','timeframe_incident_type','response_time','response_time_type','resolution_time','resolution_time_type','response_time_location','response_time_location_type')
                                                     ->with(['severityDescription' => function ($query) {
                                                         $query->select('ref_code','name','name_en');
                                                     }])
@@ -55,11 +55,11 @@ class GeneralServices
             }
 
             if($code == 'group'){
-                $data['group'] = Group::select('id','name','description')->where('is_active',true)->get();
+                $data[$code] = Group::select('id','name','description')->where('is_active',true)->get();
             }
 
             if($code == 'user'){
-                $data['user'] = User::select('id','name','nickname')
+                $data[$code] = User::select('id','name','nickname')
                                     ->when($request->group_id, function ($query) use ($request) {
                                         return $query->whereHas('group', function ($query)use($request) {
                                             $query->where('groups_id',$request->group_id); 
@@ -71,15 +71,15 @@ class GeneralServices
             }
 
             if($code == 'company'){
-                $data['company'] = Company::select('id','name','nickname')->where('is_active',true)->get();
+                $data[$code] = Company::select('id','name','nickname')->where('is_active',true)->get();
             }
 
             if($code == 'complaint'){
-                $data['complaint'] = Complaint::select('id','name','email','phone_no','office_phone_no','extension_no')->get();
+                $data[$code] = Complaint::select('id','name','email','phone_no','office_phone_no','extension_no')->get();
             }
 
             if($code == 'category_sla'){
-                $data['category_sla'] = Sla::select('id','category_id','code','sla_template_id')
+                $data[$code] = Sla::select('id','category_id','code','sla_template_id')
                                             // ->when($request->branch_id, function ($query) use ($request) {
                                             //     return $query->whereRaw("JSON_TEXTCONTAINS(branch_id, '$', '1')");
  
@@ -94,7 +94,7 @@ class GeneralServices
             }
 
             if($code == 'company_contract'){
-                $data['company'] = CompanyContract::select('id','name','company_id')->where('is_active',true)
+                $data[$code] = CompanyContract::select('id','name','company_id')->where('is_active',true)
                                             ->when($request->company_id, function ($query) use ($request) {
                                                 return $query->where('company_id',$request->company_id);
                                             })
