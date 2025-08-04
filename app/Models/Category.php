@@ -18,7 +18,12 @@ class Category extends BaseModel
         'is_active',
     ];
 
-      public function mainCategory(){
+    public function mainCategory(){
         return $this->hasOne(Category::class, 'id','category_id');
+    }
+
+
+    public function sla(){
+        return $this->hasOne(Sla::class, 'category_id','id');
     }
 }
