@@ -42,23 +42,26 @@ class SlaTemplate extends BaseModel
         if (!empty($keyword)) {
             $lang = substr(request()->header('Accept-Language'), 0, 2);
 
+            $keyword = strtolower($keyword);
+
             $query->where(function($q) use ($keyword,$lang) {
-                $q->where('code', 'like', "%$keyword%");
-              
-               $q->orWhereHas('severityDescription', function ($search) use ($keyword, $lang) {
+                $q->whereRaw('LOWER(code) LIKE ?', ["%{$keyword}%"]);
+
+                $q->orWhereHas('severityDescription', function ($search) use ($keyword, $lang) {
                     $search->when($lang === 'ms', function ($ref_table) use ($keyword) {
-                        $ref_table->where('name', 'like', "%$keyword%");
+                        $ref_table->whereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"]);
                     });
                     $search->when($lang === 'en', function ($ref_table) use ($keyword) {
-                        $ref_table->where('name_en', 'like', "%$keyword%");
+                        $ref_table->whereRaw('LOWER(name_en) LIKE ?', ["%{$keyword}%"]);
                     });
                 });
 
                 $q->orWhereHas('company', function ($search) use ($keyword) {
-                    $search->where('name', 'like', "%$keyword%");
+                    $search->whereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"]);
                 });
+
                 $q->orWhereHas('companyContract', function ($search) use ($keyword) {
-                    $search->where('name', 'like', "%$keyword%");
+                    $search->whereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"]);
                 });
             });
         }

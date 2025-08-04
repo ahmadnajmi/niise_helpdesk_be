@@ -21,20 +21,22 @@ class Sla extends BaseModel
 
     public function scopeSearch($query, $keyword){
         if (!empty($keyword)) {
+            $keyword = strtolower($keyword);
+
             $query->where(function($q) use ($keyword) {
-                $q->where('sla.code', 'like', "%$keyword%");
-              
+                $q->whereRaw('LOWER(sla.code) LIKE ?', ["%{$keyword}%"]);
+
                 $q->orWhereHas('category', function ($search) use ($keyword) {
-                    $search->where('categories.name', 'like', "%$keyword%");
+                    $search->whereRaw('LOWER(categories.name) LIKE ?', ["%{$keyword}%"]);
                 });
 
-                $q->orWhereHas('branch', function ($search) use ($keyword) {
-                    $search->where('branch.name', 'like', "%$keyword%");
-                });
+                // $q->orWhereHas('branch', function ($search) use ($keyword) {
+                //     $search->whereRaw('LOWER(branch.name) LIKE ?', ["%{$keyword}%"]);
+                // });
 
                 $q->orWhereHas('slaTemplate', function ($search) use ($keyword) {
                     $search->whereHas('severityDescription', function ($search) use ($keyword) {
-                        $search->where('ref_table.name','like', "%$keyword%");
+                        $search->whereRaw('LOWER(ref_table.name) LIKE ?', ["%{$keyword}%"]);
                     });
                 });
             });
