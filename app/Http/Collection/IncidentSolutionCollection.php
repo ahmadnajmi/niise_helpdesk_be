@@ -3,6 +3,7 @@
 namespace App\Http\Collection;
 
 use Illuminate\Http\Request;
+use App\Http\Resources\ActionCodeResources;
 
 class IncidentSolutionCollection extends BaseResource
 {
@@ -17,6 +18,7 @@ class IncidentSolutionCollection extends BaseResource
             $return =  [
                 'id' => $query->id,
                 'action_codes'=> $query->action_codes,
+                'action_codes_details' => new ActionCodeResources($query->actionCodes),
                 'solution_notes'=> $query->solution_notes,
                 'created_at' => $query->created_at->format('d-m-Y'),
                 'updated_at' => $query->updated_at->format('d-m-Y'),

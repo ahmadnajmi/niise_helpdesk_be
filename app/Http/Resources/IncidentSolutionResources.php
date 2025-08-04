@@ -17,6 +17,7 @@ class IncidentSolutionResources extends JsonResource
          return [
             'id' => $this->id,
             'action_codes'=> $this->action_codes,
+            'action_codes_details' => new ActionCodeResources($this->actionCodes),
             'group_id'=> $this->group_id,
             'operation_user_id'=> $this->operation_user_id,
             'report_contractor_no'=> $this->report_contractor_no,

@@ -39,6 +39,10 @@ class Incident extends BaseModel
         'end_date' => 'datetime:Y-m-d',
     ];
 
+    public function branch(){
+        return $this->hasOne(Branch::class,'id','branch_id');
+    }
+
     public function receviedViaDescription(){
         return $this->hasOne(RefTable::class,'ref_code','received_via')->where('code_category', 'received_via');
     }
@@ -57,5 +61,17 @@ class Incident extends BaseModel
 
     public function incidentSolution(){
         return $this->hasMany(IncidentSolution::class, 'incident_id','id');
+    }
+
+    public function categoryDescription(){
+        return $this->hasOne(Category::class,'id','category_id');
+    }
+
+    public function group(){
+        return $this->hasOne(Group::class, 'id','group_id');
+    }
+    
+    public function operationUser(){
+        return $this->hasOne(User::class,'id','operation_user_id');
     }
 }

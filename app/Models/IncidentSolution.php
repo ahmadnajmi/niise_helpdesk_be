@@ -18,4 +18,8 @@ class IncidentSolution extends BaseModel
         'notes',
         'solution_notes'
     ];
+
+    public function actionCodes(){
+        return $this->hasOne(ActionCode::class,'nickname','action_codes');
+    }
 }
