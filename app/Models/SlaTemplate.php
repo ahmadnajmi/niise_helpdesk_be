@@ -38,17 +38,13 @@ class SlaTemplate extends BaseModel
         'notes'
     ];
 
-     public function scopeSearch($query, $keyword){
+    public function scopeSearch($query, $keyword){
         if (!empty($keyword)) {
             $lang = substr(request()->header('Accept-Language'), 0, 2);
 
             $query->where(function($q) use ($keyword,$lang) {
                 $q->where('code', 'like', "%$keyword%");
               
-                $q->orWhere('timeframe_channeling','like', "%$keyword%");
-
-                $q->orWhere('service_level','like', "%$keyword%");
-
                $q->orWhereHas('severityDescription', function ($search) use ($keyword, $lang) {
                     $search->when($lang === 'ms', function ($ref_table) use ($keyword) {
                         $ref_table->where('name', 'like', "%$keyword%");
@@ -57,8 +53,27 @@ class SlaTemplate extends BaseModel
                         $ref_table->where('name_en', 'like', "%$keyword%");
                     });
                 });
+
+                $q->orWhereHas('company', function ($search) use ($keyword) {
+                    $search->where('name', 'like', "%$keyword%");
+                });
+                $q->orWhereHas('companyContract', function ($search) use ($keyword) {
+                    $search->where('name', 'like', "%$keyword%");
+                });
             });
         }
+        return $query;
+    }
+
+    public function scopeFilter($query){
+
+        $query = $query->when(request('company_id'), function ($query) {
+                            $query->where('company_id',request('company_id'));
+                        })
+                        ->when(request('severity_id'), function ($query) {
+                            $query->where('severity_id',request('severity_id'));
+                        });
+
         return $query;
     }
 
