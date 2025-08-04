@@ -52,7 +52,15 @@ class GeneralServices
                                                     ->with(['dispatchTimeTypeDescription' => function ($query) {
                                                         $query->select('ref_code','name','name_en');
                                                     }])
+                                                    ->with(['company' => function ($query) {
+                                                        $query->select('id','name');
+                                                    }])
+                                                    ->with(['companyContract' => function ($query) {
+                                                        $query->select('id','name');
+                                                    }])
                                                     ->get();
+
+                                                    
             }
 
             if($code == 'group'){
