@@ -3,7 +3,7 @@
 namespace App\Http\Collection;
 
 use Illuminate\Http\Request;
-
+use App\Http\Resources\CompanyContractResources;
 class CompanyCollection extends BaseResource
 {
     /**
@@ -27,6 +27,7 @@ class CompanyCollection extends BaseResource
                 'state_desc' => $query->stateDescription?->name,
                 'fax_no' => $query->fax_no,
                 'is_active' => $query->is_active,
+                'contracts' => CompanyContractResources::collection($query->contract),
                 'created_at' => $query->created_at->format('d-m-Y'),
                 'updated_at' => $query->updated_at->format('d-m-Y'),
                 'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
