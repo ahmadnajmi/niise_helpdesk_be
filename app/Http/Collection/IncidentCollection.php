@@ -7,6 +7,7 @@ use App\Http\Resources\GroupResources;
 use App\Http\Resources\UserResources;
 use App\Http\Resources\ComplaintResources;
 use App\Http\Resources\CategoryResources;
+use App\Http\Resources\SlaResources;
 
 class IncidentCollection extends BaseResource
 {
@@ -21,12 +22,13 @@ class IncidentCollection extends BaseResource
             $return =  [
                 'id' => $query->id,
                 'code_sla' => $query->code_sla,
+                'sla_details'=> $query->sla ? new SlaResources($query->sla) : null,
                 'incident_no' =>  $query->incident_no,
                 'incident_date' => $query->incident_date?->format('d-m-Y'),
                 'branch_id' => $query->branch_id,
                 'branch_details' => $query->branch,
                 'category_id' => $query->category_id,
-                'category_details' => new CategoryResources($query->categoryDescription),
+                'category_details' => $query->categoryDescription ? new CategoryResources($query->categoryDescription) : null,
                 'complaint_id' => $query->complaint_id,
                 'information' => $query->information,
                 'knowledge_base_id' => $query->knowledge_base_id,

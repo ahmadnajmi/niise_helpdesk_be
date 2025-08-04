@@ -18,12 +18,11 @@ class IncidentServices
             $data['complaint_id'] =  $complaint->id;
         }
 
-        // $get_sla = Sla::where('category_id',$data['category_id'])->where('branch_id',$data['branch_id'])->first();
+        $get_sla = Sla::where('category_id',$data['category_id'])->where('branch_id',$data['branch_id'])->first();
         
-
         $data['start_date'] = date('Y-m-d H:i:s');
         $data['incident_no'] = self::generateCode();
-        // $data['code_sla'] = $get_sla?->code;
+        $data['code_sla'] = $get_sla?->code;
 
         $data = self::uploadDoc($data,$request);
 
