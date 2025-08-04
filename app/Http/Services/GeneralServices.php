@@ -37,19 +37,19 @@ class GeneralServices
                                                     ->with(['severityDescription' => function ($query) {
                                                         $query->select('ref_code','name','name_en');
                                                     }])
-                                                    ->with(['channelingTypeDescription' => function ($query) {
+                                                    ->with(['responseTimeTypeDescription' => function ($query) {
                                                         $query->select('ref_code','name','name_en');
                                                     }])
-                                                    ->with(['incidentTypeDescription' => function ($query) {
+                                                    ->with(['resolutionTimeTypeDescription' => function ($query) {
                                                         $query->select('ref_code','name','name_en');
                                                     }])
-                                                    ->with(['replyTypeDescription' => function ($query) {
+                                                    ->with(['responseTimeLocationTypeDescription' => function ($query) {
                                                         $query->select('ref_code','name','name_en');
                                                     }])
-                                                    ->with(['locationTypeDescription' => function ($query) {
+                                                    ->with(['temporaryResolutionTimeTypeDescription' => function ($query) {
                                                         $query->select('ref_code','name','name_en');
                                                     }])
-                                                    ->with(['solutionTypeDescription' => function ($query) {
+                                                    ->with(['dispatchTimeTypeDescription' => function ($query) {
                                                         $query->select('ref_code','name','name_en');
                                                     }])
                                                     ->get();
