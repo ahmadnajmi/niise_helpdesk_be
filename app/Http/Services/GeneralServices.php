@@ -56,7 +56,7 @@ class GeneralServices
                                                         $query->select('id','name');
                                                     }])
                                                     ->with(['companyContract' => function ($query) {
-                                                        $query->select('id','name');
+                                                        $query->select('id','name','start_date','end_date');
                                                     }])
                                                     ->get();
 

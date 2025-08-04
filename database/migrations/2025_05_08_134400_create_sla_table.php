@@ -20,9 +20,6 @@ return new class extends Migration
             $table->date('end_date')->nullable();
             $table->unsignedBigInteger('sla_template_id')->nullable(); 
             $table->unsignedBigInteger('group_id')->nullable(); 
-            $table->string('loaner',100)->nullable(); 
-            $table->smallInteger('loaner_type')->nullable();
-            $table->smallInteger('loaner_penalty')->nullable(); 
             $table->boolean('is_active')->default(true);
             $table->log();
         });
