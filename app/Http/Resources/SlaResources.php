@@ -22,8 +22,6 @@ class SlaResources extends JsonResource
             'branch_id'=> json_decode($this->branch_id),
             'branch_name' => $this->getBranchDesc($this->branch_id),
             'branch_details' => $this->getBranchDetails($this->branch_id),
-            'start_date'=> $this->start_date?->format('Y-m-d'),
-            'end_date'=> $this->end_date?->format('Y-m-d'),
             'sla_template_id'=> $this->sla_template_id,
             'sla_template_details' => $this->slaTemplate ? new SlaTemplateResources($this->slaTemplate) : null,
             'group_id'=> $this->group_id,

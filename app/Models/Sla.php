@@ -13,17 +13,11 @@ class Sla extends BaseModel
         'code',
         'category_id',
         'branch_id',
-        'start_date',
-        'end_date',
         'sla_template_id',
         'group_id',
         'is_active'
     ];
 
-    protected $casts = [
-        'start_date' => 'datetime:Y-m-d',
-        'end_date' => 'datetime:Y-m-d',
-    ];
 
     public function scopeSearch($query, $keyword){
         if (!empty($keyword)) {

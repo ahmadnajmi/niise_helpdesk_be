@@ -28,8 +28,6 @@ class SlaRequest extends FormRequest
         return [
             // 'state_id'=> 'required',
             'branch_id'=> 'required',
-            'start_date'=> 'required',
-            'end_date'=> 'nullable',
             'sla_template_id'=> 'required',
             'group_id'=> 'nullable',
             'is_active' => 'nullable',
