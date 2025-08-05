@@ -3,12 +3,14 @@
 namespace App\Http\Services;
 use App\Models\Incident;
 use App\Models\Complaint;
+use App\Models\IncidentSolution;
 use App\Models\Sla;
 use App\Http\Resources\IncidentResources;
 use Illuminate\Support\Facades\Storage;
 
 class IncidentServices
 {
+    
     public static function create($data,$request){
 
         if(!isset($data['complaint_id'])){
@@ -18,15 +20,17 @@ class IncidentServices
             $data['complaint_id'] =  $complaint->id;
         }
 
-        $get_sla = Sla::where('category_id',$data['category_id'])->where('branch_id',$data['branch_id'])->first();
+        // $get_sla = Sla::where('category_id',$data['category_id'])->where('branch_id',$data['branch_id'])->first();
         
         $data['start_date'] = date('Y-m-d H:i:s');
         $data['incident_no'] = self::generateCode();
-        $data['code_sla'] = $get_sla?->code;
+        // $data['code_sla'] = $get_sla?->code;
 
         $data = self::uploadDoc($data,$request);
 
         $create = Incident::create($data);
+
+        $create_resolution = self::createResolution($create->id);
 
         $return = new IncidentResources($create);
 
@@ -107,5 +111,16 @@ class IncidentServices
         $new_code = 'TN'.date('Ymd').$next_number;
         
         return $new_code;
+    }
+    
+    public static function createResolution($id){
+        
+        $data['incident_id'] = $id;
+        $data['operation_user_id'] = 1;
+        $data['action_codes'] = 'INIT';
+    
+        IncidentSolution::create($data);
+
+        return true;
     }
 } 
