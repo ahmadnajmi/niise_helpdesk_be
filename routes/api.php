@@ -56,6 +56,7 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::get('incident', [IncidentController::class, 'index']);
     Route::get('incident/{incident}', [IncidentController::class, 'show']);
     Route::delete('incident/{incident}', [IncidentController::class, 'destroy']);
+    Route::get('incidents/download/{filename}', [IncidentController::class, 'downloadFile'])->name('incidents.download');
 
     Route::get('dynamic_option', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option');
 
@@ -68,12 +69,14 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::get('user_search_group', [UserController::class, 'searchIcNoContractor'])->name('user.search.group');
 
     Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');
-
+    Route::get('/download/{filename}', [FileController::class, 'download'])->name('file.download');
 
     Route::get('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranch']);
     Route::delete('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranchDelete']);
 
     Route::delete('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranchDelete']);
+
+
 });
 
 Route::middleware(['api'])->group(function () {

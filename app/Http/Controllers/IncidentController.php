@@ -10,6 +10,7 @@ use App\Http\Collection\IncidentCollection;
 use App\Http\Resources\IncidentResources;
 use App\Http\Requests\IncidentRequest;
 use App\Http\Services\IncidentServices;
+use Illuminate\Support\Facades\Storage;
 
 class IncidentController extends Controller
 {
@@ -64,5 +65,15 @@ class IncidentController extends Controller
         $data = IncidentServices::delete($incident);
 
         return $this->success('Success', null);
+    }
+    
+    public function downloadFile($filename){
+        $filePath = 'incident/'.$filename; 
+
+        if (Storage::disk('local')->exists($filePath)) { 
+            return Storage::disk('local')->download($filePath);
+        }
+
+        return $this->error('File not found');
     }
 }
