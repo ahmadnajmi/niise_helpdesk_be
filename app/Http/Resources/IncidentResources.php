@@ -18,6 +18,7 @@ class IncidentResources extends JsonResource
          return [
             'id' => $this->id,
             'code_sla' => $this->code_sla,
+            'sla_details'=> $this->sla ? new SlaResources($this->sla) : null,
             'incident_no' =>  $this->incident_no,
             'incident_date' => $this->incident_date?->format('d-m-Y'),
             'branch_id' => $this->branch_id,

@@ -51,11 +51,12 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('company', CompanyController::class);
     Route::apiResource('incident_solution', IncidentSolutionController::class);
     Route::apiResource('company_contract', CompanyContractController::class);
+    Route::apiResource('incident', IncidentController::class);
 
 
-    Route::get('incident', [IncidentController::class, 'index']);
-    Route::get('incident/{incident}', [IncidentController::class, 'show']);
-    Route::delete('incident/{incident}', [IncidentController::class, 'destroy']);
+    // Route::get('incident', [IncidentController::class, 'index']);
+    // Route::get('incident/{incident}', [IncidentController::class, 'show']);
+    // Route::delete('incident/{incident}', [IncidentController::class, 'destroy']);
     Route::get('incidents/download/{filename}', [IncidentController::class, 'downloadFile'])->name('incidents.download');
 
     Route::get('dynamic_option', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option');
@@ -79,10 +80,10 @@ Route::middleware(['api','auth:api'])->group(function () {
 
 });
 
-Route::middleware(['api'])->group(function () {
-    Route::post('incident', [IncidentController::class, 'store']);
-    Route::put('incident/{incident}', [IncidentController::class, 'update']);
-});
+// Route::middleware(['api'])->group(function () {
+//     Route::post('incident', [IncidentController::class, 'store']);
+//     Route::put('incident/{incident}', [IncidentController::class, 'update']);
+// });
 
 Route::apiResource('branch', BranchController::class)->only('index','show');
 Route::apiResource('ref_table', RefTableController::class);
