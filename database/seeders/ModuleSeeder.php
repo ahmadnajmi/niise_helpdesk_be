@@ -276,8 +276,21 @@ class ModuleSeeder extends Seeder
                             'incident.view',
                             'incident.update',
                             // 'incident.delete',
+                            'resolution.index' ,
+                            'resolution.create',
+                            'resolution.view' ,
+                            'resolution.update',
+                            'resolution.delete',
+
+                            'contract.index',
+                            'contract.create',
+                            'contract.view',
+                            'contract.update',
+                            'contract.delete',
                         ]
                     ],
+                    
+                    
                 ]
             ],
 
@@ -525,6 +538,18 @@ class ModuleSeeder extends Seeder
             'operation-time.view' => 'View detailed information about a specific operation time.',
             'operation-time.update' => 'Edit or update existing operation time information.',
             'operation-time.delete' => 'Delete an operation time entry from the system.',
+
+            'resolution.index' => 'View the list of resolution time entries.',
+            'resolution.create' => 'Create or add a new resolution time entry.',
+            'resolution.view' => 'View detailed information about a specific resolution time.',
+            'resolution.update' => 'Edit or update existing resolution time information.',
+            'resolution.delete' => 'Delete a resolution time entry from the system.',
+
+            'contract.index' => 'View the list of contracts.',
+            'contract.create' => 'Create or add a new contract.',
+            'contract.view' => 'View detailed information about a specific contract.',
+            'contract.update' => 'Edit or update existing contract information.',
+            'contract.delete' => 'Delete a contract from the system.',
         ];
 
         foreach($permissions as $permission){

@@ -38,6 +38,17 @@ class RoleSeeder extends Seeder
                             'incident.index.self',
                             'incident.create',
                             'incident.view',
+                            'resolution.index' ,
+                            'resolution.create',
+                            'resolution.view' ,
+                            'resolution.update',
+                            'resolution.delete',
+
+                            'contract.index',
+                            'contract.create',
+                            'contract.view',
+                            'contract.update',
+                            'contract.delete',
                         ]
                     ],
                     [
@@ -70,6 +81,17 @@ class RoleSeeder extends Seeder
                             'incident.index.self',
                             'incident.create',
                             'incident.view',
+                            'resolution.index' ,
+                            'resolution.create',
+                            'resolution.view' ,
+                            'resolution.update',
+                            'resolution.delete',
+
+                            'contract.index',
+                            'contract.create',
+                            'contract.view',
+                            'contract.update',
+                            'contract.delete',
                         ]
                     ],
                     [
@@ -116,6 +138,17 @@ class RoleSeeder extends Seeder
                             'incident.create',
                             'incident.view',
                             'incident.update',
+                            'resolution.index' ,
+                            'resolution.create',
+                            'resolution.view' ,
+                            'resolution.update',
+                            'resolution.delete',
+
+                            'contract.index',
+                            'contract.create',
+                            'contract.view',
+                            'contract.update',
+                            'contract.delete',
                         ]
                     ],
                     [
@@ -282,6 +315,17 @@ class RoleSeeder extends Seeder
                             'incident.view',
                             'incident.update',
                             // 'incident.delete',
+                            'resolution.index' ,
+                            'resolution.create',
+                            'resolution.view' ,
+                            'resolution.update',
+                            'resolution.delete',
+
+                            'contract.index',
+                            'contract.create',
+                            'contract.view',
+                            'contract.update',
+                            'contract.delete',
                         ]
                     ],
                     [
@@ -469,6 +513,17 @@ class RoleSeeder extends Seeder
                             'incident.view',
                             'incident.update',
                             // 'incident.delete',
+                            'resolution.index' ,
+                            'resolution.create',
+                            'resolution.view' ,
+                            'resolution.update',
+                            'resolution.delete',
+
+                            'contract.index',
+                            'contract.create',
+                            'contract.view',
+                            'contract.update',
+                            'contract.delete',
                         ]
                     ],
                     [
@@ -524,6 +579,17 @@ class RoleSeeder extends Seeder
                             'incident.index.self',
                             'incident.create',
                             'incident.view',
+                            'resolution.index' ,
+                            'resolution.create',
+                            'resolution.view' ,
+                            'resolution.update',
+                            'resolution.delete',
+
+                            'contract.index',
+                            'contract.create',
+                            'contract.view',
+                            'contract.update',
+                            'contract.delete',
                         ]
                     ],
                     [
