@@ -45,6 +45,10 @@ class IncidentResources extends JsonResource
             'appendix_file' => $this->appendix_file,
             'incident_solution' => new IncidentSolutionCollection($this->incidentSolution),
             'complainant' => new ComplaintResources($this->complaint) ,
+            'end_date' => $this->end_date?->format('d-m-Y'),
+            'status' => $this->status,
+            'status_desc' => $this->statusDesc?->name,
+
             'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
             'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
             'created_at' => $this->created_at->format('d-m-Y'),

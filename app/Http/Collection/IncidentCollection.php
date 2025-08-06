@@ -49,6 +49,10 @@ class IncidentCollection extends BaseResource
                 'appendix_file' => $query->appendix_file,
                 'incident_solution' => $query->incidentSolution ? new IncidentSolutionCollection($query->incidentSolution) : null,
                 'complainant' => $query->complaint ? new ComplaintResources($query->complaint) : null,
+                'end_date' => $query->end_date?->format('d-m-Y'),
+                'status' => $query->status,
+                'status_desc' => $query->statusDesc?->name,
+
                 'created_at' => $query->created_at->format('d-m-Y'),
                 'updated_at' => $query->updated_at->format('d-m-Y'),
                 'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,

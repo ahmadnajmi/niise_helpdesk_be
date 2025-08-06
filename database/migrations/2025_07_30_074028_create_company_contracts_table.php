@@ -18,6 +18,8 @@ return new class extends Migration
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->smallInteger('status')->default(1);
+
             $table->log();
         });
     }

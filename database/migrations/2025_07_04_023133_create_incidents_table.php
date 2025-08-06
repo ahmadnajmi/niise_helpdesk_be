@@ -33,6 +33,8 @@ return new class extends Migration
             $table->string('appendix_file',100)->nullable(); 
             $table->string('asset_file',100)->nullable(); 
             $table->dateTime('end_date')->nullable();
+            $table->smallInteger('status')->default(1);
+
             $table->log();
         });
     }

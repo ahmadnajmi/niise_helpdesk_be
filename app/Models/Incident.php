@@ -29,7 +29,8 @@ class Incident extends BaseModel
         'operation_user_id',
         'appendix_file',
         'asset_file',
-        'end_date'
+        'end_date',
+        'status'
     ];
 
     protected $casts = [
@@ -73,5 +74,9 @@ class Incident extends BaseModel
     
     public function operationUser(){
         return $this->hasOne(User::class,'id','operation_user_id');
+    }
+
+    public function statusDesc(){
+        return $this->hasOne(RefTable::class,'ref_code','status')->where('code_category', 'incident_status');
     }
 }
