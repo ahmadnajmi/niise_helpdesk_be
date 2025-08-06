@@ -20,8 +20,8 @@ class IncidentSolutionCollection extends BaseResource
                 'action_codes'=> $query->action_codes,
                 'action_codes_details' => new ActionCodeResources($query->actionCodes),
                 'solution_notes'=> $query->solution_notes,
-                'created_at' => $query->created_at->format('d-m-Y'),
-                'updated_at' => $query->updated_at->format('d-m-Y'),
+                'created_at' => $query->created_at->format('d-m-Y H:i:s'),
+                'updated_at' => $query->updated_at->format('d-m-Y H:i:s'),
                 'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
                 'updated_by' => $query->updatedBy->name .' - '. $query->updatedBy->email ,
             ];
