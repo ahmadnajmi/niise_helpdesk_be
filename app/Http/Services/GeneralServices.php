@@ -33,7 +33,13 @@ class GeneralServices
                                         ->with(['childCategory' => function ($query) {
                                             $query->select('id','category_id','name','level','code')
                                                     ->with(['childCategory' => function ($query) {
-                                                        $query->select('id','category_id','name','level','code');
+                                                        $query->select('id','category_id','name','level','code')
+                                                                ->with(['sla' => function ($query) {
+                                                                    $query->select('id','code','category_id');
+                                                                }]);
+                                                    }])
+                                                    ->with(['sla' => function ($query) {
+                                                        $query->select('id','code','category_id');
                                                     }]);
                                         }])
                                         ->with(['sla' => function ($query) {
