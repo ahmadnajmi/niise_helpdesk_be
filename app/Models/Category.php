@@ -22,6 +22,10 @@ class Category extends BaseModel
         return $this->hasOne(Category::class, 'id','category_id');
     }
 
+    public function childCategory(){
+        return $this->hasMany(Category::class,'category_id','id');
+    }
+
 
     public function sla(){
         return $this->hasOne(Sla::class, 'category_id','id');
