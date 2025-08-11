@@ -141,6 +141,13 @@ return [
         'token_url' => env('OIDC_TOKEN_URL'),
         'auth_url' => env('OIDC_AUTH_URL'),
         'userinfo_url' => env('OIDC_USERINFO_URL')
+    ],
+
+    'asset' => [
+        'client_id' => env('ASSET_CLIENT_ID'),
+        'client_secret' => env('ASSET_SECRET'),
+        'url' => env('ASSET_URL')
     ]
   
 ];
+ 

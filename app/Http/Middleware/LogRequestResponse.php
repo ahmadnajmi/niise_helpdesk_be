@@ -28,7 +28,7 @@ class LogRequestResponse
         $response = $next($request);
 
         Log::channel('api_log')->info("API Response: {$response->getStatusCode()}, {$request->fullUrl()}", [
-            'user' => Auth::user()?->email,
+            'user' => Auth::user()?->id,
             'headers' => $response->headers->all(),
             'body' => $response->getContent(),
         ]);
