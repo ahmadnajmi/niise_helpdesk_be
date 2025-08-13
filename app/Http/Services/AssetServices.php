@@ -30,7 +30,7 @@ class AssetServices
         ];
 
         
-        Log::channel('api_log')->info("API Request: {$method}, {$api_url}", [
+        Log::channel('api_log')->info("API Request: {$method},{$this->baseUrl}{$api_url}", [
             'body' => $json,
         ]);
         
@@ -38,7 +38,7 @@ class AssetServices
             $call_api = $client->$method($api_url, $postData);
             $response = $call_api->getBody()->getContents();
 
-            Log::channel('api_log')->info("API Response: {$call_api->getStatusCode()}, {$api_url}", [
+            Log::channel('api_log')->info("API Response: {$call_api->getStatusCode()},{$this->baseUrl}{$api_url}", [
                 'user_id' => Auth::user()?->id,
                 'body' => $response,
             ]);

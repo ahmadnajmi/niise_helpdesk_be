@@ -45,37 +45,19 @@ class IncidentServices
 
         $create_resolution = self::createResolution($create->id);
 
-        $asset_service = new AssetServices();
-
         $create->refresh();
 
-        $data_return = new IncidentResources($create);
+        $return = self::callAssetIncident($create);
 
-        $return['data'] = $data_return;
-
-        if($create->asset_parent_id || $create->asset_component_id){
-            $call_api_asset = $asset_service->createIncident($create);
-
-            if($call_api_asset['data'] == null){
-                DB::rollBack();
-
-                $return['data'] = null;
-                $return['message'] = $call_api_asset['message'];
-                $return['status_code'] = 500;
-            }
-            else{
-                DB::commit();
-            }
-        }
-        
         return $return;
     }
 
     public static function update(Incident $incident,$data){
+        DB::beginTransaction();
 
         $create = $incident->update($data);
 
-        $return = new IncidentResources($incident);
+        $return = self::callAssetIncident($incident);
 
         return $return;
     }
@@ -156,5 +138,29 @@ class IncidentServices
         IncidentSolution::create($data);
 
         return true;
+    }
+
+    public static function callAssetIncident($data){
+        $data_return = new IncidentResources($data);
+
+        $return['data'] = $data_return;
+
+        if(isset($data->asset_parent_id) || isset($data->asset_component_id)){
+            $asset_service = new AssetServices();
+
+            $call_api_asset = $asset_service->createIncident($data);
+
+            if($call_api_asset['data'] == null){
+                DB::rollBack();
+
+                $return['data'] = null;
+                $return['message'] = $call_api_asset['message'];
+                $return['status_code'] = 500;
+            }
+            else{
+                DB::commit();
+            }
+        }
+        return $return;
     }
 } 

@@ -53,7 +53,7 @@ class IncidentController extends Controller
 
             $data = IncidentServices::update($incident,$data);
 
-            return $this->success('Success', $data);
+            return $this->generalResponse($data);
           
         } catch (\Throwable $th) {
             return $this->error($th->getMessage());
