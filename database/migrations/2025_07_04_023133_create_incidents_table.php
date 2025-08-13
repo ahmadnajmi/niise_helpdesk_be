@@ -28,6 +28,8 @@ return new class extends Migration
             $table->date('date_report_police')->nullable();
             $table->string('report_police_no',100)->nullable(); 
             $table->string('asset_siri_no',100)->nullable(); 
+            $table->unsignedBigInteger('asset_parent_id')->nullable(); 
+            $table->json('asset_component_id')->nullable(); 
             $table->unsignedBigInteger('group_id')->nullable(); 
             $table->unsignedBigInteger('operation_user_id')->nullable(); 
             $table->string('appendix_file',100)->nullable(); 

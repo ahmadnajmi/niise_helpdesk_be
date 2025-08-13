@@ -30,7 +30,10 @@ class Incident extends BaseModel
         'appendix_file',
         'asset_file',
         'end_date',
-        'status'
+        'status',
+        'asset_parent_id',
+        'asset_component_id',
+
     ];
 
     protected $casts = [
@@ -39,6 +42,14 @@ class Incident extends BaseModel
         'date_report_police' => 'datetime:Y-m-d',
         'end_date' => 'datetime:Y-m-d',
     ];
+
+
+    const OPEN = 1;
+    const RESOLVED = 2;
+    const CLOSED = 3;
+    const CANCEL_DUPLICATE = 4;
+    const ON_HOLD = 5;
+
 
     public function branch(){
         return $this->hasOne(Branch::class,'id','branch_id');

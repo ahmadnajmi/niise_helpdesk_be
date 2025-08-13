@@ -32,10 +32,10 @@ class IncidentController extends Controller
 
             $data = IncidentServices::create($data,$request);
 
-            return $this->success('Success', $data);
+            return $this->generalResponse($data);
           
         } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
+             return $this->error($th->getMessage());
         }
     }
 

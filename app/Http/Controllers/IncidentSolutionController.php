@@ -9,6 +9,7 @@ use App\Http\Traits\ResponseTrait;
 use App\Http\Collection\IncidentSolutionCollection;
 use App\Http\Resources\IncidentSolutionResources;
 use App\Http\Requests\IncidentSolutionRequest;
+use App\Http\Services\IncidentSolutionServices;
 
 class IncidentSolutionController extends Controller
 {
@@ -27,10 +28,8 @@ class IncidentSolutionController extends Controller
     {
         try {
             $data = $request->all();
-
-            $create = IncidentSolution::create($data);
            
-            $data = new IncidentSolutionResources($create);
+            $data = IncidentSolutionServices::create($data);
 
             return $this->success('Success', $data);
           
@@ -51,9 +50,7 @@ class IncidentSolutionController extends Controller
         try {
             $data = $request->all();
 
-            $update = $incident_solution->update($data);
-
-            $data = new IncidentSolutionResources($incident_solution);
+            $data = IncidentSolutionServices::update($incident_solution,$data);
 
             return $this->success('Success', $data);
           

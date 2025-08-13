@@ -1,23 +1,36 @@
 <?php
 
 namespace App\Http\Services;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Traits\ResponseTrait;
+use App\Http\Resources\IncidentResources;
 use App\Models\Incident;
 use App\Models\Complaint;
 use App\Models\IncidentSolution;
 use App\Models\Sla;
-use App\Http\Resources\IncidentResources;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Category;
 
 class IncidentServices
 {
     
     public static function create($data,$request){
 
+        DB::beginTransaction();
+
         if(!isset($data['complaint_id'])){
 
             $complaint = Complaint::create($data);
 
             $data['complaint_id'] =  $complaint->id;
+        }
+
+        if(!isset($data['category_id'])){
+
+            $category = Category::where('name','MOBILE')->first();
+
+            $data['category_id'] = $category?->id;
         }
 
         // $get_sla = Sla::where('category_id',$data['category_id'])->where('branch_id',$data['branch_id'])->first();
@@ -32,8 +45,29 @@ class IncidentServices
 
         $create_resolution = self::createResolution($create->id);
 
-        $return = new IncidentResources($create);
+        $asset_service = new AssetServices();
 
+        $create->refresh();
+
+        $data_return = new IncidentResources($create);
+
+        $return['data'] = $data_return;
+
+        if($create->asset_parent_id || $create->asset_component_id){
+            $call_api_asset = $asset_service->createIncident($create);
+
+            if($call_api_asset['data'] == null){
+                DB::rollBack();
+
+                $return['data'] = null;
+                $return['message'] = $call_api_asset['message'];
+                $return['status_code'] = 500;
+            }
+            else{
+                DB::commit();
+            }
+        }
+        
         return $return;
     }
 

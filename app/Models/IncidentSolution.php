@@ -17,15 +17,13 @@ class IncidentSolution extends BaseModel
         'action_codes',
         'notes',
         'solution_notes',
-        'status'
-
     ];
 
     public function actionCodes(){
         return $this->hasOne(ActionCode::class,'nickname','action_codes');
     }
 
-    public function statusDesc(){
-        return $this->hasOne(RefTable::class,'ref_code','status')->where('code_category', 'incident_resolution_status');
+    public function incident(){
+        return $this->hasOne(Incident::class,'id','incident_id');
     }
 }

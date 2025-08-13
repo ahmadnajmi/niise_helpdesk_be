@@ -20,8 +20,6 @@ return new class extends Migration
             $table->string('action_codes',20)->nullable();
             $table->string('notes')->nullable();
             $table->string('solution_notes')->nullable();
-            $table->smallInteger('status')->default(1);
-
             $table->log();
         });
     }

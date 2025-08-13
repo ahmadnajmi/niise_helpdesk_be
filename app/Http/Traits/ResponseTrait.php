@@ -64,6 +64,10 @@ trait ResponseTrait {
     // protected function generalResponse(string $message, $data = [], int $status = 200) {
     protected function generalResponse($response) {
 
+        $response['status_code'] = isset($response['status_code']) ? $response['status_code'] : 200;
+        $response['message'] = isset($response['message']) ? $response['message'] : true;
+
+
         if($response['status_code'] == 200){
             $response['status'] = true;
         }

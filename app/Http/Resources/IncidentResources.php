@@ -30,7 +30,8 @@ class IncidentResources extends JsonResource
             'knowledge_base_id' => $this->knowledge_base_id,
             'received_via' => $this->received_via,
             'received_via_desc' => $this->receviedViaDescription?->name,
-
+            'asset_parent_id' => $this->asset_parent_id,
+            'asset_component_id' => $this->asset_component_id,
             'report_no' => $this->report_no,
             'incident_asset_type' => $this->incident_asset_type,
             'date_asset_loss' => $this->date_asset_loss?->format('d-m-Y'),
