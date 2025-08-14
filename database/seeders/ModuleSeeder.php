@@ -193,6 +193,8 @@ class ModuleSeeder extends Seeder
                                     'sla-template.view',
                                     'sla-template.update',
                                     'sla-template.delete',
+                                    'sla-template.replicate',
+
                                 ]
                             ],
                             [
@@ -482,6 +484,7 @@ class ModuleSeeder extends Seeder
             'sla-template.view' => 'View SLA template details.',
             'sla-template.update' => 'Update SLA template.',
             'sla-template.delete' => 'Delete SLA template.',
+            'sla-template.replicate'=> 'Replicate SLA template.',
 
             'sla.index' => 'View SLA configurations.',
             'sla.create' => 'Create new SLA.',

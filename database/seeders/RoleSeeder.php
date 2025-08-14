@@ -264,6 +264,7 @@ class RoleSeeder extends Seeder
                             'sla-template.view',
                             'sla-template.update',
                             'sla-template.delete',
+                            'sla-template.replicate',
                         ]
                     ],
                     [
@@ -462,6 +463,8 @@ class RoleSeeder extends Seeder
                             'sla-template.view',
                             'sla-template.update',
                             'sla-template.delete',
+                            'sla-template.replicate',
+
                         ]
                     ],
                     [
