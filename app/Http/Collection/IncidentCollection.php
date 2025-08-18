@@ -25,6 +25,7 @@ class IncidentCollection extends BaseResource
                 'sla_details'=> $query->sla ? new SlaResources($query->sla) : null,
                 'incident_no' =>  $query->incident_no,
                 'incident_date' => $query->incident_date?->format('d-m-Y'),
+                'barcode' => $query->barcode,
                 'branch_id' => $query->branch_id,
                 'branch_details' => $query->branch,
                 'category_id' => $query->category_id,
@@ -34,7 +35,6 @@ class IncidentCollection extends BaseResource
                 'knowledge_base_id' => $query->knowledge_base_id,
                 'received_via' => $query->received_via,
                 'received_via_desc' => $query->receviedViaDescription?->name,
-
                 'report_no' => $query->report_no,
                 'incident_asset_type' => $query->incident_asset_type,
                 'date_asset_loss' => $query->date_asset_loss?->format('d-m-Y'),
@@ -45,7 +45,6 @@ class IncidentCollection extends BaseResource
                 'group_details' =>  $query->group ? new GroupResources($query->group) : null,
                 'operation_user_id' => $query->operation_user_id,
                 'operation_user_details' => $query->operationUser ? new UserResources($query->operationUser) : null,
-
                 'appendix_file' => $query->appendix_file,
                 'incident_solution' => $query->incidentSolution ? new IncidentSolutionCollection($query->incidentSolution) : null,
                 'complainant' => $query->complaint ? new ComplaintResources($query->complaint) : null,

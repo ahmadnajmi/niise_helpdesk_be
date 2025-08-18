@@ -50,6 +50,7 @@ class IncidentRequest extends FormRequest
             'phone_no' => 'required_without:complaint_id',
             'office_phone_no'=> 'nullable',
             'extension_no'=> 'nullable',
+            'barcode' => 'nullable',
         ];
     }   
 

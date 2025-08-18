@@ -26,8 +26,13 @@ class AssetServices
                 'Client-ID' => config('app.asset.client_id'),
                 'Client-Secret' => config('app.asset.client_secret'),
             ],
-            'json' => $json
         ];
+
+        if (strtoupper($method) === 'GET') {
+            $postData['query'] = $json; 
+        } else {
+            $postData['json'] = $json; 
+        }
 
         
         Log::channel('api_log')->info("API Request: {$method},{$this->baseUrl}{$api_url}", [
@@ -80,5 +85,21 @@ class AssetServices
         $call_api = $this->callApiAsset('ext/logIncidentFromHelpDesk','POST',$data_asset);
 
         return $call_api;
+    }
+
+    public function getAsset($id){
+        $parameter['spec_batch_item_id'] = $id;
+
+        $call_api = $this->callApiAsset('ext/getAsset','GET',$parameter);
+
+        if($call_api['data']){
+            $data = $call_api['data'];
+
+            return $data->data;
+        }
+        else{
+            return [];
+        }
+
     }
 }

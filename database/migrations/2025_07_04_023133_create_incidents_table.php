@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('incident_no',20)->nullable(); 
             $table->string('code_sla',20)->nullable(); 
             $table->date('incident_date')->nullable();
+            $table->string('barcode',100)->nullable(); 
             $table->unsignedBigInteger('branch_id')->nullable(); 
             $table->unsignedBigInteger('category_id')->nullable(); 
             $table->unsignedBigInteger('complaint_id')->nullable(); 

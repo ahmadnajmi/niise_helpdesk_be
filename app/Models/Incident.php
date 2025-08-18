@@ -13,6 +13,7 @@ class Incident extends BaseModel
         'incident_no',
         'code_sla',
         'incident_date',
+        'barcode',
         'branch_id',
         'category_id',
         'complaint_id',

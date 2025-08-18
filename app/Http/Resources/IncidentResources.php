@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Collection\IncidentSolutionCollection;
+use App\Http\Services\AssetServices;
 
 class IncidentResources extends JsonResource
 {
@@ -15,12 +16,15 @@ class IncidentResources extends JsonResource
      */
     public function toArray(Request $request): array
     {
-         return [
+        $asset_service = new AssetServices();
+
+        return [
             'id' => $this->id,
             'code_sla' => $this->code_sla,
             'sla_details'=> $this->sla ? new SlaResources($this->sla) : null,
             'incident_no' =>  $this->incident_no,
             'incident_date' => $this->incident_date?->format('d-m-Y'),
+            'barcode' => $this->barcode,
             'branch_id' => $this->branch_id,
             'branch_details' => $this->branch,
             'category_id' => $this->category_id,
@@ -32,6 +36,7 @@ class IncidentResources extends JsonResource
             'received_via_desc' => $this->receviedViaDescription?->name,
             'asset_parent_id' => $this->asset_parent_id,
             'asset_component_id' => $this->asset_component_id,
+            'asset_information' => $asset_service->getAsset($this->asset_parent_id ? [$this->asset_parent_id] : json_decode($this->asset_component_id)),
             'report_no' => $this->report_no,
             'incident_asset_type' => $this->incident_asset_type,
             'date_asset_loss' => $this->date_asset_loss?->format('d-m-Y'),
