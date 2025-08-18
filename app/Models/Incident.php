@@ -72,7 +72,7 @@ class Incident extends BaseModel
     }
 
     public function incidentSolution(){
-        return $this->hasMany(IncidentSolution::class, 'incident_id','id');
+        return $this->hasMany(IncidentSolution::class, 'incident_id','id')->orderBy('created_at','asc');
     }
 
     public function categoryDescription(){

@@ -161,6 +161,9 @@ class IncidentServices
                 DB::commit();
             }
         }
+        else{
+            DB::commit();
+        }
         return $return;
     }
 } 
