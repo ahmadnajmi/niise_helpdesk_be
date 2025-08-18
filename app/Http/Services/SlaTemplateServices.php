@@ -3,7 +3,7 @@
 namespace App\Http\Services;
 use App\Models\Sla;
 use App\Models\SlaTemplate;
-use App\Models\SlaCategory;
+use App\Models\SlaVersion;
 use App\Models\Category;
 use App\Http\Resources\SlaTemplateResources;
 
@@ -14,6 +14,8 @@ class SlaTemplateServices
         $data['code'] = self::generateCode();
 
         $create = SlaTemplate::create($data);
+
+        self::generateVersion($create);
         
         $return = new SlaTemplateResources($create);
 
@@ -23,6 +25,9 @@ class SlaTemplateServices
     public static function update(SlaTemplate $sla_template,$data){
 
         $update = $sla_template->update($data);
+
+        self::generateVersion($sla_template);
+
 
         $return = new SlaTemplateResources($sla_template);
 
@@ -54,6 +59,22 @@ class SlaTemplateServices
         $new_code = 'ST'.$next_number;
         
         return $new_code;
+    }
+
+    public static function generateVersion($data){
+
+        $get_version = SlaVersion::where('sla_template_id',$data->id)->orderBy('version','desc')->first();
+        
+        $data_version['version'] = $get_version ? $get_version->version + 1 : 1;
+        $data_version['sla_template_id'] = $data->id;
+        $data_version['response_time'] = $data->response_time;
+        $data_version['response_time_type'] = $data->response_time_type;
+        $data_version['response_time_penalty'] = $data->response_time_penalty;
+        $data_version['resolution_time'] = $data->resolution_time;
+        $data_version['resolution_time_type'] = $data->resolution_time_type;
+        $data_version['resolution_time_penalty'] = $data->resolution_time_penalty;
+
+        $create = SlaVersion::create($data_version);
     }
 
     

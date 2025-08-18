@@ -38,6 +38,11 @@ class SlaTemplate extends BaseModel
         'notes'
     ];
 
+    const SLA_TYPE_MINUTE = 1;
+    const SLA_TYPE_HOUR = 2;
+    const SLA_TYPE_DAY = 3;
+
+
     public function scopeSearch($query, $keyword){
         if (!empty($keyword)) {
             $lang = substr(request()->header('Accept-Language'), 0, 2);

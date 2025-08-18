@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sla_category', function (Blueprint $table) {
+        Schema::create('incident_penalty', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('sla_id')->nullable(); 
-            $table->unsignedBigInteger('category_id')->nullable(); 
+            $table->unsignedBigInteger('incident_id')->nullable(); 
+            $table->string('total_response_time_penalty_price',20)->nullable();
+            $table->string('total_response_time_penalty_minute',20)->nullable();
+
             $table->log();
         });
     }
@@ -24,7 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sla_category');
-
+        Schema::dropIfExists('incident_penalty');
     }
 };

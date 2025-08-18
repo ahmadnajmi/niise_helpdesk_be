@@ -37,6 +37,7 @@ return new class extends Migration
             $table->string('asset_file',100)->nullable(); 
             $table->dateTime('end_date')->nullable();
             $table->smallInteger('status')->default(1);
+            $table->unsignedBigInteger('sla_version_id')->nullable(); 
 
             $table->log();
         });

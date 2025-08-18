@@ -5,7 +5,7 @@ namespace App\Http\Collection;
 use Illuminate\Http\Request;
 use App\Http\Resources\ActionCodeResources;
 
-class IncidentSolutionCollection extends BaseResource
+class IncidentResolutionCollection extends BaseResource
 {
     /**
      * Transform the resource collection into an array.

@@ -43,6 +43,8 @@ class IncidentController extends Controller
     {
         $data = new IncidentResources($incident);
 
+        IncidentServices::calculateDueDateIncident();
+
         return $this->success('Success', $data);
     }
 

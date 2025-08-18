@@ -136,10 +136,6 @@ class BaseModel extends Model implements Auditable
                 $class = 'Sla';
                 break;
 
-            case SlaCategory::class:
-                $class = 'SLA Kategori';
-                break;
-
             case SlaTemplate::class:
                 $class = 'Templat SLA';
                 break;

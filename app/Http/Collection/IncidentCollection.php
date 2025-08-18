@@ -46,7 +46,7 @@ class IncidentCollection extends BaseResource
                 'operation_user_id' => $query->operation_user_id,
                 'operation_user_details' => $query->operationUser ? new UserResources($query->operationUser) : null,
                 'appendix_file' => $query->appendix_file,
-                'incident_solution' => $query->incidentSolution ? new IncidentSolutionCollection($query->incidentSolution) : null,
+                'incident_solution' => $query->incidentResolution ? new IncidentResolutionCollection($query->incidentResolution) : null,
                 'complainant' => $query->complaint ? new ComplaintResources($query->complaint) : null,
                 'end_date' => $query->end_date?->format('d-m-Y'),
                 'status' => $query->status,

@@ -5,9 +5,9 @@ namespace App\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 
-class IncidentSolution extends BaseModel
+class IncidentResolution extends BaseModel
 {
-    protected $table = 'incident_solutions';
+    protected $table = 'incident_resolution';
 
     protected $fillable = [ 
         'incident_id',

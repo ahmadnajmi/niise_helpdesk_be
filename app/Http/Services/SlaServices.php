@@ -2,7 +2,6 @@
 
 namespace App\Http\Services;
 use App\Models\Sla;
-use App\Models\SlaCategory;
 use App\Models\Category;
 use App\Http\Resources\SlaResources;
 
@@ -68,23 +67,8 @@ class SlaServices
     }
 
     public static function delete(Sla $sla){
-        SlaCategory::where('sla_id',$sla->id)->delete();
-
         $sla->delete();
 
-        return true;
-    }
-
-    public static function slaCategory($data){
-        
-        foreach($data['sla_category'] as $sla_category){
-
-            $data_category['category_id'] = $sla_category;
-            $data_category['sla_id'] = $id;
-
-            SlaCategory::create($data_category);
-        }
-        
         return true;
     }
 

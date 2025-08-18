@@ -34,7 +34,7 @@ class Incident extends BaseModel
         'status',
         'asset_parent_id',
         'asset_component_id',
-
+        'sla_version_id',
     ];
 
     protected $casts = [
@@ -68,12 +68,16 @@ class Incident extends BaseModel
         return $this->hasOne(Complaint::class,'id','complaint_id');
     }
 
+    public function slaVersion(){
+        return $this->hasOne(SlaVersion::class,'id','sla_version_id');
+    }
+
     public function sla(){
         return $this->hasOne(Sla::class,'code','code_sla');
     }
 
-    public function incidentSolution(){
-        return $this->hasMany(IncidentSolution::class, 'incident_id','id')->orderBy('created_at','asc');
+    public function incidentResolution(){
+        return $this->hasMany(IncidentResolution::class, 'incident_id','id')->orderBy('created_at','asc');
     }
 
     public function categoryDescription(){

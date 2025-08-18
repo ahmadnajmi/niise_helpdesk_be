@@ -8,9 +8,12 @@ use App\Http\Traits\ResponseTrait;
 use App\Http\Resources\IncidentResources;
 use App\Models\Incident;
 use App\Models\Complaint;
-use App\Models\IncidentSolution;
+use App\Models\IncidentResolution;
 use App\Models\Sla;
+use App\Models\SlaVersion;
 use App\Models\Category;
+use App\Models\OperatingTime;
+use App\Models\SlaTemplate;
 
 class IncidentServices
 {
@@ -32,12 +35,11 @@ class IncidentServices
 
             $data['category_id'] = $category?->id;
         }
-
-        // $get_sla = Sla::where('category_id',$data['category_id'])->where('branch_id',$data['branch_id'])->first();
         
         $data['start_date'] = date('Y-m-d H:i:s');
         $data['incident_no'] = self::generateCode();
-        // $data['code_sla'] = $get_sla?->code;
+        $data['sla_version_id'] = self::getSlaVersion($data);
+        $data['end_date'] = self::calculateDueDateIncident($data);
 
         $data = self::uploadDoc($data,$request);
 
@@ -58,6 +60,10 @@ class IncidentServices
         $create = $incident->update($data);
 
         $return = self::callAssetIncident($incident);
+
+        if($incident->status == RESOLVED || $incident->status == CLOSED){
+            self::calculatePenalty($incident);
+        }
 
         return $return;
     }
@@ -135,7 +141,7 @@ class IncidentServices
         $data['operation_user_id'] = 1;
         $data['action_codes'] = 'INIT';
     
-        IncidentSolution::create($data);
+        IncidentResolution::create($data);
 
         return true;
     }
@@ -165,5 +171,44 @@ class IncidentServices
             DB::commit();
         }
         return $return;
+    }
+    
+    public static function getSlaVersion($data){
+
+        $get_sla = Sla::where('code',$data['code_sla'])->first();
+
+        $get_sla_details = SlaVersion::where('sla_template_id',$get_sla?->sla_template_id)->orderBy('version','desc')->first();
+
+        return $get_sla_details?->id;
+
+    }
+
+    public static function calculateDueDateIncident($data){
+
+        $get_sla_details = SlaVersion::where('id',$data['sla_version_id'])->first();
+
+        if(!$get_sla_details) return null;
+        
+        $now = now();
+
+        if($get_sla_details->resolution_time_type == SlaTemplate::SLA_TYPE_MINUTE){
+            $unit = 'addMinutes';
+        }
+        elseif($get_sla_details->resolution_time_type == SlaTemplate::SLA_TYPE_HOUR){
+            $unit = 'addHours';
+        }
+        else{
+            $unit = 'addDay';
+        }
+
+        $due_date = $now->copy()->$unit((int) $get_sla_details->resolution_time);
+
+        $get_operating_time = OperatingTime::whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $data[branch_id])')")->first();
+        
+        return $due_date->format('Y-m-d H:i:s');
+    }
+
+    public static function calculatePenalty(){
+
     }
 } 

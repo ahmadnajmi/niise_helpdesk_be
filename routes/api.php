@@ -24,7 +24,7 @@ use App\Http\Controllers\SlaTemplateController;
 use App\Http\Controllers\SlaController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\IncidentController;
-use App\Http\Controllers\IncidentSolutionController;
+use App\Http\Controllers\IncidentResolutionController;
 use App\Http\Controllers\CompanyContractController;
 
 Route::post('login', [AuthController::class, 'login']);
@@ -49,7 +49,7 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('sla', SlaController::class);
     Route::apiResource('sla_template', SlaTemplateController::class);
     Route::apiResource('company', CompanyController::class);
-    Route::apiResource('incident_solution', IncidentSolutionController::class);
+    Route::apiResource('incident_solution', IncidentResolutionController::class);
     Route::apiResource('company_contract', CompanyContractController::class);
     Route::apiResource('incident', IncidentController::class);
 

@@ -19,6 +19,12 @@ class ActionCode extends BaseModel
         'email_recipient_id'
     ];
 
+    const INIT = 'INIT';
+    const ESCL = 'ESCL';
+    const ACTR = 'ACTR';
+    const CLSD = 'CLSD';
+    const UPDT = 'UPDT';
+
     public function emailRecipientDescription(){
         return $this->hasOne(RefTable::class,'ref_code','email_recipient_id')->where('code_category', 'action_code_email_recipient');
     }
