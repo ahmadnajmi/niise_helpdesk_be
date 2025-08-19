@@ -204,7 +204,11 @@ class IncidentServices
         $due_date = $now->copy()->$unit((int) $get_sla_details->resolution_time);
 
         $get_operating_time = OperatingTime::whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $data[branch_id])')")->first();
-        
+
+        while ($due_date->isWeekend()) {
+            $due_date->addDay();
+        }
+            
         return $due_date->format('Y-m-d H:i:s');
     }
 
