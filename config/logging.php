@@ -63,6 +63,10 @@ return [
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
+            'formatter' => Monolog\Formatter\JsonFormatter::class,
+            'formatter_with' => [
+                'prettyPrint' => true, // <-- tambah ni
+            ],
         ],
 
         'daily' => [
@@ -130,7 +134,20 @@ return [
         'api_log' => [
             'driver' => 'daily',
             'path' => storage_path('logs/api.log'),
-        ]
+        ],
+
+        'fe_api' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/fe_api.log'),
+            'level' => 'info',
+        ],
+
+        // untuk API external (3rd party)
+        'external_api' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/external_api.log'),
+            'level' => 'info',
+        ],
 
     ],
 

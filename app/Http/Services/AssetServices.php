@@ -35,7 +35,7 @@ class AssetServices
         }
 
         
-        Log::channel('api_log')->info("API Request: {$method},{$this->baseUrl}{$api_url}", [
+        Log::channel('external_api')->info("API Request: {$method},{$this->baseUrl}{$api_url}", [
             'body' => $json,
         ]);
         
@@ -43,9 +43,9 @@ class AssetServices
             $call_api = $client->$method($api_url, $postData);
             $response = $call_api->getBody()->getContents();
 
-            Log::channel('api_log')->info("API Response: {$call_api->getStatusCode()},{$this->baseUrl}{$api_url}", [
+            Log::channel('external_api')->info("API Response: {$call_api->getStatusCode()},{$this->baseUrl}{$api_url}", [
                 'user_id' => Auth::user()?->id,
-                'body' => $response,
+                'body' => json_decode($response, true),
             ]);
 
             
@@ -55,7 +55,7 @@ class AssetServices
         } catch (\GuzzleHttp\Exception\BadResponseException $e){ 
             $message = 'Something went wrong on the server.Error Code = '. $e->getCode();
 
-            Log::channel('api_log')->info("API Response: {$e->getCode()}, {$api_url}", [
+            Log::channel('external_api')->info("API Response: {$e->getCode()}, {$api_url}", [
                 'message' => $e->getMessage(),
             ]);
             

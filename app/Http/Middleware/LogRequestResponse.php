@@ -18,19 +18,17 @@ class LogRequestResponse
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $data = $request->all();
-
-        Log::channel('api_log')->info("API Request: {$request->method()}, {$request->fullUrl()}", [
+        Log::channel('fe_api')->info("API Request: {$request->method()}, {$request->fullUrl()}", [
             'headers' => $request->headers->all(),
-            'body' => $data,
+            'body' => $request->all(),
         ]);
 
         $response = $next($request);
 
-        Log::channel('api_log')->info("API Response: {$response->getStatusCode()}, {$request->fullUrl()}", [
+        Log::channel('fe_api')->info("API Response: {$response->getStatusCode()}, {$request->fullUrl()}", [
             'user' => Auth::user()?->id,
             'headers' => $response->headers->all(),
-            'body' => $response->getContent(),
+            'body' => json_decode($response->getContent(), true),
         ]);
 
         return $response;

@@ -61,8 +61,8 @@ class IncidentServices
 
         $return = self::callAssetIncident($incident);
 
-        if($incident->status == RESOLVED || $incident->status == CLOSED){
-            self::calculatePenalty($incident);
+        if($incident->status == Incident::RESOLVED || $incident->status == Incident::CLOSED){
+            // self::calculatePenalty($incident);
         }
 
         return $return;

@@ -146,7 +146,7 @@ return [
     'asset' => [
         'client_id' => env('ASSET_CLIENT_ID'),
         'client_secret' => env('ASSET_SECRET'),
-        'url' => env('ASSET_URL')
+        'url' => env('ASSET_API_URL')
     ]
   
 ];
