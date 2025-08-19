@@ -87,6 +87,7 @@ Route::middleware(['api','auth:api'])->group(function () {
 
 Route::apiResource('branch', BranchController::class)->only('index','show');
 Route::apiResource('ref_table', RefTableController::class);
+Route::get('incidents/download_asset/{incident_no}', [IncidentController::class, 'downloadAssetFile'])->name('incidents.download_asset');
 
 Route::get('testing', [UserController::class,'testingJasper']);
 

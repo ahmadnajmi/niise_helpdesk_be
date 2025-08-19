@@ -76,4 +76,17 @@ class IncidentController extends Controller
 
         return $this->error('File not found');
     }
+
+    public function downloadAssetFile($incident_no){
+        $incident =  Incident::where('incident_no',$incident_no)->first();
+
+        $filePath = 'incident/'.$incident->asset_file; 
+
+        if (Storage::disk('local')->exists($filePath)) { 
+            return Storage::disk('local')->download($filePath);
+        }
+
+        return $this->error('File not found');
+
+    }
 }
