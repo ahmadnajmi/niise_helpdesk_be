@@ -14,6 +14,7 @@ use App\Models\SlaVersion;
 use App\Models\Category;
 use App\Models\OperatingTime;
 use App\Models\SlaTemplate;
+use Carbon\Carbon;
 
 class IncidentServices
 {
@@ -54,8 +55,10 @@ class IncidentServices
         return $return;
     }
 
-    public static function update(Incident $incident,$data){
+    public static function update(Incident $incident,$data,$request){
         DB::beginTransaction();
+
+        $data = self::uploadDoc($data,$request);
 
         $create = $incident->update($data);
 
@@ -81,7 +84,8 @@ class IncidentServices
     }
 
     public static function uploadDoc($data,$request){
-        $destination = storage_path('app/private/incident'); // full path
+
+        $destination = storage_path('app/private/incident'); 
         if (!file_exists($destination)) {
             mkdir($destination, 0777, true);
         }
@@ -203,7 +207,17 @@ class IncidentServices
 
         $due_date = $now->copy()->$unit((int) $get_sla_details->resolution_time);
 
-        $get_operating_time = OperatingTime::whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $data[branch_id])')")->first();
+        $get_operating_time = OperatingTime::whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $data[branch_id])')")->where('duration',OperatingTime::NORMAL_DAY)->first();
+        
+        if($get_operating_time){
+            $start = Carbon::createFromFormat('H:i', $get_operating_time->operation_start);
+            $end   = Carbon::createFromFormat('H:i', $get_operating_time->operation_end);
+
+            $total_office_hours = $start->diffInHours($end);
+
+            // dd($get_operating_time);
+        }
+
 
         while ($due_date->isWeekend()) {
             $due_date->addDay();

@@ -51,7 +51,7 @@ class IncidentController extends Controller
         try {
             $data = $request->all();
 
-            $data = IncidentServices::update($incident,$data);
+            $data = IncidentServices::update($incident,$data,$request);
 
             return $this->generalResponse($data);
           
@@ -63,6 +63,8 @@ class IncidentController extends Controller
     public function destroy(Incident $incident)
     {
         $data = IncidentServices::delete($incident);
+
+        if(!$data) return $this->error('Not user incident');
 
         return $this->success('Success', null);
     }
