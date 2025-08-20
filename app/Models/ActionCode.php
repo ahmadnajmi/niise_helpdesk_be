@@ -25,6 +25,11 @@ class ActionCode extends BaseModel
     const CLSD = 'CLSD';
     const UPDT = 'UPDT';
 
+    const SEND_TO_COMPLAINT = 1;
+    const SEND_TO_GROUP = 2;
+    const SEND_TO_GROUP_BCC = 3;
+
+
     public function emailRecipientDescription(){
         return $this->hasOne(RefTable::class,'ref_code','email_recipient_id')->where('code_category', 'action_code_email_recipient');
     }
