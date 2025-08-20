@@ -55,7 +55,15 @@ class IncidentResolutionServices
 
         if($data->actionCodes->send_email){
 
-            if()
+            if($data->actionCodes->email_recipient_id == ActionCode::SEND_TO_COMPLAINT){
+               $send_to = [$data->complaint->email];
+            }
+            elseif($data->actionCodes->email_recipient_id == ActionCode::SEND_TO_GROUP){
+
+            }
+            else{
+
+            }
 
             $send_email = Mail::to(auth()->user()->email)->send(new ActionCodeEmail());
         }
