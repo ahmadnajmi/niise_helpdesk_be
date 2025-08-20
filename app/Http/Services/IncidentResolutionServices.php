@@ -9,6 +9,8 @@ use App\Models\ActionCode;
 use App\Models\IncidentPenalty;
 use App\Models\SlaVersion;
 use App\Models\SlaTemplate;
+use App\Models\User;
+
 use App\Http\Resources\IncidentResolutionResources;
 use App\Mail\ActionCodeEmail;
 
@@ -55,17 +57,33 @@ class IncidentResolutionServices
 
         if($data->actionCodes->send_email){
 
+            $group_member =  User::whereHas('group', function ($query)use($data) {
+                                        $query->where('groups_id',$data->group_id);
+                                })
+                                ->pluck('email');
+
+            $user_operation = User::where('id',$data->operation_user_id)->first();
+
+
             if($data->actionCodes->email_recipient_id == ActionCode::SEND_TO_COMPLAINT){
-               $send_to = [$data->complaint->email];
+               $send_to = [$data->incident->complaint?->email];
+               $cc_to = $group_member;
+               $bc_to   = [];
             }
             elseif($data->actionCodes->email_recipient_id == ActionCode::SEND_TO_GROUP){
-
+                $send_to = [$user_operation?->email];
+                $cc_to = $group_member;
+                $bc_to = [$data->incident->complaint?->email];
             }
             else{
-
+                $send_to = [$user_operation?->email];
+                $cc_to = $group_member;
             }
 
-            $send_email = Mail::to(auth()->user()->email)->send(new ActionCodeEmail());
+            Mail::to($send_to)
+                ->cc($cc_to ?? [])
+                ->bcc($bc_to ?? [])
+                ->send(new ActionCodeEmail($data));
         }
 
         return true;
