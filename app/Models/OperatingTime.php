@@ -19,6 +19,11 @@ class OperatingTime extends BaseModel
         'is_active',
     ];
 
+    const NORMAL_DAY = 1;
+    const HALF_DAY = 2;
+    const WEEKEND = 3;
+
+
     public function branch(){
         return $this->hasOne(Branch::class,'id','branch_id');
     }
