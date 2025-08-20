@@ -47,7 +47,7 @@ class IncidentResources extends JsonResource
             'group_details' => new GroupResources($this->group),
             'operation_user_id' => $this->operation_user_id,
             'operation_user_details' => new UserResources($this->operationUser),
-
+            'asset_file' => $this->asset_file,
             'appendix_file' => $this->appendix_file,
             'incident_solution' => new IncidentResolutionCollection($this->incidentResolution),
             'complainant' => new ComplaintResources($this->complaint) ,
