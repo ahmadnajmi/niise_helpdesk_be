@@ -58,6 +58,7 @@ class IncidentServices
     public static function update(Incident $incident,$data,$request){
         DB::beginTransaction();
 
+        $data['incident_no'] = $incident->incident_no;
         $data = self::uploadDoc($data,$request);
 
         $create = $incident->update($data);

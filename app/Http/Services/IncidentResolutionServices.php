@@ -55,6 +55,8 @@ class IncidentResolutionServices
 
         if($data->actionCodes->send_email){
 
+            if()
+
             $send_email = Mail::to(auth()->user()->email)->send(new ActionCodeEmail());
         }
 
