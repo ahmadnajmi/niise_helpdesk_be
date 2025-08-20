@@ -18,18 +18,40 @@ class LogRequestResponse
      */
     public function handle(Request $request, Closure $next): Response
     {
-        Log::channel('fe_api')->info("API Request: {$request->method()}, {$request->fullUrl()}", [
-            'headers' => $request->headers->all(),
+        Log::channel('api_log')->info("API Request: {$request->method()}, {$request->fullUrl()}", [
             'body' => $request->all(),
         ]);
 
         $response = $next($request);
 
-        Log::channel('fe_api')->info("API Response: {$response->getStatusCode()}, {$request->fullUrl()}", [
-            'user' => Auth::user()?->id,
-            'headers' => $response->headers->all(),
-            'body' => json_decode($response->getContent(), true),
-        ]);
+        $status = $response->getStatusCode();
+
+        if ($status >= 400) {
+
+            $content = $response->getContent();
+            $decoded = json_decode($content, true);
+
+            $errorMessage = $decoded['message'] ?? $content;
+
+            Log::channel('api_log')->error("API Error: {$status}, {$request->fullUrl()}", [
+                'user'    => Auth::user()?->id,
+                'error'   => $errorMessage,
+                'body'    => $decoded ?? $content,
+            ]);
+
+            // Log::channel('api_log')->error("API Error: {$status}, {$request->fullUrl()}", [
+            //     'user'    => Auth::user()?->id,
+            //     'headers' => $response->headers->all(),
+            //     'body'    => $response->getContent(),
+            // ]);
+        }
+        else{
+            Log::channel('api_log')->info("API Response: {$status}, {$request->fullUrl()}", [
+                'body' => json_decode($response->getContent(), true),
+            ]);
+        }
+
+        
 
         return $response;
     }

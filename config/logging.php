@@ -136,17 +136,11 @@ return [
             'path' => storage_path('logs/api.log'),
         ],
 
-        'fe_api' => [
-            'driver' => 'single',
-            'path' => storage_path('logs/fe_api.log'),
-            'level' => 'info',
-        ],
-
         // untuk API external (3rd party)
         'external_api' => [
             'driver' => 'single',
             'path' => storage_path('logs/external_api.log'),
-            'level' => 'info',
+            'level' => 'debug',
         ],
 
     ],
