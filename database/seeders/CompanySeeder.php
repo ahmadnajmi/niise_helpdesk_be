@@ -18,7 +18,10 @@ class CompanySeeder extends Seeder
     {
         DB::table('COMPANIES')->truncate();
 
-        DB::statement("ALTER SEQUENCE COMPANIES_ID_SEQ RESTART START WITH 1");
+        if (DB::getDriverName() === 'oracle') {
+            DB::statement("ALTER SEQUENCE COMPANIES_ID_SEQ RESTART START WITH 1");
+        } 
+
         $faker = Faker::create('ms_My');
 
         $companies = [

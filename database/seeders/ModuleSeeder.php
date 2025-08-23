@@ -18,9 +18,12 @@ class ModuleSeeder extends Seeder
     {
 
         DB::table('module')->truncate();
-        DB::statement("ALTER SEQUENCE MODULE_ID_SEQ RESTART START WITH 1");
         DB::table('permissions')->truncate();
-        DB::statement("ALTER SEQUENCE PERMISSIONS_ID_SEQ RESTART START WITH 1");
+
+        if (DB::getDriverName() === 'oracle') {
+            DB::statement("ALTER SEQUENCE MODULE_ID_SEQ RESTART START WITH 1");
+            DB::statement("ALTER SEQUENCE PERMISSIONS_ID_SEQ RESTART START WITH 1");
+        } 
 
         $faker = Faker::create('ms_My');
 

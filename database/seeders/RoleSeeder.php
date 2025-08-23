@@ -23,7 +23,9 @@ class RoleSeeder extends Seeder
         DB::table('role')->truncate();
         DB::table('role_permissions')->truncate();
 
-        DB::statement("ALTER SEQUENCE ROLE_ID_SEQ RESTART START WITH 1");
+        if (DB::getDriverName() === 'oracle') {
+            DB::statement("ALTER SEQUENCE ROLE_ID_SEQ RESTART START WITH 1");
+        } 
 
         $faker = Faker::create('ms_My');
 

@@ -18,7 +18,9 @@ class RefTableSeeder extends Seeder
 
         DB::table('ref_table')->truncate();
         
-        DB::statement("ALTER SEQUENCE REF_TABLE_ID_SEQ RESTART START WITH 1");
+        if (DB::getDriverName() === 'oracle') {
+            DB::statement("ALTER SEQUENCE REF_TABLE_ID_SEQ RESTART START WITH 1");
+        } 
 
         Excel::import(new RefTableImport, 'database/seeders/excel/ref_table.xlsx');
 
