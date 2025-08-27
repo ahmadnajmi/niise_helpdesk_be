@@ -21,7 +21,9 @@ class GeneralServices
         foreach($request->code as $code){
 
             if($code == 'role'){
-                $data[$code] = Role::select('id','name','name_en')->get();
+                $data[$code] = Role::select('id','name','name_en')
+                                    ->orderBy('name','asc')
+                                    ->get();
             }
 
             if($code == 'category'){
@@ -47,7 +49,7 @@ class GeneralServices
                                             $query->select('id','code','category_id');
                                         }])
                                         ->where('is_active',true)
-                                        // ->where('category_id',null)
+                                        ->orderBy('name','asc')
                                         ->get();
             }
 
@@ -59,6 +61,7 @@ class GeneralServices
                                         ->when($request->operating_time, function ($query) {
                                             return $query->doesntHave('operatingTime');
                                         })
+                                        ->orderBy('name','asc')
                                         ->get();
             }
 
@@ -89,13 +92,17 @@ class GeneralServices
                                                     ->with(['companyContract' => function ($query) {
                                                         $query->select('id','name','start_date','end_date');
                                                     }])
+                                                    ->orderBy('code','asc')
                                                     ->get();
 
                                                     
             }
 
             if($code == 'group'){
-                $data[$code] = Group::select('id','name','description')->where('is_active',true)->get();
+                $data[$code] = Group::select('id','name','description')
+                                    ->where('is_active',true)
+                                    ->orderBy('name','asc')
+                                    ->get();
             }
 
             if($code == 'user'){
@@ -111,11 +118,16 @@ class GeneralServices
             }
 
             if($code == 'company'){
-                $data[$code] = Company::select('id','name','nickname')->where('is_active',true)->get();
+                $data[$code] = Company::select('id','name','nickname')
+                                    ->where('is_active',true)
+                                    ->orderBy('name','asc')
+                                    ->get();
             }
 
             if($code == 'complaint'){
-                $data[$code] = Complaint::select('id','name','email','phone_no','office_phone_no','extension_no')->get();
+                $data[$code] = Complaint::select('id','name','email','phone_no','office_phone_no','extension_no')
+                                        ->orderBy('name','asc')
+                                        ->get();
             }
 
             if($code == 'category_sla'){
@@ -127,7 +139,7 @@ class GeneralServices
                                             ->with(['slaTemplate' => function ($query) {
                                                 $query->select('id','sla_template.code','service_level','severity_id');
                                             }])
-                                            
+                                            ->orderBy('code','asc')
                                             ->get();
                                     
 
@@ -138,6 +150,7 @@ class GeneralServices
                                             ->when($request->company_id, function ($query) use ($request) {
                                                 return $query->where('company_id',$request->company_id);
                                             })
+                                            ->orderBy('name','asc')
                                             ->get();
 
             }
