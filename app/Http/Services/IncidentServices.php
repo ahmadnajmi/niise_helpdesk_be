@@ -20,6 +20,7 @@ class IncidentServices
 {
     
     public static function create($data,$request){
+        $category_code = isset($data['category']) ? $data['category'] : null;
 
         DB::beginTransaction();
 
@@ -30,18 +31,20 @@ class IncidentServices
             $data['complaint_id'] =  $complaint->id;
         }
 
-        if(!isset($data['category_id'])){
+        if($category_code){
 
-            $category = Category::where('name','MOBILE')->first();
+            $category = Category::where('name',$category_code)->first();
 
             $data['category_id'] = $category?->id;
+        }
+        else{
+            $data['sla_version_id'] = self::getSlaVersion($data);
+            $data['end_date'] = self::calculateDueDateIncident($data);
         }
         
         $data['start_date'] = date('Y-m-d H:i:s');
         $data['incident_no'] = self::generateCode();
-        $data['sla_version_id'] = self::getSlaVersion($data);
-        $data['end_date'] = self::calculateDueDateIncident($data);
-
+       
         $data = self::uploadDoc($data,$request);
 
         $create = Incident::create($data);
@@ -60,6 +63,11 @@ class IncidentServices
 
         $data['incident_no'] = $incident->incident_no;
         $data = self::uploadDoc($data,$request);
+
+        if($incident->categoryDescription->name == 'MOBILE'){
+            $data['sla_version_id'] = self::getSlaVersion($data);
+            $data['end_date'] = self::calculateDueDateIncident($data);
+        }
 
         $create = $incident->update($data);
 
