@@ -17,10 +17,15 @@ class Module extends BaseModel
         'svg_path',
         'description',
         'is_active',
+        'code',
     ];
 
     public function subModule(){
         return $this->hasMany(Module::class, 'module_id','id')->where('is_active',true);
+    }
+
+    public function subModuleRecursive(){
+        return $this->subModule()->with('subModuleRecursive','route');
     }
 
     public function permissions(){
@@ -73,5 +78,34 @@ class Module extends BaseModel
                     ->get();
     
         return $data;
+    }
+
+    public static function getUserDetailsbaru(){
+        $get_permission = Permission::getUserDetails('module_id');
+
+        $data = Module::select('id','code','module_id','name','name_en','svg_path')
+                        ->with(['subModuleRecursive' => function ($query) use ($get_permission) {
+                            $query->whereIn('id', $get_permission);
+                        },
+                        'route'])
+                ->whereIn('id', $get_permission)
+                ->whereNull('module_id')
+                ->where('is_active', true)
+                ->get();
+
+        $grouped = $data->mapWithKeys(function ($module) {
+            $return =  [$module->code => [$module]];
+
+            if(count($module->subModuleRecursive) > 0) {
+
+                foreach($module->subModuleRecursive as $sub_module){
+                    $return[$module->code][$sub_module->code] =  $sub_module;
+                }
+            }
+            return $return;
+        });
+
+        return $grouped;
+
     }
 }

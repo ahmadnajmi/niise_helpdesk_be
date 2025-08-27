@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('module', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('module_id')->nullable();
+            $table->string('code')->nullable();
             $table->string('name')->nullable();
             $table->string('name_en')->nullable();
-            $table->string('svg_path',1200)->nullable();
+            $table->string('svg_path',2500)->nullable();
             $table->string('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->log();

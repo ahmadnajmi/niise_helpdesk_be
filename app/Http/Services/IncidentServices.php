@@ -208,16 +208,16 @@ class IncidentServices
 
         $due_date = $now->copy()->$unit((int) $get_sla_details->resolution_time);
 
-        $get_operating_time = OperatingTime::whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $data[branch_id])')")->where('duration',OperatingTime::NORMAL_DAY)->first();
+        // $get_operating_time = OperatingTime::whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $data[branch_id])')")->where('duration',OperatingTime::NORMAL_DAY)->first();
         
-        if($get_operating_time){
-            $start = Carbon::createFromFormat('H:i', $get_operating_time->operation_start);
-            $end   = Carbon::createFromFormat('H:i', $get_operating_time->operation_end);
+        // if($get_operating_time){
+        //     $start = Carbon::createFromFormat('H:i', $get_operating_time->operation_start);
+        //     $end   = Carbon::createFromFormat('H:i', $get_operating_time->operation_end);
 
-            $total_office_hours = $start->diffInHours($end);
+        //     $total_office_hours = $start->diffInHours($end);
 
-            // dd($get_operating_time);
-        }
+        //     // dd($get_operating_time);
+        // }
 
 
         while ($due_date->isWeekend()) {

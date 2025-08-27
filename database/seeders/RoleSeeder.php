@@ -258,6 +258,27 @@ class RoleSeeder extends Seeder
                             'email-format.delete',
                         ]
                     ],
+                      [
+                        'module' => 'Pengurusan Cawangan',
+                        'permission' =>[
+                            'branch.index',
+                            'branch.create',
+                            'branch.view',
+                            'branch.update',
+                            'branch.delete',
+                        ]
+                    ],
+
+                    [
+                        'module' => 'Pengurusan Pelanggan',
+                        'permission' =>[
+                            'customer.index',
+                            'customer.create',
+                            'customer.view',
+                            'customer.update',
+                            'customer.delete',
+                        ]
+                    ],
                     [
                         'module' => 'Tetapan Templat',
                         'permission' =>[
@@ -455,6 +476,27 @@ class RoleSeeder extends Seeder
                             'email-format.view',
                             'email-format.update',
                             'email-format.delete',
+                        ]
+                    ],
+                    [
+                        'module' => 'Pengurusan Cawangan',
+                        'permission' =>[
+                            'branch.index',
+                            'branch.create',
+                            'branch.view',
+                            'branch.update',
+                            'branch.delete',
+                        ]
+                    ],
+
+                    [
+                        'module' => 'Pengurusan Pelanggan',
+                        'permission' =>[
+                            'customer.index',
+                            'customer.create',
+                            'customer.view',
+                            'customer.update',
+                            'customer.delete',
                         ]
                     ],
                     [

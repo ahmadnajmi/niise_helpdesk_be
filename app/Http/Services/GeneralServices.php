@@ -11,6 +11,7 @@ use App\Models\Company;
 use App\Models\Complaint;
 use App\Models\Sla;
 use App\Models\CompanyContract;
+use App\Models\OperatingTime;
 
 class GeneralServices
 {
@@ -54,6 +55,9 @@ class GeneralServices
                 $data[$code] = Branch::select('id','name','category','state_id')
                                         ->when($request->category, function ($query) use ($request) {
                                             return $query->where('category',$request->category);
+                                        })
+                                        ->when($request->operating_time, function ($query) {
+                                            return $query->doesntHave('operatingTime');
                                         })
                                         ->get();
             }
