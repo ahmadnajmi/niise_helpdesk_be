@@ -30,7 +30,8 @@ class ActionCodeRequest extends FormRequest
             'send_email' => 'nullable',
             'email_recipient_id' =>  'nullable',
             'description' => 'nullable',
-            'is_active' => 'nullable'
+            'is_active' => 'nullable',
+            'skip_penalty' => 'nullable'
         ];
     }
 

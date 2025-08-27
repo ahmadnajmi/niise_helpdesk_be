@@ -32,8 +32,8 @@ class IncidentServices
         }
 
         if($category_code){
+            $category = Category::whereRaw('LOWER(name) = ?', [strtolower($category_code)])->first();
 
-            $category = Category::where('name',$category_code)->first();
 
             $data['category_id'] = $category?->id;
         }

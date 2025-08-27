@@ -16,7 +16,8 @@ class ActionCode extends BaseModel
         'description',
         'is_active',
         'send_email',
-        'email_recipient_id'
+        'email_recipient_id',
+        'skip_penalty'
     ];
 
     const INIT = 'INIT';
