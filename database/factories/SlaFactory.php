@@ -19,8 +19,7 @@ class SlaFactory extends Factory
      *
      * @return array<string, mixed>
      */
-    public function definition(): array
-    {
+    public function definition(): array{
         $branch = Branch::inRandomOrder()->limit(fake()->numberBetween(1,5))->pluck('id');
         $category = Category::inRandomOrder()->first();
         $sla_template = SlaTemplate::inRandomOrder()->first();

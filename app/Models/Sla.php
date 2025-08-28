@@ -20,7 +20,7 @@ class Sla extends BaseModel
         'is_active'
     ];
 
-     protected static function booted(){
+    protected static function booted(){
         static::creating(function ($model) {
             $get_sla = Sla::where('category_id',$model->category_id)->orderBy('code','desc')->first();
 

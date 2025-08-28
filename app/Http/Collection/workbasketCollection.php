@@ -4,7 +4,7 @@ namespace App\Http\Collection;
 
 use Illuminate\Http\Request;
 
-class workbasketCollection extends BaseResource
+class WorkbasketCollection extends BaseResource
 {
     /**
      * Transform the resource collection into an array.

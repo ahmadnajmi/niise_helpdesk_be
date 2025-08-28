@@ -43,7 +43,6 @@ class IncidentServices
         }
         
         $data['start_date'] = date('Y-m-d H:i:s');
-        $data['incident_no'] = self::generateCode();
        
         $data = self::uploadDoc($data,$request);
 
@@ -126,28 +125,6 @@ class IncidentServices
         return $data;
     }
 
-    public static function generateCode(){
-
-        $get_incident = Incident::orderBy('incident_no','desc')->first();
-
-        if($get_incident){
-            $code = $get_incident->incident_no;
-
-            $old_code = substr($code, -5);
-
-            $incremented = (int)$old_code + 1;
-
-            $next_number = str_pad($incremented, 5, '0', STR_PAD_LEFT);
-        }
-        else{
-            $next_number = '00001';
-        }
-
-        $new_code = 'TN'.date('Ymd').$next_number;
-        
-        return $new_code;
-    }
-    
     public static function createResolution($id){
         
         $data['incident_id'] = $id;

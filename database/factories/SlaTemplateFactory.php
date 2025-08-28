@@ -10,8 +10,7 @@ use App\Models\SlaTemplate;
 
 class SlaTemplateFactory extends Factory
 {
-    public function definition(): array
-    {
+    public function definition(): array{
         $company = Company::inRandomOrder()->first();
 
         $contract = CompanyContract::where('company_id',$company?->id)->inRandomOrder()->first();
@@ -39,10 +38,8 @@ class SlaTemplateFactory extends Factory
         ];
     }
 
-    public function configure()
-    {
+    public function configure() {
         return $this->afterCreating(function (SlaTemplate $slaTemplate) {
-            // ✅ call your service or function here
             SlaTemplateServices::generateVersion($slaTemplate);
         });
     }
