@@ -71,7 +71,7 @@ class AuthController extends Controller
             if(!$token['status']) {
                 return $this->error($token['message']);
             }
-            
+
             $user = User::getUserDetails();
 
             $data = [
@@ -117,6 +117,10 @@ class AuthController extends Controller
             ]
         ];
 
+        $response = $client->post(config('app.passport_token.login_url'), $postData)->getBody()->getContents();
+
+        return ['data' => json_decode($response),'status' =>true];
+
         try{
             $response = $client->post(config('app.passport_token.login_url'), $postData)->getBody()->getContents();
 
@@ -146,7 +150,7 @@ class AuthController extends Controller
 
         return $this->success('Success', $data);
     }
-    
+
     public function loginAssetManagement(){
         $url = config('app.url_application.fe_am');
     }
