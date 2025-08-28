@@ -11,8 +11,6 @@ class SlaTemplateServices
 {
     public static function create($data){
 
-        $data['code'] = self::generateCode();
-
         $create = SlaTemplate::create($data);
 
         self::generateVersion($create);
@@ -40,25 +38,6 @@ class SlaTemplateServices
         $sla_template->delete();
 
         return true;
-    }
-
-    public static function generateCode(){
-        $sla_template = SlaTemplate::orderBy('code','desc')->first();
-
-        if($sla_template){
-            $code = $sla_template->code;
-
-            $old_code = substr($code, -2);
-
-            $next_number = str_pad($old_code + 1, 4, '0', STR_PAD_LEFT);
-        }
-        else{
-            $next_number = '0001';
-        }
-
-        $new_code = 'ST'.$next_number;
-        
-        return $new_code;
     }
 
     public static function generateVersion($data){

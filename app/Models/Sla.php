@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Sla extends BaseModel
 {
+    use HasFactory;
     protected $table = 'sla';
 
     protected $fillable = [ 
@@ -17,6 +19,27 @@ class Sla extends BaseModel
         'group_id',
         'is_active'
     ];
+
+     protected static function booted(){
+        static::creating(function ($model) {
+            $get_sla = Sla::where('category_id',$model->category_id)->orderBy('code','desc')->first();
+
+            $category = Category::find($model->category_id);
+
+            if($get_sla){
+                $code = $get_sla->code;
+
+                $old_code = substr($code, -2);
+
+                $next_number = str_pad($old_code + 1, 2, '0', STR_PAD_LEFT); // "06"
+            }
+            else{
+                $next_number = '01';
+            }
+
+            $model->code = strtoupper($category->name).$next_number;
+        });
+    }
 
 
     public function scopeSearch($query, $keyword){

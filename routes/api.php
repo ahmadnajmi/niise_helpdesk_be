@@ -52,11 +52,10 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('incident_solution', IncidentResolutionController::class);
     Route::apiResource('company_contract', CompanyContractController::class);
     Route::apiResource('incident', IncidentController::class);
+    Route::apiResource('branch', BranchController::class)->only('index','show');
+    Route::apiResource('ref_table', RefTableController::class);
 
 
-    // Route::get('incident', [IncidentController::class, 'index']);
-    // Route::get('incident/{incident}', [IncidentController::class, 'show']);
-    // Route::delete('incident/{incident}', [IncidentController::class, 'destroy']);
     Route::get('incidents/download/{filename}', [IncidentController::class, 'downloadFile'])->name('incidents.download');
 
     Route::get('dynamic_option', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option');
@@ -73,20 +72,14 @@ Route::middleware(['api','auth:api'])->group(function () {
 
     Route::get('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranch']);
     Route::delete('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranchDelete']);
-
-    Route::delete('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranchDelete']);
-
-
 });
 
-// Route::middleware(['api'])->group(function () {
-//     Route::post('incident', [IncidentController::class, 'store']);
-//     Route::put('incident/{incident}', [IncidentController::class, 'update']);
-// });
-
-Route::apiResource('branch', BranchController::class)->only('index','show');
-Route::apiResource('ref_table', RefTableController::class);
-Route::get('incidents/download_asset/{incident_no}', [IncidentController::class, 'downloadAssetFile'])->name('incidents.download_asset');
-
 Route::get('testing', [UserController::class,'testingJasper']);
+
+Route::prefix('iasset')->middleware('client.passport')->name('iasset.')->group(function () {
+    Route::get('incidents/download_asset/{incident_no}', [IncidentController::class, 'downloadAssetFile'])->name('incidents.download_asset');
+    Route::get('branch', [BranchController::class, 'index'])->name('branch.index');
+    Route::get('ref_table', [RefTableController::class, 'index'])->name('ref_table.index');
+});
+
 
