@@ -117,10 +117,6 @@ class AuthController extends Controller
             ]
         ];
 
-        $response = $client->post(config('app.passport_token.login_url'), $postData)->getBody()->getContents();
-
-        return ['data' => json_decode($response),'status' =>true];
-
         try{
             $response = $client->post(config('app.passport_token.login_url'), $postData)->getBody()->getContents();
 
