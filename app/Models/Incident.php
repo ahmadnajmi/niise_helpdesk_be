@@ -37,6 +37,7 @@ class Incident extends BaseModel
         'asset_parent_id',
         'asset_component_id',
         'sla_version_id',
+        'service_recipient_id'
     ];
 
     protected $casts = [

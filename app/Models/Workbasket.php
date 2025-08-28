@@ -11,7 +11,7 @@ class Workbasket extends BaseModel
 
     protected $fillable = [
         'date',
-        'incident_no',
+        'incident_id',
         'handle_by',
         'status',
     ];

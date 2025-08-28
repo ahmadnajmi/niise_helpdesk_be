@@ -49,7 +49,10 @@ class IncidentRequest extends FormRequest
             'email' => 'required_without:complaint_id',
             'phone_no' => 'required_without:complaint_id',
             'office_phone_no'=> 'nullable',
-            'extension_no'=> 'nullable',
+            'service_recipient_id' => 'nullable',
+            'address'=> 'nullable',
+            'postcode'=> 'nullable',
+            'state_id'=> 'nullable',
             'barcode' => 'nullable',
             'category' => 'nullable',
         ];

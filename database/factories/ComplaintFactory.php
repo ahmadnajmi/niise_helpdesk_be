@@ -16,11 +16,13 @@ class ComplaintFactory extends Factory
      */
     public function definition(): array{
         return [
-            'name'            => fake()->name(),
-            'email'           => fake()->unique()->safeEmail(),
-            'phone_no'        => '01' . fake()->numberBetween(0, 9) . fake()->numberBetween(1000000, 9999999),
+            'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
+            'phone_no' => '01' . fake()->numberBetween(0, 9) . fake()->numberBetween(1000000, 9999999),
             'office_phone_no' => '03-' . fake()->numberBetween(20000000, 29999999),
-            'extension_no'    => fake()->numberBetween(100, 999), 
+            'address' => fake()->address(), 
+            'postcode' => fake()->postcode(), 
+            'state_id' => fake()->numberBetween(1, 16)
         ];
     }
 }

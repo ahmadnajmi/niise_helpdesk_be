@@ -14,6 +14,7 @@ use App\Models\SlaVersion;
 use App\Models\Category;
 use App\Models\OperatingTime;
 use App\Models\SlaTemplate;
+use App\Models\Workbasket;
 use Carbon\Carbon;
 
 class IncidentServices
@@ -49,6 +50,8 @@ class IncidentServices
         $create = Incident::create($data);
 
         $create_resolution = self::createResolution($create->id);
+
+        $create_workbasket = self::createWorkbasket($create->id);
 
         $create->refresh();
 
@@ -132,6 +135,16 @@ class IncidentServices
         $data['action_codes'] = 'INIT';
     
         IncidentResolution::create($data);
+
+        return true;
+    }
+
+    public static function createWorkbasket($id){
+        $data['date'] = date('Y-m-d H:i:s');
+        $data['incident_id'] = $id;
+        $data['handle_by'] = 1;
+
+        Workbasket::create($data);
 
         return true;
     }

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
 
 class ActionCode extends BaseModel 
 {
