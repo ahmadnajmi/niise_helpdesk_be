@@ -15,27 +15,96 @@ class DashboardController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index(Incident $incident)
+    // {
+    //     $trueTotalIncidents = random_int(0,99);
+        
+    //     $incident = Incident::all();
+
+    //     $data = [
+    //         'trueTotalIncidents' => $trueTotalIncidents,
+    //         'totalSLA' => $trueTotalIncidents,
+    //         'totalReports' => $trueTotalIncidents,
+    //         'moreThan4Days' => $trueTotalIncidents,
+    //         'just4Days' => $trueTotalIncidents,
+    //         'lessThan4Days' => $trueTotalIncidents,
+    //         'totalIncidentsThisYear' => $trueTotalIncidents,
+    //         'totalIncidentsThisMonth' => $trueTotalIncidents,
+    //         'totalIncidentsToday' => $trueTotalIncidents,
+    //         'totalIncidentsByMonth' => $trueTotalIncidents,
+    //         'totalIncidentsByBranch' => $trueTotalIncidents,
+    //         'totalIncidentsByCategory' => $trueTotalIncidents,
+    //         'SeverityOutput' => $trueTotalIncidents,
+    //         'IncidentsOpen' => $trueTotalIncidents,
+    //         'IncidentsDone' => $trueTotalIncidents,
+    //         // 'totalIncidentsByDay' => $totalIncidentsByDay,
+    //     ];
+
+    //     return $this->success('Dashboard data retrieved successfully.', $data);
+
+    // }
+
     public function index()
-    {
-        $trueTotalIncidents = random_int(0,99);
+{
+    $trueTotalIncidents = Incident::count();
 
-        $data = [
-            'trueTotalIncidents' => $trueTotalIncidents,
-            'totalSLA' => $trueTotalIncidents,
-            'totalReports' => $trueTotalIncidents,
-            'moreThan4Days' => $trueTotalIncidents,
-            'just4Days' => $trueTotalIncidents,
-            'lessThan4Days' => $trueTotalIncidents,
-            'totalIncidentsThisYear' => $trueTotalIncidents,
-            'totalIncidentsThisMonth' => $trueTotalIncidents,
-            'totalIncidentsToday' => $trueTotalIncidents,
-            'totalIncidentsByMonth' => $trueTotalIncidents,
-            // 'totalIncidentsByDay' => $totalIncidentsByDay,
-        ];
+    $totalSLA = Incident::select('code_sla')
+        ->distinct()
+        ->count();
 
-        return $this->success('Dashboard data retrieved successfully.', $data);
+    $totalReports = Incident::whereNotNull('report_no')->count();
 
-    }
+    $moreThan4Days = Incident::where('incident_date', '<', now()->subDays(4))->count();
+    $just4Days = Incident::whereDate('incident_date', now()->subDays(4))->count();
+    $lessThan4Days = Incident::where('incident_date', '>=', now()->subDays(3))->count();
+
+    $totalIncidentsThisYear = Incident::whereYear('incident_date', now()->year)->count();
+    $totalIncidentsThisMonth = Incident::whereYear('incident_date', now()->year)
+        ->whereMonth('incident_date', now()->month)
+        ->count();
+    $totalIncidentsToday = Incident::whereDate('incident_date', today())->count();
+
+    $totalIncidentsByMonth = Incident::selectRaw('MONTH(incident_date) as month, COUNT(*) as total')
+        ->whereYear('incident_date', now()->year)
+        ->groupBy('month')
+        ->pluck('total','month');
+
+    $totalIncidentsByBranch = Incident::selectRaw('branch_id, COUNT(*) as total')
+        ->groupBy('branch_id')
+        ->with('branch')
+        ->get();
+
+    $totalIncidentsByCategory = Incident::selectRaw('category_id, COUNT(*) as total')
+        ->groupBy('category_id')
+        ->with('categoryDescription')
+        ->get();
+
+    // $IncidentsOpen = 
+
+    // $IncidentsDone = 
+
+    // $SeverityOutput =
+
+    $data = [
+        'trueTotalIncidents' => $trueTotalIncidents,
+        'totalSLA' => $totalSLA,
+        'totalReports' => $totalReports,
+        'moreThan4Days' => $moreThan4Days,
+        'just4Days' => $just4Days,
+        'lessThan4Days' => $lessThan4Days,
+        'totalIncidentsThisYear' => $totalIncidentsThisYear,
+        'totalIncidentsThisMonth' => $totalIncidentsThisMonth,
+        'totalIncidentsToday' => $totalIncidentsToday,
+        'totalIncidentsByMonth' => $totalIncidentsByMonth,
+        'totalIncidentsByBranch' => $totalIncidentsByBranch,
+        'totalIncidentsByCategory' => $totalIncidentsByCategory,
+        // 'SeverityOutput' => $SeverityOutput,
+        // 'IncidentsOpen' => $IncidentsOpen,
+        // 'IncidentsDone' => $IncidentsDone,
+    ];
+
+    return $this->success('Dashboard data retrieved successfully.', $data);
+}
 
     /**
      * Show the form for creating a new resource.
