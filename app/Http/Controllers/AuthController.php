@@ -71,7 +71,7 @@ class AuthController extends Controller
             if(!$token['status']) {
                 return $this->error($token['message']);
             }
-            
+
             $user = User::getUserDetails();
 
             $data = [
@@ -146,7 +146,7 @@ class AuthController extends Controller
 
         return $this->success('Success', $data);
     }
-    
+
     public function loginAssetManagement(){
         $url = config('app.url_application.fe_am');
     }
