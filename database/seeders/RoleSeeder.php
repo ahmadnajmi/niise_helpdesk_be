@@ -23,7 +23,9 @@ class RoleSeeder extends Seeder
         DB::table('role')->truncate();
         DB::table('role_permissions')->truncate();
 
-        DB::statement("ALTER SEQUENCE ROLE_ID_SEQ RESTART START WITH 1");
+        if (DB::getDriverName() === 'oracle') {
+            DB::statement("ALTER SEQUENCE ROLE_ID_SEQ RESTART START WITH 1");
+        } 
 
         $faker = Faker::create('ms_My');
 
@@ -31,6 +33,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'Kakitangan JIM yang berkelayakan (Pengadu)',
                 'name_en' => 'Qualified Immigration Officer (Complainant)',
+                'role' => 'JIM',
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
@@ -74,6 +77,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'NOC /SOC / AOC (2nd Lvl)',
                 'name_en' => 'NOC /SOC / AOC (2nd Lvl)',
+                'role' => 'NOC_SOC_AOC',
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
@@ -130,6 +134,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'Jurutera HDS ICT Frontliner',
                 'name_en' => 'HDS ICT Frontliner Engineer',
+                'role' => 'FRONTLINER',
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
@@ -185,6 +190,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'Penyelia Helpdesk ICT',
                 'name_en' => 'ICT Helpdesk Supervisor',
+                'role' => 'ICT_SV',
                 'permission' =>  [
                     [
                         'module' => 'Pengurusan Individu',
@@ -254,6 +260,27 @@ class RoleSeeder extends Seeder
                             'email-format.view',
                             'email-format.update',
                             'email-format.delete',
+                        ]
+                    ],
+                      [
+                        'module' => 'Pengurusan Cawangan',
+                        'permission' =>[
+                            'branch.index',
+                            'branch.create',
+                            'branch.view',
+                            'branch.update',
+                            'branch.delete',
+                        ]
+                    ],
+
+                    [
+                        'module' => 'Pengurusan Pelanggan',
+                        'permission' =>[
+                            'customer.index',
+                            'customer.create',
+                            'customer.view',
+                            'customer.update',
+                            'customer.delete',
                         ]
                     ],
                     [
@@ -374,6 +401,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'Pentadbir Helpdesk Sistem (BTMR)',
                 'name_en' => 'System Helpdesk Administrator (BTMR)',
+                'role' => 'BTMR',
                 'permission' =>  [
                     [
                         'module' => 'Pengurusan Individu',
@@ -453,6 +481,27 @@ class RoleSeeder extends Seeder
                             'email-format.view',
                             'email-format.update',
                             'email-format.delete',
+                        ]
+                    ],
+                    [
+                        'module' => 'Pengurusan Cawangan',
+                        'permission' =>[
+                            'branch.index',
+                            'branch.create',
+                            'branch.view',
+                            'branch.update',
+                            'branch.delete',
+                        ]
+                    ],
+
+                    [
+                        'module' => 'Pengurusan Pelanggan',
+                        'permission' =>[
+                            'customer.index',
+                            'customer.create',
+                            'customer.view',
+                            'customer.update',
+                            'customer.delete',
                         ]
                     ],
                     [
@@ -571,10 +620,10 @@ class RoleSeeder extends Seeder
                     // ],
                 ]
             ],
-
             [
                 'name' => 'Kontraktor',
                 'name_en' => 'Contractor',
+                'role' => 'CONTRACTOR',
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
@@ -632,6 +681,8 @@ class RoleSeeder extends Seeder
 
             $data_role['name'] = $role['name'];
             $data_role['name_en'] = $role['name_en'];
+            $data_role['role'] = $role['role'];
+
             $data_role['description'] = $faker->realText(100);
 
             $create = Role::create($data_role);

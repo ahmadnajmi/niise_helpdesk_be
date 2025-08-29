@@ -77,13 +77,16 @@ class BaseModel extends Model implements Auditable
 
     public function transformAudit(array $data): array {
 
+        $skipModels = [
+            \App\Models\Workbasket::class,
+            \App\Models\Category::class,
+            \App\Models\Customer::class,
+        ];
+
         $class = null;
         
         switch ($data['auditable_type']) {
-            case UserGroup::class:
-                $class = 'Kumpulan Individu';
-                break;
-
+           
             case ActionCode::class:
                 $class = 'Kod Tindakan';
                 break;
@@ -96,12 +99,28 @@ class BaseModel extends Model implements Auditable
                 $class = 'Kategori';
                 break;
 
+            case Company::class:
+                $class = 'Kontraktor';
+                break;
+
+            case CompanyContract::class:
+                $class = 'Kontrak';
+                break;
+
             case EmailTemplate::class:
                 $class = 'Templat Emel';
                 break;
 
             case Group::class:
                 $class = 'Kumpulan';
+                break;
+
+            case Incident::class:
+                $class = 'Incident';
+                break;
+
+            case IncidentResolution::class:
+                $class = 'Incident Penyelesaian';
                 break;
 
             case KnowledgeBase::class:
@@ -147,8 +166,15 @@ class BaseModel extends Model implements Auditable
             case UserRole::class:
                 $class = 'Peranan Individu';
                 break;
-        }
 
+            case UserGroup::class:
+                $class = 'Kumpulan Individu';
+                break;
+
+            case UserGroup::class:
+                $class = 'Kumpulan Individu Access';
+                break;
+        }
 
         switch ($data['event']) {
             case 'created':
@@ -163,7 +189,7 @@ class BaseModel extends Model implements Auditable
                 $action = 'Padam ';
                 break;
         }
-
+        
         $data['event'] = $action.$class;
         
         return $data;

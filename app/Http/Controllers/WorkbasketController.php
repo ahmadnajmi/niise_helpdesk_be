@@ -10,7 +10,7 @@ use App\Http\Collection\WorkbasketCollection;
 use App\Http\Resources\WorkbasketResources;
 use App\Http\Requests\WorkbasketRequest;
 
-class workbasketController extends Controller
+class WorkbasketController extends Controller
 {
     use ResponseTrait;
 

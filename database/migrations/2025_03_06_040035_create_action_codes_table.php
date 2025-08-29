@@ -16,9 +16,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('nickname');
             $table->string('description')->nullable();
-            $table->boolean('is_active')->default(true);
             $table->boolean('send_email')->default(true);
             $table->smallInteger('email_recipient_id')->nullable();
+            $table->boolean('skip_penalty')->default(null)->nullable();
+            $table->boolean('is_active')->default(true);
+           
             $table->log();
         });
     }

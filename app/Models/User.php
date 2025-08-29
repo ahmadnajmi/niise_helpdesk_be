@@ -70,22 +70,22 @@ class User extends Authenticatable
         return $query;
     }
 
-    public function transformAudit(array $data): array {
-        switch ($data['event']) {
-            case 'created':
-                $data['custom_label'] = 'Daftar User';
-                break;
+    // public function transformAudit(array $data): array {
+    //     switch ($data['event']) {
+    //         case 'created':
+    //             $data['custom_label'] = 'Daftar User';
+    //             break;
 
-            case 'updated':
-                $data['custom_label'] = 'Kemaskini User';
-                break;
+    //         case 'updated':
+    //             $data['custom_label'] = 'Kemaskini User';
+    //             break;
 
-            case 'deleted':
-                $data['custom_label'] = 'Padam User';
-                break;
-        }
-        return $data;
-    }
+    //         case 'deleted':
+    //             $data['custom_label'] = 'Padam User';
+    //             break;
+    //     }
+    //     return $data;
+    // }
     
     
     public static  function getUserDetails(){
@@ -103,7 +103,7 @@ class User extends Authenticatable
     }
 
     public static function getUserRole($id){
-        $get_role = Role::select('id','name')->whereHas('userRole', function ($query)use($id) {
+        $get_role = Role::select('id','name','code')->whereHas('userRole', function ($query)use($id) {
                       $query->where('user_id',$id); 
                     })
                     ->first();

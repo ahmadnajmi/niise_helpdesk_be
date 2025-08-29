@@ -5,13 +5,13 @@ namespace App\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 
-class workbasket extends BaseModel
+class Workbasket extends BaseModel
 {
     protected $table = 'workbasket';
 
     protected $fillable = [
         'date',
-        'incident_no',
+        'incident_id',
         'handle_by',
         'status',
     ];

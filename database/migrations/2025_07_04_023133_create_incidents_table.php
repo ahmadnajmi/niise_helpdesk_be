@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('branch_id')->nullable(); 
             $table->unsignedBigInteger('category_id')->nullable(); 
             $table->unsignedBigInteger('complaint_id')->nullable(); 
-            $table->string('information',255)->nullable(); 
+            $table->string('information',1200)->nullable(); 
             $table->unsignedBigInteger('knowledge_base_id')->nullable(); 
             $table->smallInteger('received_via')->nullable();
             $table->string('report_no',100)->nullable(); 
@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('asset_siri_no',100)->nullable(); 
             $table->unsignedBigInteger('asset_parent_id')->nullable(); 
             $table->json('asset_component_id')->nullable(); 
+            $table->unsignedBigInteger('service_recipient_id')->nullable(); 
             $table->unsignedBigInteger('group_id')->nullable(); 
             $table->unsignedBigInteger('operation_user_id')->nullable(); 
             $table->string('appendix_file',100)->nullable(); 
@@ -38,7 +39,6 @@ return new class extends Migration
             $table->dateTime('end_date')->nullable();
             $table->smallInteger('status')->default(1);
             $table->unsignedBigInteger('sla_version_id')->nullable(); 
-
             $table->log();
         });
     }

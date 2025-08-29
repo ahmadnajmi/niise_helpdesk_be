@@ -12,6 +12,7 @@ use App\Http\Collection\BranchCollection;
 use App\Http\Resources\BranchResources;
 use App\Http\Resources\OperatingTimeResources;
 use App\Http\Requests\OperatingTimeRequest;
+use App\Http\Services\OperatingTimeServices;
 
 class OperatingTimeController extends Controller
 {
@@ -32,12 +33,8 @@ class OperatingTimeController extends Controller
         try {
             $data = $request->all();
 
-            $data['branch_id'] = json_encode($data['branch_id']);
-
-            $create = OperatingTime::create($data);
+            $data = OperatingTimeServices::create($data);
            
-            $data = new OperatingTimeResources($create);
-
             return $this->success('Success', $data);
           
         } catch (\Throwable $th) {
@@ -55,11 +52,7 @@ class OperatingTimeController extends Controller
         try {
             $data = $request->all();
 
-            $data['branch_id'] = json_encode($data['branch_id']);
-
-            $update = $operating_time->update($data);
-
-            $data = new OperatingTimeResources($operating_time);
+            $data = OperatingTimeServices::update($operating_time,$data);
 
             return $this->success('Success', $data);
           

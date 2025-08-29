@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('workbasket', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('incident_id')->nullable(); 
             $table->date('date');
-            $table->string('incident_no',20);
             $table->unsignedBigInteger('handle_by');
-            $table->smallInteger('status');
+            $table->smallInteger('status')->default(1);
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('workbaskets');
+        Schema::dropIfExists('workbasket');
     }
 };

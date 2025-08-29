@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
-use OwenIt\Auditing\Contracts\Auditable;
 
 class ActionCode extends BaseModel 
 {
@@ -16,7 +15,8 @@ class ActionCode extends BaseModel
         'description',
         'is_active',
         'send_email',
-        'email_recipient_id'
+        'email_recipient_id',
+        'skip_penalty'
     ];
 
     const INIT = 'INIT';

@@ -21,6 +21,7 @@ class ActionCodeCollection extends BaseResource
                 'send_email' => $query->send_email,
                 'email_recipient' => $query->email_recipient_id,
                 'email_recipient_desc' => $query->emailRecipientDescription?->name,
+                'skip_penalty' => $query->skip_penalty,
                 'description' => $query->description,
                 'is_active' => $query->is_active,
                 'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,

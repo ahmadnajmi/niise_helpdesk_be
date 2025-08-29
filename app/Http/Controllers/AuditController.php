@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Traits\ResponseTrait;
 use Illuminate\Http\Request;
-use App\Http\Collection\BranchCollection;
 use App\Http\Resources\BranchResources;
 use OwenIt\Auditing\Models\Audit;
 
