@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\TestingController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TestingController;
+use App\Http\Controllers\workbasketController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -37,3 +38,4 @@ Route::middleware('web')->group(function () {
 
 // require __DIR__.'/auth.php';
 
+// Route::get('workbasket', [workbasketController::class, 'index']);

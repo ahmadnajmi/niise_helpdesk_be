@@ -16,11 +16,43 @@ class workbasketController extends Controller
 
     public function index(Request $request)
     {
-        $limit = $request->limit ? $request->limit : 15;
-        
-        $data =  Workbasket::paginate($limit);
+        // $limit = $request->limit ? $request->limit : 15;
 
-        return new WorkbasketCollection($data);
+        // $data =  Workbasket::paginate($limit);
+
+        // return new WorkbasketCollection($data);
+
+        $workbasket = [
+            (object)[
+                'id' => 1,
+                'date' => '1/11/2025',
+                'category' => 'LAN',
+                'title' => 'Server Down',
+                'severity' => 'high',
+                'status' => 'new',
+                'assignee' => null,
+            ],
+            (object)[
+                'id' => 2,
+                'date' => '2/11/2025',
+                'category' => 'Authentication',
+                'title' => 'Email Not Working',
+                'severity' => 'medium',
+                'status' => 'in_progress',
+                'assignee' => (object)['name' => 'John Doe'],
+            ],
+            (object)[
+                'id' => 3,
+                'date' => '3/11/2025',
+                'category' => 'Web',
+                'title' => 'Website Slow',
+                'severity' => 'low',
+                'status' => 'closed',
+                'assignee' => (object)['name' => 'Jane Smith'],
+            ],
+        ];
+
+        return view('workbasket.index', compact('workbasket'));
     }
 
     public function store(WorkbasketRequest $request)
@@ -29,11 +61,11 @@ class workbasketController extends Controller
             $data = $request->all();
 
             $create = Workbasket::create($data);
-           
+
             $data = new WorkbasketResources($create);
 
             return $this->success('Success', $data);
-          
+
         } catch (\Throwable $th) {
             return $this->error($th->getMessage());
         }
@@ -56,7 +88,7 @@ class workbasketController extends Controller
             $data = new WorkbasketResources($workbasket);
 
             return $this->success('Success', $data);
-          
+
         } catch (\Throwable $th) {
             return $this->error($th->getMessage());
         }
