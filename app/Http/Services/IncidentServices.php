@@ -85,7 +85,7 @@ class IncidentServices
     }
 
     public static function view(Incident $incident){
-        if($incident->workbasket->status == Workbasket::NEW){
+        if($incident->workbasket?->status == Workbasket::NEW){
             
             $incident->workbasket()->update([
                 'status' => Workbasket::OPENED,
