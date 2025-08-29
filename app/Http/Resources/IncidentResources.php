@@ -25,7 +25,7 @@ class IncidentResources extends JsonResource
         if(count($asset_id) > 0){
             $asset_service = new AssetServices();
 
-            $asset_information =  $asset_service->getAsset();
+            $asset_information =  $asset_service->getAsset($asset_id);
         }
 
         return [

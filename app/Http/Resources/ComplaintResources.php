@@ -20,6 +20,7 @@ class ComplaintResources extends JsonResource
             'email' => $this->email,
             'phone_no' => $this->phone_no,
             'office_phone_no' => $this->office_phone_no,
+            'extension_no' => $this->extension_no,
             'address' => $this->address,
             'postcode' => $this->postcode,
             'state_id' => $this->state_id,

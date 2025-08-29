@@ -125,7 +125,7 @@ class GeneralServices
             }
 
             if($code == 'complaint'){
-                $data[$code] = Complaint::select('id','name','email','phone_no','office_phone_no','address','postcode','state_id')
+                $data[$code] = Complaint::select('id','name','email','phone_no','office_phone_no','address','postcode','state_id','extension_no')
                                         ->orderBy('name','asc')
                                         ->get();
             }
