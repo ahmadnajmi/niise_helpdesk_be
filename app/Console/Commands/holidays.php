@@ -31,12 +31,11 @@ class holidays extends Command
     public function handle()
     {
         $year = $this->argument('year');
-        
-        DB::table('calendars')->truncate();
-    
-        DB::statement("ALTER SEQUENCE CALENDARS_ID_SEQ RESTART START WITH 1");
-
         Calendar::truncate();
+
+        if (DB::getDriverName() === 'oracle') {
+            DB::statement("ALTER SEQUENCE CALENDARS_ID_SEQ RESTART START WITH 1");
+        } 
         try {
             $holiday = new MalaysiaHoliday;
             $result = $holiday->fromState(MalaysiaHoliday::$region_array,$year)->get();
@@ -103,9 +102,9 @@ class holidays extends Command
            
 
         } 
-        catch (Exception $e) {
-            Log::error($e->getMessage());
-
+        catch (\Throwable $e) {
+            Log::critical("Unexpected scheduler failure: " . $e->getMessage());
+            return Command::FAILURE;
         }
        
     }
