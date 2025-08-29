@@ -91,7 +91,7 @@ class IncidentFactory extends Factory
 
                 $data_workbasket['date'] = date('Y-m-d H:i:s');
                 $data_workbasket['incident_id'] = $incident->id;
-                $data_workbasket['handle_by'] = $incident->id->operation_user_id;
+                $data_workbasket['handle_by'] = $incident->operation_user_id;
                 
                 Workbasket::create($data_workbasket);
             }

@@ -33,6 +33,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'Kakitangan JIM yang berkelayakan (Pengadu)',
                 'name_en' => 'Qualified Immigration Officer (Complainant)',
+                'role' => 'JIM',
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
@@ -76,6 +77,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'NOC /SOC / AOC (2nd Lvl)',
                 'name_en' => 'NOC /SOC / AOC (2nd Lvl)',
+                'role' => 'NOC_SOC_AOC',
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
@@ -132,6 +134,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'Jurutera HDS ICT Frontliner',
                 'name_en' => 'HDS ICT Frontliner Engineer',
+                'role' => 'FRONTLINER',
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
@@ -187,6 +190,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'Penyelia Helpdesk ICT',
                 'name_en' => 'ICT Helpdesk Supervisor',
+                'role' => 'ICT_SV',
                 'permission' =>  [
                     [
                         'module' => 'Pengurusan Individu',
@@ -397,6 +401,7 @@ class RoleSeeder extends Seeder
             [
                 'name' => 'Pentadbir Helpdesk Sistem (BTMR)',
                 'name_en' => 'System Helpdesk Administrator (BTMR)',
+                'role' => 'BTMR',
                 'permission' =>  [
                     [
                         'module' => 'Pengurusan Individu',
@@ -615,10 +620,10 @@ class RoleSeeder extends Seeder
                     // ],
                 ]
             ],
-
             [
                 'name' => 'Kontraktor',
                 'name_en' => 'Contractor',
+                'role' => 'CONTRACTOR',
                 'permission' =>  [
                     [
                         'module' => 'Insiden',
@@ -676,6 +681,8 @@ class RoleSeeder extends Seeder
 
             $data_role['name'] = $role['name'];
             $data_role['name_en'] = $role['name_en'];
+            $data_role['role'] = $role['role'];
+
             $data_role['description'] = $faker->realText(100);
 
             $create = Role::create($data_role);

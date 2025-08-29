@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->index();
             $table->string('name_en')->nullable();
+            $table->string('role',20)->nullable();
             $table->string('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->log();
