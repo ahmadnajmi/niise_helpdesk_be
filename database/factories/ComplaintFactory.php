@@ -22,7 +22,8 @@ class ComplaintFactory extends Factory
             'office_phone_no' => '03-' . fake()->numberBetween(20000000, 29999999),
             'address' => fake()->address(), 
             'postcode' => fake()->postcode(), 
-            'state_id' => fake()->numberBetween(1, 16)
+            'state_id' => fake()->numberBetween(1, 16),
+            'extension_no' => fake()->numberBetween(100, 999)
         ];
     }
 }
