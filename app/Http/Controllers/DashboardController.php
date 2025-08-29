@@ -64,10 +64,10 @@ class DashboardController extends Controller
         ->count();
     $totalIncidentsToday = Incident::whereDate('incident_date', today())->count();
 
-    $totalIncidentsByMonth = Incident::selectRaw('MONTH(incident_date) as month, COUNT(*) as total')
-        ->whereYear('incident_date', now()->year)
-        ->groupBy('month')
-        ->pluck('total','month');
+    // $totalIncidentsByMonth = Incident::selectRaw('MONTH(incident_date) as month, COUNT(*) as total')
+    //     ->whereYear('incident_date', now()->year)
+    //     ->groupBy('month')
+    //     ->pluck('total','month');
 
     $totalIncidentsByBranch = Incident::selectRaw('branch_id, COUNT(*) as total')
         ->groupBy('branch_id')
@@ -95,7 +95,7 @@ class DashboardController extends Controller
         'totalIncidentsThisYear' => $totalIncidentsThisYear,
         'totalIncidentsThisMonth' => $totalIncidentsThisMonth,
         'totalIncidentsToday' => $totalIncidentsToday,
-        'totalIncidentsByMonth' => $totalIncidentsByMonth,
+        // 'totalIncidentsByMonth' => $totalIncidentsByMonth,
         'totalIncidentsByBranch' => $totalIncidentsByBranch,
         'totalIncidentsByCategory' => $totalIncidentsByCategory,
         // 'SeverityOutput' => $SeverityOutput,
