@@ -47,7 +47,6 @@ class Incident extends BaseModel
         'end_date' => 'datetime:Y-m-d',
     ];
 
-
     const OPEN = 1;
     const RESOLVED = 2;
     const CLOSED = 3;
@@ -74,7 +73,6 @@ class Incident extends BaseModel
             $model->incident_no = 'TN'.date('Ymd').$next_number;
         });
     }
-
 
     public function branch(){
         return $this->hasOne(Branch::class,'id','branch_id');
@@ -118,5 +116,9 @@ class Incident extends BaseModel
 
     public function statusDesc(){
         return $this->hasOne(RefTable::class,'ref_code','status')->where('code_category', 'incident_status');
+    }
+
+    public function workbasket(){
+        return $this->hasOne(Workbasket::class,'incident_id','id');
     }
 }

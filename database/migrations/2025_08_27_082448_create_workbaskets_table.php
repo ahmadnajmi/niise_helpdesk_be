@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('incident_id')->nullable(); 
             $table->date('date');
-            $table->unsignedBigInteger('handle_by');
+            $table->unsignedBigInteger('handle_by')->nullable(); 
             $table->smallInteger('status')->default(1);
             $table->timestamps();
         });

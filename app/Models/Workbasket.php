@@ -15,4 +15,8 @@ class Workbasket extends BaseModel
         'handle_by',
         'status',
     ];
+
+    const NEW = 1;
+    const IN_PROGRESS = 2;
+    const OPENED = 3;
 }

@@ -41,7 +41,7 @@ class IncidentController extends Controller
 
     public function show(Incident $incident)
     {
-        $data = new IncidentResources($incident);
+        $data = IncidentServices::view($incident);
 
         return $this->success('Success', $data);
     }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Traits\ResponseTrait;
@@ -15,6 +16,7 @@ use App\Models\Category;
 use App\Models\OperatingTime;
 use App\Models\SlaTemplate;
 use App\Models\Workbasket;
+use App\Models\Role;
 use Carbon\Carbon;
 
 class IncidentServices
@@ -82,6 +84,16 @@ class IncidentServices
         return $return;
     }
 
+    public static function view(Incident $incident){
+        if($incident->workbasket->status == Workbasket::NEW){
+            
+            $incident->workbasket()->update([
+                'status' => Workbasket::OPENED,
+            ]);
+        }
+        
+        return  new IncidentResources($incident);
+    }
     public static function delete($incident){
 
         if($incident->created_by != auth()->user()->id ){
@@ -142,7 +154,6 @@ class IncidentServices
     public static function createWorkbasket($id){
         $data['date'] = date('Y-m-d H:i:s');
         $data['incident_id'] = $id;
-        $data['handle_by'] = 1;
 
         Workbasket::create($data);
 

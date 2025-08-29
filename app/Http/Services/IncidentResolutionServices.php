@@ -10,7 +10,7 @@ use App\Models\IncidentPenalty;
 use App\Models\SlaVersion;
 use App\Models\SlaTemplate;
 use App\Models\User;
-
+use App\Models\Workbasket;
 use App\Http\Resources\IncidentResolutionResources;
 use App\Mail\ActionCodeEmail;
 
@@ -45,13 +45,28 @@ class IncidentResolutionServices
 
 
     public static function actionCode($data){
+        $incident = $data->incident;
 
         if($data->action_codes == 'ACTR' || $data->action_codes == 'CLSD'){
-            $incident = $data->incident;
 
             $data_incident['status']  = $data->action_codes == 'ACTR' ? Incident::RESOLVED : Incident::CLOSED; 
 
             $incident->update($data_incident);
+        }
+
+        if($incident->status == Incident::RESOLVED || $incident->status == Incident::CLOSED){
+            $incident->workbasket->delete();
+        }
+        elseif($data->action_codes == 'ESCL'){
+            $incident->workbasket()->update([
+                'status' => Workbasket::NEW,
+                'handle_by' => $incident->operation_user_id
+            ]);
+        }
+        else{
+            $incident->workbasket()->update([
+                'status' => Workbasket::IN_PROGRESS,
+            ]);
         }
 
 
