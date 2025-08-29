@@ -16,7 +16,10 @@ class ActionCodeSeeder extends Seeder
     {
         DB::table('ACTION_CODES')->truncate();
 
-        DB::statement("ALTER SEQUENCE ACTION_CODES_ID_SEQ RESTART START WITH 1");
+        if (DB::getDriverName() === 'oracle') {
+            DB::statement("ALTER SEQUENCE ACTION_CODES_ID_SEQ RESTART START WITH 1");
+
+        } 
 
         $action_codes = [
             [   

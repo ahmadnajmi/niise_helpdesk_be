@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SlaTemplate extends BaseModel
 {
+    use HasFactory;
     protected $table = 'sla_template';
 
     protected $fillable = [
@@ -41,6 +43,21 @@ class SlaTemplate extends BaseModel
     const SLA_TYPE_MINUTE = 1;
     const SLA_TYPE_HOUR = 2;
     const SLA_TYPE_DAY = 3;
+
+    protected static function booted(){
+        static::creating(function ($model) {
+            $last = SlaTemplate::orderBy('code', 'desc')->first();
+            
+            if ($last) {
+                $old_code = (int) substr($last->code, -4); // get last 4 digits
+                $next_number = str_pad($old_code + 1, 4, '0', STR_PAD_LEFT);
+            } else {
+                $next_number = '0001';
+            }
+
+            $model->code = 'ST' . $next_number;
+        });
+    }
 
 
     public function scopeSearch($query, $keyword){

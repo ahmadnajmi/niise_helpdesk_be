@@ -7,7 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ActionCodeRequest extends FormRequest
+class WorkbasketRequest extends FormRequest
 {
     use ResponseTrait;
     /**
@@ -17,6 +17,7 @@ class ActionCodeRequest extends FormRequest
     {
         return true;
     }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -25,13 +26,7 @@ class ActionCodeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
-            'nickname' => 'required',
-            'send_email' => 'nullable',
-            'email_recipient_id' =>  'nullable',
-            'description' => 'nullable',
-            'is_active' => 'nullable',
-            'skip_penalty' => 'nullable'
+            //
         ];
     }
 

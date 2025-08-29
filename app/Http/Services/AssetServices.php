@@ -48,14 +48,12 @@ class AssetServices
                 'body' => json_decode($response, true),
             ]);
 
-            
-
             return ['data' => json_decode($response),'status' =>true];
 
         } catch (\GuzzleHttp\Exception\BadResponseException $e){ 
             $message = 'Something went wrong on the server.Error Code = '. $e->getCode();
 
-            Log::channel('external_api')->info("API Response: {$e->getCode()}, {$api_url}", [
+            Log::channel('external_api')->error("API Response: {$e->getCode()}, {$this->baseUrl}{$api_url}", [
                 'message' => $e->getMessage(),
             ]);
             

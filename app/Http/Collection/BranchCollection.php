@@ -28,7 +28,7 @@ class BranchCollection extends BaseResource
             ];
 
             if($request->route()->getName() == 'operating_time.show' || $request->route()->getName() == 'operating_time.index'){
-                $return['operating_times'] = $query->getOperatingTimeCount($query->id) > 0 ? new OperatingTimeCollection($query->getOperatingTime($query->id)) : [] ;
+                $return['operating_times'] =  new OperatingTimeCollection($query->operatingTime) ;
             }
 
             return $return;

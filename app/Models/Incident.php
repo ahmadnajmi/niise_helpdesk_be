@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Incident extends BaseModel
 {
+    use HasFactory;
     protected $table = 'incidents';
 
     protected $fillable = [ 
@@ -35,6 +37,7 @@ class Incident extends BaseModel
         'asset_parent_id',
         'asset_component_id',
         'sla_version_id',
+        'service_recipient_id'
     ];
 
     protected $casts = [
@@ -50,6 +53,27 @@ class Incident extends BaseModel
     const CLOSED = 3;
     const CANCEL_DUPLICATE = 4;
     const ON_HOLD = 5;
+
+    protected static function booted(){
+        static::creating(function ($model) {
+            $get_incident = Incident::orderBy('incident_no','desc')->first();
+
+            if($get_incident){
+                $code = $get_incident->incident_no;
+
+                $old_code = substr($code, -5);
+
+                $incremented = (int)$old_code + 1;
+
+                $next_number = str_pad($incremented, 5, '0', STR_PAD_LEFT);
+            }
+            else{
+                $next_number = '00001';
+            }
+
+            $model->incident_no = 'TN'.date('Ymd').$next_number;
+        });
+    }
 
 
     public function branch(){

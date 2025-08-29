@@ -16,7 +16,9 @@ class CategorySeeder extends Seeder
     {
         DB::table('CATEGORIES')->truncate();
 
-        DB::statement("ALTER SEQUENCE CATEGORIES_ID_SEQ RESTART START WITH 1");
+        if (DB::getDriverName() === 'oracle') {
+            DB::statement("ALTER SEQUENCE CATEGORIES_ID_SEQ RESTART START WITH 1");
+        } 
 
         $categorys = ['MOBILE'];
 

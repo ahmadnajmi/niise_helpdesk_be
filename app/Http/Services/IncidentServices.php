@@ -14,12 +14,14 @@ use App\Models\SlaVersion;
 use App\Models\Category;
 use App\Models\OperatingTime;
 use App\Models\SlaTemplate;
+use App\Models\Workbasket;
 use Carbon\Carbon;
 
 class IncidentServices
 {
     
     public static function create($data,$request){
+        $category_code = isset($data['category']) ? $data['category'] : null;
 
         DB::beginTransaction();
 
@@ -30,23 +32,26 @@ class IncidentServices
             $data['complaint_id'] =  $complaint->id;
         }
 
-        if(!isset($data['category_id'])){
+        if($category_code){
+            $category = Category::whereRaw('LOWER(name) = ?', [strtolower($category_code)])->first();
 
-            $category = Category::where('name','MOBILE')->first();
 
             $data['category_id'] = $category?->id;
         }
+        else{
+            $data['sla_version_id'] = self::getSlaVersion($data);
+            $data['end_date'] = self::calculateDueDateIncident($data);
+        }
         
         $data['start_date'] = date('Y-m-d H:i:s');
-        $data['incident_no'] = self::generateCode();
-        $data['sla_version_id'] = self::getSlaVersion($data);
-        $data['end_date'] = self::calculateDueDateIncident($data);
-
+       
         $data = self::uploadDoc($data,$request);
 
         $create = Incident::create($data);
 
         $create_resolution = self::createResolution($create->id);
+
+        $create_workbasket = self::createWorkbasket($create->id);
 
         $create->refresh();
 
@@ -60,6 +65,11 @@ class IncidentServices
 
         $data['incident_no'] = $incident->incident_no;
         $data = self::uploadDoc($data,$request);
+
+        if($incident->categoryDescription->name == 'MOBILE'){
+            $data['sla_version_id'] = self::getSlaVersion($data);
+            $data['end_date'] = self::calculateDueDateIncident($data);
+        }
 
         $create = $incident->update($data);
 
@@ -118,28 +128,6 @@ class IncidentServices
         return $data;
     }
 
-    public static function generateCode(){
-
-        $get_incident = Incident::orderBy('incident_no','desc')->first();
-
-        if($get_incident){
-            $code = $get_incident->incident_no;
-
-            $old_code = substr($code, -5);
-
-            $incremented = (int)$old_code + 1;
-
-            $next_number = str_pad($incremented, 5, '0', STR_PAD_LEFT);
-        }
-        else{
-            $next_number = '00001';
-        }
-
-        $new_code = 'TN'.date('Ymd').$next_number;
-        
-        return $new_code;
-    }
-    
     public static function createResolution($id){
         
         $data['incident_id'] = $id;
@@ -147,6 +135,16 @@ class IncidentServices
         $data['action_codes'] = 'INIT';
     
         IncidentResolution::create($data);
+
+        return true;
+    }
+
+    public static function createWorkbasket($id){
+        $data['date'] = date('Y-m-d H:i:s');
+        $data['incident_id'] = $id;
+        $data['handle_by'] = 1;
+
+        Workbasket::create($data);
 
         return true;
     }
@@ -208,16 +206,16 @@ class IncidentServices
 
         $due_date = $now->copy()->$unit((int) $get_sla_details->resolution_time);
 
-        $get_operating_time = OperatingTime::whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $data[branch_id])')")->where('duration',OperatingTime::NORMAL_DAY)->first();
+        // $get_operating_time = OperatingTime::whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $data[branch_id])')")->where('duration',OperatingTime::NORMAL_DAY)->first();
         
-        if($get_operating_time){
-            $start = Carbon::createFromFormat('H:i', $get_operating_time->operation_start);
-            $end   = Carbon::createFromFormat('H:i', $get_operating_time->operation_end);
+        // if($get_operating_time){
+        //     $start = Carbon::createFromFormat('H:i', $get_operating_time->operation_start);
+        //     $end   = Carbon::createFromFormat('H:i', $get_operating_time->operation_end);
 
-            $total_office_hours = $start->diffInHours($end);
+        //     $total_office_hours = $start->diffInHours($end);
 
-            // dd($get_operating_time);
-        }
+        //     // dd($get_operating_time);
+        // }
 
 
         while ($due_date->isWeekend()) {

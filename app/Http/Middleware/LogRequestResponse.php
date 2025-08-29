@@ -38,12 +38,6 @@ class LogRequestResponse
                 'error'   => $errorMessage,
                 'body'    => $decoded ?? $content,
             ]);
-
-            // Log::channel('api_log')->error("API Error: {$status}, {$request->fullUrl()}", [
-            //     'user'    => Auth::user()?->id,
-            //     'headers' => $response->headers->all(),
-            //     'body'    => $response->getContent(),
-            // ]);
         }
         else{
             Log::channel('api_log')->info("API Response: {$status}, {$request->fullUrl()}", [
