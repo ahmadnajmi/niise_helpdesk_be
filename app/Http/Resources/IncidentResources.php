@@ -16,7 +16,17 @@ class IncidentResources extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $asset_service = new AssetServices();
+        $asset_information = [];
+
+        $asset_id = $this->asset_parent_id ? [$this->asset_parent_id] : json_decode($this->asset_component_id);
+
+        $asset_id = $asset_id ? $asset_id : [];
+
+        if(count($asset_id) > 0){
+            $asset_service = new AssetServices();
+
+            $asset_information =  $asset_service->getAsset();
+        }
 
         return [
             'id' => $this->id,
@@ -36,7 +46,7 @@ class IncidentResources extends JsonResource
             'received_via_desc' => $this->receviedViaDescription?->name,
             'asset_parent_id' => $this->asset_parent_id,
             'asset_component_id' => $this->asset_component_id,
-            'asset_information' => $asset_service->getAsset($this->asset_parent_id ? [$this->asset_parent_id] : json_decode($this->asset_component_id)),
+            'asset_information' => $asset_information,
             'report_no' => $this->report_no,
             'incident_asset_type' => $this->incident_asset_type,
             'date_asset_loss' => $this->date_asset_loss?->format('d-m-Y'),

@@ -55,7 +55,7 @@ class IncidentResolutionServices
         }
 
         if($incident->status == Incident::RESOLVED || $incident->status == Incident::CLOSED){
-            $incident->workbasket->delete();
+            $incident->workbasket?->delete();
         }
         elseif($data->action_codes == 'ESCL'){
             $incident->workbasket()->update([
