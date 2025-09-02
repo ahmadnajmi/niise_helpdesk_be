@@ -117,6 +117,10 @@ class Incident extends BaseModel
         return $this->hasOne(User::class,'id','operation_user_id');
     }
 
+    public function serviceRecipient(){
+        return $this->hasOne(User::class,'id','service_recipient_id');
+    }
+
     public function statusDesc(){
         return $this->hasOne(RefTable::class,'ref_code','status')->where('code_category', 'incident_status');
     }
@@ -133,17 +137,17 @@ class Incident extends BaseModel
         });
     }
 
-    // protected function calculateBreachTime(): Attribute{
-    //     return Attribute::get(function () {
+    protected function calculateBreachTime(): Attribute{
+        return Attribute::get(function () {
 
-    //         if ($this->settle_date->lessThanOrEqualTo($this->expected_end_date)) {
+            if (!$this->actual_end_date || $this->actual_end_date->lessThanOrEqualTo($this->expected_end_date)) {
+                return '00 Hari : 00 Jam : 00 Minit';
+            }
+            else{
+                $diff = $this->expected_end_date->diff($this->actual_end_date);
 
-    //         }
-    //         else{
-    //             return '00 Hari : 00 Jam : 00 Minit';
-    //         }
-    //         $diff = $this->incident_date->diff($this->expected_end_date);
-
-    //     });
-    // }
+                return $diff->d .' Hari : ' . $diff->h . ' Jam : ' .$diff->i  .' Minit';
+            }
+        });
+    }
 }
