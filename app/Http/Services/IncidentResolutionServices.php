@@ -140,8 +140,8 @@ class IncidentResolutionServices
             $cc_to = $group_member;
         }
 
-        $email_template = EmailTemplate::select('sender_name','sender_email','notes')->where('is_active',true)->first();
-
+        $email_template = EmailTemplate::select('id','sender_name','sender_email','notes')->where('is_active',true)->first();
+        
         Mail::to($send_to)
             ->cc($cc_to ?? [])
             ->bcc($bc_to ?? [])
