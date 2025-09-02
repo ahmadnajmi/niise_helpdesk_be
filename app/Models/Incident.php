@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Incident extends BaseModel
 {
@@ -32,7 +33,8 @@ class Incident extends BaseModel
         'operation_user_id',
         'appendix_file',
         'asset_file',
-        'end_date',
+        'expected_end_date',
+        'actual_end_date',
         'status',
         'asset_parent_id',
         'asset_component_id',
@@ -44,7 +46,8 @@ class Incident extends BaseModel
         'incident_date' => 'datetime:Y-m-d',
         'date_asset_loss' => 'datetime:Y-m-d',
         'date_report_police' => 'datetime:Y-m-d',
-        'end_date' => 'datetime:Y-m-d',
+        'expected_end_date' => 'datetime:Y-m-d',
+        'actual_end_date' => 'datetime:Y-m-d',
     ];
 
     const OPEN = 1;
@@ -121,4 +124,26 @@ class Incident extends BaseModel
     public function workbasket(){
         return $this->hasOne(Workbasket::class,'incident_id','id');
     }
+
+    protected function calculateCountDownSettlement(): Attribute{
+        return Attribute::get(function () {
+            $diff = $this->incident_date->diff($this->expected_end_date);
+
+            return $diff->d .' Hari : ' . $diff->h . ' Jam : ' .$diff->i  .' Minit';
+        });
+    }
+
+    // protected function calculateBreachTime(): Attribute{
+    //     return Attribute::get(function () {
+
+    //         if ($this->settle_date->lessThanOrEqualTo($this->expected_end_date)) {
+
+    //         }
+    //         else{
+    //             return '00 Hari : 00 Jam : 00 Minit';
+    //         }
+    //         $diff = $this->incident_date->diff($this->expected_end_date);
+
+    //     });
+    // }
 }

@@ -42,7 +42,7 @@ class IncidentServices
         }
         else{
             $data['sla_version_id'] = self::getSlaVersion($data);
-            $data['end_date'] = self::calculateDueDateIncident($data);
+            $data['expected_end_date'] = self::calculateDueDateIncident($data);
         }
         
         $data['start_date'] = date('Y-m-d H:i:s');
@@ -70,7 +70,7 @@ class IncidentServices
 
         if($incident->categoryDescription->name == 'MOBILE'){
             $data['sla_version_id'] = self::getSlaVersion($data);
-            $data['end_date'] = self::calculateDueDateIncident($data);
+            $data['expected_end_date'] = self::calculateDueDateIncident($data);
         }
 
         $create = $incident->update($data);
