@@ -49,10 +49,9 @@ class IncidentCollection extends BaseResource
                 'incident_solution' => $query->incidentResolution ? new IncidentResolutionCollection($query->incidentResolution) : null,
                 'complainant' => $query->complaint ? new ComplaintResources($query->complaint) : null,
                 'expected_end_date' => $query->expected_end_date?->format('d-m-Y H:i:s'),
-                'actual_end_date' => $query->actual_end_date->format('d-m-Y H:i:s')
+                'actual_end_date' => $query->actual_end_date->format('d-m-Y H:i:s'),
                 'status' => $query->status,
                 'status_desc' => $query->statusDesc?->name,
-
                 'created_at' => $query->created_at->format('d-m-Y'),
                 'updated_at' => $query->updated_at->format('d-m-Y'),
                 'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
