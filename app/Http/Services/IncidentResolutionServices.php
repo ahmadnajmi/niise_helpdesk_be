@@ -57,6 +57,10 @@ class IncidentResolutionServices
 
         if($incident->status == Incident::RESOLVED || $incident->status == Incident::CLOSED){
             $incident->workbasket?->delete();
+
+            $data_incident['actual_end_date']  = date('Y-m-d H:i:s');
+
+            $incident->update($data_incident);
         }
         elseif($data->action_codes == 'ESCL'){
             $incident->workbasket()->update([
@@ -71,7 +75,7 @@ class IncidentResolutionServices
         }
 
         if($data->actionCodes->send_email){
-            self::sendEmail($data);
+            // self::sendEmail($data);
         }
 
         return true;

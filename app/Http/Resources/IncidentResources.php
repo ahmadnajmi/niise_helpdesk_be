@@ -63,7 +63,7 @@ class IncidentResources extends JsonResource
             'incident_solution' => new IncidentResolutionCollection($this->incidentResolution),
             'complainant' => new ComplaintResources($this->complaint) ,
             'expected_end_date' => $this->expected_end_date?->format('d-m-Y H:i:s'),
-            'actual_end_date' => $this->actual_end_date->format('d-m-Y H:i:s'),
+            'actual_end_date' => $this->actual_end_date?->format('d-m-Y H:i:s'),
             'status' => $this->status,
             'status_desc' => $this->statusDesc?->name,
             'countdown_settlement_date' => $this->calculateCountDownSettlement,
