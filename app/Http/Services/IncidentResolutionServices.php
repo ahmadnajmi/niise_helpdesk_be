@@ -75,7 +75,7 @@ class IncidentResolutionServices
         }
 
         if($data->actionCodes->send_email){
-            // self::sendEmail($data);
+            self::sendEmail($data);
         }
 
         return true;
@@ -145,7 +145,7 @@ class IncidentResolutionServices
         Mail::to($send_to)
             ->cc($cc_to ?? [])
             ->bcc($bc_to ?? [])
-            ->send(new ActionCodeEmail($data->incident,$email_template));
+            ->queue(new ActionCodeEmail($data->incident,$email_template));
 
         return true;
     }

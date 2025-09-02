@@ -131,9 +131,15 @@ class Incident extends BaseModel
 
     protected function calculateCountDownSettlement(): Attribute{
         return Attribute::get(function () {
-            $diff = $this->incident_date->diff($this->expected_end_date);
 
-            return $diff->d .' Hari : ' . $diff->h . ' Jam : ' .$diff->i  .' Minit';
+            if(!$this->actual_end_date){
+                $diff = $this->incident_date->diff($this->expected_end_date);
+
+                return $diff->d .' Hari : ' . $diff->h . ' Jam : ' .$diff->i  .' Minit';
+            }
+            else{
+                return '00 Hari : 00 Jam : 00 Minit';
+            }
         });
     }
 

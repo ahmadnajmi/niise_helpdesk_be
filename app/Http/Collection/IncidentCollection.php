@@ -24,7 +24,7 @@ class IncidentCollection extends BaseResource
                 'code_sla' => $query->code_sla,
                 'sla_details'=> $query->sla ? new SlaResources($query->sla) : null,
                 'incident_no' =>  $query->incident_no,
-                'incident_date' => $query->incident_date?->format('d-m-Y'),
+                'incident_date' => $query->incident_date?->format('d-m-Y H:i:s'),
                 'barcode' => $query->barcode,
                 'branch_id' => $query->branch_id,
                 'branch_details' => $query->branch,

@@ -45,7 +45,7 @@ class IncidentServices
             $data['expected_end_date'] = self::calculateDueDateIncident($data);
         }
         
-        $data['start_date'] = date('Y-m-d H:i:s');
+        $data['incident_date'] = date('Y-m-d H:i:s');
        
         $data = self::uploadDoc($data,$request);
 
