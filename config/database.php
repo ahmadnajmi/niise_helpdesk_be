@@ -113,7 +113,7 @@ return [
         ],
 
         'oracle' => [
-            'driver' =>'oci',
+            'driver' =>'oracle',
             'host' => env('DB_HOST'),
             'port' => env('DB_PORT'),
             'database' => env('DB_DATABASE'),
