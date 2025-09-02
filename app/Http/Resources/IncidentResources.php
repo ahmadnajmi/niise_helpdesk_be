@@ -63,7 +63,7 @@ class IncidentResources extends JsonResource
             'service_recipient_details' => new UserResources($this->serviceRecipient),
             'incident_solution' => new IncidentResolutionCollection($this->incidentResolution),
             'complainant' => new ComplaintResources($this->complaint) ,
-            'incident_date' => $this->incident_date?->format('d-m-Y'),
+            'incident_date' => $this->incident_date?->format('d-m-Y H:i:s'),
             'expected_end_date' => $this->expected_end_date?->format('d-m-Y H:i:s'),
             'actual_end_date' => $this->actual_end_date?->format('d-m-Y H:i:s'),
             'status' => $this->status,
