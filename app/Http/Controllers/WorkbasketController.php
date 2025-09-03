@@ -25,11 +25,18 @@ class WorkbasketController extends Controller
 
         $frontliner = Auth::user()->roles->contains('id', Role::FRONTLINER);
 
-        $data = Workbasket::when($frontliner, function ($query)  {
-                                return $query->whereIn('status',[Workbasket::NEW,Workbasket::IN_PROGRESS]);
+        $data = Workbasket::where(function ($query) use ($frontliner) {
+                                $query->when($frontliner, function ($q) {
+                                    return $q->whereIn('status', [Workbasket::NEW, Workbasket::IN_PROGRESS]);
+                                })
+                                ->when(!$frontliner, function ($q) {
+                                    return $q->where('handle_by', Auth::id());
+                                });
                             })
-                            ->when(!$frontliner, function ($query)  {
-                                return $query->where('handle_by', Auth::user()->id);
+                            ->orWhere(function ($query) {
+                                $query->whereHas('incident', function ($query) {
+                                    $query->where('complaint_user_id',Auth::user()->id);
+                                });
                             })
                             ->orderBy('updated_at','desc')
                             ->paginate($limit);
