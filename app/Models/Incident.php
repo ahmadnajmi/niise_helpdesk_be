@@ -20,6 +20,7 @@ class Incident extends BaseModel
         'branch_id',
         'category_id',
         'complaint_id',
+        'complaint_user_id',
         'information',
         'knowledge_base_id',
         'received_via',
@@ -97,6 +98,10 @@ class Incident extends BaseModel
 
     public function complaint(){
         return $this->hasOne(Complaint::class,'id','complaint_id');
+    }
+
+    public function complaintUser(){
+        return $this->hasOne(User::class,'id','complaint_user_id');
     }
 
     public function slaVersion(){

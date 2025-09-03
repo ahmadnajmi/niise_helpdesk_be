@@ -60,9 +60,10 @@ class IncidentServices
                 $complaint = Complaint::create($data_complaint);
 
                 $data['complaint_id'] =  $complaint->id;
+
+                $data['complaint_user_id'] = $user_details->id;
             }
         }
-
         if($category_code){
             $category = Category::whereRaw('LOWER(name) = ?', [strtolower($category_code)])->first();
 
