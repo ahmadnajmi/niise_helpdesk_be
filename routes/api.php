@@ -35,8 +35,7 @@ Route::middleware(['api','auth:api'])->group(function () {
 
     Route::resource('dashboard', DashboardController::class);
 
-    // Route::get('/workbasket', [WorkbasketController::class, 'index'])->name('workbasket.index');
-    Route::middleware('auth')->get('workbasket', [WorkbasketController::class, 'index'])->name('workbasket.index');
+    Route::get('/workbasket', [WorkbasketController::class, 'index'])->name('workbasket.index');
 
     Route::apiResource('module', ModuleController::class);
     Route::apiResource('permission', PermissionController::class);

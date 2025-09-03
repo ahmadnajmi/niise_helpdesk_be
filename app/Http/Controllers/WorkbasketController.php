@@ -21,23 +21,18 @@ class WorkbasketController extends Controller
 
     public function index(Request $request)
     {
-        // $user_id = Auth::user()->id;
 
-        // $limit = $request->limit ? $request->limit : 15;
-
-        // $data = Workbasket::where('handle_by', $user_id)->paginate($limit);
-
-        // return new WorkbasketCollection($data);
-
-        $user = Auth::user(); // Get the currently logged-in user
+        $user = Auth::user();
         $limit = $request->limit ?? 15;
 
+        $frontlinerId = Role::FRONTLINER;
+        $statusNew = Workbasket::NEW;
 
         $query = Workbasket::query();
 
-        if ($user->roles->contains('id', 3)) {
+        if ($user->roles->contains('id', $frontlinerId)) {
 
-            $query->where('status', '1');
+            $query->where('status', $statusNew);
         } else {
 
             $query->where('handle_by', $user->id);
