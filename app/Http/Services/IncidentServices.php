@@ -73,7 +73,7 @@ class IncidentServices
             $data['expected_end_date'] = self::calculateDueDateIncident($data);
         }
         
-        $data['service_recipient_id'] = $data['service_recipient_id'] ?? $data['operation_user_id'] ?? null;
+        // $data['service_recipient_id'] = $data['service_recipient_id'] ?? $data['operation_user_id'] ?? null;
         $data['received_via'] = $data['received_via'] ?? $received_via ?? null;
 
         $data['incident_date'] = date('Y-m-d H:i:s');
