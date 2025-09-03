@@ -26,14 +26,20 @@ class WorkbasketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'id' => 'nullable',
+            'date' => 'nullable',
+            'incident_id' => 'nullable',
+            'handle_by' => 'nullable',
+            'status' => 'nullable',
+            'created_at' => 'nullable',
+            'updated_at' => 'nullable',
         ];
     }
 
     protected function failedValidation(Validator $validator)
     {
         $response = $this->error($validator->errors(),[],422);
-      
+
         throw new HttpResponseException($response);
     }
 }

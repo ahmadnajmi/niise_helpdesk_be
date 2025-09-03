@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 
-use Illuminate\Http\Request;
+
+use App\Models\Role;
+use App\Models\User;
+use App\Models\UserRole;
 use App\Models\Workbasket;
+use Illuminate\Http\Request;
 use App\Http\Traits\ResponseTrait;
-use App\Http\Collection\WorkbasketCollection;
-use App\Http\Resources\WorkbasketResources;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\WorkbasketRequest;
+use App\Http\Resources\WorkbasketResources;
+use App\Http\Collection\WorkbasketCollection;
 
 class WorkbasketController extends Controller
 {
@@ -16,43 +21,33 @@ class WorkbasketController extends Controller
 
     public function index(Request $request)
     {
+        // $user_id = Auth::user()->id;
+
         // $limit = $request->limit ? $request->limit : 15;
 
-        // $data =  Workbasket::paginate($limit);
+        // $data = Workbasket::where('handle_by', $user_id)->paginate($limit);
 
         // return new WorkbasketCollection($data);
 
-        $workbasket = [
-            (object)[
-                'id' => 1,
-                'date' => '1/11/2025',
-                'category' => 'LAN',
-                'title' => 'Server Down',
-                'severity' => 'high',
-                'status' => 'new',
-                'assignee' => null,
-            ],
-            (object)[
-                'id' => 2,
-                'date' => '2/11/2025',
-                'category' => 'Authentication',
-                'title' => 'Email Not Working',
-                'severity' => 'medium',
-                'status' => 'in_progress',
-                'assignee' => (object)['name' => 'John Doe'],
-            ],
-            (object)[
-                'id' => 3,
-                'date' => '3/11/2025',
-                'category' => 'Web',
-                'title' => 'Website Slow',
-                'severity' => 'low',
-                'status' => 'closed',
-                'assignee' => (object)['name' => 'Jane Smith'],
-            ],
-        ];
+        $user = Auth::user(); // Get the currently logged-in user
+        $limit = $request->limit ?? 15;
 
-        return view('workbasket.index', compact('workbasket'));
+
+        $query = Workbasket::query();
+
+        if ($user->roles->contains('id', 3)) {
+
+            $query->where('status', '1');
+        } else {
+
+            $query->where('handle_by', $user->id);
+        }
+
+
+        $data = $query->paginate($limit);
+
+
+        return new WorkbasketCollection($data);
     }
 
     public function store(WorkbasketRequest $request)

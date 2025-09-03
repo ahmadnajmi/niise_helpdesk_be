@@ -16,9 +16,12 @@ class WorkbasketCollection extends BaseResource
         return $this->collection->transform(function ($query) use($request){
             $return =  [
                 'id' => $query->id,
-               
-                'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
-                'updated_by' => $query->updatedBy->name .' - '. $query->updatedBy->email ,
+                'date' => $query->date,
+                'incident_id' => $query->incident_id,
+                'handle_by' => $query->handle_by,
+                'status' => $query->status,
+                'created_at' => $query->created_at->format('d-m-Y'),
+                'updated_at' => $query->updated_at->format('d-m-Y'),
             ];
             return $return;
         });
