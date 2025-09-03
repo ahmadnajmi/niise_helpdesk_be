@@ -17,6 +17,7 @@ use App\Models\OperatingTime;
 use App\Models\SlaTemplate;
 use App\Models\Workbasket;
 use App\Models\Role;
+use App\Models\User;
 use Carbon\Carbon;
 
 class IncidentServices
@@ -32,6 +33,25 @@ class IncidentServices
             $complaint = Complaint::create($data);
 
             $data['complaint_id'] =  $complaint->id;
+        }
+        else{
+            $complaint = Complaint::where('id',$data['complaint_id'])->first();
+
+            $user_details = User::where('id',$data['complaint_id'])->first();
+
+            if(!$complaint && $user_details){
+
+                $data_complaint['name'] = $user_details->name;
+                $data_complaint['email'] = $user_details->email;
+                $data_complaint['phone_no'] = $user_details->phone_no;
+                $data_complaint['address'] = $user_details->address;
+                $data_complaint['state_id'] = $user_details->state_id;
+                $data_complaint['postcode'] = $user_details->postcode;
+
+                $complaint = Complaint::create($data_complaint);
+
+                $data['complaint_id'] =  $complaint->id;
+            }
         }
 
         if($category_code){
