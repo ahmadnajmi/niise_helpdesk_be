@@ -55,7 +55,7 @@ class IncidentResolutionServices
             $incident->update($data_incident);
         }
 
-        if($incident->status == Incident::RESOLVED || $incident->status == Incident::CLOSED){
+        if($incident->status == Incident::CLOSED){
             $incident->workbasket?->delete();
 
             $data_incident['actual_end_date']  = date('Y-m-d H:i:s');
@@ -68,7 +68,7 @@ class IncidentResolutionServices
                 'handle_by' => $incident->operation_user_id
             ]);
         }
-        elseif($data->action_codes == 'RSLVD'){
+        elseif($data->action_codes == 'RSLVD' || $data->action_codes == 'ACTR'){
             $incident->workbasket()->update([
                 'status' => Workbasket::NEW,
                 'handle_by' => null
