@@ -77,10 +77,9 @@ class IncidentServices
                 $received_via = Incident::RECIEVED_SYSTEM;
             } 
         }
-        else{
-            $data['sla_version_id'] = self::getSlaVersion($data);
-            $data['expected_end_date'] = self::calculateDueDateIncident($data);
-        }
+
+        $data['sla_version_id'] = self::getSlaVersion($data);
+        $data['expected_end_date'] = self::calculateDueDateIncident($data);
         
         // $data['service_recipient_id'] = $data['service_recipient_id'] ?? $data['operation_user_id'] ?? null;
         $data['received_via'] = $data['received_via'] ?? $received_via ?? null;

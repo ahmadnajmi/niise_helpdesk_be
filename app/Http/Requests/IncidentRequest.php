@@ -26,7 +26,7 @@ class IncidentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'incident_date' => 'required',
+            'incident_date' => 'nullable',
             'branch_id' => 'required',
             'category_id' => 'sometimes',
             'complaint_id' => 'nullable',
