@@ -207,7 +207,7 @@ class IncidentServices
 
         $return['data'] = $data_return;
 
-        if(isset($data->asset_parent_id) || count($data->asset_component_id) > 0){
+        if(isset($data->asset_parent_id) || isset($data->asset_component_id) ){
             
             $asset_service = new AssetServices();
 
