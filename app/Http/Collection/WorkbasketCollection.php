@@ -28,7 +28,7 @@ class WorkbasketCollection extends BaseResource
                 'group_details' =>  $query->incident?->group ? new GroupResources($query->incident->group) : null,
                 'handle_by' => $query->handle_by,
                 'status' => $query->status,
-                'status_desc' => $query->statusDesc?->name,
+                'status_desc' => $query->statusDesc?->translated_name,
                 'created_at' => $query->created_at->format('d-m-Y'),
                 'updated_at' => $query->updated_at->format('d-m-Y'),
             ];

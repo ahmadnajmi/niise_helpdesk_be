@@ -31,6 +31,12 @@ class RefTable extends BaseModel
         return $query;
     }
 
+    public function getTranslatedNameAttribute(){
+        $locale = request()->header('Accept-Language', 'en');
+        
+        return $this->{"name_{$locale}"} ?? $this->name;
+    }
+
     public function getParentDesc($code_category,$refcode){
         $query = RefTable::where('code_category',$code_category)->where('ref_code',$refcode)->first();
 
