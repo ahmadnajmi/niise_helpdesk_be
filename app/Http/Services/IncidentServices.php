@@ -85,7 +85,8 @@ class IncidentServices
         $data['received_via'] = $data['received_via'] ?? $received_via ?? null;
 
         $data['incident_date'] = date('Y-m-d H:i:s');
-       
+        $data['asset_component_id'] = $data['asset_component_id'] ? json_encode($data['asset_component_id']) : null;
+
         $data = self::uploadDoc($data,$request);
 
         $create = Incident::create($data);
@@ -111,6 +112,8 @@ class IncidentServices
             $data['sla_version_id'] = self::getSlaVersion($data);
             $data['expected_end_date'] = self::calculateDueDateIncident($data);
         }
+
+        $data['asset_component_id'] = $data['asset_component_id'] ? json_encode($data['asset_component_id']) : null;
 
         $create = $incident->update($data);
 
