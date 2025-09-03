@@ -12,10 +12,11 @@ class CustomAuthenticate extends Middleware
     public function handle($request, \Closure $next, ...$guards){
         if ($this->auth->guard('api')->guest()) {
             return response()->json([
-            'success' => false,
-            'message' => 'You are not authenticated. Please log in again.',
-            'error_code' => 401
-            ], Response::HTTP_UNAUTHORIZED);
+                'success' => false,
+                'message' => 'You are not authenticated. Please log in again.',
+                'status_code' => 401
+            ], 
+            Response::HTTP_UNAUTHORIZED);
         }
 
         return $next($request);

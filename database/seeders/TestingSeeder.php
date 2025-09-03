@@ -8,6 +8,9 @@ use App\Models\SlaTemplate;
 use App\Models\Sla;
 use App\Models\Complaint;
 use App\Models\Incident;
+use App\Models\SlaVersion;
+use App\Models\IncidentResolution;
+use App\Models\Workbasket;
 use Illuminate\Support\Facades\DB;
 
 class TestingSeeder extends Seeder
@@ -17,12 +20,13 @@ class TestingSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('sla_template')->truncate();
-        DB::table('sla_version')->truncate();
-        DB::table('sla')->truncate();
-        DB::table('incidents')->truncate();
-        DB::table('incident_resolution')->truncate();
-        DB::table('complaint')->truncate();
+        SlaTemplate::truncate();
+        SlaVersion::truncate();
+        Sla::truncate();
+        Complaint::truncate();
+        Incident::truncate();
+        IncidentResolution::truncate();
+        Workbasket::truncate();
 
         if (DB::getDriverName() === 'oracle') {
             DB::statement("ALTER SEQUENCE SLA_TEMPLATE_ID_SEQ RESTART START WITH 1");
@@ -31,6 +35,7 @@ class TestingSeeder extends Seeder
             DB::statement("ALTER SEQUENCE COMPLAINT_ID_SEQ RESTART START WITH 1");
             DB::statement("ALTER SEQUENCE INCIDENTS_ID_SEQ RESTART START WITH 1");
             DB::statement("ALTER SEQUENCE INCIDENT_RESOLUTION_ID_SEQ RESTART START WITH 1");
+            DB::statement("ALTER SEQUENCE WORKBASKET_ID_SEQ RESTART START WITH 1");
         } 
 
         SlaTemplate::factory()->count(10)->create();
