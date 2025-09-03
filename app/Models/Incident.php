@@ -55,6 +55,12 @@ class Incident extends BaseModel
     const CLOSED = 3;
     const CANCEL_DUPLICATE = 4;
     const ON_HOLD = 5;
+    
+    const RECIEVED_PHONE = 1;
+    const RECIEVED_EMAIL = 2;
+    const RECIEVED_CHATBOT = 3;
+    const RECIEVED_LIVECHAT = 4;
+    const RECIEVED_SYSTEM = 5;
 
     protected static function booted(){
         static::creating(function ($model) {

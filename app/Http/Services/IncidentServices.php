@@ -25,6 +25,7 @@ class IncidentServices
     
     public static function create($data,$request){
         $category_code = isset($data['category']) ? $data['category'] : null;
+        $received_via = null;
 
         DB::beginTransaction();
 
@@ -59,6 +60,13 @@ class IncidentServices
 
 
             $data['category_id'] = $category?->id;
+
+            if($category_code == Category::MOBILE) {
+                $received_via = Incident::RECIEVED_PHONE;
+            }
+            elseif($category_code == Category::SISTEM) {
+                $received_via = Incident::RECIEVED_SYSTEM;
+            } 
         }
         else{
             $data['sla_version_id'] = self::getSlaVersion($data);
@@ -66,6 +74,8 @@ class IncidentServices
         }
         
         $data['service_recipient_id'] = $data['service_recipient_id'] ?? $data['operation_user_id'] ?? null;
+        $data['received_via'] = $data['received_via'] ?? $received_via ?? null;
+
         $data['incident_date'] = date('Y-m-d H:i:s');
        
         $data = self::uploadDoc($data,$request);
