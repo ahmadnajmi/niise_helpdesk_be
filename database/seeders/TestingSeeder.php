@@ -35,11 +35,12 @@ class TestingSeeder extends Seeder
 
         SlaTemplate::factory()->count(10)->create();
         Sla::factory()->count(20)->create();
+        Complaint::factory()->count(20)->create();
         Incident::factory()->count(5)->create(['status' => Incident::OPEN]);
         Incident::factory()->count(5)->create(['status' => Incident::RESOLVED]);
         Incident::factory()->count(5)->create(['status' => Incident::CLOSED]);
         Incident::factory()->count(5)->create(['status' => Incident::CANCEL_DUPLICATE]);
-        Incident::factory()->count(5)->create(['status' => Incident::ON_HOLD]);
+        Incident::factory()->count(20)->create(['status' => Incident::ON_HOLD]);
 
 
     }

@@ -16,6 +16,7 @@ class Complaint extends BaseModel
         'email',
         'phone_no',
         'office_phone_no',
+        'extension_no',
         'address',
         'postcode',
         'state_id'

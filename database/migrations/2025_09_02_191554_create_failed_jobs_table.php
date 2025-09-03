@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('workbasket', function (Blueprint $table) {
+        Schema::create('failed_jobs', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('incident_id')->nullable(); 
-            $table->date('date');
-            $table->unsignedBigInteger('handle_by')->nullable(); 
-            $table->smallInteger('status')->default(1);
-            $table->timestamps();
+            $table->string('uuid')->unique();
+            $table->text('connection');
+            $table->text('queue');
+            $table->longText('payload');
+            $table->longText('exception');
+            $table->timestamp('failed_at')->useCurrent();
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('workbasket');
+        Schema::dropIfExists('failed_jobs');
     }
 };

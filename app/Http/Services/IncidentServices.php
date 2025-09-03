@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Traits\ResponseTrait;
@@ -15,6 +16,8 @@ use App\Models\Category;
 use App\Models\OperatingTime;
 use App\Models\SlaTemplate;
 use App\Models\Workbasket;
+use App\Models\Role;
+use App\Models\User;
 use Carbon\Carbon;
 
 class IncidentServices
@@ -31,6 +34,25 @@ class IncidentServices
 
             $data['complaint_id'] =  $complaint->id;
         }
+        else{
+            $complaint = Complaint::where('id',$data['complaint_id'])->first();
+
+            $user_details = User::where('id',$data['complaint_id'])->first();
+
+            if(!$complaint && $user_details){
+
+                $data_complaint['name'] = $user_details->name;
+                $data_complaint['email'] = $user_details->email;
+                $data_complaint['phone_no'] = $user_details->phone_no;
+                $data_complaint['address'] = $user_details->address;
+                $data_complaint['state_id'] = $user_details->state_id;
+                $data_complaint['postcode'] = $user_details->postcode;
+
+                $complaint = Complaint::create($data_complaint);
+
+                $data['complaint_id'] =  $complaint->id;
+            }
+        }
 
         if($category_code){
             $category = Category::whereRaw('LOWER(name) = ?', [strtolower($category_code)])->first();
@@ -40,10 +62,10 @@ class IncidentServices
         }
         else{
             $data['sla_version_id'] = self::getSlaVersion($data);
-            $data['end_date'] = self::calculateDueDateIncident($data);
+            $data['expected_end_date'] = self::calculateDueDateIncident($data);
         }
         
-        $data['start_date'] = date('Y-m-d H:i:s');
+        $data['incident_date'] = date('Y-m-d H:i:s');
        
         $data = self::uploadDoc($data,$request);
 
@@ -68,7 +90,7 @@ class IncidentServices
 
         if($incident->categoryDescription->name == 'MOBILE'){
             $data['sla_version_id'] = self::getSlaVersion($data);
-            $data['end_date'] = self::calculateDueDateIncident($data);
+            $data['expected_end_date'] = self::calculateDueDateIncident($data);
         }
 
         $create = $incident->update($data);
@@ -82,6 +104,16 @@ class IncidentServices
         return $return;
     }
 
+    public static function view(Incident $incident){
+        if($incident->workbasket?->status == Workbasket::NEW){
+            
+            $incident->workbasket()->update([
+                'status' => Workbasket::OPENED,
+            ]);
+        }
+        
+        return  new IncidentResources($incident);
+    }
     public static function delete($incident){
 
         if($incident->created_by != auth()->user()->id ){
@@ -142,7 +174,6 @@ class IncidentServices
     public static function createWorkbasket($id){
         $data['date'] = date('Y-m-d H:i:s');
         $data['incident_id'] = $id;
-        $data['handle_by'] = 1;
 
         Workbasket::create($data);
 

@@ -28,7 +28,7 @@ class IncidentFactory extends Factory
         $random_branch = $branch_id[array_rand($branch_id)];
 
         $data['code_sla'] = $sla?->code;
-        $data['incident_date'] = fake()->dateTimeBetween('-1 year','now');
+        $data['incident_date'] = fake()->dateTimeBetween('-2 month','now');
         $data['barcode'] = fake()->numerify('############');
         $data['branch_id'] = $random_branch;
         $data['category_id'] = $sla?->category_id;
@@ -45,8 +45,10 @@ class IncidentFactory extends Factory
         $data['group_id'] = $group?->id;
         $data['operation_user_id'] = $user?->id;
         $data['sla_version_id'] = $sla_version?->id;
-        $data['end_date'] = IncidentServices::calculateDueDateIncident($data);
+        $data['expected_end_date'] = IncidentServices::calculateDueDateIncident($data);
+
         $data['service_recipient_id'] =  $user?->id;
+        
 
         return $data;
     }
@@ -75,6 +77,12 @@ class IncidentFactory extends Factory
                 $data_reso['notes'] = fake()->sentence(20);
 
                 IncidentResolution::create($data_reso);
+                $endDate      = (clone $incident->incident_date)->addMonth();
+
+                $data_update['actual_end_date'] = fake()->dateTimeBetween($incident->incident_date, $endDate)->format('Y-m-d H:i:s');
+
+                $incident->update($data_update);
+
             }
             elseif($incident->status == Incident::CANCEL_DUPLICATE){
                 

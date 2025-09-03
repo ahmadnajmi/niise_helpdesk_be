@@ -17,8 +17,12 @@ class Workbasket extends BaseModel
         'status',
     ];
 
-     public function user()
-    {
+    const NEW = 1;
+    const IN_PROGRESS = 2;
+    const OPENED = 3;
+
+    public function user(){
         return $this->belongsTo(User::class, 'handle_by');
     }
+    
 }

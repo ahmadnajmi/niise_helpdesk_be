@@ -14,6 +14,6 @@ class EmailTemplate extends BaseModel
         'sender_name',
         'sender_email',
         'notes',
-
+        'is_active',
     ];
 }

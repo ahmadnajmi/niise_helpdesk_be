@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Incident extends BaseModel
 {
@@ -32,7 +33,8 @@ class Incident extends BaseModel
         'operation_user_id',
         'appendix_file',
         'asset_file',
-        'end_date',
+        'expected_end_date',
+        'actual_end_date',
         'status',
         'asset_parent_id',
         'asset_component_id',
@@ -44,9 +46,9 @@ class Incident extends BaseModel
         'incident_date' => 'datetime:Y-m-d',
         'date_asset_loss' => 'datetime:Y-m-d',
         'date_report_police' => 'datetime:Y-m-d',
-        'end_date' => 'datetime:Y-m-d',
+        'expected_end_date' => 'datetime:Y-m-d',
+        'actual_end_date' => 'datetime:Y-m-d',
     ];
-
 
     const OPEN = 1;
     const RESOLVED = 2;
@@ -74,7 +76,6 @@ class Incident extends BaseModel
             $model->incident_no = 'TN'.date('Ymd').$next_number;
         });
     }
-
 
     public function branch(){
         return $this->hasOne(Branch::class,'id','branch_id');
@@ -116,7 +117,43 @@ class Incident extends BaseModel
         return $this->hasOne(User::class,'id','operation_user_id');
     }
 
+    public function serviceRecipient(){
+        return $this->hasOne(User::class,'id','service_recipient_id');
+    }
+
     public function statusDesc(){
         return $this->hasOne(RefTable::class,'ref_code','status')->where('code_category', 'incident_status');
+    }
+
+    public function workbasket(){
+        return $this->hasOne(Workbasket::class,'incident_id','id');
+    }
+
+    protected function calculateCountDownSettlement(): Attribute{
+        return Attribute::get(function () {
+
+            if(!$this->actual_end_date){
+                $diff = $this->incident_date->diff($this->expected_end_date);
+
+                return $diff->d .' Hari : ' . $diff->h . ' Jam : ' .$diff->i  .' Minit';
+            }
+            else{
+                return '00 Hari : 00 Jam : 00 Minit';
+            }
+        });
+    }
+
+    protected function calculateBreachTime(): Attribute{
+        return Attribute::get(function () {
+
+            if (!$this->actual_end_date || $this->actual_end_date->lessThanOrEqualTo($this->expected_end_date)) {
+                return '00 Hari : 00 Jam : 00 Minit';
+            }
+            else{
+                $diff = $this->expected_end_date->diff($this->actual_end_date);
+
+                return $diff->d .' Hari : ' . $diff->h . ' Jam : ' .$diff->i  .' Minit';
+            }
+        });
     }
 }

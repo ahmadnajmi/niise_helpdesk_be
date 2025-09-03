@@ -17,6 +17,13 @@ class Role extends BaseModel
         'is_active',
     ];
 
+    const JIM = 1;
+    const NOC_SOC_AOC = 2;
+    const FRONTLINER = 3;
+    const ICT_SV = 4;
+    const BTMR = 5;
+    const CONTRACTOR = 6;
+
     public function users(){
         return $this->belongsToMany(User::class, 'user_role');
     }
