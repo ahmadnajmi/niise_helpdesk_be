@@ -30,7 +30,7 @@ use App\Http\Controllers\IncidentResolutionController;
 
 Route::post('login', [AuthController::class, 'login']);
 
-Route::middleware(['api','auth:api'])->group(function () {
+Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::resource('dashboard', DashboardController::class);

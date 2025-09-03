@@ -8,23 +8,20 @@ use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Symfony\Component\HttpFoundation\Response;
 
 class CustomAuthenticate extends Middleware
-
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    protected function unauthenticated($request, array $guards)
-    {
-        if ($request->expectsJson()) {
+    public function handle($request, \Closure $next, ...$guards){
+        if ($this->auth->guard('api')->guest()) {
             return response()->json([
-                'success' => false,
-                'message' => 'You are not authenticated. Please log in again.',
-                'error_code' => 401
+            'success' => false,
+            'message' => 'You are not authenticated. Please log in again.',
+            'error_code' => 401
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        abort(Response::HTTP_UNAUTHORIZED, 'Unauthorized');
+        return $next($request);
+    }
+
+    protected function redirectTo(Request $request): ?string{
+        return null;
     }
 }
