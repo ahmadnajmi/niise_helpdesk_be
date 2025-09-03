@@ -49,6 +49,7 @@ class IncidentResources extends JsonResource
             'asset_information' => $asset_information,
             'report_no' => $this->report_no,
             'incident_asset_type' => $this->incident_asset_type,
+            'incident_asset_type_desc' => $this->incidentAssetTypeDescription?->name,
             'date_asset_loss' => $this->date_asset_loss?->format('d-m-Y'),
             'date_report_police' => $this->date_report_police?->format('d-m-Y'),
             'report_police_no' => $this->report_police_no,
