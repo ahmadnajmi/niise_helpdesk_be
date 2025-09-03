@@ -18,9 +18,7 @@ class IncidentController extends Controller
 
     public function index(Request $request)
     {
-        $limit = $request->limit ? $request->limit : 15;
-        
-        $data =  Incident::paginate($limit);
+        $data = IncidentServices::index($request);
 
         return new IncidentCollection($data);
     }

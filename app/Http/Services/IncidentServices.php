@@ -22,6 +22,14 @@ use Carbon\Carbon;
 
 class IncidentServices
 {
+    public static function index($request){
+        
+        $limit = $request->limit ? $request->limit : 15;
+        
+        $data =  Incident::paginate($limit);
+
+        return $data;
+    }
     
     public static function create($data,$request){
         $category_code = isset($data['category']) ? $data['category'] : null;

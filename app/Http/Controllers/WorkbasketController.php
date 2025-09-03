@@ -21,73 +21,19 @@ class WorkbasketController extends Controller
 
     public function index(Request $request)
     {
-
-        $user = Auth::user();
         $limit = $request->limit ?? 15;
 
-        $frontlinerId = Role::FRONTLINER;
-        $statusNew = Workbasket::NEW;
+        $frontliner = Auth::user()->roles->contains('id', Role::FRONTLINER);
 
-        $query = Workbasket::query();
-
-        if ($user->roles->contains('id', $frontlinerId)) {
-
-            $query->where('status', $statusNew);
-        } else {
-
-            $query->where('handle_by', $user->id);
-        }
-
-
-        $data = $query->paginate($limit);
-
+        $data = Workbasket::when($frontliner, function ($query)  {
+                                return $query->whereIn('status',[Workbasket::NEW,Workbasket::IN_PROGRESS]);
+                            })
+                            ->when(!$frontliner, function ($query)  {
+                                return $query->where('handle_by', $user->id);
+                            })
+                            ->orderBy('updated_at','desc')
+                            ->paginate($limit);
 
         return new WorkbasketCollection($data);
-    }
-
-    public function store(WorkbasketRequest $request)
-    {
-        try {
-            $data = $request->all();
-
-            $create = Workbasket::create($data);
-
-            $data = new WorkbasketResources($create);
-
-            return $this->success('Success', $data);
-
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
-    }
-
-    public function show(Workbasket $workbasket)
-    {
-        $data = new WorkbasketResources($workbasket);
-
-        return $this->success('Success', $data);
-    }
-
-    public function update(WorkbasketRequest $request, Workbasket $workbasket)
-    {
-        try {
-            $data = $request->all();
-
-            $update = $workbasket->update($data);
-
-            $data = new WorkbasketResources($workbasket);
-
-            return $this->success('Success', $data);
-
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
-    }
-
-    public function destroy(Workbasket $workbasket)
-    {
-        $workbasket->delete();
-
-        return $this->success('Success', null);
     }
 }
