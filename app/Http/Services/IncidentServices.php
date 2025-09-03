@@ -124,7 +124,9 @@ class IncidentServices
     }
 
     public static function view(Incident $incident){
-        if($incident->workbasket?->status == Workbasket::NEW){
+        $frontliner = Auth::user()->roles->contains('id', Role::FRONTLINER);
+        // dd($frontliner);
+        if($incident->workbasket?->status == Workbasket::NEW && $frontliner){
             
             $incident->workbasket()->update([
                 'status' => Workbasket::OPENED,
@@ -133,6 +135,7 @@ class IncidentServices
         
         return  new IncidentResources($incident);
     }
+
     public static function delete($incident){
 
         if($incident->created_by != auth()->user()->id ){

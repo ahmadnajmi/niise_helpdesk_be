@@ -61,8 +61,12 @@ class GeneralServices
                                         ->when($request->operating_time, function ($query) {
                                             return $query->doesntHave('operatingTime');
                                         })
+                                        ->orderBy('category','desc')
                                         ->orderBy('name','asc')
-                                        ->get();
+                                        ->get()->groupBy(function($item) {
+                                            return $item->state_id ? $item->stateDescription->name_en : 'Unknown State';
+                                        })
+                                        ->sortKeys();
             }
 
             if($code == 'sla_template'){

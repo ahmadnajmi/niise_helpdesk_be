@@ -29,7 +29,7 @@ class WorkbasketController extends Controller
                                 return $query->whereIn('status',[Workbasket::NEW,Workbasket::IN_PROGRESS]);
                             })
                             ->when(!$frontliner, function ($query)  {
-                                return $query->where('handle_by', $user->id);
+                                return $query->where('handle_by', Auth::user()->id);
                             })
                             ->orderBy('updated_at','desc')
                             ->paginate($limit);
