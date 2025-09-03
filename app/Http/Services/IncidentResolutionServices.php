@@ -68,6 +68,12 @@ class IncidentResolutionServices
                 'handle_by' => $incident->operation_user_id
             ]);
         }
+        elseif($data->action_codes == 'RSLVD'){
+            $incident->workbasket()->update([
+                'status' => Workbasket::NEW,
+                'handle_by' => null
+            ]);
+        }
         else{
             $incident->workbasket()->update([
                 'status' => Workbasket::IN_PROGRESS,

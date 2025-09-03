@@ -24,6 +24,8 @@ class ActionCode extends BaseModel
     const ACTR = 'ACTR';
     const CLSD = 'CLSD';
     const UPDT = 'UPDT';
+    const RSLVD = 'RSLVD';
+
 
     const SEND_TO_COMPLAINT = 1;
     const SEND_TO_GROUP = 2;
