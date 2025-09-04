@@ -54,22 +54,63 @@ class DashboardController extends Controller
 
     $totalReports = Incident::whereNotNull('report_no')->count();
 
-    $moreThan4Days = Incident::where('incident_date', '<', now()->subDays(4))->count();
-    $just4Days = Incident::whereDate('incident_date', now()->subDays(4))->count();
-    $lessThan4Days = Incident::where('incident_date', '>=', now()->subDays(3))->count();
+    $moreThan4Days = Incident::where('incident_date', '<', now()->startOfDay()->modify('-4 days'))->where('status', '=', 1)->count();
+    $just4Days = Incident::where('incident_date','=', now()->startOfDay()->modify('-4 days'))->where('status', '=', 1)->count();
+    $lessThan4Days = Incident::where('incident_date', '>=', now()->startOfDay()->modify('-4 days'))->where('status', '=', 1)->count();
 
     $totalIncidentsThisYear = Incident::whereYear('incident_date', now()->year)->count();
-    // $incidentsByMonth = Incident::select(
-    //         DB::raw('MONTH(incident_date) as month'),
-    //         DB::raw('COUNT(*) as total')
-    //     )
-    //     ->whereYear('incident_date', now()->year)
-    //     ->groupBy(DB::raw('MONTH(incident_date)'))
-    //     ->pluck('total', 'month')
-    //     ->toArray();
 
-    // $allMonths = array_fill(1, 12, 0);
-    // $incidentsByMonth = array_replace($allMonths, $incidentsByMonth);
+
+    $incidentsByMonth = Incident::select(
+            DB::raw('MONTH(incident_date) as month'),
+            DB::raw('COUNT(*) as total')
+        )
+        ->whereBetween('incident_date', [now()->startOfYear(), now()->endOfYear()]) // no whereYear
+        ->groupBy(DB::raw('MONTH(incident_date)'))
+        ->pluck('total', 'month')
+        ->toArray();
+
+    $allMonths = array_fill(1, 12, 0);
+
+    $incidentsByMonth = array_replace($allMonths, $incidentsByMonth);
+
+    $incidentsByMonth = array_values($incidentsByMonth);
+
+    $incidentsByDay = Incident::select(
+        DB::raw('DAY(incident_date) as day'),
+        DB::raw('COUNT(*) as total')
+    )
+    ->whereBetween('incident_date', [now()->startOfMonth(), now()->endOfMonth()])
+    ->groupBy(DB::raw('DAY(incident_date)'))
+    ->pluck('total', 'day')
+    ->toArray();
+
+    $daysInMonth = now()->daysInMonth;
+
+    $allDays = array_fill(1, $daysInMonth, 0);
+
+   
+    $incidentsByDay = array_replace($allDays, $incidentsByDay);
+
+    $incidentsByDay = array_values($incidentsByDay);
+
+    $incidentsRaw = Incident::selectRaw('DATEPART(HOUR, incident_date) as hour, COUNT(*) as total')
+        ->whereBetween('incident_date', [now()->startOfDay(), now()->endOfDay()])
+        ->groupBy(DB::raw('DATEPART(HOUR, incident_date)'))
+        ->orderBy('hour')
+        ->pluck('total', 'hour')   // [hour => total]
+        ->toArray();
+
+    // Always 24 hours (0..23)
+    $allHours = array_fill(0, 24, 0);
+
+    // Make sure string keys like "8" become int 8 before merging
+    foreach ($incidentsRaw as $h => $cnt) {
+        $allHours[(int)$h] = (int)$cnt;
+    }
+
+    // Final simple array: [0, 0, 5, 0, ...] for hours 0..23
+    $incidentsByHour = array_values($allHours);
 
 
     $totalIncidentsThisMonth = Incident::whereYear('incident_date', now()->year)
@@ -77,10 +118,7 @@ class DashboardController extends Controller
         ->count();
     $totalIncidentsToday = Incident::whereDate('incident_date', today())->count();
 
-    // $totalIncidentsByMonth = Incident::selectRaw('MONTH(incident_date) as month, COUNT(*) as total')
-    //     ->whereYear('incident_date', now()->year)
-    //     ->groupBy('month')
-    //     ->pluck('total','month');
+ 
 
     $totalIncidentsByBranch = Incident::selectRaw('branch_id, code_sla, COUNT(*) as total')
         ->groupBy('branch_id','code_sla')
@@ -88,16 +126,26 @@ class DashboardController extends Controller
         // ->with('sla')
         ->get();
 
-    $totalIncidentsByCategory = Incident::selectRaw('category_id, code_sla, COUNT(*) as total')
-        ->groupBy('category_id' ,'code_sla')
-        ->with(['categoryDescription' ,'sla.slaTemplate'])
+
+
+    $totalIncidentsByCategory = Incident::selectRaw('category_id, COUNT(*) as total')
+    ->whereHas('sla.slaTemplate', function($q) {
+        $q->where('severity_id', 1);
+    })
+    ->groupBy('category_id')
+    ->with(['categoryDescription','sla.slaTemplate'])
+    ->get();
+
+    $SeverityOutput = Incident::selectRaw('category_id, code_sla, COUNT(*) as total')
+        ->groupBy('category_id','code_sla')
+        ->with(['categoryDescription','sla.slaTemplate'])
         ->get();
+
 
     $IncidentsOpen = Incident::where('status', '=', 1)->count();
 
     $IncidentsDone = Incident::where('status', '=', 2)->count();
 
-    // $SeverityOutput =
 
     $data = [
         'trueTotalIncidents' => $trueTotalIncidents,
@@ -109,11 +157,12 @@ class DashboardController extends Controller
         'totalIncidentsThisYear' => $totalIncidentsThisYear,
         'totalIncidentsThisMonth' => $totalIncidentsThisMonth,
         'totalIncidentsToday' => $totalIncidentsToday, 
-        // 'ArrIncidentsThisYear' => $incidentsByMonth,
-        // 'totalIncidentsByMonth' => $totalIncidentsByMonth,
+        'incidentsByMonth' => $incidentsByMonth, 
+        'incidentsByDay' => $incidentsByDay,
+        'incidentsByHour' => $incidentsByHour,
         'totalIncidentsByBranch' => $totalIncidentsByBranch,
         'totalIncidentsByCategory' => $totalIncidentsByCategory,
-        // 'SeverityOutput' => $SeverityOutput,
+        'SeverityOutput' => $SeverityOutput,
         'IncidentsOpen' => $IncidentsOpen,
         'IncidentsDone' => $IncidentsDone,
     ];
