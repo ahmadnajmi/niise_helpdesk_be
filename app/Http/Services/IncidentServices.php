@@ -85,7 +85,7 @@ class IncidentServices
         $data['received_via'] = $data['received_via'] ?? $received_via ?? null;
 
         $data['incident_date'] = date('Y-m-d H:i:s');
-        $data['asset_component_id'] = $data['asset_component_id'] ? json_encode($data['asset_component_id']) : null;
+        $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
 
         $data = self::uploadDoc($data,$request);
 
