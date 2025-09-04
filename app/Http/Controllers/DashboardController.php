@@ -48,103 +48,95 @@ class DashboardController extends Controller
 
     public function index()
 {
-    $trueTotalIncidents = Incident::count();
+$trueTotalIncidents = Incident::count();
 
-    $totalSLA = Sla::count();
+$totalSLA = Sla::count();
 
-    $totalReports = Incident::whereNotNull('report_no')->count();
+$totalReports = Incident::whereNotNull('report_no')->count();
 
-    $moreThan4Days = Incident::where('incident_date', '<', now()->startOfDay()->modify('-4 days'))->where('status', '=', 1)->count();
-    $just4Days = Incident::where('incident_date','=', now()->startOfDay()->modify('-4 days'))->where('status', '=', 1)->count();
-    $lessThan4Days = Incident::where('incident_date', '>=', now()->startOfDay()->modify('-4 days'))->where('status', '=', 1)->count();
+$moreThan4Days = Incident::where('incident_date', '<', now()->startOfDay()->modify('-4 days'))
+    ->where('status', '=', 1)
+    ->count();
 
-    $totalIncidentsThisYear = Incident::whereYear('incident_date', now()->year)->count();
+$just4Days = Incident::where('incident_date', '=', now()->startOfDay()->modify('-4 days'))
+    ->where('status', '=', 1)
+    ->count();
 
+$lessThan4Days = Incident::where('incident_date', '>=', now()->startOfDay()->modify('-4 days'))
+    ->where('status', '=', 1)
+    ->count();
 
-    $incidentsByMonth = Incident::select(
-            DB::raw('MONTH(incident_date) as month'),
-            DB::raw('COUNT(*) as total')
-        )
-        ->whereBetween('incident_date', [now()->startOfYear(), now()->endOfYear()]) // no whereYear
-        ->groupBy(DB::raw('MONTH(incident_date)'))
-        ->pluck('total', 'month')
-        ->toArray();
+$totalIncidentsThisYear = Incident::whereRaw("TO_CHAR(incident_date, 'YYYY') = ?", [now()->year])
+    ->count();
 
-    $allMonths = array_fill(1, 12, 0);
+$incidentsByMonth = Incident::select(
+        DB::raw("EXTRACT(MONTH FROM incident_date) as month"),
+        DB::raw('COUNT(*) as total')
+    )
+    ->whereBetween('incident_date', [now()->startOfYear(), now()->endOfYear()])
+    ->groupBy(DB::raw("EXTRACT(MONTH FROM incident_date)"))
+    ->pluck('total', 'month')
+    ->toArray();
 
-    $incidentsByMonth = array_replace($allMonths, $incidentsByMonth);
+$allMonths = array_fill(1, 12, 0);
+$incidentsByMonth = array_replace($allMonths, $incidentsByMonth);
+$incidentsByMonth = array_values($incidentsByMonth);
 
-    $incidentsByMonth = array_values($incidentsByMonth);
-
-    $incidentsByDay = Incident::select(
-        DB::raw('DAY(incident_date) as day'),
+$incidentsByDay = Incident::select(
+        DB::raw("EXTRACT(DAY FROM incident_date) as day"),
         DB::raw('COUNT(*) as total')
     )
     ->whereBetween('incident_date', [now()->startOfMonth(), now()->endOfMonth()])
-    ->groupBy(DB::raw('DAY(incident_date)'))
+    ->groupBy(DB::raw("EXTRACT(DAY FROM incident_date)"))
     ->pluck('total', 'day')
     ->toArray();
 
-    $daysInMonth = now()->daysInMonth;
+$daysInMonth = now()->daysInMonth;
+$allDays = array_fill(1, $daysInMonth, 0);
+$incidentsByDay = array_replace($allDays, $incidentsByDay);
+$incidentsByDay = array_values($incidentsByDay);
 
-    $allDays = array_fill(1, $daysInMonth, 0);
+$incidentsRaw = Incident::selectRaw("TO_CHAR(incident_date, 'HH24') as hour, COUNT(*) as total")
+    ->whereBetween('incident_date', [now()->startOfDay(), now()->endOfDay()])
+    ->groupBy(DB::raw("TO_CHAR(incident_date, 'HH24')"))
+    ->orderBy('hour')
+    ->pluck('total', 'hour')
+    ->toArray();
 
-   
-    $incidentsByDay = array_replace($allDays, $incidentsByDay);
+// Always 24 hours (0..23)
+$allHours = array_fill(0, 24, 0);
+foreach ($incidentsRaw as $h => $cnt) {
+    $allHours[(int)$h] = (int)$cnt;
+}
+$incidentsByHour = array_values($allHours);
 
-    $incidentsByDay = array_values($incidentsByDay);
+$totalIncidentsThisMonth = Incident::whereRaw("TO_CHAR(incident_date, 'YYYY') = ?", [now()->year])
+    ->whereRaw("TO_CHAR(incident_date, 'MM') = ?", [now()->format('m')])
+    ->count();
 
-    $incidentsRaw = Incident::selectRaw('DATEPART(HOUR, incident_date) as hour, COUNT(*) as total')
-        ->whereBetween('incident_date', [now()->startOfDay(), now()->endOfDay()])
-        ->groupBy(DB::raw('DATEPART(HOUR, incident_date)'))
-        ->orderBy('hour')
-        ->pluck('total', 'hour')   // [hour => total]
-        ->toArray();
+$totalIncidentsToday = Incident::whereRaw("TRUNC(incident_date) = TRUNC(SYSDATE)")
+    ->count();
 
-    // Always 24 hours (0..23)
-    $allHours = array_fill(0, 24, 0);
+$totalIncidentsByBranch = Incident::selectRaw('branch_id, code_sla, COUNT(*) as total')
+    ->groupBy('branch_id','code_sla')
+    ->with(['branch','sla.slaTemplate'])
+    ->get();
 
-    // Make sure string keys like "8" become int 8 before merging
-    foreach ($incidentsRaw as $h => $cnt) {
-        $allHours[(int)$h] = (int)$cnt;
-    }
-
-    // Final simple array: [0, 0, 5, 0, ...] for hours 0..23
-    $incidentsByHour = array_values($allHours);
-
-
-    $totalIncidentsThisMonth = Incident::whereYear('incident_date', now()->year)
-        ->whereMonth('incident_date', now()->month)
-        ->count();
-    $totalIncidentsToday = Incident::whereDate('incident_date', today())->count();
-
- 
-
-    $totalIncidentsByBranch = Incident::selectRaw('branch_id, code_sla, COUNT(*) as total')
-        ->groupBy('branch_id','code_sla')
-        ->with(['branch','sla.slaTemplate'])
-        // ->with('sla')
-        ->get();
-
-
-
-    $totalIncidentsByCategory = Incident::selectRaw('category_id, COUNT(*) as total')
+$totalIncidentsByCategory = Incident::selectRaw('category_id, COUNT(*) as total')
     ->whereHas('sla.slaTemplate', function($q) {
-        $q->where('severity_id', 1);
+        $q->where('severity_id', 3);
     })
     ->groupBy('category_id')
     ->with(['categoryDescription','sla.slaTemplate'])
     ->get();
 
-    $SeverityOutput = Incident::selectRaw('category_id, code_sla, COUNT(*) as total')
-        ->groupBy('category_id','code_sla')
-        ->with(['categoryDescription','sla.slaTemplate'])
-        ->get();
+$SeverityOutput = Incident::selectRaw('category_id, code_sla, COUNT(*) as total')
+    ->groupBy('category_id','code_sla')
+    ->with(['categoryDescription','sla.slaTemplate'])
+    ->get();
 
-
-    $IncidentsOpen = Incident::where('status', '=', 1)->count();
-
-    $IncidentsDone = Incident::where('status', '=', 2)->count();
+$IncidentsOpen = Incident::where('status', '=', 1)->count();
+$IncidentsDone = Incident::where('status', '=', 2)->count();
 
 
     $data = [
