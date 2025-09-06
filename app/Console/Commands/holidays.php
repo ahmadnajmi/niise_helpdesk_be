@@ -66,7 +66,7 @@ class holidays extends Command
                             if($get_calendar){
                                 $old_state = json_decode($get_calendar->state_id, true) ?? [];
 
-                                $old_state[] = $get_state->ref_code;
+                                $old_state[] = (int)$get_state->ref_code;
 
                                 $old_state = array_unique($old_state);
 
@@ -78,7 +78,7 @@ class holidays extends Command
                                 $data_calendar['start_date'] = $year['date'];
                                 $data_calendar['end_date'] = $year['date'];
                                 $data_calendar['description'] = $year['description'];
-                                $data_calendar['state_id'] = json_encode([$get_state->ref_code]);
+                                $data_calendar['state_id'] = json_encode([(int) $get_state->ref_code]);
 
                                 $create = Calendar::create($data_calendar);
                             }
