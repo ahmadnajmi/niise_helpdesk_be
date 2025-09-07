@@ -15,6 +15,7 @@ Route::middleware('web')->name('web.')->group(function () {
     Route::get('incident', [IncidentController::class, 'index'])->name('incident.index');
     Route::get('generate_due_date', [IncidentController::class, 'generateDueDateIncident'])->name('incident.generate_duedate');
 
+    Route::get('/logs', function () { return redirect('/log-viewer');})->name('logs');
 });
 
 Route::get('redirect', [TestingController::class, 'redirect'])->name('netiq.redirect');

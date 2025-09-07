@@ -27,6 +27,7 @@ use App\Http\Controllers\KnowledgeBaseController;
 use App\Http\Controllers\OperatingTimeController;
 use App\Http\Controllers\CompanyContractController;
 use App\Http\Controllers\IncidentResolutionController;
+use App\Http\Controllers\TestingController;
 
 Route::post('login', [AuthController::class, 'login']);
 
@@ -76,13 +77,11 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::delete('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranchDelete']);
 });
 
-Route::get('testing', [UserController::class,'testingJasper']);
 
 Route::prefix('iasset')->middleware('client.passport')->name('iasset.')->group(function () {
     Route::get('incidents/download_asset/{incident_no}', [IncidentController::class, 'downloadAssetFile'])->name('incidents.download_asset');
     Route::apiResource('branch', BranchController::class)->only('index','show');
     Route::apiResource('ref_table', RefTableController::class);
 });
+Route::get('testing', [TestingController::class,'testingJasper']);
 
-// Route::get('workbasket', [WorkbasketController::class, 'index'])->name('workbasket.index');
-// Route::middleware('auth')->get('workbasket', [WorkbasketController::class, 'index'])->name('workbasket.index');
