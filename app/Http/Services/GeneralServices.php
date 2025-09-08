@@ -12,7 +12,7 @@ use App\Models\Complaint;
 use App\Models\Sla;
 use App\Models\CompanyContract;
 use App\Models\OperatingTime;
-
+use App\Models\ActionCode;
 class GeneralServices
 {
     public static function dynamicOption($request){
@@ -157,6 +157,13 @@ class GeneralServices
                                             ->orderBy('name','asc')
                                             ->get();
 
+            }
+
+            if($code == 'action_code'){
+                $data[$code] = ActionCode::select('name','nickname','description')
+                                        ->where('is_active',true)
+                                        ->get();
+                
             }
         }
         return $data;
