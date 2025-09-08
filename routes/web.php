@@ -10,7 +10,7 @@ Route::get('/', function () {
 })->name('welcome');
 
 
-Route::middleware('web')->name('web.')->group(function () {
+Route::middleware(['web','web.token'])->name('web.')->group(function () {
     Route::get('dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
     Route::get('incident', [IncidentController::class, 'index'])->name('incident.index');
     Route::get('generate_due_date', [IncidentController::class, 'generateDueDateIncident'])->name('incident.generate_duedate');

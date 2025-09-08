@@ -118,18 +118,15 @@ return [
     |
     */
 
+    'admin_token' => env('ADMIN_TOKEN'),
+
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
-
-    'url_application' => [
-        'fe_ifics' => env('URL_FE_IFICS'),
-        'fe_am' => env('URL_FE_AM'),
-    ],
     
     'passport_token' => [
-        'login_url' => env('PASSPORT_LOGIN_URL'),
+        'login_url' => env('APP_URL') . '/oauth/token',
         'client_id' => env('PASSPORT_CLIENT_ID'),
         'client_secret' => env('PASSPORT_CLIENT_SECRET')
     ],

@@ -11,7 +11,7 @@
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900" style="height: 250px">
                         <a href="{{route('web.incident.index')}}" target="_blank">
-                            <img src="{{url('logo_asset_management.jpeg')}}" alt="Image" style='height: 100%; width: 100%; object-fit: contain'/>
+                            <img src="{{url('incident.png')}}" alt="Image" style='height: 100%; width: 100%; object-fit: contain'/>
                         </a>
                     </div>
                    
@@ -19,10 +19,17 @@
                 
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900" style="height: 250px">
-                        {{-- <a href="{{route('niise.helpdesk')}}" target="_blank"> --}}
+                        <a href="{{route('web.incident.generate_duedate')}}" target="_blank">
+                            <img src="{{url('stimulate_due_date.png')}}" alt="Image" style='height: 100%; width: 100%; object-fit: contain'/>
+                        </a>
+                    </div>
+                </div>
 
-                            <img src="{{url('logo_helpdesk.jpeg')}}" alt="Image" style='height: 100%; width: 100%; object-fit: contain'/>
-                        {{-- </a> --}}
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900" style="height: 250px">
+                        <a href="{{route('web.logs')}}" target="_blank">
+                            <img src="{{url('logs.png')}}" alt="Image" style='height: 100%; width: 100%; object-fit: contain'/>
+                        </a>
                     </div>
                 </div>
             </div>
