@@ -13,6 +13,7 @@ use App\Models\Incident;
 use App\Models\IncidentResolution;
 use App\Models\Workbasket;
 use App\Http\Services\IncidentServices;
+use Carbon\Carbon;
 
 class IncidentFactory extends Factory
 {
@@ -28,7 +29,7 @@ class IncidentFactory extends Factory
         $random_branch = $branch_id[array_rand($branch_id)];
 
         $data['code_sla'] = $sla?->code;
-        $data['incident_date'] = fake()->dateTimeBetween('-2 month','now');
+        $data['incident_date'] = Carbon::parse(fake()->dateTimeBetween('-2 month', 'now'));
         $data['barcode'] = fake()->numerify('############');
         $data['branch_id'] = $random_branch;
         $data['category_id'] = $sla?->category_id;
