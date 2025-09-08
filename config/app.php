@@ -118,7 +118,7 @@ return [
     |
     */
 
-    'admin_token' => env('ADMIN_TOKEN'),
+    'admin_token' => env('ADMIN_TOKEN','404'),
 
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
