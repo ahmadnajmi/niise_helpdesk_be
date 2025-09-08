@@ -76,6 +76,7 @@ class IncidentServices
             } 
         }
 
+        $data['incident_no'] = Incident::generateIncidentNo();
         $data['incident_date'] = Carbon::now();
         $data['sla_version_id'] = self::getSlaVersion($data);
         $data['expected_end_date'] = self::calculateDueDateIncident($data);
@@ -378,7 +379,9 @@ class IncidentServices
 
                 $logs['final_due_date'] = $final->format('l, d F Y h:i A');
 
-                Log::channel('incident_details')->info('SLA Minutes Calculation', $logs);
+                if($incident_no){
+                    Log::channel('incident_details')->info('Due Date Calculation for incident Number : '.$incident_no, $logs);
+                }
 
                 return $final;
             }
@@ -389,8 +392,10 @@ class IncidentServices
 
         $logs['final_due_date'] = $date->format('l, d F Y h:i A');
         $logs['note'] = 'Loop exhausted';
-        
-        Log::channel('incident_details')->info('SLA Minutes Calculation', $logs);
+
+        if($incident_no){
+            Log::channel('incident_details')->info('Due Date Calculation for incident Number : '.$incident_no, $logs);
+        }
 
         return $date;
     }
@@ -401,6 +406,7 @@ class IncidentServices
 
         $logs[] = [
             'incident_no' => $incident_no,
+            'type' => 'Days',
             'step' => 'start',
             'start_date' => $date->format('l, d F Y h:i A'),
             'sla_days' => $sla_days
@@ -415,6 +421,17 @@ class IncidentServices
                 return $op->day_start <= $current_day && $op->day_end >= $current_day;
             });
 
+            if (!$period) {
+                $logs[] = [
+                    'step' => 'skip',
+                    'day' => $date->format('l, d F Y'),
+                    'note' => 'No operating period for this day'
+                ];
+
+                $date->addDay()->startOfDay();
+                continue;
+            }
+            
             $end = $date->copy()->setTimeFromTimeString($period->operation_end);
 
             $sla_days--;
@@ -433,7 +450,9 @@ class IncidentServices
                     'final_due_date' => $end->format('l, d F Y h:i A')
                 ];
 
-                Log::channel('incident_details')->info('SLA Days Calculation', $logs);
+                if($incident_no){
+                    Log::channel('incident_details')->info('Due Date Calculation for incident Number : '.$incident_no, $logs);
+                }
 
                 $due = $date->copy()->setTimeFromTimeString($startTime);
 
@@ -450,7 +469,9 @@ class IncidentServices
             $date = $date->copy()->setTimeFromTimeString($period->operation_end)->addSecond();
         }
 
-        Log::channel('incident_details')->info('SLA Days Calculation (exhausted)', $logs);
+        if($incident_no){
+            Log::channel('incident_details')->info('Due Date Calculation (exhausted) for incident Number : '.$incident_no, $logs);
+        }
 
         return $date;
     }

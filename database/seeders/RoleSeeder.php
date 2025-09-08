@@ -27,7 +27,7 @@ class RoleSeeder extends Seeder
             DB::statement("ALTER SEQUENCE ROLE_ID_SEQ RESTART START WITH 1");
         } 
 
-        $faker = Faker::create('ms_My');
+        $faker = Faker::create(config('app.faker_locale'));
 
         $roles = [
             [

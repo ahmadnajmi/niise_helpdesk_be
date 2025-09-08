@@ -110,7 +110,7 @@ class UserServices
     }
 
     public static function checkSystemIDM($request,$hint = 'contractor'){ 
-        $faker = Faker::create('ms_My');
+        $faker = Faker::create(config('app.faker_locale'));
 
         $dummy_users = [
             '900101141234' => 'Ahmad Najmi Bin Hassan',

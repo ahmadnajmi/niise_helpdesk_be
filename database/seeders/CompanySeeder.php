@@ -22,7 +22,7 @@ class CompanySeeder extends Seeder
             DB::statement("ALTER SEQUENCE COMPANIES_ID_SEQ RESTART START WITH 1");
         } 
 
-        $faker = Faker::create('ms_MY');
+        $faker = Faker::create(config('app.faker_locale'));
 
         $companies = [
             ["name" => "Aexis Technologies Sdn. Bhd.", "nickname" => "Aexis"],

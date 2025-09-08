@@ -25,7 +25,7 @@ class ModuleSeeder extends Seeder
             DB::statement("ALTER SEQUENCE PERMISSIONS_ID_SEQ RESTART START WITH 1");
         } 
 
-        $faker = Faker::create('ms_My');
+        $faker = Faker::create(config('app.faker_locale'));
 
         $modules = [
             [
@@ -448,7 +448,7 @@ class ModuleSeeder extends Seeder
     }
 
     public function createPermission($module_id,$permissions){
-        $faker = Faker::create('ms_My');
+        $faker = Faker::create(config('app.faker_locale'));
 
         $permissions_description = [
             'dashboard.index' => 'Access to the main dashboard overview.',
