@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Role;
+use App\Models\Workbasket;
 use Laravel\Passport\HasApiTokens;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
 {
@@ -48,7 +50,7 @@ class User extends Authenticatable
     public function stateDescription(){
         return $this->hasOne(RefTable::class,'ref_code','state_id')->where('code_category', 'state');
     }
-    
+
     public static function findForPassport($email){
         return static::where('email', $email)->first();
     }
@@ -64,10 +66,15 @@ class User extends Authenticatable
     public function scopeFilter($query){
 
         $query->when(request('ic_no'), function ($query){
-            $query->where('ic_no', request('ic_no')); 
+            $query->where('ic_no', request('ic_no'));
         });
 
         return $query;
+    }
+
+     public function workbaskets()
+    {
+        return $this->hasMany(Workbasket::class, 'handle_by');
     }
 
     // public function transformAudit(array $data): array {
@@ -86,8 +93,8 @@ class User extends Authenticatable
     //     }
     //     return $data;
     // }
-    
-    
+
+
     public static  function getUserDetails(){
         $data = self::select('id','name','position','branch_id','email','phone_no','category_office')
                     ->with(['branch' => function ($query) {
@@ -103,7 +110,7 @@ class User extends Authenticatable
     }
 
     public static function getUserRole($id){
-        $get_role = Role::select('id','name')->whereHas('userRole', function ($query)use($id) {
+        $get_role = Role::select('id','name','role')->whereHas('userRole', function ($query)use($id) {
                       $query->where('user_id',$id); 
                     })
                     ->first();

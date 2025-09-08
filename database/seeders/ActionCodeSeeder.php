@@ -55,6 +55,12 @@ class ActionCodeSeeder extends Seeder
                 'description' => 'Kemaskini status terkini',
                 'send_email' => 0,
             ],
+            [
+                "name" => "Penyelesaian Contractor",
+                "nickname" => "RSLVD",
+                'description' => 'Log telah diselesaikan oleh contractor',
+                'send_email' => 0,
+            ]
         ];
 
 

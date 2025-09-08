@@ -10,7 +10,8 @@ use App\Models\IncidentPenalty;
 use App\Models\SlaVersion;
 use App\Models\SlaTemplate;
 use App\Models\User;
-
+use App\Models\Workbasket;
+use App\Models\EmailTemplate;
 use App\Http\Resources\IncidentResolutionResources;
 use App\Mail\ActionCodeEmail;
 
@@ -45,45 +46,42 @@ class IncidentResolutionServices
 
 
     public static function actionCode($data){
+        $incident = $data->incident;
 
         if($data->action_codes == 'ACTR' || $data->action_codes == 'CLSD'){
-            $incident = $data->incident;
 
             $data_incident['status']  = $data->action_codes == 'ACTR' ? Incident::RESOLVED : Incident::CLOSED; 
 
             $incident->update($data_incident);
         }
 
+        if($incident->status == Incident::CLOSED){
+            $incident->workbasket?->delete();
+
+            $data_incident['actual_end_date']  = date('Y-m-d H:i:s');
+
+            $incident->update($data_incident);
+        }
+        elseif($data->action_codes == 'ESCL'){
+            $incident->workbasket()->update([
+                'status' => Workbasket::NEW,
+                'handle_by' => $incident->operation_user_id
+            ]);
+        }
+        elseif($data->action_codes == 'RSLVD' || $data->action_codes == 'ACTR'){
+            $incident->workbasket()->update([
+                'status' => Workbasket::NEW,
+                'handle_by' => null
+            ]);
+        }
+        else{
+            $incident->workbasket()->update([
+                'status' => Workbasket::IN_PROGRESS,
+            ]);
+        }
 
         if($data->actionCodes->send_email){
-
-            $group_member =  User::whereHas('group', function ($query)use($data) {
-                                        $query->where('groups_id',$data->group_id);
-                                })
-                                ->pluck('email');
-
-            $user_operation = User::where('id',$data->operation_user_id)->first();
-
-
-            if($data->actionCodes->email_recipient_id == ActionCode::SEND_TO_COMPLAINT){
-               $send_to = [$data->incident->complaint?->email];
-               $cc_to = $group_member;
-               $bc_to   = [];
-            }
-            elseif($data->actionCodes->email_recipient_id == ActionCode::SEND_TO_GROUP){
-                $send_to = [$user_operation?->email];
-                $cc_to = $group_member;
-                $bc_to = [$data->incident->complaint?->email];
-            }
-            else{
-                $send_to = [$user_operation?->email];
-                $cc_to = $group_member;
-            }
-
-            Mail::to($send_to)
-                ->cc($cc_to ?? [])
-                ->bcc($bc_to ?? [])
-                ->send(new ActionCodeEmail($data));
+            self::sendEmail($data);
         }
 
         return true;
@@ -121,5 +119,40 @@ class IncidentResolutionServices
 
         dd('habis');
 
+    }
+
+    public static function sendEmail($data){
+
+        $group_member =  User::whereHas('group', function ($query)use($data) {
+                                        $query->where('groups_id',$data->group_id);
+                                })
+                                ->pluck('email');
+
+        $user_operation = User::where('id',$data->operation_user_id)->first();
+
+
+        if($data->actionCodes->email_recipient_id == ActionCode::SEND_TO_COMPLAINT){
+            $send_to = [$data->incident->complaint?->email];
+            $cc_to = $group_member;
+            $bc_to   = [];
+        }
+        elseif($data->actionCodes->email_recipient_id == ActionCode::SEND_TO_GROUP){
+            $send_to = [$user_operation?->email];
+            $cc_to = $group_member;
+            $bc_to = [$data->incident->complaint?->email];
+        }
+        else{
+            $send_to = [$user_operation?->email];
+            $cc_to = $group_member;
+        }
+
+        $email_template = EmailTemplate::select('id','sender_name','sender_email','notes')->where('is_active',true)->first();
+        
+        Mail::to($send_to)
+            ->cc($cc_to ?? [])
+            ->bcc($bc_to ?? [])
+            ->queue(new ActionCodeEmail($data->incident,$email_template));
+
+        return true;
     }
 } 

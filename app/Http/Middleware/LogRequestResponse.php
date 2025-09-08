@@ -18,11 +18,11 @@ class LogRequestResponse
      */
     public function handle(Request $request, Closure $next): Response
     {
-        Log::channel('api_log')->info("API Request: {$request->method()}, {$request->fullUrl()}", [
-            'body' => $request->all(),
-        ]);
-
         $response = $next($request);
+
+        if($request->method() == 'GET'){
+            return $response;
+        }
 
         $status = $response->getStatusCode();
 
@@ -33,14 +33,16 @@ class LogRequestResponse
 
             $errorMessage = $decoded['message'] ?? $content;
 
-            Log::channel('api_log')->error("API Error: {$status}, {$request->fullUrl()}", [
+            Log::channel('api_log')->error("API Response: {$status}, {$request->fullUrl()}", [
                 'user'    => Auth::user()?->id,
                 'error'   => $errorMessage,
+                'payload' => $request->all(),
                 'body'    => $decoded ?? $content,
             ]);
         }
         else{
             Log::channel('api_log')->info("API Response: {$status}, {$request->fullUrl()}", [
+                'payload' => $request->all(),
                 'body' => json_decode($response->getContent(), true),
             ]);
         }

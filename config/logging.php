@@ -63,10 +63,6 @@ return [
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
-            'formatter' => Monolog\Formatter\JsonFormatter::class,
-            'formatter_with' => [
-                'prettyPrint' => true, // <-- tambah ni
-            ],
         ],
 
         'daily' => [
@@ -134,6 +130,12 @@ return [
         'api_log' => [
             'driver' => 'daily',
             'path' => storage_path('logs/api.log'),
+        ],
+
+        'incident_details' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/incident.log'),
+            'level' => 'debug',
         ],
 
         // untuk API external (3rd party)

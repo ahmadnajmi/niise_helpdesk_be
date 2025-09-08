@@ -19,6 +19,11 @@ class OperatingTime extends BaseModel
         'is_active',
     ];
 
+    protected $casts = [
+        'operation_start' => 'date:H:i:s',
+        'operation_end'   => 'date:H:i:s',
+    ];
+
     const NORMAL_DAY = 1;
     const HALF_DAY = 2;
     const WEEKEND = 3;
@@ -49,10 +54,10 @@ class OperatingTime extends BaseModel
     }
 
     public function setOperationStartAttribute($value){
-        $this->attributes['operation_start'] = date('Y-m-d H:i:s', strtotime("1970-01-01 $value"));
+        $this->attributes['operation_start'] = now()->format('Y-m-d') . ' ' . $value;
     }
 
     public function setOperationEndAttribute($value){
-        $this->attributes['operation_end'] = date('Y-m-d H:i:s', strtotime("1970-01-01 $value"));
+        $this->attributes['operation_end'] = now()->format('Y-m-d') . ' ' . $value;
     }
 }

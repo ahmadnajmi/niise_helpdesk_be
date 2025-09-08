@@ -18,6 +18,10 @@ class Category extends BaseModel
         'is_active',
     ];
 
+    const MOBILE = 'MOBILE';
+    const SISTEM = 'SISTEM';
+
+
     public function mainCategory(){
         return $this->hasOne(Category::class, 'id','category_id');
     }

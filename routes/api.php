@@ -2,37 +2,41 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ModuleController;
-use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\SubModuleController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\RefTableController;
-use App\Http\Controllers\ActionCodeController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\GroupController;
-use App\Http\Controllers\CalendarController;
-use App\Http\Controllers\BranchController;
-use App\Http\Controllers\EmailTemplateController;
-use App\Http\Controllers\OperatingTimeController;
-use App\Http\Controllers\AuditController;
-use App\Http\Controllers\KnowledgeBaseController;
-use App\Http\Controllers\GeneralController;
-use App\Http\Controllers\SlaTemplateController;
 use App\Http\Controllers\SlaController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AuditController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\BranchController;
+use App\Http\Controllers\ModuleController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\GeneralController;
+use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\IncidentController;
-use App\Http\Controllers\IncidentResolutionController;
+use App\Http\Controllers\RefTableController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SubModuleController;
+use App\Http\Controllers\ActionCodeController;
+use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\WorkbasketController;
+use App\Http\Controllers\SlaTemplateController;
+use App\Http\Controllers\EmailTemplateController;
+use App\Http\Controllers\KnowledgeBaseController;
+use App\Http\Controllers\OperatingTimeController;
 use App\Http\Controllers\CompanyContractController;
+use App\Http\Controllers\IncidentResolutionController;
+use App\Http\Controllers\TestingController;
 
 Route::post('login', [AuthController::class, 'login']);
 
-Route::middleware(['api','auth:api'])->group(function () {
+Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::resource('dashboard', DashboardController::class);
+
+    Route::get('workbasket', [WorkbasketController::class, 'index'])->name('workbasket.index');
 
     Route::apiResource('module', ModuleController::class);
     Route::apiResource('permission', PermissionController::class);
@@ -55,7 +59,6 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::apiResource('branch', BranchController::class)->only('index','show');
     Route::apiResource('ref_table', RefTableController::class);
 
-
     Route::get('incidents/download/{filename}', [IncidentController::class, 'downloadFile'])->name('incidents.download');
 
     Route::get('dynamic_option', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option');
@@ -74,12 +77,11 @@ Route::middleware(['api','auth:api'])->group(function () {
     Route::delete('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranchDelete']);
 });
 
-Route::get('testing', [UserController::class,'testingJasper']);
 
 Route::prefix('iasset')->middleware('client.passport')->name('iasset.')->group(function () {
     Route::get('incidents/download_asset/{incident_no}', [IncidentController::class, 'downloadAssetFile'])->name('incidents.download_asset');
     Route::apiResource('branch', BranchController::class)->only('index','show');
     Route::apiResource('ref_table', RefTableController::class);
 });
-
+Route::get('testing', [TestingController::class,'testingJasper']);
 

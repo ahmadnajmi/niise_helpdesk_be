@@ -3,12 +3,17 @@
 namespace App\Http\Controllers;
 
 
-use Illuminate\Http\Request;
+
+use App\Models\Role;
+use App\Models\User;
+use App\Models\UserRole;
 use App\Models\Workbasket;
+use Illuminate\Http\Request;
 use App\Http\Traits\ResponseTrait;
-use App\Http\Collection\WorkbasketCollection;
-use App\Http\Resources\WorkbasketResources;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\WorkbasketRequest;
+use App\Http\Resources\WorkbasketResources;
+use App\Http\Collection\WorkbasketCollection;
 
 class WorkbasketController extends Controller
 {
@@ -16,56 +21,26 @@ class WorkbasketController extends Controller
 
     public function index(Request $request)
     {
-        $limit = $request->limit ? $request->limit : 15;
-        
-        $data =  Workbasket::paginate($limit);
+        $limit = $request->limit ?? 15;
+
+        $frontliner = Auth::user()->roles->contains('id', Role::FRONTLINER);
+
+        $data = Workbasket::where(function ($query) use ($frontliner) {
+                                $query->when($frontliner, function ($q) {
+                                    return $q->whereIn('status', [Workbasket::NEW, Workbasket::IN_PROGRESS]);
+                                })
+                                ->when(!$frontliner, function ($q) {
+                                    return $q->where('handle_by', Auth::id());
+                                });
+                            })
+                            ->orWhere(function ($query) {
+                                $query->whereHas('incident', function ($query) {
+                                    $query->where('complaint_user_id',Auth::user()->id);
+                                });
+                            })
+                            ->orderBy('updated_at','desc')
+                            ->paginate($limit);
 
         return new WorkbasketCollection($data);
-    }
-
-    public function store(WorkbasketRequest $request)
-    {
-        try {
-            $data = $request->all();
-
-            $create = Workbasket::create($data);
-           
-            $data = new WorkbasketResources($create);
-
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
-    }
-
-    public function show(Workbasket $workbasket)
-    {
-        $data = new WorkbasketResources($workbasket);
-
-        return $this->success('Success', $data);
-    }
-
-    public function update(WorkbasketRequest $request, Workbasket $workbasket)
-    {
-        try {
-            $data = $request->all();
-
-            $update = $workbasket->update($data);
-
-            $data = new WorkbasketResources($workbasket);
-
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
-    }
-
-    public function destroy(Workbasket $workbasket)
-    {
-        $workbasket->delete();
-
-        return $this->success('Success', null);
     }
 }

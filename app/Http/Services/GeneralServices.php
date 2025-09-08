@@ -12,7 +12,7 @@ use App\Models\Complaint;
 use App\Models\Sla;
 use App\Models\CompanyContract;
 use App\Models\OperatingTime;
-
+use App\Models\ActionCode;
 class GeneralServices
 {
     public static function dynamicOption($request){
@@ -61,8 +61,12 @@ class GeneralServices
                                         ->when($request->operating_time, function ($query) {
                                             return $query->doesntHave('operatingTime');
                                         })
+                                        ->orderBy('category','desc')
                                         ->orderBy('name','asc')
-                                        ->get();
+                                        ->get()->groupBy(function($item) {
+                                            return $item->state_id ? $item->stateDescription->name_en : 'Unknown State';
+                                        })
+                                        ->sortKeys();
             }
 
             if($code == 'sla_template'){
@@ -125,7 +129,7 @@ class GeneralServices
             }
 
             if($code == 'complaint'){
-                $data[$code] = Complaint::select('id','name','email','phone_no','office_phone_no','extension_no')
+                $data[$code] = Complaint::select('id','name','email','phone_no','office_phone_no','address','postcode','state_id','extension_no')
                                         ->orderBy('name','asc')
                                         ->get();
             }
@@ -153,6 +157,13 @@ class GeneralServices
                                             ->orderBy('name','asc')
                                             ->get();
 
+            }
+
+            if($code == 'action_code'){
+                $data[$code] = ActionCode::select('name','nickname','description')
+                                        ->where('is_active',true)
+                                        ->get();
+                
             }
         }
         return $data;

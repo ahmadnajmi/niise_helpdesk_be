@@ -17,7 +17,7 @@ class BranchController extends Controller
 
         $data = Branch::select('id as branch_code','state_id','name','category','location')->get()->groupBy(function($item) {
                             return $item->state_id ? $item->stateDescription->name_en : 'Unknown State';
-                        });;
+                        });
 
         return $this->success('Success', $data);
         // return new BranchCollection($data);

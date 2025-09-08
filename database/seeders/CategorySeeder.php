@@ -20,8 +20,7 @@ class CategorySeeder extends Seeder
             DB::statement("ALTER SEQUENCE CATEGORIES_ID_SEQ RESTART START WITH 1");
         } 
 
-        $categorys = ['MOBILE'];
-
+        $categorys = ['MOBILE','SISTEM'];
 
         foreach($categorys as $category_code){
 

@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 use App\Http\Services\NetIQSocialiteProvider;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Branch;
 use Illuminate\Http\Request;
+use App\Http\Traits\ResponseTrait;
 
 class TestingController extends Controller
 {
     //
+    use ResponseTrait;
 
     public function redirect(Request $request){
         $provider = new NetIQSocialiteProvider(
@@ -48,5 +51,11 @@ class TestingController extends Controller
 
 
         https://lab3.secure-x.my/nidp/oauth/v1/nam/end_session
+    }
+
+    public function testingJasper(){
+        $data = Branch::select('id as branch_code','state_id as state','name','category','location')->get();
+
+        return $this->success('Success', $data);
     }
 }

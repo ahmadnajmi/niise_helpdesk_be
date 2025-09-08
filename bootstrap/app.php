@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\LogRequestResponse;
 use App\Http\Middleware\SetLocaleFromHeader;
 use App\Http\Middleware\ClientAuthMiddleware;
+use App\Http\Middleware\CustomAuthenticate;
 
 use Illuminate\Routing\Middleware\SubstituteBindings;
 
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->alias([
             'client.passport' => ClientAuthMiddleware::class,
+            'auth.check' => CustomAuthenticate::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
