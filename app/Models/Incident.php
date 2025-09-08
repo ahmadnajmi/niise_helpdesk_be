@@ -65,23 +65,23 @@ class Incident extends BaseModel
 
     protected static function booted(){
         static::creating(function ($model) {
-            $get_incident = Incident::orderBy('incident_no','desc')->first();
-
-            if($get_incident){
-                $code = $get_incident->incident_no;
-
-                $old_code = substr($code, -5);
-
-                $incremented = (int)$old_code + 1;
-
-                $next_number = str_pad($incremented, 5, '0', STR_PAD_LEFT);
-            }
-            else{
-                $next_number = '00001';
-            }
-
-            $model->incident_no = 'TN'.date('Ymd').$next_number;
+            $model->incident_no = self::generateIncidentNo();
         });
+    }
+
+    public static function generateIncidentNo(){
+        $get_incident = self::orderBy('incident_no','desc')->first();
+
+        if($get_incident){
+            $code = $get_incident->incident_no;
+            $old_code = substr($code, -5);
+            $incremented = (int)$old_code + 1;
+            $next_number = str_pad($incremented, 5, '0', STR_PAD_LEFT);
+        } else {
+            $next_number = '00001';
+        }
+
+        return 'TN'.date('Ymd').$next_number;
     }
 
     public function branch(){
