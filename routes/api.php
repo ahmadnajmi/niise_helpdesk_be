@@ -37,6 +37,7 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::resource('dashboard', DashboardController::class);
 
     Route::get('workbasket', [WorkbasketController::class, 'index'])->name('workbasket.index');
+    Route::get('jasper', [WorkbasketController::class, 'testReport'])->name('workbasket.jasper');
 
     Route::apiResource('module', ModuleController::class);
     Route::apiResource('permission', PermissionController::class);

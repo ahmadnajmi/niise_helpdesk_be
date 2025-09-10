@@ -21,7 +21,8 @@ class SlaFactory extends Factory
      */
     public function definition(): array{
         $branch = Branch::inRandomOrder()->limit(fake()->numberBetween(1,5))->pluck('id');
-        $category = Category::inRandomOrder()->first();
+        $category = Category::whereNotNull('category_id')->inRandomOrder()->first();
+
         $sla_template = SlaTemplate::inRandomOrder()->first();
         $group = Group::inRandomOrder()->first();
 

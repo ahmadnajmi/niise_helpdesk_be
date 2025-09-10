@@ -144,7 +144,14 @@ return [
         'client_id' => env('ASSET_CLIENT_ID'),
         'client_secret' => env('ASSET_SECRET'),
         'url' => env('ASSET_API_URL')
-    ]
+    ],
+
+    'jasper_server' => [
+        'url' => env('JASPER_URL'),
+        'username' => env('JASPER_USERNAME'),
+        'password' => env('JASPER_PASSWORD')
+    ],
+
   
 ];
  
