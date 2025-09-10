@@ -116,6 +116,4 @@ class ReportServices
 
         return $data;
     }
-
-    
 }

@@ -6,9 +6,12 @@ use App\Http\Controllers\TestingController;
 use App\Http\Controllers\Web\IncidentController;
 
 Route::get('/', function () {
+    return redirect()->route('welcome');
+});
+
+Route::get('/welcome', function () {
     return view('welcome');
 })->name('welcome');
-
 
 Route::middleware(['web','web.token'])->name('web.')->group(function () {
     Route::get('dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
