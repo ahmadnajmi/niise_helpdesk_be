@@ -26,6 +26,14 @@ class DashboardServices
             ->where('status', '=', 1)
             ->count();
 
+
+        $New = Incident::where('incident_date', '>=', now()->startOfDay()->modify('-5 days'))
+            ->where('status', '=', 1)
+            ->count();
+        $TBB = Incident::where('expected_end_date', '>=', now()->startOfDay()->modify('-2 days'))
+            ->where('status', '=', 1)
+            ->count();
+
         $totalIncidentsThisYear = Incident::whereRaw("TO_CHAR(incident_date, 'YYYY') = ?", [now()->year])
             ->count();
 
@@ -93,7 +101,10 @@ class DashboardServices
 
         $IncidentsOpen = Incident::where('status', '=', Incident::OPEN)->count();
         $IncidentsDone = Incident::where('status', '=', Incident::RESOLVED)->count();
+        $onHoldCount = Incident::where('status', Incident::ON_HOLD)->count();
+        $openCount   = Incident::where('status', Incident::OPEN)->count();
 
+        $IncidentsOnHold = $onHoldCount + $openCount;
         return [
             'trueTotalIncidents' => $trueTotalIncidents,
             'totalSLA' => $totalSLA,
@@ -112,6 +123,10 @@ class DashboardServices
             'SeverityOutput' => $SeverityOutput,
             'IncidentsOpen' => $IncidentsOpen,
             'IncidentsDone' => $IncidentsDone,
+            'New' => $New,
+            'IncidentsOnHold' => $IncidentsOnHold,
+            'TBB' => $TBB,
         ];
     }
+    
 }
