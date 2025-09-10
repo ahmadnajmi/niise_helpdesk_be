@@ -44,6 +44,12 @@ class SlaTemplate extends BaseModel
     const SLA_TYPE_HOUR = 2;
     const SLA_TYPE_DAY = 3;
 
+    const SEVERITY_NOT_IMPORTANT = 1;
+    const SEVERITY_CRITICAL = 2;
+    const SEVERITY_IMPORTANT = 3;
+    const SEVERITY_MEDIUM = 4;
+    const SEVERITY_LOW = 5;
+
     protected static function booted(){
         static::creating(function ($model) {
             $last = SlaTemplate::orderBy('code', 'desc')->first();

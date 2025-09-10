@@ -28,16 +28,12 @@ use App\Http\Controllers\OperatingTimeController;
 use App\Http\Controllers\CompanyContractController;
 use App\Http\Controllers\IncidentResolutionController;
 use App\Http\Controllers\TestingController;
+use App\Http\Controllers\ReportController;
 
 Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
-
-    Route::resource('dashboard', DashboardController::class);
-
-    Route::get('workbasket', [WorkbasketController::class, 'index'])->name('workbasket.index');
-    Route::get('jasper', [WorkbasketController::class, 'testReport'])->name('workbasket.jasper');
 
     Route::apiResource('module', ModuleController::class);
     Route::apiResource('permission', PermissionController::class);
@@ -49,7 +45,6 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::apiResource('calendar', CalendarController::class);
     Route::apiResource('email_template', EmailTemplateController::class);
     Route::apiResource('operating_time', OperatingTimeController::class);
-    Route::apiResource('audit', AuditController::class)->only('index','show');
     Route::apiResource('knowledge_base', KnowledgeBaseController::class);
     Route::apiResource('sla', SlaController::class);
     Route::apiResource('sla_template', SlaTemplateController::class);
@@ -57,8 +52,12 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::apiResource('incident_solution', IncidentResolutionController::class);
     Route::apiResource('company_contract', CompanyContractController::class);
     Route::apiResource('incident', IncidentController::class);
-    Route::apiResource('branch', BranchController::class)->only('index','show');
     Route::apiResource('ref_table', RefTableController::class);
+    Route::apiResource('dashboard', DashboardController::class);
+    Route::apiResource('branch', BranchController::class)->only('index','show');
+    Route::apiResource('audit', AuditController::class)->only('index','show');
+    Route::apiResource('report', ReportController::class)->only('index');
+    Route::apiResource('workbasket', WorkbasketController::class)->only('index');
 
     Route::get('incidents/download/{filename}', [IncidentController::class, 'downloadFile'])->name('incidents.download');
 
@@ -84,5 +83,6 @@ Route::prefix('iasset')->middleware('client.passport')->name('iasset.')->group(f
     Route::apiResource('branch', BranchController::class)->only('index','show');
     Route::apiResource('ref_table', RefTableController::class);
 });
+
 Route::get('testing', [TestingController::class,'testingJasper']);
 

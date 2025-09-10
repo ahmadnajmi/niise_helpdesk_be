@@ -5,15 +5,26 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use DB;
 
 class WebTokenkMiddleware
 {
 
     public function handle(Request $request, Closure $next): Response
     {
-        $token_access = $request->header('token-access');
+        $clientId = $request->header('Client-Id');
+        $clientSecret = $request->header('Client-Secret');
+        $headers = $request->headers->all();
 
-        if ($token_access === config('app.admin_token')) {
+        $client = DB::table('oauth_clients')
+                    ->where('id', $clientId)
+                    ->where('secret', $clientSecret)
+                    ->where('revoked', false)
+                    ->where('name','admin_helpdesk')
+                    ->first();
+
+
+        if ($client) {
             return $next($request);
         }
 

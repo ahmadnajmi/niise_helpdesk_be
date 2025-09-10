@@ -44,13 +44,4 @@ class WorkbasketController extends Controller
 
         return new WorkbasketCollection($data);
     }
-
-    public function testReport(){
-
-        $jasper = new JasperServices();
-
-
-        $call_api = $jasper->callApiJasper('reports/interactive/TableReport.pdf');
-
-    }
 }

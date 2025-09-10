@@ -17,6 +17,10 @@ class RefTable extends BaseModel
         'ref_code_parent',
     ];
 
+    public function incidentsStatus(){
+        return $this->hasMany(Incident::class, 'status', 'ref_code');
+    }
+
     public function scopeFilter($query){
 
         if (request('code_category')) {
