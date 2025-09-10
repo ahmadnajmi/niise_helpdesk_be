@@ -5,9 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TestingController;
 use App\Http\Controllers\Web\IncidentController;
 
-Route::get('/', function () {
-    return redirect()->route('welcome');
-});
+Route::redirect('/', '/welcome');
 
 Route::get('/welcome', function () {
     return view('welcome');
