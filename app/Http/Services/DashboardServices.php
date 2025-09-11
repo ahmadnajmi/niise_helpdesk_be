@@ -15,24 +15,22 @@ class DashboardServices
         $totalReports = Incident::whereNotNull('report_no')->count();
 
         $moreThan4Days = Incident::where('incident_date', '<', now()->startOfDay()->modify('-4 days'))
-            ->where('status', '=', 1)
+            ->where('status', '=', Incident::OPEN)
             ->count();
 
         $just4Days = Incident::where('incident_date', '=', now()->startOfDay()->modify('-4 days'))
-            ->where('status', '=', 1)
+            ->where('status', '=', Incident::OPEN)
             ->count();
 
         $lessThan4Days = Incident::where('incident_date', '>=', now()->startOfDay()->modify('-4 days'))
-            ->where('status', '=', 1)
+            ->where('status', '=', Incident::OPEN)
             ->count();
 
 
         $New = Incident::where('incident_date', '>=', now()->startOfDay()->modify('-5 days'))
-            ->where('status', '=', 1)
             ->count();
-        $TBB = Incident::where('expected_end_date', '>=', now()->startOfDay()->modify('-2 days'))
-            ->where('status', '=', 1)
-            ->count();
+        // $TBB = Incident::where('expected_end_date', '<', now()->startOfDay()->modify('-2 days'))
+        //     ->where('status', '=', Incident::OPEN)->where('status', Incident::ON_HOLD)->count();
 
         $totalIncidentsThisYear = Incident::whereRaw("TO_CHAR(incident_date, 'YYYY') = ?", [now()->year])
             ->count();
@@ -86,15 +84,16 @@ class DashboardServices
 
         $totalIncidentsByBranch = Incident::selectRaw('branch_id, code_sla, COUNT(*) as total')
             ->groupBy('branch_id','code_sla')
-            ->with(['branch','sla.slaTemplate'])
+            ->with(['branch','sla.slaTemplate.severityDescription'])
             ->get();
 
-        $totalIncidentsByCategory = Incident::selectRaw('category_id, COUNT(*) as total')
-            ->groupBy('category_id')
+        $totalIncidentsByCategory = Incident::selectRaw('category_id, code_sla, COUNT(*) as total')
+            ->groupBy('category_id','code_sla')
             ->with(['categoryDescription','sla.slaTemplate'])
             ->get();
-
-        $SeverityOutput = Incident::selectRaw('category_id, code_sla, COUNT(*) as total')
+        $SeverityOutput = Incident::where('expected_end_date', '<', now()->startOfDay()->modify('-2 days'))
+            ->whereIn('status', [Incident::OPEN, Incident::ON_HOLD])
+            ->selectRaw('category_id, code_sla, COUNT(*) as total')
             ->groupBy('category_id','code_sla')
             ->with(['categoryDescription','sla.slaTemplate'])
             ->get();
@@ -104,7 +103,16 @@ class DashboardServices
         $onHoldCount = Incident::where('status', Incident::ON_HOLD)->count();
         $openCount   = Incident::where('status', Incident::OPEN)->count();
 
+        
+        $TBB1 = Incident::where('expected_end_date', '<', now()->startOfDay()->modify('-2 days'))->where('status', Incident::ON_HOLD)->count();
+        
+        $TBB2 = Incident::where('expected_end_date', '<', now()->startOfDay()->modify('-2 days'))->where('status', Incident::OPEN)->count();
+
         $IncidentsOnHold = $onHoldCount + $openCount;
+
+        $TBB = $TBB1+$TBB2;
+
+        
         return [
             'trueTotalIncidents' => $trueTotalIncidents,
             'totalSLA' => $totalSLA,
