@@ -29,9 +29,9 @@ class ReportServices
         foreach($get_category as $category){
 
             $default = collect([
+                'sev_1' => 0,
                 'sev_2' => 0,
                 'sev_3' => 0,
-                'sev_4' => 0,
             ]);
 
             $get_incident = Incident::with('sla.slaTemplate')
@@ -92,7 +92,7 @@ class ReportServices
     public static function outstandingIncident(){
         $data = [];
 
-        $ref_tables = RefTable::where('code_category','severity')->get();
+        $ref_tables = RefTable::where('code_category','severity')->orderBy('ref_code','asc')->get();
         $get_category = Category::select('id','category_id','name')->whereDoesntHave('childCategory')->get();
 
         $incident_counts = Incident::select('category_id', DB::raw('COUNT(*) as total'))
@@ -101,7 +101,7 @@ class ReportServices
 
         foreach($ref_tables as $idx => $reference){
 
-            $format['name'] = $reference->name;
+            $format['name'] = 'Severity '.$reference->ref_code; 
             $format['level'] = $reference->ref_code;
             $format['categories'] = [];
 

@@ -44,11 +44,11 @@ class SlaTemplate extends BaseModel
     const SLA_TYPE_HOUR = 2;
     const SLA_TYPE_DAY = 3;
 
-    const SEVERITY_NOT_IMPORTANT = 1;
-    const SEVERITY_CRITICAL = 2;
-    const SEVERITY_IMPORTANT = 3;
-    const SEVERITY_MEDIUM = 4;
-    const SEVERITY_LOW = 5;
+    const SEVERITY_NOT_IMPORTANT = 5;
+    const SEVERITY_CRITICAL = 1;
+    const SEVERITY_IMPORTANT = 2;
+    const SEVERITY_MEDIUM = 3;
+    const SEVERITY_LOW = 4;
 
     protected static function booted(){
         static::creating(function ($model) {
