@@ -31,7 +31,7 @@ class UserRole extends BaseModel
     public static  function getUserDetails(){
         $data = self::select('role_id')
                     ->with(['roleDetails' => function ($query) {
-                        $query->select('id', 'name');
+                        $query->select('id', 'name','role');
                     }])
                     ->where('user_id',Auth::user()->id)
                     ->first();
