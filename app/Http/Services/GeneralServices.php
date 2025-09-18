@@ -135,6 +135,13 @@ class GeneralServices
                                         })
                                         ->orderBy('name','asc')
                                         ->get();
+                
+                if($request->group_by){
+                    $data[$code] = $data[$code]->groupBy(function($item) {
+                                                    return $item->state_id ? $item->stateDescription->name_en : 'Unknown State';
+                                                })
+                                                ->sortKeys();
+                }
             }
 
             if($code == 'category_sla'){
