@@ -22,7 +22,7 @@ class DashboardServices
             ->where('status', '=', Incident::OPEN)
             ->count();
 
-        $lessThan4Days = Incident::where('incident_date', '>=', now()->startOfDay()->modify('-4 days'))
+        $lessThan4Days = Incident::where('incident_date', '>', now()->startOfDay()->modify('-4 days'))
             ->where('status', '=', Incident::OPEN)
             ->count();
 
@@ -89,7 +89,7 @@ class DashboardServices
 
         $totalIncidentsByCategory = Incident::selectRaw('category_id, code_sla, COUNT(*) as total')
             ->groupBy('category_id','code_sla')
-            ->with(['categoryDescription','sla.slaTemplate'])
+            ->with(['categoryDescription.mainCategory','sla.slaTemplate'])
             ->get();
         $SeverityOutput = Incident::where('expected_end_date', '<', now()->startOfDay()->modify('-2 days'))
             ->whereIn('status', [Incident::OPEN, Incident::ON_HOLD])
