@@ -130,6 +130,9 @@ class GeneralServices
 
             if($code == 'complaint'){
                 $data[$code] = Complaint::select('id','name','email','phone_no','office_phone_no','address','postcode','state_id','extension_no')
+                                        ->when($request->state_id, function ($query)use($request) {
+                                            return $query->where('state_id',$request->state_id);
+                                        })
                                         ->orderBy('name','asc')
                                         ->get();
             }
