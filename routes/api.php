@@ -56,7 +56,6 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::apiResource('dashboard', DashboardController::class);
     Route::apiResource('branch', BranchController::class)->only('index','show');
     Route::apiResource('audit', AuditController::class)->only('index','show');
-    Route::apiResource('report', ReportController::class)->only('index');
     Route::apiResource('workbasket', WorkbasketController::class)->only('index');
 
     Route::get('incidents/download/{filename}', [IncidentController::class, 'downloadFile'])->name('incidents.download');
@@ -75,6 +74,10 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
 
     Route::get('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranch']);
     Route::delete('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranchDelete']);
+
+    Route::post('report/generate', [ReportController::class, 'generateReport'])->name('report.generate');
+    Route::get('report', [ReportController::class, 'index'])->name('report.index');
+
 });
 
 

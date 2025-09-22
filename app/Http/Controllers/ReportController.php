@@ -3,17 +3,31 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Services\ReportServices;
 use App\Http\Traits\ResponseTrait;
+use App\Http\Requests\ReportRequest;
 
 class ReportController extends Controller
 {
     use ResponseTrait;
-    public function index(Request $request)
-    {
+
+    public function index(Request $request){
         $data = ReportServices::index($request);
 
         return $this->success('Success', $data);
+    }
+    
+    public function generateReport(ReportRequest $request){
+
+        $filePath = 'dummy-pdf_2.pdf'; 
+
+        if (Storage::disk('local')->exists($filePath)) { 
+            return Storage::disk('local')->download($filePath);
+        }
+
+        return $this->error('File failed to generate');
+
     }
 
 }
