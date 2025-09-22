@@ -2,39 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Traits\ResponseTrait;
-use App\Models\Incident;
+use App\Models\Sla;
 use App\Models\Report;
+use App\Models\Incident;
 use App\Models\ServiceLevel;
 use Illuminate\Http\Request;
+use App\Http\Traits\ResponseTrait;
+use Illuminate\Support\Facades\DB;
+use App\Http\Services\DashboardServices;
 
 class DashboardController extends Controller
 {
     use ResponseTrait;
+    protected $dashboardService;
 
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct(DashboardServices $dashboardService)
+    {
+        $this->dashboardService = $dashboardService;
+    }
+
     public function index()
     {
-        $trueTotalIncidents = random_int(0,99);
-
-        $data = [
-            'trueTotalIncidents' => $trueTotalIncidents,
-            'totalSLA' => $trueTotalIncidents,
-            'totalReports' => $trueTotalIncidents,
-            'moreThan4Days' => $trueTotalIncidents,
-            'just4Days' => $trueTotalIncidents,
-            'lessThan4Days' => $trueTotalIncidents,
-            'totalIncidentsThisYear' => $trueTotalIncidents,
-            'totalIncidentsThisMonth' => $trueTotalIncidents,
-            'totalIncidentsToday' => $trueTotalIncidents,
-            'totalIncidentsByMonth' => $trueTotalIncidents,
-            // 'totalIncidentsByDay' => $totalIncidentsByDay,
-        ];
+        $data = $this->dashboardService->getDashboardData();
 
         return $this->success('Dashboard data retrieved successfully.', $data);
-
     }
 
     /**
