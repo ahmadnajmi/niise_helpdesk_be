@@ -232,12 +232,15 @@ class IncidentServices
     
     public static function getSlaVersion($data){
 
-        $get_sla = Sla::where('code',$data['code_sla'])->first();
+        if(isset($data['code_sla'])){
+            $get_sla = Sla::where('code',$data['code_sla'])->first();
 
-        $get_sla_details = SlaVersion::where('sla_template_id',$get_sla?->sla_template_id)->orderBy('version','desc')->first();
+            $get_sla_details = SlaVersion::where('sla_template_id',$get_sla?->sla_template_id)->orderBy('version','desc')->first();
 
-        return $get_sla_details?->id;
+            return $get_sla_details?->id;
+        }
 
+        return null;
     }
 
 
@@ -274,9 +277,11 @@ class IncidentServices
     }
 
     public static function calculateDueDateIncident($data){
+
+        $sla_version = isset($data['sla_version_id']) ? $data['sla_version_id'] : null;
         $incident_no = isset($data['incident_no']) ? $data['incident_no'] : null;
 
-        $sla = SlaVersion::find($data['sla_version_id']);
+        $sla = SlaVersion::find($sla_version);
         
         if (!$sla) {
             return null;
