@@ -111,7 +111,7 @@ class IncidentServices
             $data['expected_end_date'] = self::calculateDueDateIncident($data);
         }
 
-        $data['asset_component_id'] = $data['asset_component_id'] ? json_encode($data['asset_component_id']) : null;
+        $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
 
         $create = $incident->update($data);
 
