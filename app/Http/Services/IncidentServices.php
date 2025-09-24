@@ -232,15 +232,13 @@ class IncidentServices
     
     public static function getSlaVersion($data){
 
-        if(isset($data['code_sla'])){
-            $get_sla = Sla::where('code',$data['code_sla'])->first();
+        $code = isset($data['code_sla']) ? $data['code_sla'] : null;
 
-            $get_sla_details = SlaVersion::where('sla_template_id',$get_sla?->sla_template_id)->orderBy('version','desc')->first();
+        $get_sla = Sla::where('code',$code)->first();
 
-            return $get_sla_details?->id;
-        }
+        $get_sla_details = SlaVersion::where('sla_template_id',$get_sla?->sla_template_id)->orderBy('version','desc')->first();
 
-        return null;
+        return $get_sla_details?->id;
     }
 
 
