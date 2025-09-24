@@ -98,16 +98,33 @@ class DashboardServices
             ->with(['branch','sla.slaTemplate.severityDescription'])
             ->get();
 
-        $totalIncidentsByCategory = (clone $incidentQuery)
-            ->where('code_sla', '!=', 0)
-            ->selectRaw('category_id, code_sla, COUNT(*) as total')
-            ->groupBy('category_id', 'code_sla')
-            ->with(['categoryDescription.mainCategory','sla.slaTemplate.severityDescription'])
-            ->get()
-            ->filter(function ($row) {
-                return !empty($row->categoryDescription?->category_id);})
-            ;
+$totalIncidentsByCategory = (clone $incidentQuery)
+    ->selectRaw('category_id, code_sla, COUNT(*) as total')
+    ->groupBy('category_id', 'code_sla')
+    ->with(['categoryDescription.mainCategory','sla.slaTemplate.severityDescription'])
+    ->get()
+    ->groupBy(function ($row) {
+        // Group by main category name (or itself if no mainCategory)
+        return $row->categoryDescription->mainCategory->name 
+            ?? $row->categoryDescription->name;
+    })
+    ->map(function ($rows) {
+        // Total incidents for this main category
+        $mainTotal    = $rows->sum('total');
+        $mainCritical = $rows->where('sla.slaTemplate.severityDescription.id', 47)->sum('total');
 
+        return [
+            'main_total'    => $mainTotal,
+            'main_critical' => $mainCritical,
+            'subs' => $rows->groupBy('categoryDescription.name')->map(function ($subRows) {
+                return [
+                    'name'     => $subRows->first()->categoryDescription->name,
+                    'total'    => $subRows->sum('total'),
+                    'critical' => $subRows->where('sla.slaTemplate.severityDescription.id', 47)->sum('total'),
+                ];
+            })->values()
+        ];
+    });
         $SeverityOutput = (clone $incidentQuery)
             ->where('expected_end_date', '<', now()->startOfDay()->modify('-2 days'))
             ->whereIn('status', [Incident::OPEN, Incident::ON_HOLD])
@@ -132,6 +149,8 @@ class DashboardServices
 
         $IncidentsOnHold = $onHoldCount + $openCount;
         $TBB = $TBB1 + $TBB2;
+
+        
 
         return [
             'trueTotalIncidents' => $trueTotalIncidents,
