@@ -126,7 +126,10 @@ $totalIncidentsByCategory = (clone $incidentQuery)
         ];
     });
         $SeverityOutput = (clone $incidentQuery)
-            ->where('expected_end_date', '<', now()->startOfDay()->modify('-2 days'))
+            ->whereBetween('expected_end_date', [
+                now()->startOfDay(),              // today 00:00
+                now()->addDays(2)->endOfDay()     // two days ahead, 23:59:59
+            ])
             ->whereIn('status', [Incident::OPEN, Incident::ON_HOLD])
             ->selectRaw('category_id, code_sla, COUNT(*) as total')
             ->groupBy('category_id','code_sla')
@@ -140,11 +143,17 @@ $totalIncidentsByCategory = (clone $incidentQuery)
         $openCount   = (clone $incidentQuery)->where('status', Incident::OPEN)->count();
 
         $TBB1 = (clone $incidentQuery)
-            ->where('expected_end_date', '<', now()->startOfDay()->modify('-2 days'))
+            ->whereBetween('expected_end_date', [
+                now()->startOfDay(),              // today 00:00
+                now()->addDays(2)->endOfDay()     // two days ahead, 23:59:59
+            ])
             ->where('status', Incident::ON_HOLD)->count();
 
         $TBB2 = (clone $incidentQuery)
-            ->where('expected_end_date', '<', now()->startOfDay()->modify('-2 days'))
+            ->whereBetween('expected_end_date', [
+                now()->startOfDay(),              // today 00:00
+                now()->addDays(2)->endOfDay()     // two days ahead, 23:59:59
+            ])
             ->where('status', Incident::OPEN)->count();
 
         $IncidentsOnHold = $onHoldCount + $openCount;
