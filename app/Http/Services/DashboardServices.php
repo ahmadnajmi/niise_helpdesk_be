@@ -104,12 +104,10 @@ $totalIncidentsByCategory = (clone $incidentQuery)
     ->with(['categoryDescription.mainCategory','sla.slaTemplate.severityDescription'])
     ->get()
     ->groupBy(function ($row) {
-        // Group by main category name (or itself if no mainCategory)
         return $row->categoryDescription->mainCategory->name 
             ?? $row->categoryDescription->name;
     })
     ->map(function ($rows) {
-        // Total incidents for this main category
         $mainTotal    = $rows->sum('total');
         $mainCritical = $rows->where('sla.slaTemplate.severityDescription.id', 47)->sum('total');
 
@@ -127,8 +125,8 @@ $totalIncidentsByCategory = (clone $incidentQuery)
     });
         $SeverityOutput = (clone $incidentQuery)
             ->whereBetween('expected_end_date', [
-                now()->startOfDay(),              // today 00:00
-                now()->addDays(2)->endOfDay()     // two days ahead, 23:59:59
+                now()->startOfDay(),          
+                now()->addDays(2)->endOfDay()     
             ])
             ->whereIn('status', [Incident::OPEN, Incident::ON_HOLD])
             ->selectRaw('category_id, code_sla, COUNT(*) as total')
@@ -144,15 +142,15 @@ $totalIncidentsByCategory = (clone $incidentQuery)
 
         $TBB1 = (clone $incidentQuery)
             ->whereBetween('expected_end_date', [
-                now()->startOfDay(),              // today 00:00
-                now()->addDays(2)->endOfDay()     // two days ahead, 23:59:59
+                now()->startOfDay(),      
+                now()->addDays(2)->endOfDay()   
             ])
             ->where('status', Incident::ON_HOLD)->count();
 
         $TBB2 = (clone $incidentQuery)
             ->whereBetween('expected_end_date', [
-                now()->startOfDay(),              // today 00:00
-                now()->addDays(2)->endOfDay()     // two days ahead, 23:59:59
+                now()->startOfDay(),             
+                now()->addDays(2)->endOfDay()  
             ])
             ->where('status', Incident::OPEN)->count();
 
