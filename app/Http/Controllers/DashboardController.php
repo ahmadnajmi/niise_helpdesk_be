@@ -21,13 +21,13 @@ class DashboardController extends Controller
         $this->dashboardService = $dashboardService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $data = $this->dashboardService->getDashboardData();
+        $branchId = $request->query('branch_id'); // from ?branch_id=5
+        $data = $this->dashboardService->getDashboardData($branchId);
 
         return $this->success('Dashboard data retrieved successfully.', $data);
     }
-
     /**
      * Show the form for creating a new resource.
      */

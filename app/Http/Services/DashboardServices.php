@@ -3,39 +3,44 @@
 namespace App\Http\Services;
 
 use App\Models\Incident;
-use App\Models\Sla;
 use Illuminate\Support\Facades\DB;
 
 class DashboardServices
 {
-    public function getDashboardData()
+    public function getDashboardData($branchId = null)
     {
-        $trueTotalIncidents = Incident::count();
-        $totalSLA = Sla::count();
-        $totalReports = Incident::whereNotNull('report_no')->count();
+        $incidentQuery = Incident::query();
+        if ($branchId) {
+            $incidentQuery->where('branch_id', $branchId);
+        }
 
-        $moreThan4Days = Incident::where('incident_date', '<', now()->startOfDay()->modify('-4 days'))
+        $trueTotalIncidents = (clone $incidentQuery)->count();
+
+        $moreThan4Days = (clone $incidentQuery)
+            ->where('incident_date', '<', now()->startOfDay()->modify('-4 days'))
             ->where('status', '=', Incident::OPEN)
             ->count();
 
-        $just4Days = Incident::where('incident_date', '=', now()->startOfDay()->modify('-4 days'))
+        $just4Days = (clone $incidentQuery)
+            ->where('incident_date', '=', now()->startOfDay()->modify('-4 days'))
             ->where('status', '=', Incident::OPEN)
             ->count();
 
-        $lessThan4Days = Incident::where('incident_date', '>', now()->startOfDay()->modify('-4 days'))
+        $lessThan4Days = (clone $incidentQuery)
+            ->where('incident_date', '>', now()->startOfDay()->modify('-4 days'))
             ->where('status', '=', Incident::OPEN)
             ->count();
 
-
-        $New = Incident::where('incident_date', '>=', now()->startOfDay()->modify('-5 days'))
-            ->count();
-        // $TBB = Incident::where('expected_end_date', '<', now()->startOfDay()->modify('-2 days'))
-        //     ->where('status', '=', Incident::OPEN)->where('status', Incident::ON_HOLD)->count();
-
-        $totalIncidentsThisYear = Incident::whereRaw("TO_CHAR(incident_date, 'YYYY') = ?", [now()->year])
+        $New = (clone $incidentQuery)
+            ->where('incident_date', '>=', now()->startOfDay()->modify('-5 days'))
             ->count();
 
-        $incidentsByMonth = Incident::select(
+        $totalIncidentsThisYear = (clone $incidentQuery)
+            ->whereRaw("TO_CHAR(incident_date, 'YYYY') = ?", [now()->year])
+            ->count();
+
+        $incidentsByMonth = (clone $incidentQuery)
+            ->select(
                 DB::raw("EXTRACT(MONTH FROM incident_date) as month"),
                 DB::raw('COUNT(*) as total')
             )
@@ -45,10 +50,10 @@ class DashboardServices
             ->toArray();
 
         $allMonths = array_fill(1, 12, 0);
-        $incidentsByMonth = array_replace($allMonths, $incidentsByMonth);
-        $incidentsByMonth = array_values($incidentsByMonth);
+        $incidentsByMonth = array_values(array_replace($allMonths, $incidentsByMonth));
 
-        $incidentsByDay = Incident::select(
+        $incidentsByDay = (clone $incidentQuery)
+            ->select(
                 DB::raw("EXTRACT(DAY FROM incident_date) as day"),
                 DB::raw('COUNT(*) as total')
             )
@@ -59,10 +64,10 @@ class DashboardServices
 
         $daysInMonth = now()->daysInMonth;
         $allDays = array_fill(1, $daysInMonth, 0);
-        $incidentsByDay = array_replace($allDays, $incidentsByDay);
-        $incidentsByDay = array_values($incidentsByDay);
+        $incidentsByDay = array_values(array_replace($allDays, $incidentsByDay));
 
-        $incidentsRaw = Incident::selectRaw("TO_CHAR(incident_date, 'HH24') as hour, COUNT(*) as total")
+        $incidentsRaw = (clone $incidentQuery)
+            ->selectRaw("TO_CHAR(incident_date, 'HH24') as hour, COUNT(*) as total")
             ->whereBetween('incident_date', [now()->startOfDay(), now()->endOfDay()])
             ->groupBy(DB::raw("TO_CHAR(incident_date, 'HH24')"))
             ->orderBy('hour')
@@ -71,52 +76,91 @@ class DashboardServices
 
         $allHours = array_fill(0, 24, 0);
         foreach ($incidentsRaw as $h => $cnt) {
-            $allHours[(int)$h] = (int)$cnt;
+            $allHours[(int) $h] = (int) $cnt;
         }
         $incidentsByHour = array_values($allHours);
 
-        $totalIncidentsThisMonth = Incident::whereRaw("TO_CHAR(incident_date, 'YYYY') = ?", [now()->year])
+        $totalIncidentsThisMonth = (clone $incidentQuery)
+            ->whereRaw("TO_CHAR(incident_date, 'YYYY') = ?", [now()->year])
             ->whereRaw("TO_CHAR(incident_date, 'MM') = ?", [now()->format('m')])
             ->count();
 
-        $totalIncidentsToday = Incident::whereRaw("TRUNC(incident_date) = TRUNC(SYSDATE)")
+        $totalIncidentsToday = (clone $incidentQuery)
+            ->whereRaw("TRUNC(incident_date) = TRUNC(SYSDATE)")
             ->count();
 
-        $totalIncidentsByBranch = Incident::selectRaw('branch_id, code_sla, COUNT(*) as total')
-            ->groupBy('branch_id','code_sla')
+        $totalIncidentsByBranch = (clone $incidentQuery)
+            ->whereNotNull( 'branch_id',)
+            ->whereNotNull( 'code_sla',)
+            ->where('code_sla', '!=', 0)
+            ->selectRaw('branch_id, code_sla, COUNT(*) as total')
+            ->groupBy('branch_id', 'code_sla')
             ->with(['branch','sla.slaTemplate.severityDescription'])
             ->get();
 
-        $totalIncidentsByCategory = Incident::selectRaw('category_id, code_sla, COUNT(*) as total')
-            ->groupBy('category_id','code_sla')
-            ->with(['categoryDescription.mainCategory','sla.slaTemplate'])
-            ->get();
-        $SeverityOutput = Incident::where('expected_end_date', '<', now()->startOfDay()->modify('-2 days'))
+$totalIncidentsByCategory = (clone $incidentQuery)
+    ->selectRaw('category_id, code_sla, COUNT(*) as total')
+    ->groupBy('category_id', 'code_sla')
+    ->with(['categoryDescription.mainCategory','sla.slaTemplate.severityDescription'])
+    ->get()
+    ->groupBy(function ($row) {
+        return $row->categoryDescription->mainCategory->name 
+            ?? $row->categoryDescription->name;
+    })
+    ->map(function ($rows) {
+        $mainTotal    = $rows->sum('total');
+        $mainCritical = $rows->where('sla.slaTemplate.severityDescription.id', 47)->sum('total');
+
+        return [
+            'main_total'    => $mainTotal,
+            'main_critical' => $mainCritical,
+            'subs' => $rows->groupBy('categoryDescription.name')->map(function ($subRows) {
+                return [
+                    'name'     => $subRows->first()->categoryDescription->name,
+                    'total'    => $subRows->sum('total'),
+                    'critical' => $subRows->where('sla.slaTemplate.severityDescription.id', 47)->sum('total'),
+                ];
+            })->values()
+        ];
+    });
+        $SeverityOutput = (clone $incidentQuery)
+            ->whereBetween('expected_end_date', [
+                now()->startOfDay(),          
+                now()->addDays(2)->endOfDay()     
+            ])
             ->whereIn('status', [Incident::OPEN, Incident::ON_HOLD])
             ->selectRaw('category_id, code_sla, COUNT(*) as total')
             ->groupBy('category_id','code_sla')
             ->with(['categoryDescription','sla.slaTemplate'])
             ->get();
 
-        $IncidentsOpen = Incident::where('status', '=', Incident::OPEN)->count();
-        $IncidentsDone = Incident::where('status', '=', Incident::RESOLVED)->count();
-        $onHoldCount = Incident::where('status', Incident::ON_HOLD)->count();
-        $openCount   = Incident::where('status', Incident::OPEN)->count();
+        $IncidentsOpen = (clone $incidentQuery)->where('status', '=', Incident::OPEN)->count();
+        $IncidentsDone = (clone $incidentQuery)->where('status', '=', Incident::RESOLVED)->count();
 
-        
-        $TBB1 = Incident::where('expected_end_date', '<', now()->startOfDay()->modify('-2 days'))->where('status', Incident::ON_HOLD)->count();
-        
-        $TBB2 = Incident::where('expected_end_date', '<', now()->startOfDay()->modify('-2 days'))->where('status', Incident::OPEN)->count();
+        $onHoldCount = (clone $incidentQuery)->where('status', Incident::ON_HOLD)->count();
+        $openCount   = (clone $incidentQuery)->where('status', Incident::OPEN)->count();
+
+        $TBB1 = (clone $incidentQuery)
+            ->whereBetween('expected_end_date', [
+                now()->startOfDay(),      
+                now()->addDays(2)->endOfDay()   
+            ])
+            ->where('status', Incident::ON_HOLD)->count();
+
+        $TBB2 = (clone $incidentQuery)
+            ->whereBetween('expected_end_date', [
+                now()->startOfDay(),             
+                now()->addDays(2)->endOfDay()  
+            ])
+            ->where('status', Incident::OPEN)->count();
 
         $IncidentsOnHold = $onHoldCount + $openCount;
-
-        $TBB = $TBB1+$TBB2;
+        $TBB = $TBB1 + $TBB2;
 
         
+
         return [
             'trueTotalIncidents' => $trueTotalIncidents,
-            'totalSLA' => $totalSLA,
-            'totalReports' => $totalReports,
             'moreThan4Days' => $moreThan4Days,
             'just4Days' => $just4Days,
             'lessThan4Days' => $lessThan4Days,
@@ -136,5 +180,4 @@ class DashboardServices
             'TBB' => $TBB,
         ];
     }
-    
 }
