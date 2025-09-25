@@ -104,6 +104,8 @@ class IncidentServices
         DB::beginTransaction();
 
         $data['incident_no'] = $incident->incident_no;
+        $data['incident_date'] = $incident->incident_date;
+
         $data = self::uploadDoc($data,$request);
 
         if($incident->categoryDescription->name == 'MOBILE'){
