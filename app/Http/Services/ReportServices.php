@@ -113,7 +113,7 @@ class ReportServices
                         ->map(function ($status) {
                             return [
                                 'description' => $status->name,
-                                'total'       => $status->incidents_status_count, // auto added by withCount
+                                'total'       => $status->total, // auto added by withCount
                             ];
                         });
 
