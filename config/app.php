@@ -154,7 +154,7 @@ return [
 
     'microservices' => [
         'url' => env('MICROSERVICE_URL'),
-        'path' => env('MICROSERVICE_PATHL'),
+        'path' => env('MICROSERVICE_PATH'),
     ]
 
   
