@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use App\Models\Incident;
+use App\Models\Branch;
 use Illuminate\Support\Facades\DB;
 
 class DashboardServices
@@ -11,9 +12,16 @@ class DashboardServices
     {
         $incidentQuery = Incident::query();
         if ($branchId) {
-            $incidentQuery->where('branch_id', $branchId);
+            $incidentQuery->where('branch_id', $branchId)->with('branch');
+            $currentBranch = Branch::find($branchId)?->name ?? 'Unknown Branch';
+        }else {
+            // No branch selected → treat as "All Branches"
+            $branchId = 'All Branches';
+            $currentBranch = 'All Branches';
         }
 
+        
+        $allBranches = Branch::select('id', 'name', 'category')->get();
         $trueTotalIncidents = (clone $incidentQuery)->count();
 
         $moreThan4Days = (clone $incidentQuery)
@@ -161,6 +169,7 @@ $totalIncidentsByCategory = (clone $incidentQuery)
 
         return [
             'trueTotalIncidents' => $trueTotalIncidents,
+            'allBranches' => $allBranches,
             'moreThan4Days' => $moreThan4Days,
             'just4Days' => $just4Days,
             'lessThan4Days' => $lessThan4Days,
@@ -178,6 +187,7 @@ $totalIncidentsByCategory = (clone $incidentQuery)
             'New' => $New,
             'IncidentsOnHold' => $IncidentsOnHold,
             'TBB' => $TBB,
+            'currentBranch' => $currentBranch
         ];
     }
 }
