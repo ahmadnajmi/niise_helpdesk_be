@@ -217,11 +217,18 @@ class Incident extends BaseModel
                         ->when($request->branch_id, function ($query) use ($request) {
                             return $query->where('branch_id',$request->branch_id);
                         })
-                        ->when($request->category_code, function ($query) use ($request) {
+                        ->when($request->category_id, function ($query) use ($request) {
                             return $query->whereHas('categoryDescription', function ($query)use($request) {
-                                    $query->where('name',$request->category_code); 
+                                    $query->where('id',$request->category_id); 
                             });
                         })
+                        ->when($request->main_category_id, function ($query) use ($request) {
+                            return $query->whereHas('categoryDescription', function ($query)use($request) {
+                                    $query->where('category_id',$request->main_category_id)
+                                        ->orWhere('id',$request->main_category_id); 
+                            });
+                        })
+                        
                         ->when($request->severity_id, function ($query) use ($request) {
                             return $query->whereHas('sla', function ($query)use($request) {
                                     $query->whereHas('slaTemplate', function ($query)use($request) {

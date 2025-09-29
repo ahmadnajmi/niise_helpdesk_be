@@ -107,15 +107,18 @@ $totalIncidentsByCategory = (clone $incidentQuery)
         return $row->categoryDescription->mainCategory->name 
             ?? $row->categoryDescription->name;
     })
-    ->map(function ($rows) {
+    ->map(function ($rows)  {
         $mainTotal    = $rows->sum('total');
         $mainCritical = $rows->where('sla.slaTemplate.severityDescription.id', 47)->sum('total');
 
         return [
+            'id' => $rows->first()->categoryDescription?->mainCategory?->id,
             'main_total'    => $mainTotal,
             'main_critical' => $mainCritical,
             'subs' => $rows->groupBy('categoryDescription.name')->map(function ($subRows) {
+                
                 return [
+                    'id' => $subRows->first()->category_id,
                     'name'     => $subRows->first()->categoryDescription->name,
                     'total'    => $subRows->sum('total'),
                     'critical' => $subRows->where('sla.slaTemplate.severityDescription.id', 47)->sum('total'),
