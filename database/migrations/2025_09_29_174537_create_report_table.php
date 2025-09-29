@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('workbasket', function (Blueprint $table) {
+        Schema::create('report', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('incident_id')->nullable(); 
-            $table->date('date');
-            $table->unsignedBigInteger('handle_by')->nullable(); 
-            $table->smallInteger('status')->default(1);
+            $table->string('code')->nullable();
+            $table->string('file_name')->nullable();           
             $table->log();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('workbasket');
+        Schema::dropIfExists('report');
     }
 };

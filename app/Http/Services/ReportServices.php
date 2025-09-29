@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Incident;
 use App\Models\SlaTemplate;
 use App\Models\RefTable;
+use App\Models\Report;
 use Illuminate\Support\Str;
 
 class ReportServices
@@ -20,17 +21,17 @@ class ReportServices
         $this->beUrl = config('app.url');
     }
 
-    public static function index(){
+    public static function index($request){
 
-        $data['to_be_breach'] = self::toBeBreach();
-        $data['total_incident'] = self::totalIncident();
-        $data['total_incident_status'] = self::totalIncidentStatus();
-        $data['outstanding_incident'] = self::outstandingIncident();
+        $data['to_be_breach'] = self::toBeBreach($request);
+        $data['total_incident'] = self::totalIncident($request);
+        $data['total_incident_status'] = self::totalIncidentStatus($request);
+        $data['outstanding_incident'] = self::outstandingIncident($request);
 
         return $data;
     }
 
-    public static function toBeBreach(){
+    public static function toBeBreach($request){
         $data = [];
         $get_category = Category::select('id','category_id','name')->whereDoesntHave('childCategory')->get();
 
@@ -47,7 +48,13 @@ class ReportServices
             $get_incident = Incident::with('sla.slaTemplate')
                                     ->whereHas('sla', function ($query)use($severity) {
                                     $query->whereHas('slaTemplate', function ($query)use($severity) {
-                                        $query->whereIn('severity_id',$severity);});
+                                            $query->whereIn('severity_id',$severity);});
+                                    })
+                                    ->when($request->branch_id, function ($query)use($request) {
+                                        return $query->where('branch_id',$request->branch_id);
+                                    })
+                                    ->when($request->contractor_id, function ($query)use($request) {
+                                        return $query->where('group_id',$request->contractor_id);
                                     })
                                     ->where('category_id',$category->id)
                                     ->get();
@@ -66,13 +73,20 @@ class ReportServices
         return $data;
     }
 
-    public static function totalIncident(){
+    public static function totalIncident($request){
         $data = [];
         $get_category = Category::whereDoesntHave('childCategory')->get();
 
         foreach($get_category as $category){
 
-            $get_incident = Incident::where('category_id',$category->id)->count();
+            $get_incident = Incident::where('category_id',$category->id)
+                                    ->when($request->branch_id, function ($query)use($request) {
+                                        return $query->where('branch_id',$request->branch_id);
+                                    })
+                                    ->when($request->contractor_id, function ($query)use($request) {
+                                        return $query->where('group_id',$request->contractor_id);
+                                    })
+                                    ->count();
 
             $format['category'] = $category->name;
             $format['total'] = $get_incident;
@@ -83,10 +97,18 @@ class ReportServices
         return $data;
     }
 
-    public static function totalIncidentStatus(){
+    public static function totalIncidentStatus($request){
 
         $counts = RefTable::where('code_category','incident_status')
-                        ->withCount('incidentsStatus')
+                        // ->withCount('incidentsStatus')
+                        ->withCount(['incidentsStatus as total' => function ($query) use ($request) {
+                            if ($request->branch_id) {
+                                $query->where('branch_id', $request->branch_id);
+                            }
+                            if ($request->contractor_id) {
+                                $query->where('group_id', $request->contractor_id);
+                            }
+                        }])
                         ->get()
                         ->map(function ($status) {
                             return [
@@ -99,13 +121,19 @@ class ReportServices
 
     }
 
-    public static function outstandingIncident(){
+    public static function outstandingIncident($request){
         $data = [];
 
         $ref_tables = RefTable::where('code_category','severity')->orderBy('ref_code','asc')->get();
         $get_category = Category::select('id','category_id','name')->whereDoesntHave('childCategory')->get();
 
         $incident_counts = Incident::select('category_id', DB::raw('COUNT(*) as total'))
+                                    ->when($request->branch_id, function ($query)use($request) {
+                                        return $query->where('branch_id',$request->branch_id);
+                                    })
+                                    ->when($request->contractor_id, function ($query)use($request) {
+                                        return $query->where('group_id',$request->contractor_id);
+                                    })
                                     ->groupBy('category_id')
                                     ->pluck('total', 'category_id'); 
 
@@ -129,7 +157,9 @@ class ReportServices
 
     public function generateReport($request){
 
-        $file = $request->report_type == 1 ?  'unattendedDailyReport' : 'OutstandingReport';
+        $report = Report::where('code',$request->report_category)->first();
+
+        $file = $report ? $report->file_name : 'unattendedDailyReport';
        
         $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'csv' ;
 
@@ -138,8 +168,11 @@ class ReportServices
         $parameter  = [
             "SUBREPORT_DIR" => $this->pathFolder.$file.'/',
             "image_path" => $this->beUrl."/logo_immigration.png",
-            "chart_image" => $chart_image
+            "chart_image" => $chart_image,
+            "cawangan_id" => $request->branch_id,
+            "kontraktor_id" => $request->contractor_id,
         ];
+        
 
         $data = [
             'reportTemplate' => $file.'/'.$file.'.jasper',
@@ -214,11 +247,11 @@ class ReportServices
             $mimeType = $request->file('chart_file')->getClientOriginalExtension();
             $file_name = $image_name.'.'.$mimeType;
 
-            // $file->move($destination, $file_name);
+            $file->move($destination, $file_name);
 
             $fileUrl = asset('storage/report/' . $file_name);
         }
-        $file_name = $this->beUrl."/empty.png";
+        // $file_name = $this->beUrl."/empty.png";
         
         return $file_name;
     }
