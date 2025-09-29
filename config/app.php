@@ -152,6 +152,11 @@ return [
         'password' => env('JASPER_PASSWORD')
     ],
 
+    'microservices' => [
+        'url' => env('MICROSERVICE_URL'),
+        'path' => env('MICROSERVICE_PATHL'),
+    ]
+
   
 ];
  

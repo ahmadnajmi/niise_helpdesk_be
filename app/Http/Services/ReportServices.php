@@ -2,14 +2,24 @@
 
 namespace App\Http\Services;
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use App\Models\Category;
 use App\Models\Incident;
 use App\Models\SlaTemplate;
 use App\Models\RefTable;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ReportServices
 {
+    protected string $baseUrl;
+
+    public function __construct(){
+        $this->baseUrl = config('app.microservices.url');
+        $this->pathFolder = config('app.microservices.path');
+        $this->beUrl = config('app.url');
+    }
+
     public static function index(){
 
         $data['to_be_breach'] = self::toBeBreach();
@@ -115,5 +125,101 @@ class ReportServices
         }
 
         return $data;
+    }
+
+    public function generateReport($request){
+
+        $file = $request->report_type == 1 ?  'unattendedDailyReport' : 'OutstandingReport';
+       
+        $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'csv' ;
+
+        $chart_image = $this->uploadDoc($request);
+
+        $parameter  = [
+            "SUBREPORT_DIR" => $this->pathFolder.$file.'/',
+            "image_path" => $this->beUrl."/logo_immigration.png",
+            "chart_image" => $chart_image
+        ];
+
+        $data = [
+            'reportTemplate' => $file.'/'.$file.'.jasper',
+            'outputFileName' => $file.'.'.$fileExtension,
+            'reportTitle' => $request->tittle,
+            'report_format' => $fileExtension,
+            'parameters' => $parameter
+        ];
+        
+        $generate = $this->callMicroServices('testing/generate','POST',$data);
+        
+        return $generate;
+    }
+
+    public function callMicroServices($api_url,$method,$json) {
+
+        try{
+            $response = Http::$method($this->baseUrl.$api_url, $json);
+            
+            if ($response->successful()) {
+                $contentType = $this->getContentType($json['report_format']);
+                $filename = $json['outputFileName'];
+                
+                return [
+                    'data' => response($response->body(), 200)->header('Content-Type', $contentType)->header('Content-Disposition', 'inline; filename="'.$filename.'"')
+                    
+                ]; 
+            }
+            else{
+                
+                return ['data' => null ,'status' => $response->status(),'message' => 'Failed to generate report'.$response->body()];
+            }
+        }
+        catch (\GuzzleHttp\Exception\BadResponseException $e){ 
+            $message = 'Something went wrong on the server.Error Code = '. $e->getCode();
+
+            Log::channel('external_api')->error("API Response: {$e->getCode()}, {$this->baseUrl}{$api_url}", [
+                'message' => $e->getMessage(),
+            ]);
+            
+            return ['data' => null,'status' =>null,'message' => $e->getMessage()];
+        }
+
+    }
+
+    private function getContentType($reportFormat) {
+        switch($reportFormat) {
+            case 'pdf':
+                return 'application/pdf';
+            case 'csv':
+            case 'excel':
+                return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+            default:
+                return 'application/pdf';
+        }
+    }
+
+    public function uploadDoc($request){
+        
+        $destination = storage_path('app/public/report'); 
+
+        $file_name = $this->beUrl."/empty.png";
+
+        if (!file_exists($destination)) {
+            mkdir($destination, 0777, true);
+        }
+
+        if ($request->hasFile('chart_file') && $request->file('chart_file')->isValid()){
+            $file = $request->file('chart_file');
+
+            $image_name = time() . '_' . Str::random(10);
+            $mimeType = $request->file('chart_file')->getClientOriginalExtension();
+            $file_name = $image_name.'.'.$mimeType;
+
+            // $file->move($destination, $file_name);
+
+            $fileUrl = asset('storage/report/' . $file_name);
+        }
+        $file_name = $this->beUrl."/empty.png";
+        
+        return $file_name;
     }
 }

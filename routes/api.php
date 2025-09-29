@@ -89,3 +89,4 @@ Route::prefix('iasset')->middleware('client.passport')->name('iasset.')->group(f
 
 Route::get('testing', [TestingController::class,'testingJasper']);
 
+    Route::get('testing_report', [ReportController::class, 'generateReport']);

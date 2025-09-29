@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use DB;
 
 class Incident extends BaseModel
 {
@@ -166,5 +167,22 @@ class Incident extends BaseModel
                 return $diff->d .' Hari : ' . $diff->h . ' Jam : ' .$diff->i  .' Minit';
             }
         });
+    }
+
+    public static  function getIdleIncidents(){
+        $data = Incident::select('b.name as customer_name', DB::raw('COUNT(*) as total_logs'))
+                        ->join('branch as b', 'incidents.branch_id', '=', 'b.id')
+                        ->whereNotIn('incidents.status', [3, 4])
+                        ->where('incidents.updated_at', '<=', now()->subDays(2)) // Incident itself not updated
+                        ->groupBy('b.name')
+                        ->get();
+
+        return $data->map(function ($item) {
+                return [
+                    'CUSTNAME' => $item->customer_name,
+                    'TOTLOGS'  => $item->total_logs,
+                ];
+            })->toArray();
+                        
     }
 }

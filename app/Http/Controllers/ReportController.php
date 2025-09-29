@@ -22,11 +22,23 @@ class ReportController extends Controller
 
         $filePath = 'dummy-pdf_2.pdf'; 
 
-        if (Storage::disk('local')->exists($filePath)) { 
-            return Storage::disk('local')->download($filePath);
+        $report_service = new ReportServices();
+
+
+        $return = $report_service->generateReport($request);
+        
+        if($return['data']){
+            return $return['data'];
+        }
+        else{
+            return $this->error($return['message']);
         }
 
-        return $this->error('File failed to generate');
+        // if (Storage::disk('local')->exists($filePath)) { 
+        //     return Storage::disk('local')->download($filePath);
+        // }
+
+        // return $this->error('File failed to generate');
 
     }
 

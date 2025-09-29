@@ -17,6 +17,9 @@ class RefTable extends BaseModel
         'ref_code_parent',
     ];
 
+    const PDF = 1;
+    const CSV = 2;
+
     public function incidentsStatus(){
         return $this->hasMany(Incident::class, 'status', 'ref_code');
     }
