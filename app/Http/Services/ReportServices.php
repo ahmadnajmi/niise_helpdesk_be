@@ -10,6 +10,7 @@ use App\Models\SlaTemplate;
 use App\Models\RefTable;
 use App\Models\Report;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 
 class ReportServices
 {
@@ -195,7 +196,7 @@ class ReportServices
             if ($response->successful()) {
                 $contentType = $this->getContentType($json['report_format']);
                 $filename = $json['outputFileName'];
-                
+                                            
                 return [
                     'data' => response($response->body(), 200)->header('Content-Type', $contentType)->header('Content-Disposition', 'inline; filename="'.$filename.'"')
                     
@@ -234,7 +235,7 @@ class ReportServices
         
         $destination = storage_path('app/public/report'); 
 
-        $file_name = $this->beUrl."/empty.png";
+        $file_name = asset("empty.png");
 
         if (!file_exists($destination)) {
             mkdir($destination, 0777, true);
@@ -244,12 +245,14 @@ class ReportServices
             $file = $request->file('chart_file');
 
             $image_name = time() . '_' . Str::random(10);
-            $mimeType = $request->file('chart_file')->getClientOriginalExtension();
+            $mimeType = $file->getClientOriginalExtension();
             $file_name = $image_name.'.'.$mimeType;
 
-            $file->move($destination, $file_name);
+            $fileContents = file_get_contents($file->getRealPath());
+        
+            file_put_contents($destination . '/' . $file_name, $fileContents);
 
-            $fileUrl = asset('storage/report/' . $file_name);
+            $file_name = asset('storage/report/' . $file_name);
         }
         // $file_name = $this->beUrl."/empty.png";
         
