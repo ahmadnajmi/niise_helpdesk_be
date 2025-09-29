@@ -207,6 +207,13 @@ class Incident extends BaseModel
                             return $query->where('status',Incident::OPEN)
                                         ->where('incident_date', '>', now()->startOfDay()->modify('-4 days'));
                         })
+                        ->when($request->type == 'tbb', function ($query) use ($request) {
+                            return $query->whereIn('status',[Incident::OPEN,Incident::ON_HOLD])
+                                        ->whereBetween('expected_end_date', [
+                                            now()->startOfDay(),      
+                                            now()->addDays(2)->endOfDay()   
+                                        ]);
+                        })
                         ->when($request->branch_id, function ($query) use ($request) {
                             return $query->where('branch_id',$request->branch_id);
                         })
