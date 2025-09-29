@@ -27,9 +27,7 @@ class IncidentServices
 {
     public static function index($request){
         
-        $limit = $request->limit ? $request->limit : 15;
-        
-        $data =  Incident::paginate($limit);
+        $data =  Incident::filterIncident($request);
 
         return $data;
     }

@@ -185,4 +185,45 @@ class Incident extends BaseModel
             })->toArray();
                         
     }
+
+    public static function filterIncident($request){
+        $limit = $request->limit ? $request->limit : 15;
+
+        $data =  Incident::when($request->status, function ($query) use ($request) {
+                            if (is_array($request->status)) {
+                                return $query->whereIn('status', $request->status);
+                            }
+                            return $query->where('status', $request->status);
+                        })
+                        ->when($request->type == 'more_4_day', function ($query) use ($request) {
+                            return $query->where('status',Incident::OPEN)
+                                        ->where('incident_date', '<', now()->startOfDay()->modify('-4 days'));
+                        })
+                        ->when($request->type == '4_day', function ($query) use ($request) {
+                            return $query->where('status',Incident::OPEN)
+                                        ->where('incident_date', now()->startOfDay()->modify('-4 days'));
+                        })
+                        ->when($request->type == 'less_4_day', function ($query) use ($request) {
+                            return $query->where('status',Incident::OPEN)
+                                        ->where('incident_date', '>', now()->startOfDay()->modify('-4 days'));
+                        })
+                        ->when($request->branch_id, function ($query) use ($request) {
+                            return $query->where('branch_id',$request->branch_id);
+                        })
+                        ->when($request->category_code, function ($query) use ($request) {
+                            return $query->whereHas('categoryDescription', function ($query)use($request) {
+                                    $query->where('name',$request->category_code); 
+                            });
+                        })
+                        ->when($request->severity_id, function ($query) use ($request) {
+                            return $query->whereHas('sla', function ($query)use($request) {
+                                    $query->whereHas('slaTemplate', function ($query)use($request) {
+                                        $query->where('severity_id',$request->severity_id); 
+                                }); 
+                            });
+                        })
+                        ->paginate($limit);
+
+        return $data;
+    }
 }
