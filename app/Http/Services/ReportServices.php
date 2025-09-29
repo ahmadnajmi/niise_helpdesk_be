@@ -177,7 +177,7 @@ class ReportServices
 
         $data = [
             'reportTemplate' => $file.'/'.$file.'.jasper',
-            'outputFileName' => $file.'.'.$fileExtension,
+            'outputFileName' => $request->name.'.'.$fileExtension,
             'reportTitle' => $request->tittle,
             'report_format' => $fileExtension,
             'parameters' => $parameter
