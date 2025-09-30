@@ -32,6 +32,14 @@
                         </a>
                     </div>
                 </div>
+
+                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6 text-gray-900" style="height: 250px">
+                        <a href="{{route('web.queue.index')}}" target="_blank">
+                            <img src="{{url('logs.png')}}" alt="Image" style='height: 100%; width: 100%; object-fit: contain'/>
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
