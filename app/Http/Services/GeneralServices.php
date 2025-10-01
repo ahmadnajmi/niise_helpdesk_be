@@ -54,7 +54,7 @@ class GeneralServices
             }
 
             if($code == 'branch'){
-                $data[$code] = Branch::select('id','name','category','state_id','branch_code')
+                $data[$code] = Branch::select('id','name','category','state_id')
                                         ->when($request->category, function ($query) use ($request) {
                                             return $query->where('category',$request->category);
                                         })
