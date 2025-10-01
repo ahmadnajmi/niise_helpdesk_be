@@ -13,7 +13,7 @@ class BranchImport implements ToModel
         $category = $row[2] == 2 ? 'PTJ' : 'Cawangan';
         
         return new Branch([
-            'branch_code' => $row[0],
+            'id' => $row[0],
             'name'     => $row[1],
             'state_id'    => $row[3],
             'category' => $category,

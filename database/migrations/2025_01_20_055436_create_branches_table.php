@@ -12,9 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('branch', function (Blueprint $table) {
-            $table->id();
+            $table->string('id',20)->nullable(); 
             $table->string('name')->nullable(); 
-            $table->string('branch_code',20)->nullable(); 
             $table->string('category')->nullable(); 
             $table->smallInteger('state_id')->nullable();
             $table->string('location')->nullable(); 

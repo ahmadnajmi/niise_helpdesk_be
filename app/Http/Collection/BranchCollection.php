@@ -19,7 +19,6 @@ class BranchCollection extends BaseResource
         return $this->collection->transform(function ($query) use($request){
             $return =  [
                 'id' => $query->id,
-                'branch_code' => $query->branch_code,
                 'name' => $query->name,
                 'category' => $query->category,
                 'state_id' => $query->state_id,

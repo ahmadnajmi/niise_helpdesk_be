@@ -10,7 +10,10 @@ class Branch extends Model
     //
     protected $table = 'branch';
 
+    public $incrementing = false;
+
     protected $fillable = [
+        'id',
         'name',
         'state_id',
         'category',

@@ -17,9 +17,9 @@ class BranchSeeder extends Seeder
     {
         DB::table('branch')->truncate();
 
-        if (DB::getDriverName() === 'oracle') {
-            DB::statement("ALTER SEQUENCE BRANCH_ID_SEQ RESTART START WITH 1");
-        } 
+        // if (DB::getDriverName() === 'oracle') {
+        //     DB::statement("ALTER SEQUENCE BRANCH_ID_SEQ RESTART START WITH 1");
+        // } 
         
         Excel::import(new BranchImport, 'database/seeders/excel/branch_niise.xlsx');
 

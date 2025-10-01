@@ -16,11 +16,10 @@ class BranchResources extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'branch_code' => $this->id,
+            'id' => $this->id,
             'name' => $this->name,
             'category' => $this->category,
             'state_id' => $this->state_id,
-            'branch_code' => $this->branch_code,
             'state' => $this->stateDescription?->name,
             'location' => $this->location,
             'operating_times' =>  new OperatingTimeCollection($this->operatingTime)
