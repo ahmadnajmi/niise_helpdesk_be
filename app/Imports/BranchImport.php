@@ -10,13 +10,13 @@ class BranchImport implements ToModel
 {
     public function model(array $row)
     {
-        $get_state = RefTable::where('code_category','state')->where('name_en',$row[0])->first();
+        $category = $row[2] == 2 ? 'PTJ' : 'Cawangan';
         
         return new Branch([
+            'branch_code' => $row[0],
             'name'     => $row[1],
-            'state_id'    => $get_state?->ref_code,
-            'location' => $row[2],
-            'category' => $row[3],
+            'state_id'    => $row[3],
+            'category' => $category,
 
         ]);
     }
