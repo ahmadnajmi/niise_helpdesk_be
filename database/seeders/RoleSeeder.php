@@ -64,6 +64,10 @@ class RoleSeeder extends Seeder
                             'dashboard.card.total-reports',
                         ]
                     ],
+                    [
+                        'module' => 'Configuration Management',
+                        'permission' =>['configuration.index','configuration.create','configuration.view','configuration.update','configuration.delete']
+                    ],
                     // [
                     //     'module' => 'Emel',
                     //     'permission' =>[
@@ -121,6 +125,10 @@ class RoleSeeder extends Seeder
                             'dashboard.index'
                         ]
                     ],
+                    [
+                        'module' => 'Configuration Management',
+                        'permission' =>['configuration.index','configuration.create','configuration.view','configuration.update','configuration.delete']
+                    ],
                     // [
                     //     'module' => 'Emel',
                     //     'permission' =>[
@@ -176,6 +184,10 @@ class RoleSeeder extends Seeder
                     [
                         'module' => 'Halaman Utama',
                         'permission' =>['dashboard.index']
+                    ],
+                    [
+                        'module' => 'Configuration Management',
+                        'permission' =>['configuration.index','configuration.create','configuration.view','configuration.update','configuration.delete']
                     ],
                     // [
                     //     'module' => 'Emel',
@@ -387,6 +399,10 @@ class RoleSeeder extends Seeder
                     [
                         'module' => 'Halaman Utama',
                         'permission' =>['dashboard.index']
+                    ],
+                    [
+                        'module' => 'Configuration Management',
+                        'permission' =>['configuration.index','configuration.create','configuration.view','configuration.update','configuration.delete']
                     ],
                     // [
                     //     'module' => 'Emel',
@@ -610,6 +626,10 @@ class RoleSeeder extends Seeder
                         'module' => 'Halaman Utama',
                         'permission' =>['dashboard.index']
                     ],
+                    [
+                        'module' => 'Configuration Management',
+                        'permission' =>['configuration.index','configuration.create','configuration.view','configuration.update','configuration.delete']
+                    ],
                     // [
                     //     'module' => 'Emel',
                     //     'permission' =>[
@@ -663,6 +683,10 @@ class RoleSeeder extends Seeder
                     [
                         'module' => 'Halaman Utama',
                         'permission' =>['dashboard.index']
+                    ],
+                    [
+                        'module' => 'Configuration Management',
+                        'permission' =>['configuration.index','configuration.create','configuration.view','configuration.update','configuration.delete']
                     ],
                     // [
                     //     'module' => 'Emel',

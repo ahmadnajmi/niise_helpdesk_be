@@ -417,6 +417,32 @@ class ModuleSeeder extends Seeder
             //     ]
         // ],
 
+            [
+                'name' => 'Administration',
+                'name_en' =>'Administration',
+                'code' => 'admin',
+                'description' =>'A central overview screen displaying key metrics, statistics, and summaries for quick system insights.',
+                'permission' =>[
+                    'index',
+                ],
+                'svg_path' => '<path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+                'sub_module' => [
+                    [
+                        'code' => 'configuration',
+                        'name' =>'Configuration Management',
+                        'name_en' =>'Configuration Management',
+                        'description' => 'The individual articles or content items inside the knowledge base.',
+                        'permission' =>[
+                            'configuration.index',
+                            'configuration.create',
+                            'configuration.view',
+                            'configuration.update',
+                            'configuration.delete',
+                        ]
+                    ],
+                ]
+            ],
+
         ];
 
         foreach($modules as $module){
@@ -593,6 +619,13 @@ class ModuleSeeder extends Seeder
             'customer.view' => 'View detailed information about a specific customer.',
             'customer.update' => 'Edit or update existing customer information.',
             'customer.delete' => 'Delete a customer from the system.',
+
+            'configuration.index' => 'View the list of customers.',
+            'configuration.create' => 'Create or add a new configuration.',
+            'configuration.view' => 'View detailed information about a specific configuration.',
+            'configuration.update' => 'Edit or update existing configuration information.',
+            'configuration.delete' => 'Delete a configuration from the system.',
+            
 
             
         ];
