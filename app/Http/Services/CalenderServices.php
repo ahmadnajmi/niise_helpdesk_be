@@ -3,35 +3,46 @@
 namespace App\Http\Services;
 use App\Models\Calendar;
 use App\Http\Resources\CalendarResources;
+use App\Http\Traits\ResponseTrait;
 
 class CalenderServices
 {
+    use ResponseTrait;
+
     public static function create($data){
-        
-        $data['state_id'] = json_encode($data['state_id']);
+        try{
+            $data['state_id'] = json_encode($data['state_id']);
 
-        $create = Calendar::create($data);
+            $create = Calendar::create($data);
 
-        $return = new CalendarResources($create);
+            $return = new CalendarResources($create);
 
-        return $return;
+            return self::success('Success', $return);
+        } 
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
     }
 
     public static function update(Calendar $calendar,$data){
+        try{
+            $data['state_id'] = json_encode($data['state_id']);
 
-        $data['state_id'] = json_encode($data['state_id']);
+            $create = $calendar->update($data);
 
-        $create = $calendar->update($data);
+            $return = new CalendarResources($calendar);
 
-        $return = new CalendarResources($calendar);
-
-        return $return;
+            return self::success('Success', $return);
+        }
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
     }
 
     public static function delete(Calendar $calendar){
 
         $calendar->delete();
 
-        return true;
+        return self::success('Success', true);
     }
 }

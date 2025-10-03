@@ -87,6 +87,10 @@ Route::prefix('iasset')->middleware('client.passport')->name('iasset.')->group(f
     Route::apiResource('ref_table', RefTableController::class);
 });
 
+Route::prefix('idm')->middleware('client.passport')->name('idm.')->group(function () {
+    Route::post('branch', [BranchController::class, 'idmCreateUpdate'])->name('branch.create');
+});
+
 Route::get('testing', [TestingController::class,'testingJasper']);
 
-    Route::get('testing_report', [ReportController::class, 'generateReport']);
+Route::get('testing_report', [ReportController::class, 'generateReport']);

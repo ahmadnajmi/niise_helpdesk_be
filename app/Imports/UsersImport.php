@@ -13,7 +13,7 @@ class UsersImport implements ToModel
 {
     public function model(array $row)
     {
-        $get_branch = Branch::select('id')->where('name',$row[2])->first();
+        $get_branch = Branch::inRandomOrder()->first();
         
         $data['name']  = $row[0];
         $data['nickname']  = $row[0];

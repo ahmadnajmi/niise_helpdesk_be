@@ -25,16 +25,11 @@ class CalendarController extends Controller
 
     public function store(CalendarRequest $request)
     {
-        // try {
-            $data = $request->all();
+        $data = $request->all();
 
-            $data = CalenderServices::create($data);
+        $data = CalenderServices::create($data);
            
-            return $this->success('Success', $data);
-          
-        // } catch (\Throwable $th) {
-        //     return $this->error($th->getMessage());
-        // }
+        return $data;
     }
 
     public function show(Calendar $calendar)
@@ -46,22 +41,17 @@ class CalendarController extends Controller
 
     public function update(CalendarRequest $request, Calendar $calendar)
     {
-        try {
-            $data = $request->all();
+        $data = $request->all();
 
-            $data = CalenderServices::update($calendar,$data);
+        $data = CalenderServices::update($calendar,$data);
 
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return  $data; 
     }
 
     public function destroy(Calendar $calendar)
     {
         $data = CalenderServices::delete($calendar);
 
-        return $this->success('Success', null);
+        return  $data;
     }
 }

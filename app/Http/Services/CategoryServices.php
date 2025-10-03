@@ -3,47 +3,64 @@
 namespace App\Http\Services;
 use App\Models\Category;
 use App\Http\Resources\CategoryResources;
+use App\Http\Traits\ResponseTrait;
 
 class CategoryServices
 {
+    use ResponseTrait;
+    
     public static function create($data){
 
-        $data = self::processData($data);
+        try{
+            $data = self::processData($data);
 
-        $create = Category::create($data);
+            $create = Category::create($data);
 
-        $return = new CategoryResources($create);
+            $return = new CategoryResources($create);
 
-        return $return;
+            return self::success('Success', $return);
+        } 
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
     }
 
     public static function update(Category $category,$data){
 
-        if(isset($data['category_id']) && $category->category_id != $data['category_id']){
-            $data = self::processData($data);
+        try{
+            if(isset($data['category_id']) && $category->category_id != $data['category_id']){
+                $data = self::processData($data);
+            }
+            $create = $category->update($data);
+
+            $return = new CategoryResources($category);
+
+            return self::success('Success', $return);
+        } 
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
         }
-
-        $create = $category->update($data);
-
-        $return = new CategoryResources($category);
-
-        return $return;
     }
 
-     public static function delete(Category $category){
+    public static function delete(Category $category){
 
-        $child_id = Category::where('category_id',$category->id)->pluck('id');
+        try{
+            $child_id = Category::where('category_id',$category->id)->pluck('id');
 
-        if(count($child_id) > 0){
+            if(count($child_id) > 0){
 
-            self::deleteChild($child_id);
+                self::deleteChild($child_id);
+            }
+
+            $category->delete();
+
+            return self::success('Success', true);
+
+        } 
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
         }
-
-        $category->delete();
-
-        return true;
     }
-
 
     public static function deleteChild($child_id){
         $grand_child_id = Category::whereIn('category_id',$child_id)->pluck('id');

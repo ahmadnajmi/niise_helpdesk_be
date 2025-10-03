@@ -18,7 +18,6 @@ class Branch extends Model
         'state_id',
         'category',
         'location',
-        'branch_code'
     ];
 
     public function operatingTime(){

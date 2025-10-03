@@ -25,46 +25,34 @@ class IncidentController extends Controller
 
     public function store(IncidentRequest $request)
     {
-        try {
-            $data = $request->all();
+        $data = $request->all();
 
-            $data = IncidentServices::create($data,$request);
+        $data = IncidentServices::create($data,$request);
 
-            return $this->generalResponse($data);
-          
-        } catch (\Throwable $th) {
-             return $this->error($th->getMessage());
-        }
+        return $data; 
     }
 
     public function show(Incident $incident)
     {
         $data = IncidentServices::view($incident);
 
-        return $this->success('Success', $data);
+        return $data;
     }
 
     public function update(IncidentRequest $request, Incident $incident)
     {
-        try {
-            $data = $request->all();
+        $data = $request->all();
 
-            $data = IncidentServices::update($incident,$data,$request);
+        $data = IncidentServices::update($incident,$data,$request);
 
-            return $this->generalResponse($data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return $data;
     }
 
     public function destroy(Incident $incident)
     {
         $data = IncidentServices::delete($incident);
 
-        if(!$data) return $this->error('Not user incident');
-
-        return $this->success('Success', null);
+        return $data;
     }
     
     public function downloadFile($filename){

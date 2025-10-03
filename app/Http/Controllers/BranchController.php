@@ -6,7 +6,9 @@ use App\Http\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use App\Http\Collection\BranchCollection;
 use App\Http\Resources\BranchResources;
+use App\Http\Services\BranchService;
 use App\Models\Branch;
+use App\Http\Requests\BranchRequest;
 
 class BranchController extends Controller
 {
@@ -21,6 +23,15 @@ class BranchController extends Controller
 
         return $this->success('Success', $data);
         // return new BranchCollection($data);
+    }
+
+    public function idmCreateUpdate(BranchRequest $request){
+
+        $data = $request->all();
+
+        $data = BranchService::create($data);
+
+        return $data;
     }
 
     public function show(Branch $Branch){

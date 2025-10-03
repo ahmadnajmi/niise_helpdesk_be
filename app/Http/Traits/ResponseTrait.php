@@ -6,7 +6,7 @@ use Illuminate\Testing\Exceptions\InvalidArgumentException;
 
 trait ResponseTrait {
 
-    protected function success(string $message, $data = [], int $status = 200) {
+    public static function success(string $message, $data = [], int $status = 200) {
 
         $response = [
             'status' => true,
@@ -22,7 +22,7 @@ trait ResponseTrait {
 
     }
 
-    protected function error(string $message, $errors = [], int $status = 500) {
+    public static function error($message, $errors = [], int $status = 500) {
 
         $response = [
             'status' => false,
@@ -61,8 +61,7 @@ trait ResponseTrait {
         return response()->json($response, $status);
     }
 
-    // protected function generalResponse(string $message, $data = [], int $status = 200) {
-    protected function generalResponse($response) {
+    protected static function generalResponse($response) {
 
         $response['status_code'] = isset($response['status_code']) ? $response['status_code'] : 200;
         $response['message'] = isset($response['message']) ? $response['message'] : true;

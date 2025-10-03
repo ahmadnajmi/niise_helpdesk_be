@@ -25,6 +25,8 @@ use Carbon\Carbon;
 
 class IncidentServices
 {
+    use ResponseTrait;
+
     public static function index($request){
         
         $data =  Incident::filterIncident($request);
@@ -33,95 +35,108 @@ class IncidentServices
     }
     
     public static function create($data,$request){
-        $category_code = isset($data['category']) ? $data['category'] : null;
-        $received_via = null;
 
-        DB::beginTransaction();
+        try{
+            $category_code = isset($data['category']) ? $data['category'] : null;
+            $received_via = null;
 
-        if(!isset($data['complaint_id'])){
+            DB::beginTransaction();
 
-            $complaint = Complaint::create($data);
+            if(!isset($data['complaint_id'])){
 
-            $data['complaint_id'] =  $complaint->id;
-        }
+                $complaint = Complaint::create($data);
 
-        $user_details = User::where('id',$data['complaint_id'])->first();
-
-        if(isset($data['complaint_user_id']) && $user_details){
-            $data_complaint['name'] = $user_details->name;
-            $data_complaint['email'] = $user_details->email;
-            $data_complaint['phone_no'] = $user_details->phone_no;
-            $data_complaint['address'] = $user_details->address;
-            $data_complaint['state_id'] = $user_details->state_id;
-            $data_complaint['postcode'] = $user_details->postcode;
-
-            $complaint = Complaint::create($data_complaint);
-
-            $data['complaint_id'] =  $complaint->id; 
-        }
-
-        if($category_code){
-            $category = Category::whereRaw('LOWER(name) = ?', [strtolower($category_code)])->first();
-
-
-            $data['category_id'] = $category?->id;
-
-            if($category_code == Category::MOBILE) {
-                $received_via = Incident::RECIEVED_PHONE;
+                $data['complaint_id'] =  $complaint->id;
             }
-            elseif($category_code == Category::SISTEM) {
-                $received_via = Incident::RECIEVED_SYSTEM;
-            } 
+
+            $user_details = User::where('id',$data['complaint_id'])->first();
+
+            if(isset($data['complaint_user_id']) && $user_details){
+                $data_complaint['name'] = $user_details->name;
+                $data_complaint['email'] = $user_details->email;
+                $data_complaint['phone_no'] = $user_details->phone_no;
+                $data_complaint['address'] = $user_details->address;
+                $data_complaint['state_id'] = $user_details->state_id;
+                $data_complaint['postcode'] = $user_details->postcode;
+
+                $complaint = Complaint::create($data_complaint);
+
+                $data['complaint_id'] =  $complaint->id; 
+            }
+
+            if($category_code){
+                $category = Category::whereRaw('LOWER(name) = ?', [strtolower($category_code)])->first();
+
+
+                $data['category_id'] = $category?->id;
+
+                if($category_code == Category::MOBILE) {
+                    $received_via = Incident::RECIEVED_PHONE;
+                }
+                elseif($category_code == Category::SISTEM) {
+                    $received_via = Incident::RECIEVED_SYSTEM;
+                } 
+            }
+
+            $data['incident_no'] = Incident::generateIncidentNo();
+            $data['incident_date'] = Carbon::now();
+            $data['sla_version_id'] = self::getSlaVersion($data);
+            $data['expected_end_date'] = self::calculateDueDateIncident($data);
+
+            // $data['service_recipient_id'] = $data['service_recipient_id'] ?? $data['operation_user_id'] ?? null;
+            $data['received_via'] = $data['received_via'] ?? $received_via ?? null;
+            $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
+
+            $data = self::uploadDoc($data,$request);
+
+            $create = Incident::create($data);
+
+            $create_resolution = self::createResolution($create->id);
+
+            $create_workbasket = self::createWorkbasket($create->id);
+
+            $create->refresh();
+
+            $return = self::callAssetIncident($create);
+
+            return self::generalResponse($return);
         }
-
-        $data['incident_no'] = Incident::generateIncidentNo();
-        $data['incident_date'] = Carbon::now();
-        $data['sla_version_id'] = self::getSlaVersion($data);
-        $data['expected_end_date'] = self::calculateDueDateIncident($data);
-
-        // $data['service_recipient_id'] = $data['service_recipient_id'] ?? $data['operation_user_id'] ?? null;
-        $data['received_via'] = $data['received_via'] ?? $received_via ?? null;
-        $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
-
-        $data = self::uploadDoc($data,$request);
-
-        $create = Incident::create($data);
-
-        $create_resolution = self::createResolution($create->id);
-
-        $create_workbasket = self::createWorkbasket($create->id);
-
-        $create->refresh();
-
-        $return = self::callAssetIncident($create);
-
-        return $return;
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
     }
 
     public static function update(Incident $incident,$data,$request){
-        DB::beginTransaction();
 
-        $data['incident_no'] = $incident->incident_no;
-        $data['incident_date'] = $incident->incident_date;
+        try{
 
-        $data = self::uploadDoc($data,$request);
+            DB::beginTransaction();
 
-        if($incident->categoryDescription->name == 'MOBILE'){
-            $data['sla_version_id'] = self::getSlaVersion($data);
-            $data['expected_end_date'] = self::calculateDueDateIncident($data);
+            $data['incident_no'] = $incident->incident_no;
+            $data['incident_date'] = $incident->incident_date;
+
+            $data = self::uploadDoc($data,$request);
+        
+            if($incident->categoryDescription?->name == 'MOBILE'){
+                $data['sla_version_id'] = self::getSlaVersion($data);
+                $data['expected_end_date'] = self::calculateDueDateIncident($data);
+            }
+
+            $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
+
+            $create = $incident->update($data);
+
+            $return = self::callAssetIncident($incident);
+
+            if($incident->status == Incident::RESOLVED || $incident->status == Incident::CLOSED){
+                // self::calculatePenalty($incident);
+            }
+
+            return self::generalResponse($return);
         }
-
-        $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
-
-        $create = $incident->update($data);
-
-        $return = self::callAssetIncident($incident);
-
-        if($incident->status == Incident::RESOLVED || $incident->status == Incident::CLOSED){
-            // self::calculatePenalty($incident);
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
         }
-
-        return $return;
     }
 
     public static function view(Incident $incident){
@@ -132,20 +147,21 @@ class IncidentServices
                 'status' => Workbasket::OPENED,
             ]);
         }
-        
-        return  new IncidentResources($incident);
+        $data = new IncidentResources($incident);
+
+        return self::success('Success', $data);
     }
 
     public static function delete($incident){
 
-        if($incident->created_by != auth()->user()->id ){
-            return false;
+    if($incident->created_by != auth()->user()->id ){
+            return self::error('Not user incident');
         }
+        $incident->incidentResolution()->delete();
 
         $incident->delete();
 
-        return true;
-
+        return self::success('Success', true);
     }
 
     public static function uploadDoc($data,$request){

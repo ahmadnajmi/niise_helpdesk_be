@@ -25,16 +25,11 @@ class CategoryController extends Controller
 
     public function store(CategoryRequest $request)
     {
-        try {
-            $data = $request->all();
+        $data = $request->all();
 
-            $data = CategoryServices::create($data);
-           
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        $data = CategoryServices::create($data);
+        
+        return $data;
     }
 
     public function show(Category $category)
@@ -46,23 +41,18 @@ class CategoryController extends Controller
 
     public function update(CategoryRequest $request, Category $category)
     {
-        try {
-            $data = $request->all();
+        $data = $request->all();
 
-            $data = CategoryServices::update($category,$data);
+        $data = CategoryServices::update($category,$data);
 
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return $data;
     }
 
     public function destroy(Category $category)
     {
-        CategoryServices::delete($category);
+        $data = CategoryServices::delete($category);
 
-        return $this->success('Success', null);
+        return $data;
     }
 
 }
