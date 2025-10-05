@@ -33,16 +33,11 @@ class RefTableController extends Controller
 
     public function store(RefTableRequest $request)
     {
-        try {
-            $data = $request->all();
+        $data = $request->all();
 
-            $data = RefTableServices::create($data);
+        $data = RefTableServices::create($data);
            
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return $data;
     }
 
     public function show(RefTable $ref_table)
@@ -54,16 +49,11 @@ class RefTableController extends Controller
 
     public function update(RefTableRequest $request, RefTable $ref_table)
     {
-        try {
-            $data = $request->all();
+        $data = $request->all();
 
-            $return = RefTableServices::update($ref_table,$data);
+        $return = RefTableServices::update($ref_table,$data);
 
-            return $this->success('Success', $return);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return $return;
     }
 
     public function destroy(RefTable $ref_table)

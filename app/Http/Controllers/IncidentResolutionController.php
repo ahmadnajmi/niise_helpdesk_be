@@ -26,16 +26,11 @@ class IncidentResolutionController extends Controller
 
     public function store(IncidentResolutionRequest $request)
     {
-        try {
-            $data = $request->all();
-           
-            $data = IncidentResolutionServices::create($data);
+        $data = $request->all();
+        
+        $data = IncidentResolutionServices::create($data);
 
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return $data;     
     }
 
     public function show(IncidentResolution $incident_solution)
@@ -47,16 +42,12 @@ class IncidentResolutionController extends Controller
 
     public function update(IncidentResolutionRequest $request, IncidentResolution $incident_solution)
     {
-        // try {
-            $data = $request->all();
+       
+        $data = $request->all();
 
-            $data = IncidentResolutionServices::update($incident_solution,$data);
+        $data = IncidentResolutionServices::update($incident_solution,$data);
 
-            return $this->success('Success', $data);
-          
-        // } catch (\Throwable $th) {
-        //     return $this->error($th->getMessage());
-        // }
+        return $data;
     }
 
     public function destroy(IncidentResolution $incident_solution)

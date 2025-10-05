@@ -26,16 +26,11 @@ class SlaTemplateController extends Controller
 
     public function store(SlaTemplateRequest $request)
     {
-        try {
-            $data = $request->all();
+        $data = $request->all();
 
-            $data =  SlaTemplateServices::create($data);
+        $data =  SlaTemplateServices::create($data);
 
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return $data;
     }
 
     public function show(SlaTemplate $sla_template)
@@ -47,16 +42,11 @@ class SlaTemplateController extends Controller
 
     public function update(SlaTemplateRequest $request, SlaTemplate $sla_template)
     {
-        try {
-            $data = $request->all();
+        $data = $request->all();
 
-            $data = SlaTemplateServices::update($sla_template,$data);
+        $data = SlaTemplateServices::update($sla_template,$data);
 
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return $data;
     }
 
     public function destroy(SlaTemplate $sla_template)

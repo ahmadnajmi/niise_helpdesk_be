@@ -14,8 +14,7 @@ class UserController extends Controller
 {
     use ResponseTrait;
 
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         $limit = $request->limit ? $request->limit : 15;
 
         $data =  User::paginate($limit);
@@ -23,43 +22,29 @@ class UserController extends Controller
         return new UserCollection($data);
     }
 
-    public function store(UserRequest $request)
-    {
-        try {
-            $data = $request->all();
+    public function store(UserRequest $request){
+        $data = $request->all();
 
-            $data = UserServices::create($data);
+        $data = UserServices::create($data);
            
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return $data;  
     }
 
-    public function show(User $user)
-    {
+    public function show(User $user){
         $data = new UserResources($user);
 
         return $this->success('Success', $data);
     }
 
-    public function update(UserRequest $request, User $user)
-    {
-        try {
-            $data = $request->all();
+    public function update(UserRequest $request, User $user){
+        $data = $request->all();
 
-            $data = UserServices::update($user,$data);
+        $data = UserServices::update($user,$data);
 
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return $data; 
     }
 
-    public function destroy(User $user)
-    {
+    public function destroy(User $user){
         UserServices::delete($user);
 
         return $this->success('Success', null);
@@ -72,7 +57,7 @@ class UserController extends Controller
         return $this->success($data['message'], $data['data']);
     }
 
-      public function searchIcNoContractor(Request $request){
+    public function searchIcNoContractor(Request $request){
 
         $data = UserServices::searchIcNoContractor($request);
 

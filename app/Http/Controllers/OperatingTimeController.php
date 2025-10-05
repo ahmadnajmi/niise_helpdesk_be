@@ -30,16 +30,12 @@ class OperatingTimeController extends Controller
     }
 
     public function store(OperatingTimeRequest $request){
-        try {
-            $data = $request->all();
+       
+        $data = $request->all();
 
-            $data = OperatingTimeServices::create($data);
-           
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        $data = OperatingTimeServices::create($data);
+         
+        return $data; 
     }
 
     public function show(OperatingTime $operating_time){
@@ -48,17 +44,12 @@ class OperatingTimeController extends Controller
         return $this->success('Success', $data);
     }
 
-    public function update(OperatingTimeRequest $request, OperatingTime $operating_time){
-        try {
-            $data = $request->all();
+    public function update(OperatingTimeRequest $request, OperatingTime $operating_time){  
+        $data = $request->all();
 
-            $data = OperatingTimeServices::update($operating_time,$data);
+        $data = OperatingTimeServices::update($operating_time,$data);
 
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return $data;
     }
 
     public function destroy(OperatingTime $operating_time){

@@ -4,64 +4,80 @@ namespace App\Http\Services;
 use App\Models\Sla;
 use App\Models\Category;
 use App\Http\Resources\SlaResources;
+use App\Http\Traits\ResponseTrait;
 
 class SlaServices
 {
+    use ResponseTrait;
+
     public static function create($data){
+        try{
+            $sla_id = [];
+            $branch_id = json_encode($data['branch_id']);
 
-        $sla_id = [];
-        $branch_id = json_encode($data['branch_id']);
+            foreach($data['sla_category'] as $sla_category){
 
-        foreach($data['sla_category'] as $sla_category){
+                // $branch_listed = json_encode($data['branch_id']);
 
-            // $branch_listed = json_encode($data['branch_id']);
+                // $check_sla = Sla::where('category_id',$sla_category)->exists();
 
-            // $check_sla = Sla::where('category_id',$sla_category)->exists();
+                // if(!$check_sla){
+                    $data['category_id'] = $sla_category;
+                    $data['code'] = self::generateCode($sla_category);
+                    $data['branch_id'] = $branch_id;
 
-            // if(!$check_sla){
-                $data['category_id'] = $sla_category;
-                $data['code'] = self::generateCode($sla_category);
-                $data['branch_id'] = $branch_id;
+                    $create = Sla::create($data);
+                    
+                    $sla_id[] = $create->id;
+                // }
+            }
 
-                $create = Sla::create($data);
-                
-                $sla_id[] = $create->id;
-            // }
+            if(count($sla_id) > 0){
+                $data = new SlaResources($create);
+                $message = 'Success';
+                $code = 200;
+            } 
+            else{
+                $message =  __('sla.message.sla_exists');
+                $data = null;
+                $code = 500;
+            }   
+
+            $return  = [
+                'status_code' => $code,
+                'message' => $message,
+                'data' => $data,
+            ]; 
+            
+            return self::generalResponse($return);
         }
-
-        if(count($sla_id) > 0){
-            $data = new SlaResources($create);
-            $message = 'Success';
-            $code = 200;
-        } 
-        else{
-            $message =  __('sla.message.sla_exists');
-            $data = null;
-            $code = 500;
-        }   
-
-        $return  = [
-            'status_code' => $code,
-            'message' => $message,
-            'data' => $data,
-        ]; 
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
 
         return $return;
     }
 
     public static function update(Sla $sla,$data){
 
-        $data['branch_id'] = json_encode($data['branch_id']);
+        try{
+            $data['branch_id'] = json_encode($data['branch_id']);
 
-        $update = $sla->update($data);
+            $update = $sla->update($data);
 
-        $return = new SlaResources($sla);
+            $return = new SlaResources($sla);
 
-        $return  = [
-            'message' => 'Success',
-            'data' => $data,
-            'status_code' => 200,
-        ]; 
+            $return  = [
+                'message' => 'Success',
+                'data' => $data,
+                'status_code' => 200,
+            ]; 
+
+            return self::generalResponse($return);
+        }
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
 
         return $return;
     }
@@ -92,6 +108,4 @@ class SlaServices
         
         return $new_code;
     }
-
-    
 }

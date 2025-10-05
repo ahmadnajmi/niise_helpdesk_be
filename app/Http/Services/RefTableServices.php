@@ -5,27 +5,40 @@ namespace App\Http\Services;
 use App\Models\RefTable;
 use App\Http\Resources\SlaTemplateResources;
 use App\Http\Resources\RefTableResources;
+use App\Http\Traits\ResponseTrait;
 
 class RefTableServices
 {
+    use ResponseTrait;
+
     public static function create($data){
 
-        $data['ref_code'] = self::generateRefCode($data);
+        try{
+            $data['ref_code'] = self::generateRefCode($data);
 
-        $create = RefTable::create($data);
-        
-        $return = new RefTableResources($create);
+            $create = RefTable::create($data);
+            
+            $return = new RefTableResources($create);
 
-        return $return;
+            return self::success('Success', $return);
+        }
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
     }
 
     public static function update(RefTable $ref_table,$data){
 
-        $update = $ref_table->update($data);
+        try{
+            $update = $ref_table->update($data);
 
-        $return = new RefTableResources($ref_table);
+            $return = new RefTableResources($ref_table);
 
-        return $return;
+            return self::success('Success', $return);
+        }
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
     }
 
     public static function generateRefCode($data){

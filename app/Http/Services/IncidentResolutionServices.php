@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 
 use Illuminate\Support\Facades\Mail;
+use App\Http\Traits\ResponseTrait;
 use App\Models\Incident;
 use App\Models\IncidentResolution;
 use App\Models\ActionCode;
@@ -17,31 +18,43 @@ use App\Mail\ActionCodeEmail;
 
 class IncidentResolutionServices
 {
-    
+    use ResponseTrait;
+
     public static function create($data){
 
-        $create = IncidentResolution::create($data);
+        try{
+            $create = IncidentResolution::create($data);
 
-        self::actionCode($create);
+            self::actionCode($create);
 
-        // self::checkPenalty($create);
+            // self::checkPenalty($create);
 
-        $return = new IncidentResolutionResources($create);
+            $return = new IncidentResolutionResources($create);
 
-        return $return;
+            return self::success('Success', $return);
+        }
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
     }
 
     public static function update(IncidentResolution $incident_solution,$data){
 
-        $create = $incident_solution->update($data);
+        try{
+            $create = $incident_solution->update($data);
 
-        self::actionCode($incident_solution);
+            self::actionCode($incident_solution);
 
-        // self::checkPenalty($incident_solution);
+            // self::checkPenalty($incident_solution);
 
-        $return = new IncidentResolutionResources($incident_solution);
+            $return = new IncidentResolutionResources($incident_solution);
 
-        return $return;
+            return self::success('Success', $return);
+        }
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
+        
     }
 
 

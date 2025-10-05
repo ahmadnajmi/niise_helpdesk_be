@@ -10,48 +10,64 @@ use App\Models\RefTable;
 use App\Http\Resources\UserResources;
 use Faker\Factory as Faker;
 use Illuminate\Support\Facades\Lang;
+use App\Http\Traits\ResponseTrait;
 
 class UserServices
 {
+    use ResponseTrait;
+
     public static function create($data){
 
-        $check_user = User::where('ic_no',$data['ic_no'])->exists();
+        try {
+            $check_user = User::where('ic_no',$data['ic_no'])->exists();
 
-        if(!$check_user){
-            $data['password'] = Hash::make('P@ssw0rd');
+            if(!$check_user){
+                $data['password'] = Hash::make('P@ssw0rd');
 
-            $create = User::create($data);
+                $create = User::create($data);
 
-            $group_user = self::groupUser($data,$create->id);
+                $group_user = self::groupUser($data,$create->id);
 
-            if($data['role']){
-                $user_role['user_id'] = $create->id;
-                $user_role['role_id'] = $data['role'];
+                if($data['role']){
+                    $user_role['user_id'] = $create->id;
+                    $user_role['role_id'] = $data['role'];
 
-                UserRole::disableAuditing();
+                    UserRole::disableAuditing();
 
-                UserRole::create($user_role);
+                    UserRole::create($user_role);
+                }
+
+                $return = new UserResources($create);
+
+              
+            }
+            else{
+                $return = null;
             }
 
-            $return = new UserResources($create);
+            return self::success('Success', $return);
         }
-        else{
-            $return = null;
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
         }
         
-
         return $return;
     }
 
     public static function update(User $user,$data){
 
-        $update = $user->update($data);
+        try {
+            $update = $user->update($data);
 
-        $data = self::groupUser($data,$user->id);
+            $data = self::groupUser($data,$user->id);
 
-        $return = new UserResources($user);
+            $return = new UserResources($user);
 
-        return $return;
+            return self::success('Success', $return);
+        }
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
     }
 
     public static function groupUser($data,$user_id){
@@ -86,11 +102,11 @@ class UserServices
     public static function delete(User $user){
 
         UserGroup::where('user_id',$user->id)->delete();
+        UserGroupAccess::where('user_id',$user->id)->delete();
 
         $user->delete();
 
         return true;
-
     }
 
     public static function searchIcNo($request){
@@ -198,11 +214,7 @@ class UserServices
         return $return;
     }
     
-
-   
-
-    public static function generateMalayName()
-    {
+    public static function generateMalayName(){
         $firstNames = [
             'Ahmad', 'Ali', 'Azman', 'Faizal', 'Hafiz', 'Imran', 'Khairul', 'Najmi', 'Shafiq', 'Zul',
             'Ismail', 'Syazwan', 'Ridzuan', 'Fikri', 'Nizam', 'Firdaus', 'Zaki', 'Hasbullah', 'Roslan', 'Farid',

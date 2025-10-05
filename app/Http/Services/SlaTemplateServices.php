@@ -6,34 +6,47 @@ use App\Models\SlaTemplate;
 use App\Models\SlaVersion;
 use App\Models\Category;
 use App\Http\Resources\SlaTemplateResources;
+use App\Http\Traits\ResponseTrait;
 
 class SlaTemplateServices
 {
+    use ResponseTrait;
+
     public static function create($data){
 
-        $create = SlaTemplate::create($data);
+        try {
+            $create = SlaTemplate::create($data);
 
-        self::generateVersion($create);
-        
-        $return = new SlaTemplateResources($create);
+            self::generateVersion($create);
+            
+            $return = new SlaTemplateResources($create);
 
-        return $return;
+            return self::success('Success', $return);
+        }
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
     }
 
     public static function update(SlaTemplate $sla_template,$data){
 
-        $update = $sla_template->update($data);
+        try {
+            $update = $sla_template->update($data);
 
-        self::generateVersion($sla_template);
+            self::generateVersion($sla_template);
 
+            $return = new SlaTemplateResources($sla_template);
 
-        $return = new SlaTemplateResources($sla_template);
-
-        return $return;
+            return self::success('Success', $return);
+        }
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
     }
 
     public static function delete(SlaTemplate $sla_template){
         Sla::where('sla_template_id',$sla_template->id)->delete();
+        SlaVersion::where('sla_template_id',$sla_template->id)->delete();
 
         $sla_template->delete();
 
