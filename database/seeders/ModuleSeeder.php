@@ -303,6 +303,19 @@ class ModuleSeeder extends Seeder
                                     // 'module.delete',
                                 ]
                             ],
+                            [
+                                'code' => 'schedule_report',
+                                'name' => 'Schedule Report',
+                                'name_en' =>'Schedule Report',
+                                'description' => 'Manage customer profiles and related details, allowing the creation, viewing, updating, and deletion of customer records.',
+                                'permission' =>[
+                                    'schedule_report.index',
+                                    'schedule_report.create',
+                                    'schedule_report.view',
+                                    'schedule_report.update',
+                                    'schedule_report.delete',
+                                ]
+                            ],
                         ]
                     ],
                 ]
@@ -625,6 +638,12 @@ class ModuleSeeder extends Seeder
             'configuration.view' => 'View detailed information about a specific configuration.',
             'configuration.update' => 'Edit or update existing configuration information.',
             'configuration.delete' => 'Delete a configuration from the system.',
+
+            'schedule_report.index' => 'View the list of customers.',
+            'schedule_report.create' => 'Create or add a new schedule_report.',
+            'schedule_report.view' => 'View detailed information about a specific schedule_report.',
+            'schedule_report.update' => 'Edit or update existing schedule_report information.',
+            'schedule_report.delete' => 'Delete a schedule_report from the system.',
             
 
             

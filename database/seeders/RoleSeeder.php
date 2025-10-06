@@ -347,6 +347,16 @@ class RoleSeeder extends Seeder
                         ]
                     ],
                     [
+                        'module' => 'Schedule Report',
+                        'permission' =>[
+                            'schedule_report.index',
+                            'schedule_report.create',
+                            'schedule_report.view',
+                            'schedule_report.update',
+                            'schedule_report.delete',
+                        ]
+                    ],
+                    [
                         'module' =>'Insiden',
                         'permission' =>[
                             'incident.index.all',
@@ -560,6 +570,16 @@ class RoleSeeder extends Seeder
                             'action-code.view',
                             'action-code.update',
                             'action-code.delete',
+                        ]
+                    ],
+                    [
+                        'module' => 'Schedule Report',
+                        'permission' =>[
+                            'schedule_report.index',
+                            'schedule_report.create',
+                            'schedule_report.view',
+                            'schedule_report.update',
+                            'schedule_report.delete',
                         ]
                     ],
                     [
