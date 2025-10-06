@@ -2,13 +2,14 @@
 
 namespace App\Http\Services;
 
+use Illuminate\Support\Facades\DB;
+use App\Http\Traits\ResponseTrait;
 use App\Models\Incident;
 use App\Models\Branch;
 use App\Models\Workbasket;
 use App\Models\RefTable;
 use App\Models\Category;
-use Illuminate\Support\Facades\DB;
-use App\Http\Traits\ResponseTrait;
+use App\Models\Company;
 
 class DashboardServices
 {
@@ -205,11 +206,14 @@ class DashboardServices
     public static function index($request){
         
         $return = [
-            // 'incident_status' => self::incidentStatus($request),
-            // 'incident_four_days' => self::incidentFourDays($request),
-            // 'incident_by_branch' => self::incidentByBranch($request),
-            // 'incident_by_category' => self::incidentByCategory($request),
+            'incident_status' => self::incidentStatus($request),
+            'incident_four_days' => self::incidentFourDays($request),
+            'incident_by_branch' => self::incidentByBranch($request),
+            'incident_by_category' => self::incidentByCategory($request),
             'incident_to_be_breach' => self::incidentToBeBreach($request),
+            'incident_by_contractor' => self::incidentByContractor($request),
+            'graph_incident_daily' => self::graphTotalIncidentDaily($request),
+            'graph_incident_monthly' => self::graphTotalIncidentMonthly($request)
         ];
 
         return self::success('Success', $return);
@@ -217,15 +221,34 @@ class DashboardServices
 
     public static function incidentStatus($request){
 
-        $data['total_incident'] = Incident::count();
+        $data['total_incident'] = Incident::when($request->branch_id, function ($query) use ($request) {
+                                                return $query->where('branch_id',$request->branch_id); 
+                                            })
+                                            ->count();
+
         $data['in_progress'] = Incident::whereHas('workbasket', function ($query)use($data) {
                                             $query->where('status',Workbasket::IN_PROGRESS);
                                         })
+                                        ->when($request->branch_id, function ($query) use ($request) {
+                                            return $query->where('branch_id',$request->branch_id); 
+                                        })
                                         ->count();
 
-        $data['new'] = Incident::where('status',Incident::OPEN)->count();
-        $data['resolved'] = Incident::where('status',Incident::RESOLVED)->count();
-        $data['closed'] = Incident::where('status',Incident::CLOSED)->count();
+        $data['new'] = Incident::where('status',Incident::OPEN)
+                                ->when($request->branch_id, function ($query) use ($request) {
+                                    return $query->where('branch_id',$request->branch_id); 
+                                })
+                                ->count();
+        $data['resolved'] = Incident::where('status',Incident::RESOLVED)
+                                    ->when($request->branch_id, function ($query) use ($request) {
+                                        return $query->where('branch_id',$request->branch_id); 
+                                    })
+                                    ->count();
+        $data['closed'] = Incident::where('status',Incident::CLOSED)
+                                ->when($request->branch_id, function ($query) use ($request) {
+                                    return $query->where('branch_id',$request->branch_id); 
+                                })
+                                ->count();
 
         return $data;
     }
@@ -234,14 +257,23 @@ class DashboardServices
 
         $data['more_day'] = Incident::whereDate('expected_end_date', '<', now()->subDays(4)->startOfDay())
                                     ->where('status', '=', Incident::OPEN)
+                                    ->when($request->branch_id, function ($query) use ($request) {
+                                        return $query->where('branch_id',$request->branch_id); 
+                                    })
                                     ->count();
 
         $data['less_day'] = Incident::whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay())
                                     ->where('status', '=', Incident::OPEN)
+                                    ->when($request->branch_id, function ($query) use ($request) {
+                                        return $query->where('branch_id',$request->branch_id); 
+                                    })
                                     ->count();
 
         $data['same_day'] = Incident::whereDate('expected_end_date',now()->subDays(4)->startOfDay())
                                     ->where('status', '=', Incident::OPEN)
+                                    ->when($request->branch_id, function ($query) use ($request) {
+                                        return $query->where('branch_id',$request->branch_id); 
+                                    })
                                     ->count();
         return $data;
     }
@@ -253,11 +285,19 @@ class DashboardServices
                             })
                             ->get();
 
-        $total_incident = Incident::query()->selectRaw('branch_id, COUNT(*) as total_incident')->groupBy('branch_id');
+        $total_incident = Incident::query()
+                                ->selectRaw('branch_id, COUNT(*) as total_incident')
+                                ->when($request->branch_id, function ($query) use ($request) {
+                                    return $query->where('branch_id',$request->branch_id); 
+                                })
+                                ->groupBy('branch_id');
 
         $critical_incident = Incident::query()->selectRaw('branch_id, COUNT(*) as total_incident_critical')
                                     ->whereHas('sla.slaTemplate',function ($query){
                                         $query->where('severity_id', RefTable::SEVERITY_CRITICAL);
+                                    })
+                                    ->when($request->branch_id, function ($query) use ($request) {
+                                        return $query->where('branch_id',$request->branch_id); 
                                     })
                                     ->groupBy('branch_id');
 
@@ -334,12 +374,18 @@ class DashboardServices
                                 ->get();
 
         $incidentCounts = Incident::selectRaw('category_id, COUNT(*) as total_incident')
+                                ->when($request->branch_id, function ($query) use ($request) {
+                                    return $query->where('branch_id',$request->branch_id); 
+                                })
                                 ->groupBy('category_id')
                                 ->pluck('total_incident', 'category_id');
 
         $criticalCounts = Incident::selectRaw('category_id, COUNT(*) as total_incident_critical')
                                     ->whereHas('sla.slaTemplate', function ($q) {
                                         $q->where('severity_id', RefTable::SEVERITY_CRITICAL);
+                                    })
+                                    ->when($request->branch_id, function ($query) use ($request) {
+                                        return $query->where('branch_id',$request->branch_id); 
                                     })
                                     ->groupBy('category_id')
                                     ->pluck('total_incident_critical', 'category_id');
@@ -408,12 +454,15 @@ class DashboardServices
 
         $dateRange = [now()->startOfDay(), now()->addDays(2)->endOfDay()];
 
-        $counts = Incident::selectRaw('sla_templates.severity_id, incidents.category_id, COUNT(*) as total')
-                            ->join('sla', 'sla.id', '=', 'incidents.sla_template_id')
-                            ->join('sla_templates', 'sla_templates.id', '=', 'incidents.sla_template_id')
+        $counts = Incident::selectRaw('sla_template.severity_id, incidents.category_id, COUNT(*) as total')
+                            ->join('sla', 'sla.code', '=', 'incidents.code_sla')
+                            ->join('sla_template', 'sla_template.id', '=', 'sla.sla_template_id')
                             ->where('incidents.status', Incident::OPEN)
                             ->whereBetween('incidents.expected_end_date', $dateRange)
-                            ->groupBy('sla_templates.severity_id', 'incidents.category_id')
+                            ->when($request->branch_id, function ($query) use ($request) {
+                                return $query->where('incidents.branch_id',$request->branch_id); 
+                            })
+                            ->groupBy('sla_template.severity_id', 'incidents.category_id')
                             ->get();
 
         $criticalCounts  = $counts->where('severity_id', RefTable::SEVERITY_CRITICAL)->pluck('total', 'category_id');
@@ -460,5 +509,116 @@ class DashboardServices
         });
 
         return $data->values();
+    }
+
+    // public static function incidentByContractor($request){
+    //     $get_company = Company::select('id','name')
+    //                         ->get();
+
+    //     $data = [];
+
+    //     foreach($get_company as $company){
+
+    //         $total_incident = Incident::whereHas('sla.slaTemplate',function ($query)use($company){
+    //                                         $query->where('company_id', $company->id);
+    //                                     })
+    //                                     ->count();
+
+    //         $critical_incident = Incident::whereHas('sla.slaTemplate',function ($query){
+    //                                         $query->where('severity_id', RefTable::SEVERITY_CRITICAL);
+    //                                     })
+    //                                     ->whereHas('sla.slaTemplate',function ($query)use($company){
+    //                                         $query->where('company_id', $company->id);
+    //                                     })
+    //                                     ->count();
+    //         $data[] = [
+    //             'id' => $company->id,
+    //             'name' => $company->name,
+    //             'total_incident' => $total_incident,
+    //             'total_incident_critical' => $critical_incident,
+    //         ];
+    //     }
+
+
+    //     return $data;
+
+    // }
+
+    public static function incidentByContractor($request){
+        $get_company = Company::select('id','name')
+                            ->get();
+
+        $incidentCounts = Incident::selectRaw('sla_template.company_id, sla_template.severity_id, COUNT(*) as total')
+                                    ->join('sla', 'sla.code', '=', 'incidents.code_sla')
+                                    ->join('sla_template', 'sla_template.id', '=', 'sla.sla_template_id')
+                                    ->when($request->branch_id, function ($query) use ($request) {
+                                        return $query->where('incidents.branch_id',$request->branch_id); 
+                                    })
+                                    ->groupBy('sla_template.company_id', 'sla_template.severity_id')
+                                    ->get();
+        // dd($incidentCounts);
+        $data = [];
+
+        foreach($get_company as $company){
+            $companyIncidents = $incidentCounts->where('company_id', $company->id);
+
+            $total_incident = $companyIncidents->sum('total');
+
+            $critical_incident = $companyIncidents
+                ->where('severity_id', RefTable::SEVERITY_CRITICAL)
+                ->sum('total');
+
+            $data[] = [
+                'id' => $company->id,
+                'name' => $company->name,
+                'total_incident' => $total_incident,
+                'total_incident_critical' => $critical_incident,
+            ];
+        }
+
+
+        return $data;
+
+    }
+
+    public static function graphTotalIncidentDaily($request){
+
+        $incidentsByDay = Incident::select(
+                                        DB::raw("EXTRACT(DAY FROM incident_date) as day"),
+                                        DB::raw('COUNT(*) as total')
+                                    )
+                                    ->whereBetween('incident_date', [now()->startOfMonth(), now()->endOfMonth()])
+                                    ->when($request->branch_id, function ($query) use ($request) {
+                                        return $query->where('branch_id',$request->branch_id); 
+                                    })
+                                    ->groupBy(DB::raw("EXTRACT(DAY FROM incident_date)"))
+                                    ->pluck('total', 'day')
+                                    ->toArray();
+
+        $daysInMonth = now()->daysInMonth;
+        $allDays = array_fill(1, $daysInMonth, 0);
+        $incidentsByDay = array_values(array_replace($allDays, $incidentsByDay));
+
+        return $incidentsByDay;
+    }
+
+    public static function graphTotalIncidentMonthly($request){
+        
+        $incidentsByMonth = Incident::select(
+                                DB::raw("EXTRACT(MONTH FROM incident_date) as month"),
+                                DB::raw('COUNT(*) as total')
+                            )
+                            ->whereBetween('incident_date', [now()->startOfYear(), now()->endOfYear()])
+                            ->when($request->branch_id, function ($query) use ($request) {
+                                return $query->where('branch_id',$request->branch_id); 
+                            })
+                            ->groupBy(DB::raw("EXTRACT(MONTH FROM incident_date)"))
+                            ->pluck('total', 'month')
+                            ->toArray();
+
+        $allMonths = array_fill(1, 12, 0);
+        $incidentsByMonth = array_values(array_replace($allMonths, $incidentsByMonth));
+
+        return $incidentsByMonth;
     }
 }
