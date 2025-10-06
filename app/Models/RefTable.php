@@ -19,6 +19,10 @@ class RefTable extends BaseModel
 
     const PDF = 1;
     const CSV = 2;
+    const SEVERITY_CRITICAL = 1;
+    const SEVERITY_IMPORTANT = 2;
+    const SEVERITY_MEDIUM = 3;
+
 
     public function incidentsStatus(){
         return $this->hasMany(Incident::class, 'status', 'ref_code');
