@@ -24,7 +24,7 @@ class WorkbasketController extends Controller
     {
         $limit = $request->limit ?? 15;
 
-        $frontliner = Auth::user()->roles->contains('id', Role::FRONTLINER);
+        $frontliner = Auth::user()->roles->contains('role', Role::FRONTLINER);
 
         $data = Workbasket::where(function ($query) use ($frontliner) {
                                 $query->when($frontliner, function ($q) {

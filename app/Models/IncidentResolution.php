@@ -26,4 +26,8 @@ class IncidentResolution extends BaseModel
     public function incident(){
         return $this->hasOne(Incident::class,'id','incident_id');
     }
+
+    public function group(){
+        return $this->hasMany(Group::class,'id','group_id');
+    }
 }

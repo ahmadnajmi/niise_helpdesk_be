@@ -74,63 +74,7 @@ class RoleSeeder extends Seeder
                     // ],
                 ]
             ],
-            [
-                'name' => 'NOC /SOC / AOC (2nd Lvl)',
-                'name_en' => 'NOC /SOC / AOC (2nd Lvl)',
-                'role' => 'NOC_SOC_AOC',
-                'permission' =>  [
-                    [
-                        'module' => 'Insiden',
-                        'permission' =>[
-                            'incident.index.self',
-                            'incident.create',
-                            'incident.view',
-                            'resolution.index' ,
-                            'resolution.create',
-                            'resolution.view' ,
-                            'resolution.update',
-                            'resolution.delete',
-
-                            'contract.index',
-                            'contract.create',
-                            'contract.view',
-                            'contract.update',
-                            'contract.delete',
-                        ]
-                    ],
-                    [
-                        'module' => 'Jejak Audit',
-                        'permission' =>[
-                            'audit-trail.index',
-                            'audit-trail.view',
-                        ]
-                    ],
-                    [
-                        'module' => 'Knowledge Entries',
-                        'permission' =>[
-                            'knowledge-base.index',
-                            'knowledge-base.create',
-                            'knowledge-base.view',
-                            'knowledge-base.update',
-                            'knowledge-base.delete',
-                        ]
-                    ],
-                    [
-                        'module' => 'Halaman Utama',
-                        'permission' =>[
-                            'dashboard.index'
-                        ]
-                    ],
-                    // [
-                    //     'module' => 'Emel',
-                    //     'permission' =>[
-                    //         'email-notification.index',
-                    //         'email-notification.view',
-                    //         'email-notification.receive'
-                    //     ]
-                    // ],
-                ]
-            ],
+           
             [
                 'name' => 'Jurutera HDS ICT Frontliner',
                 'name_en' => 'HDS ICT Frontliner Engineer',

@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Facades\Auth;
 use DB;
 
 class Incident extends BaseModel
@@ -194,7 +195,19 @@ class Incident extends BaseModel
     public static function filterIncident($request){
         $limit = $request->limit ? $request->limit : 15;
 
-        $data =  Incident::when($request->status, function ($query) use ($request) {
+        $role = User::getUserRole(Auth::user()->id);
+
+        $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
+
+        $data =  Incident::when($role?->role == Role::JIM, function ($query){
+                            $query->where('created_by',Auth::user()->id);
+                        })
+                        ->when($role?->role == Role::CONTRACTOR, function ($query)use($group_id){
+                            return $query->whereHas('incidentResolution', function ($query)use($group_id) {
+                                $query->whereIn('group_id',$group_id); 
+                            });
+                        })
+                        ->when($request->status, function ($query) use ($request) {
                             if (is_array($request->status)) {
                                 return $query->whereIn('status', $request->status);
                             }
