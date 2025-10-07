@@ -163,11 +163,14 @@ class IncidentResolutionServices
         }
 
         $email_template = EmailTemplate::select('id','sender_name','sender_email','notes')->where('is_active',true)->first();
+
+        if (count(array_filter($send_to)) > 0) {
+            Mail::to($send_to)
+                ->cc($cc_to ?? [])
+                ->bcc($bc_to ?? [])
+                ->queue(new ActionCodeEmail($data->incident,$email_template));
+        }
         
-        Mail::to($send_to)
-            ->cc($cc_to ?? [])
-            ->bcc($bc_to ?? [])
-            ->queue(new ActionCodeEmail($data->incident,$email_template));
 
         return true;
     }
