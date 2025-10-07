@@ -85,6 +85,31 @@ class Incident extends BaseModel
         return 'TN'.date('Ymd').$next_number;
     }
 
+    public function scopeFilter($query){
+
+        $query = $query->when(request('code_sla'), function ($query) {
+                            $query->where('code_sla',request('code_sla'));
+                        })
+                        ->when(request('state_id'), function ($query) {
+                            $query->whereHas('branch', function ($query)use($check_parent_module) {
+                                $query->where('state_id',request('state_id')); 
+                            });
+                        })
+                        
+                        ->when(request('branch_id'), function ($query) {
+                            $query->where('branch_id',request('branch_id'));
+                        })
+                        
+                        
+                        
+                        
+                        
+                        ;
+
+        return $query;
+    }
+
+
     public function branch(){
         return $this->hasOne(Branch::class,'id','branch_id');
     }
@@ -236,6 +261,33 @@ class Incident extends BaseModel
                                 }); 
                             });
                         })
+                        ->when($request->code_sla, function ($query) use ($request){
+                            $query->where('code_sla',$request->code_sla);
+                        })
+                        ->when($request->state_id, function ($query)use ($request) {
+                            $query->whereHas('branch', function ($query)use($request) {
+                                $query->where('state_id',$request->state_id); 
+                            });
+                        })
+                        ->when($request->start_date, function ($query) use ($request){
+                            $query->whereDate('incident_date','>=',$request->start_date);
+                        })
+                        ->when($request->end_date, function ($query) use ($request){
+                            $query->whereDate('incident_date','<=',$request->end_date);
+                        })
+                        ->when($request->start_close_date, function ($query) use ($request){
+                            $query->whereDate('actual_end_date','>=',$request->start_close_date);
+                        })
+                        ->when($request->end_close_date, function ($query) use ($request){
+                            $query->whereDate('actual_end_date','<=',$request->end_close_date);
+                        })
+                        ->when($request->asset_siri_no, function ($query) use ($request){
+                            $query->where('asset_siri_no',$request->asset_siri_no);
+                        })
+                        ->when($request->incident_no, function ($query) use ($request){
+                            $query->where('incident_no',$request->incident_no);
+                        })
+                        
                         ->paginate($limit);
 
         return $data;
