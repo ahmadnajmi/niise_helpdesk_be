@@ -65,6 +65,9 @@ class IncidentResolutionServices
 
             $data_incident['status']  = $data->action_codes == 'ACTR' ? Incident::RESOLVED : Incident::CLOSED; 
 
+            if($data->action_codes == 'CLSD'){
+                $data_incident['resolved_user_id'] = auth()->user()->id;
+            }
             $incident->update($data_incident);
         }
 

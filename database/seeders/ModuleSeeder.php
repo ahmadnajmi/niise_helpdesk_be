@@ -188,32 +188,6 @@ class ModuleSeeder extends Seeder
                                     'email-format.delete',
                                 ]
                             ],
-                            [
-                                'code' => 'branch',
-                                'name' => 'Pengurusan Cawangan',
-                                'name_en' =>'Branch Management',
-                                'description' => 'Manage branch information, including creating, updating, viewing, and deleting branch records within the system.',
-                                'permission' =>[
-                                    'branch.index',
-                                    'branch.create',
-                                    'branch.view',
-                                    'branch.update',
-                                    'branch.delete',
-                                ]
-                            ],
-                            [
-                                'code' => 'customer',
-                                'name' => 'Pengurusan Pelanggan',
-                                'name_en' =>'Customer Management',
-                                'description' => 'Manage customer profiles and related details, allowing the creation, viewing, updating, and deletion of customer records.',
-                                'permission' =>[
-                                    'customer.index',
-                                    'customer.create',
-                                    'customer.view',
-                                    'customer.update',
-                                    'customer.delete',
-                                ]
-                            ],
                         ]
                     ],
 
@@ -581,20 +555,6 @@ class ModuleSeeder extends Seeder
             'contract.view' => 'View detailed information about a specific contract.',
             'contract.update' => 'Edit or update existing contract information.',
             'contract.delete' => 'Delete a contract from the system.',
-
-            'branch.index' => 'View the list of branches.',
-            'branch.create' => 'Create or add a new branch.',
-            'branch.view' => 'View detailed information about a specific branch.',
-            'branch.update' => 'Edit or update existing branch information.',
-            'branch.delete' => 'Delete a branch from the system.',
-
-            'customer.index' => 'View the list of customers.',
-            'customer.create' => 'Create or add a new customer.',
-            'customer.view' => 'View detailed information about a specific customer.',
-            'customer.update' => 'Edit or update existing customer information.',
-            'customer.delete' => 'Delete a customer from the system.',
-
-            
         ];
 
         foreach($permissions as $permission){

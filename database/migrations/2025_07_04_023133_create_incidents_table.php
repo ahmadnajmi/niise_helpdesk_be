@@ -40,6 +40,7 @@ return new class extends Migration
             $table->dateTime('expected_end_date')->nullable();
             $table->dateTime('actual_end_date')->nullable();
             $table->smallInteger('status')->default(1);
+            $table->unsignedBigInteger('resolved_user_id')->nullable(); 
             $table->unsignedBigInteger('sla_version_id')->nullable(); 
             $table->log();
         });

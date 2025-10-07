@@ -41,7 +41,8 @@ class Incident extends BaseModel
         'asset_parent_id',
         'asset_component_id',
         'sla_version_id',
-        'service_recipient_id'
+        'service_recipient_id',
+        'resolved_user_id',
     ];
 
     protected $casts = [
@@ -85,31 +86,6 @@ class Incident extends BaseModel
         return 'TN'.date('Ymd').$next_number;
     }
 
-    public function scopeFilter($query){
-
-        $query = $query->when(request('code_sla'), function ($query) {
-                            $query->where('code_sla',request('code_sla'));
-                        })
-                        ->when(request('state_id'), function ($query) {
-                            $query->whereHas('branch', function ($query)use($check_parent_module) {
-                                $query->where('state_id',request('state_id')); 
-                            });
-                        })
-                        
-                        ->when(request('branch_id'), function ($query) {
-                            $query->where('branch_id',request('branch_id'));
-                        })
-                        
-                        
-                        
-                        
-                        
-                        ;
-
-        return $query;
-    }
-
-
     public function branch(){
         return $this->hasOne(Branch::class,'id','branch_id');
     }
@@ -128,6 +104,10 @@ class Incident extends BaseModel
 
     public function complaintUser(){
         return $this->hasOne(User::class,'id','complaint_user_id');
+    }
+
+    public function resolvedByUser(){
+        return $this->hasOne(User::class,'id','resolved_user_id');
     }
 
     public function slaVersion(){
@@ -261,9 +241,27 @@ class Incident extends BaseModel
                                 }); 
                             });
                         })
-                        ->when($request->code_sla, function ($query) use ($request){
-                            $query->where('code_sla',$request->code_sla);
+                        ->when($request->code_sla, function ($query) use ($request) {
+                            return $query->where('code_sla',$request->code_sla);
                         })
+                        ->when($request->received_via, function ($query) use ($request) {
+                            return $query->where('received_via',$request->received_via);
+                        })
+                        ->when($request->created_by, function ($query) use ($request) {
+                            return $query->whereHas('createdBy', function ($query)use($request) {
+                                    $query->where('name',$request->created_by); 
+                            });
+                        })
+                        ->when($request->complaint_by, function ($query) use ($request) {
+                            return $query->whereHas('complaintUser', function ($query)use($request) {
+                                    $query->where('name',$request->complaint_by); 
+                            });
+                        })
+                        ->when($request->close_by, function ($query) use ($request) {
+                            return $query->whereHas('resolvedByUser', function ($query)use($request) {
+                                    $query->where('name',$request->close_by); 
+                            });
+                        })    
                         ->when($request->state_id, function ($query)use ($request) {
                             $query->whereHas('branch', function ($query)use($request) {
                                 $query->where('state_id',$request->state_id); 

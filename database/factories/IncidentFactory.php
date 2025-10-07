@@ -56,6 +56,8 @@ class IncidentFactory extends Factory
 
     public function configure(){
         return $this->afterCreating(function (Incident $incident) {
+            $user = User::inRandomOrder()->first();
+
             IncidentServices::createResolution($incident->id);
 
             $data_reso['incident_id'] = $incident->id;
@@ -81,6 +83,7 @@ class IncidentFactory extends Factory
                 $endDate      = (clone $incident->incident_date)->addMonth();
 
                 $data_update['actual_end_date'] = fake()->dateTimeBetween($incident->incident_date, $endDate)->format('Y-m-d H:i:s');
+                $data_update['resolved_user_id'] = $user?->id;
 
                 $incident->update($data_update);
 
