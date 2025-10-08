@@ -155,28 +155,15 @@ class Incident extends BaseModel
             $query->where(function($q) use ($keyword,$lang) {
                 $q->whereRaw('LOWER(incident_no) LIKE ?', ["%{$keyword}%"]);
                 $q->orWhereRaw('LOWER(information) LIKE ?', ["%{$keyword}%"]);
-                $q->orWhereDate('incident_date',$keyword);
-                $q->orWhereDate('actual_end_date',$keyword);
-
-                // $q->orWhereHas('sla.slaTemplate.severityDescription', function ($search) use ($keyword,$lang) {
-                //     $search->when($lang === 'ms', function ($ref_table) use ($keyword) {
-                //         $ref_table->whereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"]);
-                //     });
-                //     $search->when($lang === 'en', function ($ref_table) use ($keyword) {
-                //         $ref_table->whereRaw('LOWER(name_en) LIKE ?', ["%{$keyword}%"]);
-                //     });
-                // });
-                // $q->orWhereHas('sla', function ($sla) use ($keyword, $lang) {
-                //     $sla->whereHas('slaTemplate', function ($template) use ($keyword, $lang) {
-                //         $template->whereHas('severityDescription', function ($desc) use ($keyword, $lang) {
-                //             $desc->when($lang === 'ms', fn($q) => 
-                //                 $q->whereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"])
-                //             )->when($lang === 'en', fn($q) => 
-                //                 $q->whereRaw('LOWER(name_en) LIKE ?', ["%{$keyword}%"])
-                //             );
-                //         });
-                //     });
-                // });
+                
+                $q->orWhereHas('sla.slaTemplate.severityDescription', function ($desc) use ($keyword, $lang) {
+                    if ($lang === 'ms') {
+                        $desc->whereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"]);
+                    } else{
+                        $desc->whereRaw('LOWER(name_en) LIKE ?', ["%{$keyword}%"]);
+                    }
+                });
+                                
                 $q->orWhereHas('branch', function ($search) use ($keyword) {
                     $search->whereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"]);
                 });
@@ -184,9 +171,27 @@ class Incident extends BaseModel
                 $q->orWhereHas('complaint', function ($search) use ($keyword) {
                     $search->whereRaw('LOWER(phone_no) LIKE ?', ["%{$keyword}%"]);
                 });
+
+                if ($this->isValidDate($keyword)) {
+                    $q->orWhereDate('incident_date', $keyword);
+                    $q->orWhereDate('actual_end_date', $keyword);
+                }
             });
         }
         return $query;
+    }
+
+    private function isValidDate($date){
+        if (empty($date)) {
+            return false;
+        }
+        
+        try {
+            $parsedDate = \Carbon\Carbon::parse($date);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     protected function calculateCountDownSettlement(): Attribute{
