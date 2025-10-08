@@ -147,6 +147,48 @@ class Incident extends BaseModel
         return $this->hasOne(Workbasket::class,'incident_id','id');
     }
 
+    public function scopeSearch($query, $keyword){
+        if (!empty($keyword)) {
+            $keyword = strtolower($keyword);
+            $lang = substr(request()->header('Accept-Language'), 0, 2); 
+
+            $query->where(function($q) use ($keyword,$lang) {
+                $q->whereRaw('LOWER(incident_no) LIKE ?', ["%{$keyword}%"]);
+                $q->orWhereRaw('LOWER(information) LIKE ?', ["%{$keyword}%"]);
+                $q->orWhereDate('incident_date',$keyword);
+                $q->orWhereDate('actual_end_date',$keyword);
+
+                // $q->orWhereHas('sla.slaTemplate.severityDescription', function ($search) use ($keyword,$lang) {
+                //     $search->when($lang === 'ms', function ($ref_table) use ($keyword) {
+                //         $ref_table->whereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"]);
+                //     });
+                //     $search->when($lang === 'en', function ($ref_table) use ($keyword) {
+                //         $ref_table->whereRaw('LOWER(name_en) LIKE ?', ["%{$keyword}%"]);
+                //     });
+                // });
+                // $q->orWhereHas('sla', function ($sla) use ($keyword, $lang) {
+                //     $sla->whereHas('slaTemplate', function ($template) use ($keyword, $lang) {
+                //         $template->whereHas('severityDescription', function ($desc) use ($keyword, $lang) {
+                //             $desc->when($lang === 'ms', fn($q) => 
+                //                 $q->whereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"])
+                //             )->when($lang === 'en', fn($q) => 
+                //                 $q->whereRaw('LOWER(name_en) LIKE ?', ["%{$keyword}%"])
+                //             );
+                //         });
+                //     });
+                // });
+                $q->orWhereHas('branch', function ($search) use ($keyword) {
+                    $search->whereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"]);
+                });
+
+                $q->orWhereHas('complaint', function ($search) use ($keyword) {
+                    $search->whereRaw('LOWER(phone_no) LIKE ?', ["%{$keyword}%"]);
+                });
+            });
+        }
+        return $query;
+    }
+
     protected function calculateCountDownSettlement(): Attribute{
         return Attribute::get(function () {
 
@@ -199,15 +241,16 @@ class Incident extends BaseModel
 
         $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
 
-        $data =  Incident::when($role?->role == Role::JIM, function ($query){
-                            $query->where('created_by',Auth::user()->id);
-                        })
-                        ->when($role?->role == Role::CONTRACTOR, function ($query)use($group_id){
-                            return $query->whereHas('incidentResolution', function ($query)use($group_id) {
-                                $query->whereIn('group_id',$group_id); 
-                            });
-                        })
-                        ->when($request->status, function ($query) use ($request) {
+        $data =  Incident::
+                        // when($role?->role == Role::JIM, function ($query){
+                        //     $query->where('created_by',Auth::user()->id);
+                        // })
+                        // ->when($role?->role == Role::CONTRACTOR, function ($query)use($group_id){
+                        //     return $query->whereHas('incidentResolution', function ($query)use($group_id) {
+                        //         $query->whereIn('group_id',$group_id); 
+                        //     });
+                        // })
+                        when($request->status, function ($query) use ($request) {
                             if (is_array($request->status)) {
                                 return $query->whereIn('status', $request->status);
                             }
@@ -313,6 +356,7 @@ class Incident extends BaseModel
                                 $query->where('group_id',$request->group_id); 
                             });
                         })
+                        ->search($request->search)
                         ->paginate($limit);
 
         return $data;
