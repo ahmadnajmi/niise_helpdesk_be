@@ -266,8 +266,18 @@ class Incident extends BaseModel
                             });
                         })
                         ->when($request->complaint_by, function ($query) use ($request) {
-                            return $query->whereHas('complaintUser', function ($query)use($request) {
+                            return $query->whereHas('complaint', function ($query)use($request) {
                                     $query->where('name',$request->complaint_by); 
+                            });
+                        })
+                         ->when($request->complaint_phone_no, function ($query) use ($request) {
+                            return $query->whereHas('complaint', function ($query)use($request) {
+                                    $query->where('phone_no',$request->complaint_phone_no); 
+                            });
+                        })
+                         ->when($request->complaint_ic_no, function ($query) use ($request) {
+                            return $query->whereHas('complaintUser', function ($query)use($request) {
+                                    $query->where('ic_no',$request->complaint_ic_no); 
                             });
                         })
                         ->when($request->close_by, function ($query) use ($request) {
@@ -298,7 +308,11 @@ class Incident extends BaseModel
                         ->when($request->incident_no, function ($query) use ($request){
                             $query->where('incident_no',$request->incident_no);
                         })
-                        
+                        ->when($request->group_id, function ($query)use($request){
+                            return $query->whereHas('incidentResolution', function ($query)use($request) {
+                                $query->where('group_id',$request->group_id); 
+                            });
+                        })
                         ->paginate($limit);
 
         return $data;

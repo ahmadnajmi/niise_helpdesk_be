@@ -21,6 +21,11 @@ class Category extends BaseModel
     const MOBILE = 'MOBILE';
     const SISTEM = 'SISTEM';
 
+    public function childCategoryRecursive(){
+        return $this->hasMany(Category::class, 'category_id', 'id')
+                    ->with('childCategoryRecursive');
+    }
+
 
     public function mainCategory(){
         return $this->hasOne(Category::class, 'id','category_id');

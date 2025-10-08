@@ -33,21 +33,13 @@ class GeneralServices
                                                 $query->whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $request->branch_id)')");
                                             });
                                         })
-                                        // ->with(['childCategory' => function ($query) {
-                                        //     $query->select('id','category_id','name','level','code')
-                                        //             ->with(['childCategory' => function ($query) {
-                                        //                 $query->select('id','category_id','name','level','code')
-                                        //                         ->with(['sla' => function ($query) {
-                                        //                             $query->select('id','code','category_id');
-                                        //                         }]);
-                                        //             }])
-                                        //             ->with(['sla' => function ($query) {
-                                        //                 $query->select('id','code','category_id');
-                                        //             }]);
-                                        // }])
                                         ->with(['sla' => function ($query) {
                                             $query->select('id','code','category_id');
                                         }])
+                                        ->with(['childCategoryRecursive' => function ($query) {
+                                            $query->select('id','category_id','name','level','code');
+                                        }])
+                                        ->whereNull('category_id')
                                         ->where('is_active',true)
                                         ->orderBy('name','asc')
                                         ->get();
