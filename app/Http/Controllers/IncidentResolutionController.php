@@ -19,7 +19,11 @@ class IncidentResolutionController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
         
-        $data =  IncidentResolution::paginate($limit);
+        $data =  IncidentResolution::when($request->incident_id, function ($query)use($request) {
+                                        return $query->where('incident_id', $request->incident_id);
+                                    })
+                                    ->sortByField($request)
+                                    ->paginate($limit);
 
         return new IncidentResolutionCollection($data);
     }
