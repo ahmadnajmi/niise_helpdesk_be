@@ -62,7 +62,8 @@ class Incident extends BaseModel
         'end_date' => 'actual_end_date',
         'information' => 'information',
         'branch' => 'branch.name', 
-        'severity' => 'sla.slaTemplate.severityDescription.name'
+        'severity' => 'sla.slaTemplate.severityDescription.name',
+        'phone_no' => 'complaint.phone_no'
     ];
 
     const OPEN = 1;
@@ -209,12 +210,12 @@ class Incident extends BaseModel
                 if (str_contains($sortable, '.')) {
                     [$relation, $column] = explode('.', $sortable);
                     
-                    if ($field === 'branch') {
+                    if($field === 'branch') {
                         $query->leftJoin('branch', 'branch.id', '=', 'incidents.branch_id')
                             ->select('incidents.*')
                             ->orderBy("branch.$column", $direction);
                     }
-                    else if ($field === 'severity') {
+                    elseif($field === 'severity') {
                         $lang = substr(request()->header('Accept-Language'), 0, 2); 
 
                         $query->leftJoin('sla', 'sla.code', '=', 'incidents.code_sla')
@@ -229,6 +230,12 @@ class Incident extends BaseModel
                                     ELSE ref_table.name_en 
                                 END) {$direction}
                             ", [$lang]);
+                    }
+                    elseif($field === 'phone_no') {
+
+                        $query->leftJoin('complaint', 'complaint.id', '=', 'incidents.complaint_id')
+                                ->select('incidents.*')
+                                ->orderBy("complaint.$column", $direction);
                     }
                 } 
                
@@ -378,7 +385,7 @@ class Incident extends BaseModel
                                     $query->where('name',$request->complaint_by); 
                             });
                         })
-                         ->when($request->complaint_phone_no, function ($query) use ($request) {
+                        ->when($request->complaint_phone_no, function ($query) use ($request) {
                             return $query->whereHas('complaint', function ($query)use($request) {
                                     $query->where('phone_no',$request->complaint_phone_no); 
                             });
