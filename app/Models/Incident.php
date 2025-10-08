@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+
 use DB;
 
 class Incident extends BaseModel
@@ -52,6 +54,15 @@ class Incident extends BaseModel
         'date_report_police' => 'datetime:Y-m-d',
         'expected_end_date' => 'datetime:Y-m-d',
         'actual_end_date' => 'datetime:Y-m-d',
+    ];
+
+    protected static $sortable = [
+        'incident_no' => 'incident_no',
+        'start_date' => 'incident_date',
+        'end_date' => 'actual_end_date',
+        'information' => 'information',
+        'branch' => 'branch.name', 
+        'severity' => 'sla.slaTemplate.severityDescription.name'
     ];
 
     const OPEN = 1;
@@ -178,6 +189,55 @@ class Incident extends BaseModel
                 }
             });
         }
+        return $query;
+    }
+
+    public function scopeSortByField($query,$request){
+     
+        foreach ($request->all() as $key => $direction) {
+
+            if (Str::endsWith($key, '_sort')) {
+
+                $field = str_replace('_sort', '', $key);
+                $direction = strtolower($direction);
+                $sortable = static::$sortable[$field] ?? null;
+
+                if (!in_array($direction, ['asc', 'desc']) || !$sortable) {
+                    continue;
+                }
+                
+                if (str_contains($sortable, '.')) {
+                    [$relation, $column] = explode('.', $sortable);
+                    
+                    if ($field === 'branch') {
+                        $query->leftJoin('branch', 'branch.id', '=', 'incidents.branch_id')
+                            ->select('incidents.*')
+                            ->orderBy("branch.$column", $direction);
+                    }
+                    else if ($field === 'severity') {
+                        $lang = substr(request()->header('Accept-Language'), 0, 2); 
+
+                        $query->leftJoin('sla', 'sla.code', '=', 'incidents.code_sla')
+                            ->leftJoin('sla_template', 'sla_template.id', '=', 'sla.sla_template_id')
+                            ->leftJoin('ref_table', function ($join) {
+                                $join->on('ref_table.ref_code', '=', 'sla_template.severity_id')
+                                    ->where('ref_table.code_category', '=', 'severity');
+                            })
+                            ->orderByRaw("
+                                LOWER(CASE 
+                                    WHEN ? = 'ms' THEN ref_table.name 
+                                    ELSE ref_table.name_en 
+                                END) {$direction}
+                            ", [$lang]);
+                    }
+                } 
+               
+                else {
+                    $query->orderBy($sortable, $direction);
+                }
+            }
+        }
+
         return $query;
     }
 
@@ -362,6 +422,7 @@ class Incident extends BaseModel
                             });
                         })
                         ->search($request->search)
+                        ->sortByField($request)
                         ->paginate($limit);
 
         return $data;
