@@ -104,6 +104,9 @@ class GeneralServices
                                             $query->where('groups_id',$request->group_id); 
                                         });
                                     })
+                                    ->when($request->branch_id, function ($query)use($request) {
+                                        return $query->where('branch_id',$request->branch_id);
+                                    })
                                     ->where('is_active',true)
                                     ->orderBy('name','asc')
                                     ->get();
