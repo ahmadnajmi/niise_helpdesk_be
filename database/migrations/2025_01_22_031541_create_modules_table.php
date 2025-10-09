@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('name_en')->nullable();
             $table->string('svg_path',2500)->nullable();
+            $table->smallInteger('order_by')->nullable();
             $table->string('description')->nullable();
             $table->boolean('is_active')->default(true);
             $table->log();

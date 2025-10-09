@@ -11,13 +11,14 @@ class Module extends BaseModel
     protected $table = 'module';
 
     protected $fillable = [ 
-       'module_id',
+        'module_id',
         'name',
         'name_en',
         'svg_path',
         'description',
         'is_active',
         'code',
+        'order_by'
     ];
 
     public function subModule(){
@@ -65,6 +66,7 @@ class Module extends BaseModel
                     ->whereIn('id',$get_permission)
                     ->whereNull('module_id')
                     ->where('is_active',true)
+                    ->orderBy('order_by','asc')
                     ->get();
     
         return $data;
