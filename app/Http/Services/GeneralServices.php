@@ -36,10 +36,6 @@ class GeneralServices
                                         ->with(['sla' => function ($query) {
                                             $query->select('id','code','category_id');
                                         }])
-                                        ->with(['childCategoryRecursive' => function ($query) {
-                                            $query->select('id','category_id','name','level','code');
-                                        }])
-                                        ->whereNull('category_id')
                                         ->where('is_active',true)
                                         ->orderBy('name','asc')
                                         ->get();
@@ -166,6 +162,25 @@ class GeneralServices
                                         ->where('is_active',true)
                                         ->get();
                 
+            }
+
+             if($code == 'main_category'){
+                $data[$code] = Category::select('id','name','level','code')
+                                        ->when($request->branch_id, function ($query) use ($request) {
+                                            return $query->whereHas('sla', function ($query)use($request) {
+                                                $query->whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $request->branch_id)')");
+                                            });
+                                        })
+                                        ->with(['sla' => function ($query) {
+                                            $query->select('id','code','category_id');
+                                        }])
+                                        ->with(['childCategoryRecursive' => function ($query) {
+                                            $query->select('id','category_id','name','level','code');
+                                        }])
+                                        ->whereNull('category_id')
+                                        ->where('is_active',true)
+                                        ->orderBy('name','asc')
+                                        ->get();
             }
         }
         return $data;
