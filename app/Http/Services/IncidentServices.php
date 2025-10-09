@@ -42,32 +42,30 @@ class IncidentServices
 
             DB::beginTransaction();
 
-            if(!isset($data['complaint_id'])){
+            if(!isset($data['complaint_user_id'])){
 
                 $complaint = Complaint::create($data);
 
                 $data['complaint_id'] =  $complaint->id;
             }
 
-            if(Auth::user()->roles->contains('role', Role::JIM)){
-                $data['complaint_user_id'] = Auth::user()->id;
-                $user_details = User::where('id',$data['complaint_id'])->first();
+            // if(Auth::user()->roles->contains('role', Role::JIM)){
+            //     $data['complaint_user_id'] = Auth::user()->id;
+            //     $user_details = User::where('id',$data['complaint_id'])->first();
 
-                if(isset($data['complaint_user_id']) && $user_details){
-                    $data_complaint['name'] = $user_details->name;
-                    $data_complaint['email'] = $user_details->email;
-                    $data_complaint['phone_no'] = $user_details->phone_no;
-                    $data_complaint['address'] = $user_details->address;
-                    $data_complaint['state_id'] = $user_details->state_id;
-                    $data_complaint['postcode'] = $user_details->postcode;
+            //     if(isset($data['complaint_user_id']) && $user_details){
+            //         $data_complaint['name'] = $user_details->name;
+            //         $data_complaint['email'] = $user_details->email;
+            //         $data_complaint['phone_no'] = $user_details->phone_no;
+            //         $data_complaint['address'] = $user_details->address;
+            //         $data_complaint['state_id'] = $user_details->state_id;
+            //         $data_complaint['postcode'] = $user_details->postcode;
 
-                    $complaint = Complaint::create($data_complaint);
+            //         $complaint = Complaint::create($data_complaint);
 
-                    $data['complaint_id'] =  $complaint->id; 
-                }
-            }
-
-           
+            //         $data['complaint_id'] =  $complaint->id; 
+            //     }
+            // }
 
             if($category_code){
                 $category = Category::whereRaw('LOWER(name) = ?', [strtolower($category_code)])->first();
