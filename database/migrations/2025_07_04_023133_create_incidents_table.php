@@ -35,8 +35,6 @@ return new class extends Migration
             $table->unsignedBigInteger('service_recipient_id')->nullable(); 
             $table->unsignedBigInteger('group_id')->nullable(); 
             $table->unsignedBigInteger('operation_user_id')->nullable(); 
-            $table->string('appendix_file',100)->nullable(); 
-            $table->string('asset_file',100)->nullable(); 
             $table->dateTime('expected_end_date')->nullable();
             $table->dateTime('actual_end_date')->nullable();
             $table->smallInteger('status')->default(1);

@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Collection\IncidentResolutionCollection;
+use App\Http\Collection\IncidentDocumentCollection;
 use App\Http\Services\AssetServices;
 
 class IncidentResources extends JsonResource
@@ -58,8 +59,8 @@ class IncidentResources extends JsonResource
             'group_details' => new GroupResources($this->group),
             'operation_user_id' => $this->operation_user_id,
             'operation_user_details' => new UserResources($this->operationUser),
-            'asset_file' => $this->asset_file,
-            'appendix_file' => $this->appendix_file,
+            'asset_file' => new IncidentDocumentCollection($this->incidentDocumentAsset),
+            'appendix_file' => new IncidentDocumentCollection($this->incidentDocumentAppendix),
             'service_recipient_id' => $this->service_recipient_id,
             'service_recipient_details' => new UserResources($this->serviceRecipient),
             'incident_solution' => new IncidentResolutionCollection($this->incidentResolution),

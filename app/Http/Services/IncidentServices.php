@@ -6,9 +6,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use App\Http\Traits\ResponseTrait;
 use App\Http\Resources\IncidentResources;
 use App\Models\Incident;
+use App\Models\IncidentDocument;
 use App\Models\Complaint;
 use App\Models\IncidentResolution;
 use App\Models\Sla;
@@ -90,9 +92,10 @@ class IncidentServices
             $data['received_via'] = $data['received_via'] ?? $received_via ?? null;
             $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
 
-            $data = self::uploadDoc($data,$request);
 
             $create = Incident::create($data);
+
+            $create_document = self::uploadDoc($data,$create);
 
             $create_resolution = self::createResolution($create->id);
 
@@ -112,13 +115,10 @@ class IncidentServices
     public static function update(Incident $incident,$data,$request){
 
         try{
-
             DB::beginTransaction();
 
             $data['incident_no'] = $incident->incident_no;
             $data['incident_date'] = $incident->incident_date;
-
-            $data = self::uploadDoc($data,$request);
         
             if($incident->categoryDescription?->name == 'MOBILE'){
                 $data['sla_version_id'] = self::getSlaVersion($data);
@@ -128,6 +128,9 @@ class IncidentServices
             $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
 
             $create = $incident->update($data);
+
+            $create_document = self::uploadDoc($data,$incident);
+
 
             $return = self::callAssetIncident($incident);
 
@@ -157,7 +160,7 @@ class IncidentServices
 
     public static function delete($incident){
 
-    if($incident->created_by != auth()->user()->id ){
+        if($incident->created_by != auth()->user()->id ){
             return self::error('Not user incident');
         }
         $incident->incidentResolution()->delete();
@@ -167,38 +170,53 @@ class IncidentServices
         return self::success('Success', true);
     }
 
-    public static function uploadDoc($data,$request){
+    public static function uploadDoc($data,Incident $incident){
 
-        $destination = storage_path('app/private/incident'); 
+        $appendix = isset($data['appendix_file']) ? $data['appendix_file'] : [];
+        $asset = isset($data['asset_file']) ? $data['asset_file'] : [];
+
+        self::createIncidentDocument($appendix,IncidentDocument::APPENDIX,$incident->id);
+       
+        self::createIncidentDocument($asset,IncidentDocument::ASSET,$incident->id);
+
+        return true;
+    }
+
+    public static function createIncidentDocument($data,$document_type,$incident_id){
+
+        if($document_type == IncidentDocument::APPENDIX){
+            $folder = 'appendix';
+        }
+        else{
+            $folder = 'asset';
+        }
+
+        $data_document['incident_id']  = $incident_id;
+
+        $destination = storage_path('app/private/incident/'.$folder); 
+
         if (!file_exists($destination)) {
             mkdir($destination, 0777, true);
         }
 
-        if ($request->hasFile('appendix_file') && $request->file('appendix_file')->isValid()){
-            $file = $request->file('appendix_file');
+        foreach($data as $document){
+            if($document instanceof \Illuminate\Http\UploadedFile && $document->isValid()) {
 
-            $mimeType = $request->file('appendix_file')->getClientOriginalExtension();
-            $file_name = $data['incident_no'].'_appendix.'.$mimeType;
+                $mimeType = $document->getClientOriginalExtension();
+                $file_name = time() . '_' . Str::random(10).'.'.$mimeType;
 
-            // $path = $request->file('appendix_file')->storeAs('incident', $file_name, 'local');
-            $file->move($destination, $file_name);
-           
-            $data['appendix_file'] = $file_name;
+                $fileContents = file_get_contents($document->getRealPath());
+        
+                file_put_contents($destination . '/' . $file_name, $fileContents);
+            
+                $data_document['path'] = 'incident/'.$folder.'/'.$file_name;
+                $data_document['type'] = $document_type;
+
+                IncidentDocument::create($data_document);
+            }
         }
 
-        if ($request->hasFile('asset_file') && $request->file('asset_file')->isValid()){
-            $file = $request->file('asset_file');
-
-            $mimeType = $request->file('asset_file')->getClientOriginalExtension();
-            $file_name = $data['incident_no'].'_asset_file.'.$mimeType;
-
-            // $path = $request->file('asset_file')->storeAs('private/incident_asset', $file_name);
-            $file->move($destination, $file_name);
-
-            $data['asset_file'] = $file_name;
-        }
-
-        return $data;
+        return true;
     }
 
     public static function createResolution($id){

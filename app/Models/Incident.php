@@ -36,8 +36,6 @@ class Incident extends BaseModel
         'asset_siri_no',
         'group_id',
         'operation_user_id',
-        'appendix_file',
-        'asset_file',
         'expected_end_date',
         'actual_end_date',
         'status',
@@ -133,6 +131,14 @@ class Incident extends BaseModel
 
     public function incidentResolution(){
         return $this->hasMany(IncidentResolution::class, 'incident_id','id')->orderBy('created_at','asc');
+    }
+
+    public function incidentDocumentAppendix(){
+        return $this->hasMany(IncidentDocument::class, 'incident_id','id')->where('type',IncidentDocument::APPENDIX)->orderBy('created_at','desc');
+    }
+
+    public function incidentDocumentAsset(){
+        return $this->hasMany(IncidentDocument::class, 'incident_id','id')->where('type',IncidentDocument::ASSET)->orderBy('created_at','desc');
     }
 
     public function categoryDescription(){
