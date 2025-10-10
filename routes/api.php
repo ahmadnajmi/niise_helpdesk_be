@@ -29,6 +29,7 @@ use App\Http\Controllers\CompanyContractController;
 use App\Http\Controllers\IncidentResolutionController;
 use App\Http\Controllers\TestingController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\IncidentDocumentController;
 
 Route::post('login', [AuthController::class, 'login']);
 
@@ -57,6 +58,7 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::apiResource('branch', BranchController::class)->only('index','show');
     Route::apiResource('audit', AuditController::class)->only('index','show');
     Route::apiResource('workbasket', WorkbasketController::class)->only('index');
+    Route::apiResource('incident_document', IncidentDocumentController::class)->only('destroy','show');
 
     Route::get('incidents/download/{filename}', [IncidentController::class, 'downloadFile'])->name('incidents.download');
 
