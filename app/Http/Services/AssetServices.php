@@ -63,12 +63,20 @@ class AssetServices
     }
 
     public function createIncident($data){
+        if($data->complaint_user_id){
+            $data_asset["reporter_name"] =  $data->complaintUser?->name;
+            $data_asset["phone_number"] =  $data->complaintUser?->phone_no;
+            $data_asset["office_phone_number"] = null;
+        }
+        else{
+            $data_asset["reporter_name"] =  $data->complaint?->name;
+            $data_asset["phone_number"] =  $data->complaint?->phone_no;
+            $data_asset["office_phone_number"] = $data->complaint?->office_phone_no;
+        }
         $data_asset["spec_batch_item_id"] = $data->asset_parent_id ? [$data->asset_parent_id] : json_decode($data->asset_component_id) ;
         $data_asset["incident_no"] =  $data->incident_no;
         $data_asset["incident_date"] = $data->incident_date?->format('Y-m-d'); 
-        $data_asset["reporter_name"] =  $data->complaint->name;
-        $data_asset["phone_number"] =  $data->complaint->phone_no;
-        $data_asset["office_phone_number"] = $data->complaint->office_phone_no;
+       
         $data_asset["description"] =  $data->information;
         // $data_asset["ptj_code"] =  $data->branch->id;
         // $data_asset["branch_code"] =   $data->branch->id;
