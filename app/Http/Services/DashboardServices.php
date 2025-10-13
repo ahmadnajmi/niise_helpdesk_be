@@ -119,8 +119,8 @@ class DashboardServices
             ->with(['categoryDescription.mainCategory','sla.slaTemplate.severityDescription'])
             ->get()
             ->groupBy(function ($row) {
-                return $row->categoryDescription->mainCategory->name 
-                    ?? $row->categoryDescription->name;
+                return $row->categoryDescription?->mainCategory?->name 
+                    ?? $row->categoryDescription?->name;
             })
             ->map(function ($rows)  {
                 $mainTotal    = $rows->sum('total');
@@ -134,7 +134,7 @@ class DashboardServices
                         
                         return [
                             'id' => $subRows->first()->category_id,
-                            'name'     => $subRows->first()->categoryDescription->name,
+                            'name'     => $subRows->first()->categoryDescription?->name,
                             'total'    => $subRows->sum('total'),
                             'critical' => $subRows->where('sla.slaTemplate.severityDescription.id', 47)->sum('total'),
                         ];
