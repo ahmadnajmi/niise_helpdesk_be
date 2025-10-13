@@ -98,7 +98,7 @@ class GeneralServices
             }
 
             if($code == 'user'){
-                $data[$code] = User::select('id','name','nickname')
+                $data[$code] = User::select('id','name','nickname','email','phone_no','address','fax_no','postcode','state_id')
                                     ->when($request->group_id, function ($query) use ($request) {
                                         return $query->whereHas('group', function ($query)use($request) {
                                             $query->where('groups_id',$request->group_id); 
