@@ -36,7 +36,11 @@ class IncidentResolution extends BaseModel
     }
 
     public function group(){
-        return $this->hasMany(Group::class,'id','group_id');
+        return $this->hasOne(Group::class,'id','group_id');
+    }
+    
+    public function operationUser(){
+        return $this->hasOne(User::class,'id','operation_user_id');
     }
 
     public function scopeSortByField($query,$request){
