@@ -54,7 +54,7 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::apiResource('company_contract', CompanyContractController::class);
     Route::apiResource('incident', IncidentController::class);
     Route::apiResource('ref_table', RefTableController::class);
-    Route::apiResource('dashboard', DashboardController::class);
+    Route::apiResource('dashboard', DashboardController::class)->only('index');
     Route::apiResource('branch', BranchController::class)->only('index','show');
     Route::apiResource('audit', AuditController::class)->only('index','show');
     Route::apiResource('workbasket', WorkbasketController::class)->only('index');
@@ -63,6 +63,7 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::get('incidents/download/{filename}', [IncidentController::class, 'downloadFile'])->name('incidents.download');
 
     Route::get('dynamic_option', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option');
+    Route::get('dashboard_graph', [DashboardController::class, 'dashboardGraph'])->name('dashboard.graph');
 
     Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');
     Route::get('navigation', [ModuleController::class,'index'])->name('navigation.index');

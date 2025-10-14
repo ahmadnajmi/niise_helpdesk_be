@@ -319,16 +319,15 @@ class Incident extends BaseModel
 
         $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
 
-        $data =  Incident::
-                        // when($role?->role == Role::JIM, function ($query){
-                        //     $query->where('created_by',Auth::user()->id);
-                        // })
-                        // ->when($role?->role == Role::CONTRACTOR, function ($query)use($group_id){
-                        //     return $query->whereHas('incidentResolution', function ($query)use($group_id) {
-                        //         $query->whereIn('group_id',$group_id); 
-                        //     });
-                        // })
-                        when($request->status, function ($query) use ($request) {
+        $data =  Incident::when($role?->role == Role::JIM, function ($query){
+                            $query->where('created_by',Auth::user()->id);
+                        })
+                        ->when($role?->role == Role::CONTRACTOR, function ($query)use($group_id){
+                            return $query->whereHas('incidentResolution', function ($query)use($group_id) {
+                                $query->whereIn('group_id',$group_id); 
+                            });
+                        })
+                        ->when($request->status, function ($query) use ($request) {
                             if (is_array($request->status)) {
                                 return $query->whereIn('status', $request->status);
                             }
@@ -346,13 +345,13 @@ class Incident extends BaseModel
                             return $query->where('status',Incident::OPEN)
                                         ->where('incident_date', '>', now()->startOfDay()->modify('-4 days'));
                         })
-                        ->when($request->type == 'tbb', function ($query) use ($request) {
-                            return $query->whereIn('status',[Incident::OPEN,Incident::ON_HOLD])
-                                        ->whereBetween('expected_end_date', [
-                                            now()->startOfDay(),      
-                                            now()->addDays(2)->endOfDay()   
-                                        ]);
-                        })
+                        // ->when($request->type == 'tbb', function ($query) use ($request) {
+                        //     return $query->whereIn('status',[Incident::OPEN,Incident::ON_HOLD])
+                        //                 ->whereBetween('expected_end_date', [
+                        //                     now()->startOfDay(),      
+                        //                     now()->addDays(2)->endOfDay()   
+                        //                 ]);
+                        // })
                         ->when($request->branch_id, function ($query) use ($request) {
                             return $query->where('branch_id',$request->branch_id);
                         })
@@ -439,5 +438,22 @@ class Incident extends BaseModel
                         ->paginate($limit);
 
         return $data;
+    }
+
+
+    public function scopeApplyFilters($query, $branch_id = null, $role = null, $group_id = []){
+        if ($branch_id) {
+            $query->where('incidents.branch_id', $branch_id); // fully qualify
+        }
+
+        if ($role?->role == Role::JIM) {
+            $query->where('incidents.created_by', auth()->id());
+        } elseif ($role?->role == Role::CONTRACTOR) {
+            $query->whereHas('incidentResolution', function ($q) use ($group_id) {
+                $q->whereIn('group_id', $group_id);
+            });
+        }
+
+        return $query;
     }
 }
