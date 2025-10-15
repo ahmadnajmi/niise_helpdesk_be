@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\UserRole;
 use App\Models\Workbasket;
+use  App\Models\UserGroup;
 use Illuminate\Http\Request;
 use App\Http\Traits\ResponseTrait;
 use Illuminate\Support\Facades\Auth;
@@ -23,15 +24,27 @@ class WorkbasketController extends Controller
     public function index(Request $request)
     {
         $limit = $request->limit ?? 15;
+        $group_id = [];
 
-        $frontliner = Auth::user()->roles->contains('role', Role::FRONTLINER);
+        $role = User::getUserRole(Auth::user()->id);
 
-        $data = Workbasket::where(function ($query) use ($frontliner) {
-                                $query->when($frontliner, function ($q) {
+        if($role?->role == Role::CONTRACTOR){
+            $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
+        }
+
+        $data = Workbasket::where(function ($query) use ($role,$group_id) {
+                                $query->when($role?->role == Role::FRONTLINER, function ($q) {
                                     return $q->whereIn('status', [Workbasket::NEW, Workbasket::IN_PROGRESS]);
                                 })
-                                ->when(!$frontliner, function ($q) {
+                                ->when($role?->role != Role::FRONTLINER, function ($q) {
                                     return $q->where('handle_by', Auth::id());
+                                })
+                                ->when($role?->role == Role::CONTRACTOR, function ($query)use($group_id) {
+                                    return $query->whereHas('incident', function ($query)use($group_id) {
+                                            $query->whereHas('incidentResolution', function ($query) use($group_id){
+                                                $query->whereIn('group_id',$group_id); 
+                                        }); 
+                                    });
                                 });
                             })
                             ->orWhere(function ($query) {
@@ -39,6 +52,7 @@ class WorkbasketController extends Controller
                                     $query->where('complaint_user_id',Auth::user()->id);
                                 });
                             })
+                           
                             ->orderBy('updated_at','desc')
                             ->paginate($limit);
 
