@@ -18,7 +18,7 @@ class KnowledgeBaseController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
         
-        $data =  KnowledgeBase::paginate($limit);
+        $data =  KnowledgeBase::search($request->search)->paginate($limit);
 
         return new KnowledgeBaseCollection($data);
     }
