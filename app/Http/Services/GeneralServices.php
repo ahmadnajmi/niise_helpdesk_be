@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Services;
+
+use Illuminate\Support\Facades\Auth;
 use App\Models\Role;
 use App\Models\Category;
 use App\Models\Group;
@@ -13,6 +15,7 @@ use App\Models\Sla;
 use App\Models\CompanyContract;
 use App\Models\OperatingTime;
 use App\Models\ActionCode;
+
 class GeneralServices
 {
     public static function dynamicOption($request){
@@ -91,9 +94,21 @@ class GeneralServices
             }
 
             if($code == 'group'){
+                $contractor = Auth::user()->roles->contains('role', Role::CONTRACTOR);
+                
                 $data[$code] = Group::select('id','name','description')
                                     ->where('is_active',true)
                                     ->whereHas('userGroup')
+                                    ->when($contractor, function ($query) {
+                                        return $query->where(function ($subQuery) {
+                                            $subQuery->whereHas('userGroup', function ($q)  {
+                                                $q->where('user_id', Auth::user()->id);
+                                            })
+                                            ->orWhereHas('userGroupAccess', function ($q)  {
+                                                $q->where('user_id', Auth::user()->id);
+                                            });
+                                        });
+                                    })
                                     ->orderBy('name','asc')
                                     ->get();
             }
