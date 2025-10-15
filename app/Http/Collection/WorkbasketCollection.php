@@ -21,6 +21,7 @@ class WorkbasketCollection extends BaseResource
             $return =  [
                 'id' => $query->id,
                 'incident_id' => $query->incident_id,
+                'incident_no' => $query->incident?->incident_no,
                 'complaint_user_id' => $query->incident?->complaint_user_id,
                 'date' => $query->date->format('d-m-Y H:i:s'),
                 'category_details' => $query->incident?->categoryDescription ? new CategoryResources($query->incident->categoryDescription) : null,

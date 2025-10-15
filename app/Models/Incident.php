@@ -441,16 +441,17 @@ class Incident extends BaseModel
     }
 
 
-    public function scopeApplyFilters($query, $branch_id = null, $role = null, $group_id = []){
-        if ($branch_id) {
-            $query->where('incidents.branch_id', $branch_id); // fully qualify
+    public function scopeApplyFilters($query, $request){
+
+        if ($request->branch_id) {
+            $query->where('incidents.branch_id', $request->branch_id); 
         }
 
-        if ($role?->role == Role::JIM) {
+        if ($request->role?->role == Role::JIM) {
             $query->where('incidents.created_by', auth()->id());
-        } elseif ($role?->role == Role::CONTRACTOR) {
-            $query->whereHas('incidentResolution', function ($q) use ($group_id) {
-                $q->whereIn('group_id', $group_id);
+        } elseif ($request->role?->role == Role::CONTRACTOR) {
+            $query->whereHas('incidentResolution', function ($q) use ($request) {
+                $q->whereIn('group_id', $request->group_id);
             });
         }
 
