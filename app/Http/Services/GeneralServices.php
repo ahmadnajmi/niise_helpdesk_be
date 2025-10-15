@@ -93,6 +93,7 @@ class GeneralServices
             if($code == 'group'){
                 $data[$code] = Group::select('id','name','description')
                                     ->where('is_active',true)
+                                    ->whereHas('userGroup')
                                     ->orderBy('name','asc')
                                     ->get();
             }
