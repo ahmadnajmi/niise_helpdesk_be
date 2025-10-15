@@ -343,15 +343,15 @@ class Incident extends BaseModel
                         })
                         ->when($request->type == 'less_4_day', function ($query) use ($request) {
                             return $query->where('status',Incident::OPEN)
-                                        ->where('incident_date', '>', now()->startOfDay()->modify('-4 days'));
+                                        ->where('expected_end_date', '>', now()->startOfDay()->modify('-4 days'));
                         })
-                        // ->when($request->type == 'tbb', function ($query) use ($request) {
-                        //     return $query->whereIn('status',[Incident::OPEN,Incident::ON_HOLD])
-                        //                 ->whereBetween('expected_end_date', [
-                        //                     now()->startOfDay(),      
-                        //                     now()->addDays(2)->endOfDay()   
-                        //                 ]);
-                        // })
+                        ->when($request->type == 'tbb', function ($query) use ($request) {
+                            return $query->where('status',Incident::OPEN)
+                                        ->whereBetween('expected_end_date', [
+                                            now()->startOfDay(),      
+                                            now()->addDays(2)->endOfDay()   
+                                        ]);
+                        })
                         ->when($request->branch_id, function ($query) use ($request) {
                             return $query->where('branch_id',$request->branch_id);
                         })
@@ -431,6 +431,18 @@ class Incident extends BaseModel
                         ->when($request->group_id, function ($query)use($request){
                             return $query->whereHas('incidentResolution', function ($query)use($request) {
                                 $query->where('group_id',$request->group_id); 
+                            });
+                        })
+                        ->when($request->company_id, function ($query) use ($request) {
+                            return $query->whereHas('sla', function ($query)use($request) {
+                                    $query->whereHas('slaTemplate', function ($query)use($request) {
+                                        $query->where('company_id',$request->company_id); 
+                                }); 
+                            });
+                        })
+                        ->when($request->status_workbasket, function ($query) use ($request) {
+                            return $query->whereHas('workbasket', function ($query)use($request) {
+                                    $query->where('status',$request->status_workbasket); 
                             });
                         })
                         ->search($request->search)
