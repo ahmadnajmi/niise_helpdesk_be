@@ -320,7 +320,7 @@ class Incident extends BaseModel
         $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
 
         $data =  Incident::when($role?->role == Role::JIM, function ($query){
-                            $query->where('created_by',Auth::user()->id);
+                            $query->where('complaint_user_id',Auth::user()->id);
                         })
                         ->when($role?->role == Role::CONTRACTOR, function ($query)use($group_id){
                             return $query->whereHas('incidentResolution', function ($query)use($group_id) {
