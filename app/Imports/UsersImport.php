@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\Branch;
 use App\Models\Role;
 use App\Models\UserRole;
+use App\Models\RefTable;
+
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
 
@@ -14,7 +16,8 @@ class UsersImport implements ToModel
     public function model(array $row)
     {
         $get_branch = Branch::inRandomOrder()->first();
-        
+        $state = RefTable::inRandomOrder()->where('code_category','state')->first();
+
         $data['name']  = $row[0];
         $data['nickname']  = $row[0];
         $data['password']  = Hash::make('P@ssw0rd');
@@ -24,6 +27,7 @@ class UsersImport implements ToModel
         $data['phone_no'] =   $row[4];
         $data['category_office'] =   $row[5];
         $data['ic_no'] =   $this->generateDummyIC();
+        $data['state_id'] = $state?->ref_code;
 
         $create = User::create($data);
 
