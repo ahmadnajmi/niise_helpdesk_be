@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('sender_name')->nullable();
             $table->string('sender_email')->nullable();
             $table->string('notes')->nullable();
-            $table->boolean('is_active')->default(null);
+            $table->boolean('is_active')->default(false);
             $table->log();
 
         });
