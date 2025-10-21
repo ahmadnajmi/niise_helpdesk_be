@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 
 class SlaTemplate extends BaseModel
 {
@@ -38,6 +39,13 @@ class SlaTemplate extends BaseModel
         'dispatch_time_type',
 
         'notes'
+    ];
+
+    protected static $sortable = [
+        'company' => 'company.name',
+        'company_contract' => 'companyContract.name',
+        'code' => 'code',
+        'severity' => 'severityDescription.name',
     ];
 
     const SLA_TYPE_MINUTE = 1;
@@ -108,12 +116,55 @@ class SlaTemplate extends BaseModel
         return $query;
     }
 
-    public function scopeSortByField($query, $fields){
-        if(isset($fields)){
-            foreach($fields as $column => $order_by){
-                $query->orderBy($column,$order_by);
+    public function scopeSortByField($query,$request){
+     
+        foreach ($request->all() as $key => $direction) {
+
+            if (Str::endsWith($key, '_sort')) {
+                
+                $field = str_replace('_sort', '', $key);
+                $direction = strtolower($direction);
+                $sortable = static::$sortable[$field] ?? null;
+
+                if (!in_array($direction, ['asc', 'desc']) || !$sortable) {
+                    continue;
+                }
+                if (str_contains($sortable, '.')) {
+                    [$relation, $column] = explode('.', $sortable);
+
+                    if($field === 'company') {
+                        $query->leftJoin('companies', 'companies.id', '=', 'sla_template.company_id')
+                            ->select('sla_template.*')
+                            ->orderBy("companies.$column", $direction);
+                    }
+                    elseif($field === 'company_contract') {
+                        $query->leftJoin('company_contracts', 'company_contracts.id', '=', 'sla_template.company_contract_id')
+                            ->select('sla_template.*')
+                            ->orderBy("company_contracts.$column", $direction);
+                    }
+                    elseif($field === 'severity') {
+                        $lang = substr(request()->header('Accept-Language'), 0, 2); 
+
+                        $query->leftJoin('ref_table', function ($join) {
+                                $join->on('ref_table.ref_code', '=', 'sla_template.severity_id')
+                                    ->where('ref_table.code_category', '=', 'severity');
+                                })
+                                ->orderByRaw("
+                                    LOWER(CASE 
+                                        WHEN ? = 'ms' THEN ref_table.name 
+                                        ELSE ref_table.name_en 
+                                    END) {$direction}
+                                ", [$lang]);
+                    }
+                } 
+               
+                else {
+                    
+                    $query->orderBy($sortable, $direction);
+                }
             }
         }
+
         return $query;
     }
 

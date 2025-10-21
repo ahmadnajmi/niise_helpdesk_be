@@ -19,7 +19,7 @@ class SlaTemplateController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
         
-        $data =  SlaTemplate::filter()->search($request->search)->sortByField($request->sort_by)->paginate($limit);
+        $data =  SlaTemplate::filter()->search($request->search)->sortByField($request)->paginate($limit);
 
         return new SlaTemplateCollection($data);
     }
