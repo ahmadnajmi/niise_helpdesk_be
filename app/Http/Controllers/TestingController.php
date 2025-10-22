@@ -36,7 +36,7 @@ class TestingController extends Controller
 
         $data = $provider->getUserFromCode($request->input('code'));
 
-        dd($data);
+        dd($data,$request->input('code'));
         $user = User::updateOrCreate(
             ['email' => $userData['email']],
             ['name' => $userData['name'] ?? $userData['preferred_username'] ?? 'User']
