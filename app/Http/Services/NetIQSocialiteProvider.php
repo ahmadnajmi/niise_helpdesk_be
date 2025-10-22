@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\ProviderInterface;
 use Laravel\Socialite\Two\User;
+use Illuminate\Support\Facades\Http;
 
 class NetIQSocialiteProvider extends AbstractProvider implements ProviderInterface
 {
