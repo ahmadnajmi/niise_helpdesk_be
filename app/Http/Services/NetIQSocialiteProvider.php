@@ -46,17 +46,33 @@ class NetIQSocialiteProvider extends AbstractProvider implements ProviderInterfa
     }
 
     protected function getCodeFields($state = null) {
-       return [
+       $data = [
             'client_id'     => $this->clientId,
             'redirect_uri'  => $this->redirectUrl,
             'response_type' => 'code',
             'scope'         => $this->formatScopes($this->scopes, $this->scopeSeparator),
             'state'         => $state,
         ];
+
+        return $data;
     }
 
     public function getUserFromCode($code){
-        $token = $this->getAccessTokenResponse($code);
+        // $token = $this->getAccessTokenResponse($code);
+
+        $response = Http::asForm()
+                        ->withOptions(['verify' => false])
+                        ->post(config('app.netiq.token_url'), [
+                            'grant_type'    => 'authorization_code',
+                            'code'          => $code,
+                            'redirect_uri'  => config('app.netiq.redirect_url'),
+                            'client_id'     => config('app.netiq.client_id'),
+                            'client_secret' => config('app.netiq.client_secret'),
+                        ]);
+
+        $token = $response->json();
+
+
         $user  = $this->getUserByToken($token['access_token']);
 
         return [$user, $token];
