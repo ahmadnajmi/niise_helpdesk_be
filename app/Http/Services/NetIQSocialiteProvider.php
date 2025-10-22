@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Http;
 class NetIQSocialiteProvider extends AbstractProvider implements ProviderInterface
 {
     protected $scopes = ['openid', 'profile', 'email'];
+    protected $scopeSeparator = ' ';    
 
     protected function getAuthUrl($state)
     {
