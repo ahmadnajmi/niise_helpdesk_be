@@ -51,8 +51,8 @@ class User extends Authenticatable
         return $this->hasOne(RefTable::class,'ref_code','state_id')->where('code_category', 'state');
     }
 
-    public static function findForPassport($email){
-        return static::where('email', $email)->first();
+    public function findForPassport($ic_no) {
+        return $this->where('ic_no', $ic_no)->first();
     }
 
     public function group(){

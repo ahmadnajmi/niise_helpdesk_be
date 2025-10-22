@@ -61,7 +61,7 @@ class AuthController extends Controller
     {
 
         $credentials = [
-            'email' => $request['email'],
+            'ic_no' => $request['ic_no'],
             'password' => $request['password'],
         ];
 
@@ -112,7 +112,7 @@ class AuthController extends Controller
                 'grant_type' => 'password',
                 'client_id' => config('app.passport_token.client_id'),
                 'client_secret' => config('app.passport_token.client_secret'),
-                'username' => $credentials['email'],
+                'username' => $credentials['ic_no'],
                 'password' => $credentials['password'],
             ]
         ];
