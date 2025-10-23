@@ -57,26 +57,48 @@ class AuthController extends Controller
 
     }
 
-    public function login(Request $request)
-    {
+    // public function login(Request $request){
+    //     $credentials = [
+    //         'ic_no' => $request['ic_no'],
+    //         'password' => $request['password'],
+    //     ];
+    //     if(Auth::attempt($credentials)){
+    //         $token = $this->generateToken($credentials);
 
-        $credentials = [
-            'ic_no' => $request['ic_no'],
-            'password' => $request['password'],
-        ];
+    //         if(!$token['status']) {
+    //             return $this->error($token['message']);
+    //         }
 
-        if(Auth::attempt($credentials)){
-            $token = $this->generateToken($credentials);
+    //         $user = User::getUserDetails();
 
-            if(!$token['status']) {
-                return $this->error($token['message']);
-            }
+    //         $data = [
+    //             'user' => $user,
+    //             'token' => $token['data']->access_token,
+    //             'role' => UserRole::getUserDetails(),
+    //             'permission' => Permission::getUserDetails(),
+    //             'module' => Module::getUserDetails(),
+    //         ];
 
-            $user = User::getUserDetails();
+    //         return $this->success('Success', $data);
+    //     }
+    //     else{
+    //         return $this->error('Login failed. Invalid credentials.');
+    //     }
+    // }
+
+    public function login(Request $request){
+
+        $user = User::where('ic_no', $request->ic_no)->first();
+
+        if($user){
+            Auth::login($user);
+
+            $tokenResult = $user->createToken('NetIQSSO');
+            $token = $tokenResult->accessToken;
 
             $data = [
-                'user' => $user,
-                'token' => $token['data']->access_token,
+                'token' => $token,
+                'user' => User::getUserDetails(),
                 'role' => UserRole::getUserDetails(),
                 'permission' => Permission::getUserDetails(),
                 'module' => Module::getUserDetails(),
@@ -116,7 +138,7 @@ class AuthController extends Controller
                 'password' => $credentials['password'],
             ]
         ];
-
+        // dd($postData);
         try{
             $response = $client->post(config('app.passport_token.login_url'), $postData)->getBody()->getContents();
 
