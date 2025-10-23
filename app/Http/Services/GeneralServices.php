@@ -99,16 +99,16 @@ class GeneralServices
                 $data[$code] = Group::select('id','name','description')
                                     ->where('is_active',true)
                                     ->whereHas('userGroup')
-                                    ->when($contractor, function ($query) {
-                                        return $query->where(function ($subQuery) {
-                                            $subQuery->whereHas('userGroup', function ($q)  {
-                                                $q->where('user_id', Auth::user()->id);
-                                            })
-                                            ->orWhereHas('userGroupAccess', function ($q)  {
-                                                $q->where('user_id', Auth::user()->id);
-                                            });
-                                        });
-                                    })
+                                    // ->when($contractor, function ($query) {
+                                    //     return $query->where(function ($subQuery) {
+                                    //         $subQuery->whereHas('userGroup', function ($q)  {
+                                    //             $q->where('user_id', Auth::user()->id);
+                                    //         })
+                                    //         ->orWhereHas('userGroupAccess', function ($q)  {
+                                    //             $q->where('user_id', Auth::user()->id);
+                                    //         });
+                                    //     });
+                                    // })
                                     ->orderBy('name','asc')
                                     ->get();
             }
