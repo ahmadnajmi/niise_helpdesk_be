@@ -28,7 +28,8 @@ class EmailTemplateRequest extends FormRequest
             'name' => 'required',
             'sender_name' => 'required|string',
             'sender_email' => 'required|email',
-            'notes' => 'required'
+            'notes' => 'required',
+            'is_active' => 'nullable'
         ];
     }
 
