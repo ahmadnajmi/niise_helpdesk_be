@@ -99,15 +99,15 @@ class Sla extends BaseModel
                             });
                         })
                         ->when(request()->has('is_active'), function ($query) {
-                            $query->where('is_active',request('is_active') == 1 ? true : false);
+                            $query->where('sla.is_active',request('is_active') == true ? true : false);
                         });
 
         return $query;
     }
 
-
     public function scopeSortByField($query,$request){
-     
+        $hasSorting = false;
+
         foreach ($request->all() as $key => $direction) {
 
             if (Str::endsWith($key, '_sort')) {
@@ -119,6 +119,8 @@ class Sla extends BaseModel
                 if (!in_array($direction, ['asc', 'desc']) || !$sortable) {
                     continue;
                 }
+                $hasSorting = true;
+
                 if (str_contains($sortable, '.')) {
                     [$relation, $column] = explode('.', $sortable);
 
@@ -149,6 +151,10 @@ class Sla extends BaseModel
                     $query->orderBy($sortable, $direction);
                 }
             }
+        }
+
+        if (!$hasSorting) {
+            $query->orderByDesc('updated_at');
         }
 
         return $query;
