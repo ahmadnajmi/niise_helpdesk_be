@@ -43,6 +43,7 @@ return new class extends Migration
             $table->string('notes')->nullable();
 
             $table->log();
+            $table->softDeletes();
         });
     }
 

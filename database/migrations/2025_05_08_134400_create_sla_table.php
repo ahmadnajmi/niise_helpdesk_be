@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('group_id')->nullable(); 
             $table->boolean('is_active')->default(true);
             $table->log();
+            $table->softDeletes();
         });
     }
 

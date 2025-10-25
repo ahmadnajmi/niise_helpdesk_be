@@ -6,10 +6,11 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sla extends BaseModel
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
     protected $table = 'sla';
 
     protected $fillable = [ 
