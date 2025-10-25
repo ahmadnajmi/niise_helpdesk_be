@@ -23,6 +23,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\Calendar;
 use App\Models\Branch;
+use App\Models\ActionCode;
 use Carbon\Carbon;
 
 class IncidentServices
@@ -223,7 +224,7 @@ class IncidentServices
         
         $data['incident_id'] = $id;
         $data['operation_user_id'] = 1;
-        $data['action_codes'] = 'INIT';
+        $data['action_codes'] = ActionCode::INITIAL;
     
         IncidentResolution::create($data);
 

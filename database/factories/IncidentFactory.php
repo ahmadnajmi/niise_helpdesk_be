@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Incident;
 use App\Models\IncidentResolution;
 use App\Models\Workbasket;
+use App\Models\ActionCode;
 use App\Http\Services\IncidentServices;
 use Carbon\Carbon;
 
@@ -61,7 +62,7 @@ class IncidentFactory extends Factory
             IncidentServices::createResolution($incident->id);
 
             $data_reso['incident_id'] = $incident->id;
-            $data_reso['action_codes'] = 'UPDT';
+            $data_reso['action_codes'] = ActionCode::UPDATE;
 
             IncidentResolution::create($data_reso);
 
@@ -69,14 +70,14 @@ class IncidentFactory extends Factory
                 IncidentServices::createWorkbasket($incident->id);
             }
             elseif($incident->status == Incident::RESOLVED){
-                $data_reso['action_codes'] = 'ACTR';
+                $data_reso['action_codes'] = ActionCode::ACTR;
                 $data_reso['notes'] = fake()->sentence(20);
                 $data_reso['solution_notes'] = fake()->sentence(20);
 
                 IncidentResolution::create($data_reso);
             }
             elseif($incident->status == Incident::CLOSED){
-                $data_reso['action_codes'] = 'CLSD';
+                $data_reso['action_codes'] = ActionCode::CLOSED;
                 $data_reso['notes'] = fake()->sentence(20);
 
                 IncidentResolution::create($data_reso);
@@ -90,13 +91,13 @@ class IncidentFactory extends Factory
             }
             elseif($incident->status == Incident::CANCEL_DUPLICATE){
                 
-                $data_reso['action_codes'] = 'CLSD';
+                $data_reso['action_codes'] = ActionCode::CLOSED;
                 $data_reso['notes'] = fake()->sentence(20);
 
                 IncidentResolution::create($data_reso);
             }
             else{
-                $data_reso['action_codes'] = 'ESCL';
+                $data_reso['action_codes'] = ActionCode::ESCALATE;
                 $data_reso['notes'] = fake()->sentence(20);
 
                 IncidentResolution::create($data_reso);

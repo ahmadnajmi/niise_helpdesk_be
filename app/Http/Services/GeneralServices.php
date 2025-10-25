@@ -177,7 +177,12 @@ class GeneralServices
             }
 
             if($code == 'action_code'){
+                $contractor = Auth::user()->roles->contains('role', Role::CONTRACTOR);
+                
                 $data[$code] = ActionCode::select('name','nickname','description')
+                                        ->when($contractor, function ($query) use ($request) {
+                                            return $query->whereNot('nickname',ActionCode::CLOSED);
+                                        })
                                         ->where('is_active',true)
                                         ->get();
                 

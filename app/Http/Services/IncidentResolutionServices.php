@@ -61,11 +61,11 @@ class IncidentResolutionServices
     public static function actionCode($data){
         $incident = $data->incident;
 
-        if($data->action_codes == 'ACTR' || $data->action_codes == 'CLSD'){
+        if($data->action_codes == ActionCode::ACTR || $data->action_codes == ActionCode::CLOSED){
 
-            $data_incident['status']  = $data->action_codes == 'ACTR' ? Incident::RESOLVED : Incident::CLOSED; 
+            $data_incident['status']  = $data->action_codes == ActionCode::ACTR ? Incident::RESOLVED : Incident::CLOSED; 
 
-            if($data->action_codes == 'CLSD'){
+            if($data->action_codes == ActionCode::CLOSED){
                 $data_incident['resolved_user_id'] = auth()->user()->id;
             }
             $incident->update($data_incident);
@@ -78,13 +78,13 @@ class IncidentResolutionServices
 
             $incident->update($data_incident);
         }
-        elseif($data->action_codes == 'ESCL'){
+        elseif($data->action_codes == ActionCode::ESCALATE){
             $incident->workbasket()->update([
                 'status' => Workbasket::NEW,
                 'handle_by' => $incident->operation_user_id
             ]);
         }
-        elseif($data->action_codes == 'RSLVD' || $data->action_codes == 'ACTR'){
+        elseif($data->action_codes == ActionCode::RESOLVED || $data->action_codes == ActionCode::ACTR){
             $incident->workbasket()->update([
                 'status' => Workbasket::NEW,
                 'handle_by' => null
@@ -106,7 +106,7 @@ class IncidentResolutionServices
     public static function checkPenalty($data){
         $get_sla_version = Incident::where('id',$data->incident_id)->first()->slaVersion;
 
-        if($data->action_codes == ActionCode::INIT){
+        if($data->action_codes == ActionCode::INITIAL){
 
             if($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_MINUTE){
                 $unit = 'addMinutes';
