@@ -65,7 +65,7 @@ class DashboardServices
             'total_incident_daily' =>  array_sum($daily),
             'graph_incident_monthly' => $montly,
             'total_incident_monthly' => array_sum($montly),
-            'incident_status' => self::incidentStatus($request),
+            // 'incident_status' => self::incidentStatus($request),
             'incident_four_days' => self::incidentFourDays($request),
         ];
 
