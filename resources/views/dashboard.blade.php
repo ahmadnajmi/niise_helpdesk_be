@@ -44,4 +44,24 @@
         </div>
     </div>
 
+    <script>
+var LHCChatOptions = {}; 
+LHCChatOptions.attr_prefill = new Array();  
+LHCChatOptions.attr_prefill.push({'name':'email','value':'amina@gmail.com','hidden':true});  
+LHCChatOptions.attr_prefill.push({'name':'phone','value':'123456789'});  
+LHCChatOptions.attr_prefill.push({'name':'username','value':'Amina'}); 
+LHCChatOptions.attr_prefill.push({'name':'question','value':'Default user message'});  
+LHCChatOptions.attr_prefill.push({'name':'token','value':'abc1234'}); 
+	
+var LHC_API = LHC_API||{};
+LHC_API.args = {mode:'widget',lhc_base_url:'http://172.22.50.110/lhc/index.php/',wheight:450,wwidth:350,pheight:520,pwidth:500,leaveamessage:true,department:["1"],theme:[1],check_messages:false};
+(function() {
+var po = document.createElement('script'); po.type = 'text/javascript'; po.setAttribute('crossorigin','anonymous'); po.async = true;
+var date = new Date();po.src = 'http://172.22.50.110/lhc/design/defaulttheme/js/widgetv2/index.js?'+(""+date.getFullYear() + date.getMonth() + date.getDate());
+var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+})();
+		
+</script>
+
+
 </x-app-layout>

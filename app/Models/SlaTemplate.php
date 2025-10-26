@@ -6,10 +6,11 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SlaTemplate extends BaseModel
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
     protected $table = 'sla_template';
 
     protected $fillable = [
@@ -117,7 +118,8 @@ class SlaTemplate extends BaseModel
     }
 
     public function scopeSortByField($query,$request){
-     
+        $hasSorting = false;
+
         foreach ($request->all() as $key => $direction) {
 
             if (Str::endsWith($key, '_sort')) {
@@ -129,6 +131,9 @@ class SlaTemplate extends BaseModel
                 if (!in_array($direction, ['asc', 'desc']) || !$sortable) {
                     continue;
                 }
+
+                $hasSorting = true;
+
                 if (str_contains($sortable, '.')) {
                     [$relation, $column] = explode('.', $sortable);
 
@@ -163,6 +168,10 @@ class SlaTemplate extends BaseModel
                     $query->orderBy($sortable, $direction);
                 }
             }
+        }
+
+        if (!$hasSorting) {
+            $query->orderByDesc('updated_at');
         }
 
         return $query;

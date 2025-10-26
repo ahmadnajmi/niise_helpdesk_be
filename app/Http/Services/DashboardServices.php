@@ -65,7 +65,7 @@ class DashboardServices
             'total_incident_daily' =>  array_sum($daily),
             'graph_incident_monthly' => $montly,
             'total_incident_monthly' => array_sum($montly),
-            'incident_status' => self::incidentStatus($request),
+            // 'incident_status' => self::incidentStatus($request),
             'incident_four_days' => self::incidentFourDays($request),
         ];
 
@@ -158,7 +158,7 @@ class DashboardServices
                                 ->orderBy('name', 'asc')
                                 ->get();
 
-        $dateRange = [now()->startOfDay(), now()->addDays(2)->endOfDay()];
+        $dateRange = [now()->startOfDay(), now()->addDays(4)->endOfDay()];
 
         $counts = Incident::selectRaw('sla_template.severity_id as severity_id, incidents.category_id as category_id, COUNT(*) as total')
                             ->join('sla', 'sla.code', '=', 'incidents.code_sla')

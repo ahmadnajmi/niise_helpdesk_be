@@ -133,6 +133,10 @@ class Incident extends BaseModel
         return $this->hasMany(IncidentResolution::class, 'incident_id','id')->orderBy('created_at','asc');
     }
 
+    public function incidentResolutionLatest(){
+        return $this->hasOne(IncidentResolution::class, 'incident_id','id')->ofMany('created_at', 'max'); 
+    }
+
     public function incidentDocumentAppendix(){
         return $this->hasMany(IncidentDocument::class, 'incident_id','id')->where('type',IncidentDocument::APPENDIX)->orderBy('created_at','desc');
     }
@@ -323,7 +327,7 @@ class Incident extends BaseModel
                             $query->where('complaint_user_id',Auth::user()->id);
                         })
                         ->when($role?->role == Role::CONTRACTOR, function ($query)use($group_id){
-                            return $query->whereHas('incidentResolution', function ($query)use($group_id) {
+                            return $query->whereHas('incidentResolutionLatest', function ($query)use($group_id) {
                                 $query->whereIn('group_id',$group_id); 
                             });
                         })

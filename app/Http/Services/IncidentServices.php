@@ -23,6 +23,7 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\Calendar;
 use App\Models\Branch;
+use App\Models\ActionCode;
 use Carbon\Carbon;
 
 class IncidentServices
@@ -148,10 +149,21 @@ class IncidentServices
     public static function view(Incident $incident){
 
         if (request()->source == 'workbasket') {
+            $data_workbasket['status_complaint'] =  Workbasket::IN_PROGRESS;
 
-            $incident->workbasket()->update([
-                'status' => Workbasket::OPENED,
-            ]);
+            $resolution = $incident->incidentResolutionLatest;
+
+            if($resolution->action_codes == ActionCode::ESCALATE && $resolution->operation_user_id == Auth::user()->id){
+
+                $data_workbasket['status'] = Workbasket::OPENED;
+
+                if(!$resolution->pickup_date){
+                    $resolution->pickup_date = Carbon::now();
+                    $resolution->save();
+                }
+            }
+
+            $incident->workbasket()->update($data_workbasket);
         }
         $data = new IncidentResources($incident);
 
@@ -223,7 +235,7 @@ class IncidentServices
         
         $data['incident_id'] = $id;
         $data['operation_user_id'] = 1;
-        $data['action_codes'] = 'INIT';
+        $data['action_codes'] = ActionCode::INITIAL;
     
         IncidentResolution::create($data);
 

@@ -5,10 +5,12 @@ namespace App\Models;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Sla extends BaseModel
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
     protected $table = 'sla';
 
     protected $fillable = [ 
@@ -18,6 +20,13 @@ class Sla extends BaseModel
         'sla_template_id',
         'group_id',
         'is_active'
+    ];
+
+    protected static $sortable = [
+        'category' => 'category.name',
+        'code' => 'code',
+        'severity' => 'slaTemplate.severityDescription.name',
+        'is_active' => 'is_active'
     ];
 
     protected static function booted(){
@@ -67,22 +76,88 @@ class Sla extends BaseModel
         return $query;
     }
 
-    public function scopeSortByField($query, $fields){
+    public function scopeFilter($query){
 
-        if(isset($fields)){
-            foreach($fields as $column => $order_by){
-                if($column == 'severity_id'){
-                    $query->leftJoin('sla_template', 'sla_template.id', '=', 'sla.sla_template_id')
-                        ->leftJoin('ref_table', 'sla_template.severity_id', '=', 'ref_table.ref_code')->where('ref_table.code_category','severity')
-                        ->orderBy('ref_table.name', $order_by);
+        $query = $query->when(request('category_id'), function ($query) {
+                            $query->where('category_id',request('category_id'));
+                        })
+                        ->when(request('branch_id'), function ($query) {
+                            $branchId = request('branch_id'); // single value
+                            $query->whereRaw(
+                                "EXISTS (
+                                    SELECT 1 FROM JSON_TABLE(
+                                        branch_id, '$[*]' 
+                                        COLUMNS (value NUMBER PATH '$')
+                                    ) jt 
+                                    WHERE jt.value = ?
+                                )", 
+                                [$branchId]
+                            );
+                        })
+                        ->when(request('severity_id'), function ($query) {
+                            $query->WhereHas('slaTemplate', function ($query)  {
+                                $query->where('severity_id',request('severity_id'));
+                            });
+                        })
+                        ->when(request()->has('is_active'), function ($query) {
+                            $query->where('sla.is_active',request('is_active') == true ? true : false);
+                        });
+
+        return $query;
+    }
+
+    public function scopeSortByField($query,$request){
+        $hasSorting = false;
+
+        foreach ($request->all() as $key => $direction) {
+
+            if (Str::endsWith($key, '_sort')) {
+                
+                $field = str_replace('_sort', '', $key);
+                $direction = strtolower($direction);
+                $sortable = static::$sortable[$field] ?? null;
+
+                if (!in_array($direction, ['asc', 'desc']) || !$sortable) {
+                    continue;
                 }
-                else{
-                    $query->orderBy('sla.'.$column,$order_by);
+                $hasSorting = true;
+
+                if (str_contains($sortable, '.')) {
+                    [$relation, $column] = explode('.', $sortable);
+
+                    if($field === 'severity') {
+                        $lang = substr(request()->header('Accept-Language'), 0, 2); 
+
+                        $query->leftJoin('sla_template', 'sla_template.id', '=', 'sla.sla_template_id')
+                                ->leftJoin('ref_table', function ($join) {
+                                $join->on('ref_table.ref_code', '=', 'sla_template.severity_id')
+                                    ->where('ref_table.code_category', '=', 'severity');
+                                })
+                                ->orderByRaw("
+                                    LOWER(CASE 
+                                        WHEN ? = 'ms' THEN ref_table.name 
+                                        ELSE ref_table.name_en 
+                                    END) {$direction}
+                                ", [$lang]);
+                    }
+                    elseif($field =='category'){
+                        $query->leftJoin('categories', 'categories.id', '=', 'sla.category_id')
+                            ->select('sla.*')
+                            ->orderBy("categories.$column", $direction);
+                    }
+                } 
+               
+                else {
+                    
+                    $query->orderBy($sortable, $direction);
                 }
             }
         }
-       
-        
+
+        if (!$hasSorting) {
+            $query->orderByDesc('updated_at');
+        }
+
         return $query;
     }
 
@@ -102,7 +177,7 @@ class Sla extends BaseModel
         return $this->hasOne(Group::class,'id','group_id');
     }
 
-     public function category(){
+    public function category(){
         return $this->hasOne(Category::class,'id','category_id');
     }
 

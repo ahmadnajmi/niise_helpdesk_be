@@ -15,6 +15,7 @@ class IncidentResolution extends BaseModel
         'group_id',
         'operation_user_id',
         'report_contractor_no',
+        'pickup_date',
         'action_codes',
         'notes',
         'solution_notes',
@@ -25,6 +26,10 @@ class IncidentResolution extends BaseModel
         'solution_notes' => 'solution_notes',
         'created_at' => 'created_at',
         'created_by' => 'user.name',
+    ];
+
+    protected $casts = [
+        'pickup_date' => 'datetime:Y-m-d H:i:s',
     ];
 
     public function actionCodes(){

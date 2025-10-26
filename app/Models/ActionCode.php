@@ -19,12 +19,12 @@ class ActionCode extends BaseModel
         'skip_penalty'
     ];
 
-    const INIT = 'INIT';
-    const ESCL = 'ESCL';
+    const INITIAL = 'INIT';
+    const ESCALATE = 'ESCL';
     const ACTR = 'ACTR';
-    const CLSD = 'CLSD';
-    const UPDT = 'UPDT';
-    const RSLVD = 'RSLVD';
+    const CLOSED = 'CLSD';
+    const UPDATE = 'UPDT';
+    const RESOLVED = 'RSLVD';
 
 
     const SEND_TO_COMPLAINT = 1;

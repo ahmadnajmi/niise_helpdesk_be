@@ -5,10 +5,12 @@ namespace App\Http\Services;
 use Laravel\Socialite\Two\AbstractProvider;
 use Laravel\Socialite\Two\ProviderInterface;
 use Laravel\Socialite\Two\User;
+use Illuminate\Support\Facades\Http;
 
 class NetIQSocialiteProvider extends AbstractProvider implements ProviderInterface
 {
-    protected $scopes = ['profile email'];
+    protected $scopes = ['openid', 'profile', 'email'];
+    protected $scopeSeparator = ' ';    
 
     protected function getAuthUrl($state)
     {
@@ -46,17 +48,33 @@ class NetIQSocialiteProvider extends AbstractProvider implements ProviderInterfa
     }
 
     protected function getCodeFields($state = null) {
-       return [
+       $data = [
             'client_id'     => $this->clientId,
             'redirect_uri'  => $this->redirectUrl,
             'response_type' => 'code',
             'scope'         => $this->formatScopes($this->scopes, $this->scopeSeparator),
             'state'         => $state,
         ];
+
+        return $data;
     }
 
     public function getUserFromCode($code){
-        $token = $this->getAccessTokenResponse($code);
+        // $token = $this->getAccessTokenResponse($code);
+
+        $response = Http::asForm()
+                        ->withOptions(['verify' => false])
+                        ->post(config('app.netiq.token_url'), [
+                            'grant_type'    => 'authorization_code',
+                            'code'          => $code,
+                            'redirect_uri'  => config('app.netiq.redirect_url'),
+                            'client_id'     => config('app.netiq.client_id'),
+                            'client_secret' => config('app.netiq.client_secret'),
+                        ]);
+
+        $token = $response->json();
+
+
         $user  = $this->getUserByToken($token['access_token']);
 
         return [$user, $token];
