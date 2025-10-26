@@ -133,6 +133,10 @@ class Incident extends BaseModel
         return $this->hasMany(IncidentResolution::class, 'incident_id','id')->orderBy('created_at','asc');
     }
 
+    public function incidentResolutionLatest(){
+        return $this->hasOne(IncidentResolution::class, 'incident_id','id')->latest('created_at');
+    }
+
     public function incidentDocumentAppendix(){
         return $this->hasMany(IncidentDocument::class, 'incident_id','id')->where('type',IncidentDocument::APPENDIX)->orderBy('created_at','desc');
     }

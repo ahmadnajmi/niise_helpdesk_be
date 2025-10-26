@@ -149,10 +149,22 @@ class IncidentServices
     public static function view(Incident $incident){
 
         if (request()->source == 'workbasket') {
+            $data_workbasket['status_complaint'] =  Workbasket::IN_PROGRESS;
 
-            $incident->workbasket()->update([
-                'status' => Workbasket::OPENED,
-            ]);
+            $resolution = $incident->incidentResolutionLatest;
+
+            if($resolution->action_codes == ActionCode::ESCALATE && $resolution->operation_user_id == Auth::user()->id){
+
+                $data_workbasket['status'] = Workbasket::OPENED;
+
+                if(!$resolution->pickup_date){
+                    $incident->incidentResolutionLatest()->update([
+                        'pickup_date' => Carbon::now()
+                    ]);
+                }
+            }
+
+            $incident->workbasket()->update($data_workbasket);
         }
         $data = new IncidentResources($incident);
 

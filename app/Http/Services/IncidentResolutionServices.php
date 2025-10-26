@@ -78,21 +78,16 @@ class IncidentResolutionServices
 
             $incident->update($data_incident);
         }
-        elseif($data->action_codes == ActionCode::ESCALATE){
+        elseif($data->action_codes == ActionCode::RESOLVED || $data->action_codes == ActionCode::ACTR || $data->action_codes == ActionCode::ESCALATE){
             $incident->workbasket()->update([
                 'status' => Workbasket::NEW,
-                'handle_by' => $incident->operation_user_id
-            ]);
-        }
-        elseif($data->action_codes == ActionCode::RESOLVED || $data->action_codes == ActionCode::ACTR){
-            $incident->workbasket()->update([
-                'status' => Workbasket::NEW,
-                'handle_by' => null
+                'status_complaint' => Workbasket::IN_PROGRESS
             ]);
         }
         else{
             $incident->workbasket()->update([
                 'status' => Workbasket::IN_PROGRESS,
+                'status_complaint' => Workbasket::IN_PROGRESS
             ]);
         }
 

@@ -31,13 +31,10 @@ class WorkbasketController extends Controller
         if($role?->role == Role::CONTRACTOR){
             $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
         }
-
+        
         $data = Workbasket::where(function ($query) use ($role,$group_id) {
                                 $query->when($role?->role == Role::FRONTLINER, function ($q) {
                                     return $q->whereIn('status', [Workbasket::NEW, Workbasket::IN_PROGRESS]);
-                                })
-                                ->when($role?->role != Role::FRONTLINER, function ($q) {
-                                    return $q->where('handle_by', Auth::id());
                                 })
                                 ->when($role?->role == Role::CONTRACTOR, function ($query)use($group_id) {
                                     return $query->whereHas('incident', function ($query)use($group_id) {

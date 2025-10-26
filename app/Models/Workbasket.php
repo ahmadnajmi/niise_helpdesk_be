@@ -13,8 +13,8 @@ class Workbasket extends BaseModel
     protected $fillable = [
         'date',
         'incident_id',
-        'handle_by',
         'status',
+        'status_complaint'
     ];
 
     protected $casts = [
@@ -29,8 +29,12 @@ class Workbasket extends BaseModel
         return $this->belongsTo(Incident::class, 'incident_id');
     }
 
-     public function statusDesc(){
+    public function statusDesc(){
         return $this->hasOne(RefTable::class,'ref_code','status')->where('code_category', 'workbasket_status');
+    }
+
+    public function statusComplaintDesc(){
+        return $this->hasOne(RefTable::class,'ref_code','status_complaint')->where('code_category', 'workbasket_status');
     }
     
 }
