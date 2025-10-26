@@ -23,8 +23,8 @@ class AuditTrailCollection extends BaseResource
                 'old_values' => $query->old_values,
                 'new_values' => $query->new_values,
                 'user_details' => $query->user ? new UserResources($query->user) : null,
-                'created_at' => $query->created_at->format('d-m-Y'),
-                'updated_at' => $query->updated_at->format('d-m-Y'),
+                'created_at' => $query->created_at->format('d-m-Y H:i:s'),
+                'updated_at' => $query->updated_at->format('d-m-Y H:i:s'),
             ];
         });
     }

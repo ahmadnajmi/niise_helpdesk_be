@@ -22,8 +22,8 @@ class AuditTrailResources extends JsonResource
             'old_values' => $this->old_values,
             'new_values' => $this->new_values,
             'user_details' => $this->user ? new UserResources($this->user) : null,
-            'created_at' => $this->created_at->format('d-m-Y'),
-            'updated_at' => $this->updated_at->format('d-m-Y'),
+            'created_at' => $this->created_at->format('d-m-Y H:i:s'),
+            'updated_at' => $this->updated_at->format('d-m-Y H:i:s'),
         ];
     }
 }
