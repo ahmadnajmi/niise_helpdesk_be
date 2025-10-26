@@ -134,7 +134,7 @@ class Incident extends BaseModel
     }
 
     public function incidentResolutionLatest(){
-        return $this->hasOne(IncidentResolution::class, 'incident_id','id')->latest('created_at');
+        return $this->hasOne(IncidentResolution::class, 'incident_id','id')->ofMany('created_at', 'max'); 
     }
 
     public function incidentDocumentAppendix(){
