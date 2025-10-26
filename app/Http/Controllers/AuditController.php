@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Traits\ResponseTrait;
 use Illuminate\Http\Request;
-use App\Http\Resources\BranchResources;
 use OwenIt\Auditing\Models\Audit;
+use App\Http\Collection\AuditTrailCollection;
+use App\Http\Resources\AuditTrailResources;
+
+use Illuminate\Support\Facades\Auth;
 
 class AuditController extends Controller
 {
@@ -15,18 +18,17 @@ class AuditController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
 
-        $data =  Audit::with('user')->latest()->paginate($limit);
+        $data =  Audit::where('user_id',Auth::user()->id)->latest()->paginate($limit);
 
-        // return new UserCollection($data);
+        return new AuditTrailCollection($data);
 
-        return $this->success('Success', $data);
     }
 
     public function show($id)
     {
-        $data = Audit::with('user')->find($id);
+        $data = Audit::find($id);
 
-        // $data = new BranchResources($Branch);
+        $data = new AuditTrailResources($data);
 
         return $this->success('Success', $data);
     }
