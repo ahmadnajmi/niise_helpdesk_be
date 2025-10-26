@@ -158,9 +158,8 @@ class IncidentServices
                 $data_workbasket['status'] = Workbasket::OPENED;
 
                 if(!$resolution->pickup_date){
-                    $incident->incidentResolutionLatest()->update([
-                        'pickup_date' => Carbon::now()
-                    ]);
+                    $resolution->pickup_date = Carbon::now();
+                    $resolution->save();
                 }
             }
 
