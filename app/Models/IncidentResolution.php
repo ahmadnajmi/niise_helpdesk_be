@@ -15,7 +15,7 @@ class IncidentResolution extends BaseModel
         'group_id',
         'operation_user_id',
         'report_contractor_no',
-        'pickup_date'
+        'pickup_date',
         'action_codes',
         'notes',
         'solution_notes',
