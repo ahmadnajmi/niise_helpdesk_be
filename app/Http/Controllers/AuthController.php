@@ -57,57 +57,63 @@ class AuthController extends Controller
 
     }
 
-    // public function login(Request $request){
-    //     $credentials = [
-    //         'ic_no' => $request['ic_no'],
-    //         'password' => $request['password'],
-    //     ];
-    //     if(Auth::attempt($credentials)){
-    //         $token = $this->generateToken($credentials);
-
-    //         if(!$token['status']) {
-    //             return $this->error($token['message']);
-    //         }
-
-    //         $user = User::getUserDetails();
-
-    //         $data = [
-    //             'user' => $user,
-    //             'token' => $token['data']->access_token,
-    //             'role' => UserRole::getUserDetails(),
-    //             'permission' => Permission::getUserDetails(),
-    //             'module' => Module::getUserDetails(),
-    //         ];
-
-    //         return $this->success('Success', $data);
-    //     }
-    //     else{
-    //         return $this->error('Login failed. Invalid credentials.');
-    //     }
-    // }
 
     public function login(Request $request){
 
-        $user = User::where('ic_no', $request->ic_no)->first();
+        if($request->ic_no){
+            $user = User::where('ic_no', $request->ic_no)->first();
 
-        if($user){
-            Auth::login($user);
+            if($user){
+                Auth::login($user);
 
-            $tokenResult = $user->createToken('NetIQSSO');
-            $token = $tokenResult->accessToken;
+                $tokenResult = $user->createToken('NetIQSSO');
+                $token = $tokenResult->accessToken;
 
-            $data = [
-                'token' => $token,
-                'user' => User::getUserDetails(),
-                'role' => UserRole::getUserDetails(),
-                'permission' => Permission::getUserDetails(),
-                'module' => Module::getUserDetails(),
-            ];
+                $data = [
+                    'token' => $token,
+                    'user' => User::getUserDetails(),
+                    'role' => UserRole::getUserDetails(),
+                    'permission' => Permission::getUserDetails(),
+                    'module' => Module::getUserDetails(),
+                ];
 
-            return $this->success('Success', $data);
+                return $this->success('Success Netiq', $data);
+            }
+            else{
+                return $this->error('Login failed. Invalid credentials.');
+            }
         }
         else{
-            return $this->error('Login failed. Invalid credentials.');
+
+            $user = User::where('email', $request->email)->first();
+
+            $credentials = [
+                'ic_no' => $user->getRawOriginal('ic_no'),
+                'password' => $request['password'],
+            ];
+
+            if(Auth::attempt($credentials)){
+                $token = $this->generateToken($credentials);
+
+                if(!$token['status']) {
+                    return $this->error($token['message']);
+                }
+
+                $user = User::getUserDetails();
+
+                $data = [
+                    'user' => $user,
+                    'token' => $token['data']->access_token,
+                    'role' => UserRole::getUserDetails(),
+                    'permission' => Permission::getUserDetails(),
+                    'module' => Module::getUserDetails(),
+                ];
+
+                return $this->success('Success', $data);
+            }
+            else{
+                return $this->error('Login failed. Invalid credentials.');
+            }
         }
     }
 
