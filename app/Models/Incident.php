@@ -327,7 +327,7 @@ class Incident extends BaseModel
                             $query->where('complaint_user_id',Auth::user()->id);
                         })
                         ->when($role?->role == Role::CONTRACTOR, function ($query)use($group_id){
-                            return $query->whereHas('incidentResolution', function ($query)use($group_id) {
+                            return $query->whereHas('incidentResolutionLatest', function ($query)use($group_id) {
                                 $query->whereIn('group_id',$group_id); 
                             });
                         })

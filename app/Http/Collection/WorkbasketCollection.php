@@ -31,6 +31,8 @@ class WorkbasketCollection extends BaseResource
                 'handle_by' => $query->handle_by,
                 'status' => $query->status,
                 'status_desc' => $query->statusDesc?->translated_name,
+                'status_complaint' => $query->status,
+                'status_complaint_desc' => $query->statusComplaintDesc?->translated_name,
                 'incident_status' => $query->incident?->status,
                 'incident_status_desc' => $query->incident?->statusDesc?->translated_name,
                 'created_at' => $query->created_at->format('d-m-Y'),

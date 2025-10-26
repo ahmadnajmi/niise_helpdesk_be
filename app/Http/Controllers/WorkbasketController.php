@@ -38,7 +38,7 @@ class WorkbasketController extends Controller
                                 })
                                 ->when($role?->role == Role::CONTRACTOR, function ($query)use($group_id) {
                                     return $query->whereHas('incident', function ($query)use($group_id) {
-                                            $query->whereHas('incidentResolution', function ($query) use($group_id){
+                                            $query->whereHas('incidentResolutionLatest', function ($query) use($group_id){
                                                 $query->whereIn('group_id',$group_id); 
                                         }); 
                                     });
