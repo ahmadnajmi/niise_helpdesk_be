@@ -42,11 +42,7 @@ class RoleSeeder extends Seeder
                             'incident.create',
                             'incident.view',
                             'resolution.index' ,
-                            'resolution.create',
                             'resolution.view' ,
-                            'resolution.update',
-                            'resolution.delete',
-
                             'contract.index',
                             'contract.create',
                             'contract.view',
@@ -64,14 +60,6 @@ class RoleSeeder extends Seeder
                             'dashboard.card.total-reports',
                         ]
                     ],
-                    // [
-                    //     'module' => 'Emel',
-                    //     'permission' =>[
-                    //         'email-notification.index',
-                    //         'email-notification.view',
-                    //         'email-notification.receive'
-                    //     ]
-                    // ],
                 ]
             ],
            
