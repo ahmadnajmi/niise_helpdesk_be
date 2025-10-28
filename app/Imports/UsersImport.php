@@ -15,8 +15,8 @@ class UsersImport implements ToModel
 {
     public function model(array $row)
     {
-        $get_branch = Branch::inRandomOrder()->first();
         $state = RefTable::inRandomOrder()->where('code_category','state')->first();
+        $get_branch = Branch::where('state_id', $state?->ref_code)->inRandomOrder()->first();
 
         $data['name']  = $row[0];
         $data['nickname']  = $row[0];

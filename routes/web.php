@@ -24,7 +24,6 @@ Route::middleware(['web','web.token'])->name('web.')->group(function () {
     Route::get('/logs', function () { return redirect('/log-viewer');})->name('logs');
 });
 
-Route::get('redirect', [TestingController::class, 'redirect'])->name('netiq.redirect');
-Route::get('callback', [TestingController::class, 'callback'])->name('netiq.callback');
+Route::get('testing', [TestingController::class, 'testing'])->name('testing');
 
 
