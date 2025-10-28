@@ -67,7 +67,7 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
 
     Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');
     Route::get('navigation', [ModuleController::class,'index'])->name('navigation.index');
-    Route::get('auth/details', [AuthController::class, 'authDetails'])->name('auth.details');
+    Route::get('auth/token', [AuthController::class, 'authToken'])->name('auth.token');
     Route::get('ref_table_dropdown', [RefTableController::class, 'dropdownIndex'])->name('ref_table.dropdown');
     Route::get('ref_table_dropdown_value', [RefTableController::class, 'dropdownValueIndex'])->name('ref_table.dropdown_value');
     Route::get('user_search', [UserController::class, 'searchIcNo'])->name('user.search');

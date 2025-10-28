@@ -23,6 +23,7 @@ class UserServices
 
             if(!$check_user){
                 $data['password'] = Hash::make('P@ssw0rd');
+                $data['user_type'] = User::FROM_HDS;
 
                 $create = User::create($data);
 

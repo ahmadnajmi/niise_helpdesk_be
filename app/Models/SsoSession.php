@@ -12,7 +12,7 @@ class SsoSession extends BaseModel
     protected $fillable = [
         'user_id',
         'id_token',
-        'session_id',
+        'access_token',
         'is_active',
     ];  
 }

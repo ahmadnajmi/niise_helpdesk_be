@@ -35,6 +35,10 @@ class User extends Authenticatable
         'user_type',
     ];
 
+    const FROM_IDM = 1;
+    const FROM_HDS = 2;
+    const FROM_COMPLAINT = 3;
+
     public function branch(){
         return $this->hasOne(Branch::class,'id','branch_id');
     }
