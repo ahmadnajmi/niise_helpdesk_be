@@ -27,6 +27,13 @@ class AuthController extends Controller
         return $data; 
     }
 
+    public function logoutCallback(Request $request){
+       
+        $data = AuthServices::logoutCallback($request);
+           
+        return $data; 
+    }
+
     public function authToken(Request $request){
         $data = AuthServices::getToken();
            

@@ -13,6 +13,7 @@ class SsoSession extends BaseModel
         'user_id',
         'id_token',
         'access_token',
+        'session_id',
         'is_active',
     ];  
 }

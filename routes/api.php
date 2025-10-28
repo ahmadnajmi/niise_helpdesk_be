@@ -32,9 +32,13 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\IncidentDocumentController;
 
 Route::post('login', [AuthController::class, 'login']);
+Route::get('logout-callback', [AuthController::class, 'logoutCallback']);
+
 
 Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
+
+    Route::get('auth/token', [AuthController::class, 'authToken'])->name('auth.token');
 
     Route::apiResource('module', ModuleController::class);
     Route::apiResource('permission', PermissionController::class);
@@ -67,7 +71,7 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
 
     Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');
     Route::get('navigation', [ModuleController::class,'index'])->name('navigation.index');
-    Route::get('auth/token', [AuthController::class, 'authToken'])->name('auth.token');
+    
     Route::get('ref_table_dropdown', [RefTableController::class, 'dropdownIndex'])->name('ref_table.dropdown');
     Route::get('ref_table_dropdown_value', [RefTableController::class, 'dropdownValueIndex'])->name('ref_table.dropdown_value');
     Route::get('user_search', [UserController::class, 'searchIcNo'])->name('user.search');

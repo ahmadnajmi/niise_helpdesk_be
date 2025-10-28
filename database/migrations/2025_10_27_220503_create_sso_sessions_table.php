@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('user_id');
             $table->string('id_token',3000)->unique();
             $table->string('access_token',3000)->unique();
+            $table->string('session_id')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
