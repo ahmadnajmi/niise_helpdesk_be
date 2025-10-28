@@ -39,6 +39,10 @@ class User extends Authenticatable
         return $this->hasOne(Branch::class,'id','branch_id');
     }
 
+    public function ssoToken(){
+        return $this->hasOne(SsoSession::class,'user_id','id');
+    }
+
     public function company(){
         return $this->hasOne(Company::class,'id','company_id');
     }

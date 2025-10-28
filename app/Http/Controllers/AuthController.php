@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserRole;
 use App\Models\Permission;
 use App\Models\Module;
+use App\Models\SsoSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -65,6 +66,8 @@ class AuthController extends Controller
 
             if($user){
                 Auth::login($user);
+
+                $this->storeSsoToken($request);
 
                 $tokenResult = $user->createToken('NetIQSSO');
                 $token = $tokenResult->accessToken;
@@ -175,16 +178,18 @@ class AuthController extends Controller
         return $this->success('Success', $data);
     }
 
-    public function loginAssetManagement(){
-        $url = config('app.url_application.fe_am');
-    }
+    public function storeSsoToken($request){
+        SsoSession::updateOrCreate(
+            ['user_id' => Auth::user()->id],
+            [
+                'id_token' => $request->id_token,
+                'access_token' => $request->access_token,
+                'is_active' => true,
+            ]
+        );
 
-    public function loginHelpDesk(){
+        return true;
 
-        $url = config('app.url_application.fe_ifics');
-        $token = Session::get('bearer_token');
-        // dd($token);
-        return redirect()->to($url."login/sso?token=$token");
     }
 
 }

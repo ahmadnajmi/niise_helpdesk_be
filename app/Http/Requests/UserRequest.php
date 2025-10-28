@@ -25,10 +25,10 @@ class UserRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'name' => 'required',
             'nickname' => 'nullable',
-            'ic_no' => 'required|string',
+            'ic_no' => 'string',
             'email' => 'required',
             'phone_no' => 'required',
             'category_office' => 'nullable',
@@ -45,6 +45,10 @@ class UserRequest extends FormRequest
             'group_user_access' => 'array|nullable',
             'role' => 'required',
         ];
+        if ($this->routeIs('user.store')) {
+            $rules['ic_no'] .= '|required'; 
+        }
+        return $rules;
     }
 
     protected function failedValidation(Validator $validator)
