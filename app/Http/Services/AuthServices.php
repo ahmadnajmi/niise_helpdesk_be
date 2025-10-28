@@ -138,10 +138,9 @@ class AuthServices
 
     public static function logout(){
         $delete = SsoSession::where('user_id',Auth::user()->id)->delete();
-        dd(Auth::user()->id,$delete);
-        // Auth::user()->tokens->each(function ($token, $key){
-        //     $token->delete();
-        // });
+        Auth::user()->tokens->each(function ($token, $key){
+            $token->delete();
+        });
 
         return self::success('Success Logout', true);
     }
