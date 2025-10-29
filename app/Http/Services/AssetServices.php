@@ -81,7 +81,7 @@ class AssetServices
         // $data_asset["ptj_code"] =  $data->branch->id;
         // $data_asset["branch_code"] =   $data->branch->id;
         $data_asset["location_id"] =  null;
-        $data_asset["ic_number"] =  Auth::user()->getRawOriginal('ic_no');
+        $data_asset["ic_number"] =  Auth::user()->ic_no;
         $data_asset["status"] =  $data->status;
         $data_asset["category_id"] =  $data->incident_asset_type;
         $data_asset["lost_date"] =  $data->date_asset_loss?->format('Y-m-d');

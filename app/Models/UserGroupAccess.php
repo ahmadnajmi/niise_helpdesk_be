@@ -11,11 +11,11 @@ class UserGroupAccess extends BaseModel
 
     protected $fillable = [ 
         'groups_id',
-        'user_id',
+        'ic_no',
     ];
 
     public function userDetails(){
-        return $this->hasOne(User::class,'id','user_id');
+        return $this->hasOne(User::class,'ic_no','ic_no');
     }
 
     public function groupDetails(){

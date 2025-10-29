@@ -64,11 +64,11 @@ class User extends Authenticatable
     }
 
     public function group(){
-        return $this->hasMany(UserGroup::class,'user_id');
+        return $this->hasMany(UserGroup::class,'ic_no','ic_no');
     }
 
     public function groupAccess(){
-        return $this->hasMany(UserGroupAccess::class,'user_id','id');
+        return $this->hasMany(UserGroupAccess::class,'ic_no','ic_no');
     }
 
     public function scopeFilter($query){
@@ -126,7 +126,13 @@ class User extends Authenticatable
         return $get_role;
     }
 
-    public function getIcNoAttribute($value){
+    // public function getIcNoAttribute($value){
+    //     return str_repeat('*', strlen($value) - 4) . substr($value, -4);
+    // }
+
+    public function getMaskedIcNoAttribute(){
+        $value = $this->attributes['ic_no'];
+
         return str_repeat('*', strlen($value) - 4) . substr($value, -4);
     }
 }

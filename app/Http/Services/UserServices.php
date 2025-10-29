@@ -27,7 +27,7 @@ class UserServices
 
                 $create = User::create($data);
 
-                $group_user = self::groupUser($data,$create->id);
+                $group_user = self::groupUser($data,$create->ic_no);
 
                 if($data['role']){
                     $user_role['user_id'] = $create->id;
@@ -60,7 +60,7 @@ class UserServices
         try {
             $update = $user->update($data);
 
-            $data = self::groupUser($data,$user->id);
+            $data = self::groupUser($data,$user->ic_no);
 
             $return = new UserResources($user);
 
@@ -71,14 +71,14 @@ class UserServices
         }
     }
 
-    public static function groupUser($data,$user_id){
+    public static function groupUser($data,$ic_no){
 
         if(isset($data['group_user'])){
-            UserGroup::where('user_id',$user_id)->delete();
+            UserGroup::where('ic_no',$ic_no)->delete();
 
             foreach($data['group_user'] as $group_id){
 
-                $data_group_user['user_id'] = $user_id;
+                $data_group_user['ic_no'] = $ic_no;
                 $data_group_user['groups_id'] = $group_id;
     
                 UserGroup::create($data_group_user);
@@ -86,11 +86,11 @@ class UserServices
         }
 
         if(isset($data['group_user_access'])){
-            UserGroupAccess::where('user_id',$user_id)->delete();
+            UserGroupAccess::where('ic_no',$ic_no)->delete();
 
             foreach($data['group_user_access'] as $access_group_id){
 
-                $data_group_user_access['user_id'] = $user_id;
+                $data_group_user_access['ic_no'] = $ic_no;
                 $data_group_user_access['groups_id'] = $access_group_id;
     
                 UserGroupAccess::create($data_group_user_access);
@@ -102,8 +102,8 @@ class UserServices
 
     public static function delete(User $user){
 
-        UserGroup::where('user_id',$user->id)->delete();
-        UserGroupAccess::where('user_id',$user->id)->delete();
+        UserGroup::where('ic_no',$user->ic_no)->delete();
+        UserGroupAccess::where('ic_no',$user->ic_no)->delete();
 
         $user->delete();
 

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('user_groups', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('groups_id')->index();
-            $table->unsignedBigInteger('user_id')->index();
+            $table->string('ic_no',12);
             $table->log();
         });
     }

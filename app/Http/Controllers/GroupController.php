@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Group;
 use App\Models\UserGroup;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Traits\ResponseTrait;
 use App\Http\Collection\GroupCollection;
@@ -86,10 +87,16 @@ class GroupController extends Controller
 
             foreach($request['users'] as $user_id){
 
-                $data['user_id'] = $user_id;
-                $data['groups_id'] = $group_id;
+                $user_details = User::where('id',$user_id)->first();
 
-                UserGroup::create($data);
+                if($user_details){
+                    $data['ic_no'] = $user_details->ic_no;
+                    $data['groups_id'] = $group_id;
+
+                    UserGroup::create($data);
+                }
+
+                
             }
         }
     }

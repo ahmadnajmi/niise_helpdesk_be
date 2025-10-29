@@ -50,7 +50,7 @@ class AuthServices
             $user = User::where('email', $request->email)->first();
 
             $credentials = [
-                'ic_no' => $user->getRawOriginal('ic_no'),
+                'ic_no' => $user->ic_no,
                 'password' => $request['password'],
             ];
 
