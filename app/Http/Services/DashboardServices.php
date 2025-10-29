@@ -24,7 +24,7 @@ class DashboardServices
         $limit = $request->limit ? $request->limit : 15;
         $role = User::getUserRole(Auth::user()->id);
 
-        $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
+        $group_id = UserGroup::where('ic_no',Auth::user()->ic_no)->pluck('groups_id');
 
         if($request->code == 'by_branch'){
             $data = self::incidentByBranch($request);
@@ -55,7 +55,7 @@ class DashboardServices
     public static function getDashboardGraph($request){
         $request->role = User::getUserRole(Auth::user()->id);
 
-        $request->group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
+        $request->group_id = UserGroup::where('ic_no',Auth::user()->ic_no)->pluck('groups_id');
 
         $daily = self::graphTotalIncidentDaily($request);
         $montly = self::graphTotalIncidentMonthly($request);
