@@ -15,7 +15,7 @@ class UserGroup extends BaseModel
     ];
 
     public function userDetails(){
-        return $this->belongsTo(User::class, 'ic_no');
+        return $this->belongsTo(User::class, 'ic_no','ic_no');
     }
 
     public function groupDetails(){
