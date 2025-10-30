@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('name',100)->nullable(); 
             $table->string('nickname',100)->nullable(); 
             $table->string('password')->nullable(); 
-            $table->string('password')->nullable(); 
             $table->string('position',100)->nullable(); 
             $table->unsignedBigInteger('branch_id')->nullable(); 
             $table->unsignedBigInteger('company_id')->nullable();
