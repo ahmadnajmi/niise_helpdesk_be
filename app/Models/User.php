@@ -44,7 +44,8 @@ class User extends Authenticatable
         'name' => 'name',
         'ic_no' => 'ic_no',
         'phone_no' => 'phone_no',
-        'is_active' => 'is_active'
+        'is_active' => 'is_active',
+        'branch_id' => 'branch.name'
     ];
 
     public function scopeSearch($query, $keyword){
@@ -74,6 +75,9 @@ class User extends Authenticatable
                         })
                         ->when(request('phone_no'), function ($query) {
                             $query->where('phone_no',request('phone_no'));
+                        })
+                        ->when(request('branch_id'), function ($query) {
+                            $query->where('branch_id',request('branch_id'));
                         })
                         ->when(request()->has('is_active'), function ($query) {
                             $query->where('is_active',request('is_active') == true ? true : false);
