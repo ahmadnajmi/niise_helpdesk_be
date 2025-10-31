@@ -17,7 +17,9 @@ class UserController extends Controller
     public function index(Request $request){
         $limit = $request->limit ? $request->limit : 15;
 
-        $data =  User::paginate($limit);
+        // $data =  User::paginate($limit);
+        $data =  User::filter()->search($request->search)->sortByField($request)->paginate($limit);
+
 
         return new UserCollection($data);
     }
