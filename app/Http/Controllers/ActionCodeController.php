@@ -17,7 +17,7 @@ class ActionCodeController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
         
-        $data =  ActionCode::paginate($limit);
+        $data =  ActionCode::filter()->search($request->search)->sortByField($request)->paginate($limit);
 
         return new ActionCodeCollection($data);
     }

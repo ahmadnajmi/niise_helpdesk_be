@@ -26,7 +26,7 @@ class UserRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'name' => 'required',
+            'name' => 'string',
             'nickname' => 'nullable',
             'ic_no' => 'string',
             'email' => 'required',
@@ -45,8 +45,11 @@ class UserRequest extends FormRequest
             'group_user_access' => 'array|nullable',
             'role' => 'required',
         ];
+        
         if ($this->routeIs('user.store')) {
             $rules['ic_no'] .= '|required'; 
+            $rules['name'] .= '|required'; 
+
         }
         return $rules;
     }

@@ -22,6 +22,8 @@ class Company extends BaseModel
         'is_active',
     ];
 
+    protected array $filterable = ['name','nickname','phone_no','email','is_active'];
+
     public function stateDescription(){
         return $this->hasOne(RefTable::class,'ref_code','state_id')->where('code_category', 'state');
     }

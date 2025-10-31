@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Schema; 
 use OwenIt\Auditing\Contracts\Auditable;
 use App\Models\User;
+use Illuminate\Support\Str;
 
 class BaseModel extends Model implements Auditable
 {
@@ -14,17 +15,138 @@ class BaseModel extends Model implements Auditable
 
     // protected $commonFillable = ['created_by', 'updated_by'];
     protected $commonFillable = [];
+    protected static $sortable = [];
+    protected array $searchable = [];
+    protected array $filterable = [];
 
-
-    public function __construct(array $attributes = [])
-    {
+    public function __construct(array $attributes = []) {
         parent::__construct($attributes);
 
         $this->mergeFillable($this->commonFillable);
     }
 
-    public function mergeFillable(array $fields)
-    {
+    // public function scopeSearch($query, $keyword){
+    //     if (!empty($keyword) && !empty($this->searchable)) {
+    //         $keyword = strtolower($keyword);
+    //         $query->where(function ($q) use ($keyword) {
+    //             foreach ($this->searchable as $column) {
+    //                 $q->orWhereRaw("LOWER({$column}) LIKE ?", ["%{$keyword}%"]);
+    //             }
+    //         });
+    //     }
+    //     return $query;
+    // }
+
+    public function scopeSearch($query, $keyword){
+        if (empty($keyword)) return $query;
+
+        $fields = property_exists($this, 'searchable') && !empty($this->searchable)  ? $this->searchable   : (property_exists($this, 'filterable') ? $this->filterable : []);
+
+        $fields = array_filter($fields, fn($f) => $f !== 'is_active');
+
+        if (empty($fields)) return $query;
+
+        $keyword = strtolower($keyword);
+
+        $query->where(function ($q) use ($fields, $keyword) {
+            foreach ($fields as $column) {
+                
+                if ($column === 'state_id' && Schema::hasColumn($this->getTable(), $column)) {
+                    $type = Schema::getColumnType($this->getTable(), $column);
+                    if ($type === 'clob') {
+                        continue; // skip this column
+                    }
+                }
+                
+                $q->orWhereRaw("LOWER({$column}) LIKE ?", ["%{$keyword}%"]);
+            }
+        });
+
+        return $query;
+    }
+
+    public function scopeFilter($query){
+        foreach ($this->filterable as $field) {
+            if (!request()->has($field)) continue;
+
+            $value = request($field);
+
+            if ($field === 'state_id') {
+                $stateIds = is_array($value) ? $value : [$value];
+
+                $query->where(function ($q) use ($stateIds) {
+                    foreach ($stateIds as $id) {
+                        $q->orWhereRaw(
+                            "EXISTS (
+                                SELECT 1 FROM JSON_TABLE(
+                                    state_id, '$[*]' 
+                                    COLUMNS (value NUMBER PATH '$')
+                                ) jt 
+                                WHERE jt.value = TO_NUMBER(?)
+                            )",
+                            [(string)$id] // cast to string to satisfy Oracle binding
+                        );
+                    }
+                });
+            } else {
+                $query->where($field, $value);
+            }
+        }
+        return $query;
+    }
+
+    // public function scopeSortByField($query, $request){
+    //     $hasSorting = false;
+
+    //     foreach ($request->all() as $key => $direction) {
+    //         if (Str::endsWith($key, '_sort')) {
+    //             $field = str_replace('_sort', '', $key);
+    //             $direction = strtolower($direction);
+    //             $sortable = static::$sortable[$field] ?? null;
+
+    //             if (!in_array($direction, ['asc', 'desc']) || !$sortable) continue;
+
+    //             $hasSorting = true;
+    //             $query->orderBy($sortable, $direction);
+    //         }
+    //     }
+
+    //     if (!$hasSorting && $this->timestamps) {
+    //         $query->orderByDesc('updated_at');
+    //     }
+
+    //     return $query;
+    // }
+
+    public function scopeSortByField($query, $request){
+        $hasSorting = false;
+
+        $sortableFields = !empty(static::$sortable) ? static::$sortable : array_combine(
+            property_exists($this, 'filterable') ? $this->filterable : [],
+            property_exists($this, 'filterable') ? $this->filterable : []
+        );
+
+        foreach ($request->all() as $key => $direction) {
+            if (Str::endsWith($key, '_sort')) {
+                $field = str_replace('_sort', '', $key);
+                $direction = strtolower($direction);
+                $sortable = $sortableFields[$field] ?? null;
+
+                if (!in_array($direction, ['asc', 'desc']) || !$sortable) continue;
+
+                $hasSorting = true;
+                $query->orderBy($sortable, $direction);
+            }
+        }
+
+        if (!$hasSorting && $this->timestamps) {
+            $query->orderByDesc('updated_at');
+        }
+
+        return $query;
+    }
+
+    public function mergeFillable(array $fields){
         $this->fillable = array_merge($this->fillable, $fields);
     }
 
@@ -36,8 +158,7 @@ class BaseModel extends Model implements Auditable
         return $this->hasOne(User::class,'id','updated_by');
     }
 
-    protected static function boot()
-    {
+    protected static function boot() {
         parent::boot();
 
         static::addGlobalScope('orderByUpdatedAt', function (Builder $builder) {

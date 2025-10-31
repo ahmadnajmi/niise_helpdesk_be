@@ -17,7 +17,7 @@ class EmailTemplateController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
         
-        $data =  EmailTemplate::paginate($limit);
+        $data =  EmailTemplate::filter()->search($request->search)->sortByField($request)->paginate($limit);
 
         return new EmailTemplateCollection($data);
     }

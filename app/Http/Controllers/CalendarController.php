@@ -18,7 +18,7 @@ class CalendarController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
         
-        $data =  Calendar::paginate($limit);
+        $data =  Calendar::filter()->search($request->search)->sortByField($request)->paginate($limit);
 
         return new CalendarCollection($data);
     }

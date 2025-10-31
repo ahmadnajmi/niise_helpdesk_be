@@ -17,29 +17,17 @@ class RefTable extends BaseModel
         'ref_code_parent',
     ];
 
+    protected array $filterable = ['code_category','name_en','name'];
+
     const PDF = 1;
     const CSV = 2;
     const SEVERITY_CRITICAL = 1;
     const SEVERITY_IMPORTANT = 2;
     const SEVERITY_MEDIUM = 3;
 
-
+    
     public function incidentsStatus(){
         return $this->hasMany(Incident::class, 'status', 'ref_code');
-    }
-
-    public function scopeFilter($query){
-
-        if (request('code_category')) {
-            $codeCategory = request('code_category');
-
-            if (is_array($codeCategory)) {
-                $query->whereIn('code_category', $codeCategory);
-            } else {
-                $query->where('code_category', $codeCategory);
-            }
-        }
-        return $query;
     }
 
     public function getTranslatedNameAttribute(){

@@ -19,7 +19,7 @@ class GroupController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
         
-        $data =  Group::paginate($limit);
+        $data =  Group::filter()->search($request->search)->sortByField($request)->paginate($limit);
 
         return new GroupCollection($data);
     }

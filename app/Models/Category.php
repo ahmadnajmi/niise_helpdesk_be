@@ -21,6 +21,9 @@ class Category extends BaseModel
     const MOBILE = 'MOBILE';
     const SISTEM = 'SISTEM';
 
+    protected array $filterable = ['code','description','name','is_active'];
+
+
     public function childCategoryRecursive(){
         return $this->hasMany(Category::class, 'category_id', 'id')
                     ->with('childCategoryRecursive');

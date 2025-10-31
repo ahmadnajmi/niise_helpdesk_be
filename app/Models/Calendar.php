@@ -21,6 +21,9 @@ class Calendar extends BaseModel
         'end_date' => 'datetime:Y-m-d',
     ];
 
+    protected array $filterable = ['name','start_date','end_date','state_id','is_active'];
+
+
     public function stateDescription(){
         return $this->hasOne(RefTable::class,'ref_code','state_id')->where('code_category', 'state');
     }

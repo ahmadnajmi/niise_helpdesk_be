@@ -18,7 +18,7 @@ class CompanyController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
         
-        $data =  Company::paginate($limit);
+        $data =  Company::filter()->search($request->search)->sortByField($request)->paginate($limit);
 
         return new CompanyCollection($data);
     }

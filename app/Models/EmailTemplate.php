@@ -16,4 +16,7 @@ class EmailTemplate extends BaseModel
         'notes',
         'is_active',
     ];
+
+    protected array $filterable = ['name','sender_name','sender_email','notes','is_active'];
+
 }

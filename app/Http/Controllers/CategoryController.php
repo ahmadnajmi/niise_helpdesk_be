@@ -18,8 +18,8 @@ class CategoryController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
         
-        $data =  Category::paginate($limit);
-
+        $data =  Category::filter()->search($request->search)->sortByField($request)->paginate($limit);
+        
         return new CategoryCollection($data);
     }
 

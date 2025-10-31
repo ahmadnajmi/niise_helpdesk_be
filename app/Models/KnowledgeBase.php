@@ -16,6 +16,8 @@ class KnowledgeBase extends BaseModel
         'solution'
     ];
 
+    protected array $filterable = ['explanation','keywords','solution'];
+
     public function categoryDescription(){
         return $this->hasOne(Category::class,'id','category_id');
     }

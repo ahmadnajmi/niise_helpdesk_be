@@ -18,7 +18,7 @@ class RefTableController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
         
-        $data =  RefTable::filter()->paginate($limit);
+        $data =  RefTable::filter()->search($request->search)->sortByField($request)->paginate($limit);
 
         return new RefTableCollection($data);
     }
