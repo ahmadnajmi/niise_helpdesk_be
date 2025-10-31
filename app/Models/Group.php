@@ -85,6 +85,7 @@ class Group extends BaseModel
     }
 
     public function users(){
-        return $this->hasManyThrough(User::class, UserGroup::class, 'groups_id', 'ic_no', 'id', 'ic_no');
+        return $this->hasManyThrough(User::class, UserGroup::class, 'groups_id', 'id', 'id', 'user_id');
     }
+    
 }

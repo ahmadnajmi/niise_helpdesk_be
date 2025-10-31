@@ -7,6 +7,7 @@ use App\Models\UserGroup;
 use App\Models\UserRole;
 use App\Models\UserGroupAccess;
 use App\Models\RefTable;
+use App\Models\Branch;
 use App\Http\Resources\UserResources;
 use Faker\Factory as Faker;
 use Illuminate\Support\Facades\Lang;
@@ -23,11 +24,11 @@ class UserServices
 
             if(!$check_user){
                 $data['password'] = Hash::make('P@ssw0rd');
-                $data['user_type'] = User::FROM_HDS;
+                $data['user_type'] = isset($data['user_type']) ? $data['user_type'] : User::FROM_HDS;
 
                 $create = User::create($data);
 
-                $group_user = self::groupUser($data,$create->ic_no);
+                $group_user = self::groupUser($data,$create->id);
 
                 if($data['role']){
                     $user_role['user_id'] = $create->id;
@@ -60,7 +61,7 @@ class UserServices
         try {
             $update = $user->update($data);
 
-            $data = self::groupUser($data,$user->ic_no);
+            $data = self::groupUser($data,$user->id);
 
             $return = new UserResources($user);
 
@@ -71,14 +72,14 @@ class UserServices
         }
     }
 
-    public static function groupUser($data,$ic_no){
+    public static function groupUser($data,$user_id){
 
         if(isset($data['group_user'])){
-            UserGroup::where('ic_no',$ic_no)->delete();
+            UserGroup::where('user_id',$user_id)->delete();
 
             foreach($data['group_user'] as $group_id){
 
-                $data_group_user['ic_no'] = $ic_no;
+                $data_group_user['user_id'] = $user_id;
                 $data_group_user['groups_id'] = $group_id;
     
                 UserGroup::create($data_group_user);
@@ -86,11 +87,11 @@ class UserServices
         }
 
         if(isset($data['group_user_access'])){
-            UserGroupAccess::where('ic_no',$ic_no)->delete();
+            UserGroupAccess::where('user_id',$user_id)->delete();
 
             foreach($data['group_user_access'] as $access_group_id){
 
-                $data_group_user_access['ic_no'] = $ic_no;
+                $data_group_user_access['user_id'] = $user_id;
                 $data_group_user_access['groups_id'] = $access_group_id;
     
                 UserGroupAccess::create($data_group_user_access);
@@ -102,8 +103,8 @@ class UserServices
 
     public static function delete(User $user){
 
-        UserGroup::where('ic_no',$user->ic_no)->delete();
-        UserGroupAccess::where('ic_no',$user->ic_no)->delete();
+        UserGroup::where('user_id',$user->id)->delete();
+        UserGroupAccess::where('user_id',$user->id)->delete();
 
         $user->delete();
 
@@ -186,18 +187,20 @@ class UserServices
             $gender = $faker->randomElement(['male', 'female']);
             $position = $faker->randomElement(['Pengarah Imigresen Negeri', 'Ketua Pejabat','Pegawai Imigresen (PI)','Timb. Pen Pengarah Imigresen (TPPI)']);
 
+            $branch = Branch::inRandomOrder()->first();
+
             $data['ic_no'] = $request->ic_no;
             $data['name'] = $dummy_users[$request->ic_no];
             $data['nickname'] = $faker->userName;
             $data['position'] = $position;
-            $data['branch'] = $faker->numberBetween(1,59);
+            $data['branch_id'] = $branch->id;
             $data['email'] = $faker->safeEmail;
             $data['phone_no'] = $faker->phoneNumber;
             $data['address'] = $faker->address;
             $data['postcode'] = $faker->postcode;
             $data['city'] = $faker->city;
-            $data['state_id'] = $faker->numberBetween(1,16);
-            $data['stateDescription'] = RefTable::where('code_category','state')->where('ref_code',$data['state_id'])->first();
+            $data['state_id'] = $branch->state_id;
+            $data['stateDescription'] = RefTable::where('code_category','state')->where('ref_code', $branch->state_id)->first();
 
             $message =  __('user.message.user_exists_adm');
         }

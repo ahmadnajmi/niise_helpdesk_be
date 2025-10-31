@@ -11,11 +11,11 @@ class UserGroup extends BaseModel
 
     protected $fillable = [ 
         'groups_id',
-        'ic_no',
+        'user_id',
     ];
 
     public function userDetails(){
-        return $this->belongsTo(User::class, 'ic_no','ic_no');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function groupDetails(){
