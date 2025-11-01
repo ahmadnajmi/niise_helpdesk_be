@@ -1,9 +1,10 @@
 deploy:
   stage: deploy
   script:
+    - apt-get update -yqq
+    - apt-get install -y rsync ssh
     - mkdir -p ~/.ssh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
     - echo "Deploying to STAGING..."
     - rsync -az --delete --delete-excluded --exclude=".git" --exclude=".env" --exclude="storage" ./ $DEPLOY_USER@$DEPLOY_SERVER:$DEPLOY_PATH
     - ssh $DEPLOY_USER@$DEPLOY_SERVER "cd $DEPLOY_PATH && composer install --no-dev --optimize-autoloader && php artisan migrate --force && php artisan optimize"
-
