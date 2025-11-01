@@ -1,23 +1,27 @@
-image: docker:stable
-
-stages:
-  - Build image
-
-variables:
-  IMAGE_VERSION: $CI_BUILD_TAG
-  TOKEN_NAME: $TOKEN_NAME
-  ACCESS_TOKEN: $ACCESS_TOKEN
-
-before_script:
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-
-docker build:
-  stage: Build image
-  script:
-  - echo $CI_REGISTRY_IMAGE
-  - echo $CI_BUILD_TAG
-  - docker info
-  - docker build --no-cache --no-cache --build-arg ACCESS_TOKEN=$ACCESS_TOKEN --build-arg TOKEN_NAME=$TOKEN_NAME -t $CI_REGISTRY_IMAGE:$IMAGE_VERSION .
-  - docker push $CI_REGISTRY_IMAGE:$IMAGE_VERSION
+deploy-staging:
+  stage: deploy
+  environment:
+    name: staging
+    url: https://niccdev.heitech.com.my/helpdeskbe
   only:
-    - tags
+    - staging
+  script:
+    - mkdir -p ~/.ssh
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+    - echo "Deploying to STAGING..."
+    - rsync -az --delete --delete-excluded --exclude=".git" --exclude=".env" --exclude="storage" ./ deploy@staging-server-ip:/var/www/html/staging
+    - ssh deploy@staging-server-ip "cd /var/www/html/staging && composer install --no-dev --optimize-autoloader && php artisan migrate --force && php artisan optimize"
+
+deploy-production:
+  stage: deploy
+  environment:
+    name: production
+    url: https://niccdev.heitech.com.my/helpdeskbe
+  only:
+    - main
+  script:
+    - mkdir -p ~/.ssh
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+    - echo "Deploying to PRODUCTION..."
+    - rsync -az --delete --delete-excluded --exclude=".git" --exclude=".env" --exclude="storage" ./ deploy@production-server-ip:/var/www/html/project
+    - ssh deploy@production-server-ip "cd /var/www/html/project && composer install --no-dev --optimize-autoloader && php artisan migrate --force && php artisan optimize"
