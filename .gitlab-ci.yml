@@ -1,27 +1,9 @@
-deploy-staging:
+deploy:
   stage: deploy
-  environment:
-    name: staging
-    url: https://niccdev.heitech.com.my/helpdeskbe
-  only:
-    - staging
   script:
     - mkdir -p ~/.ssh
     - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
     - echo "Deploying to STAGING..."
-    - rsync -az --delete --delete-excluded --exclude=".git" --exclude=".env" --exclude="storage" ./ deploy@staging-server-ip:/var/www/html/staging
-    - ssh deploy@staging-server-ip "cd /var/www/html/staging && composer install --no-dev --optimize-autoloader && php artisan migrate --force && php artisan optimize"
+    - rsync -az --delete --delete-excluded --exclude=".git" --exclude=".env" --exclude="storage" ./ $DEPLOY_USER@$DEPLOY_SERVER:$DEPLOY_PATH
+    - ssh $DEPLOY_USER@$DEPLOY_SERVER "cd $DEPLOY_PATH && composer install --no-dev --optimize-autoloader && php artisan migrate --force && php artisan optimize"
 
-deploy-production:
-  stage: deploy
-  environment:
-    name: production
-    url: https://niccdev.heitech.com.my/helpdeskbe
-  only:
-    - main
-  script:
-    - mkdir -p ~/.ssh
-    - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
-    - echo "Deploying to PRODUCTION..."
-    - rsync -az --delete --delete-excluded --exclude=".git" --exclude=".env" --exclude="storage" ./ deploy@production-server-ip:/var/www/html/project
-    - ssh deploy@production-server-ip "cd /var/www/html/project && composer install --no-dev --optimize-autoloader && php artisan migrate --force && php artisan optimize"
