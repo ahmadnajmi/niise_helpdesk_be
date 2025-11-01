@@ -6,5 +6,6 @@ deploy:
     - mkdir -p ~/.ssh
     - echo -e "Host *\n\tPort 8822\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
     - echo "Deploying to STAGING..."
+    - echo "Deploying to $DEPLOY_USER@$DEPLOY_SERVER:$DEPLOY_PATH"   # <-- debug here
     - rsync -az --delete --delete-excluded --exclude=".git" --exclude=".env" --exclude="storage" ./ $DEPLOY_USER@$DEPLOY_SERVER:$DEPLOY_PATH
     - ssh -p 8822 $DEPLOY_USER@$DEPLOY_SERVER "cd $DEPLOY_PATH && composer install --no-dev --optimize-autoloader && php artisan migra
