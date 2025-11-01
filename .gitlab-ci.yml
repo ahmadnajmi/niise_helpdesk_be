@@ -10,17 +10,17 @@ deploy:
   stage: deploy
   environment: staging
   before_script:
-  - apt-get update -yqq
-  - apt-get install -y rsync ssh openssh-client
-  - mkdir -p ~/.ssh
-  - ssh-keyscan -p 8822 $DEPLOY_SERVER >> ~/.ssh/known_hosts
-  - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-  - chmod 600 ~/.ssh/id_rsa
-  - eval $(ssh-agent -s)
-  - ssh-add ~/.ssh/id_rsa
-  - echo -e "Host *\n\tPort 8822\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+    - apt-get update -yqq
+    - apt-get install -y rsync ssh openssh-client
+    - mkdir -p ~/.ssh
+    - ssh-keyscan -p 8822 $DEPLOY_SERVER >> ~/.ssh/known_hosts
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - eval $(ssh-agent -s)
+    - ssh-add ~/.ssh/id_rsa
+    - echo -e "Host *\n\tPort 8822\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
   script:
     - echo "Deploying to STAGING..."
     - echo "Deploying to $DEPLOY_USER@$DEPLOY_SERVER:$DEPLOY_PATH"
     - rsync -az --delete --delete-excluded --exclude=".git" --exclude=".env" --exclude="storage" -e "ssh -p 8822" ./ $DEPLOY_USER@$DEPLOY_SERVER:$DEPLOY_PATH
-    - ssh -p 8822 $DEPLOY_USER@$DEPLOY_SERVER "cd $DEPLOY_PATH && cat composer.json && cat composer.lock && composer install --no-dev --optimize-autoloader && php artisan migrate --force && php artisan optimize"
+    - ssh -p 8822 $DEPLOY_USER@$DEPLOY_SERVER "cd $DEPLOY_PATH && composer install --no-dev --optimize-autoloader && php artisan config:clear && php artisan optimize && php artisan migrate --force"
