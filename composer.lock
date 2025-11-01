@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "53c915d0f8e5d6ca65bdcb083d5033ae",
+    "content-hash": "1829c1ba083ab2d9a49462148ffc8bf8",
     "packages": [
         {
             "name": "afiqiqmal/malaysiaholiday",
@@ -8311,16 +8311,16 @@
         },
         {
             "name": "yajra/laravel-pdo-via-oci8",
-            "version": "dev-master",
+            "version": "v3.7.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/yajra/pdo-via-oci8.git",
-                "reference": "4790b5ab1d8c11e07b43a9ccf465264731e52e8a"
+                "reference": "ae0f521edb8e65862b0972a66ef4a4d50974e09a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yajra/pdo-via-oci8/zipball/4790b5ab1d8c11e07b43a9ccf465264731e52e8a",
-                "reference": "4790b5ab1d8c11e07b43a9ccf465264731e52e8a",
+                "url": "https://api.github.com/repos/yajra/pdo-via-oci8/zipball/ae0f521edb8e65862b0972a66ef4a4d50974e09a",
+                "reference": "ae0f521edb8e65862b0972a66ef4a4d50974e09a",
                 "shasum": ""
             },
             "require": {
@@ -8355,7 +8355,7 @@
             "description": "PDO userspace driver proxying calls to PHP OCI8 driver",
             "support": {
                 "issues": "https://github.com/yajra/pdo-via-oci8/issues",
-                "source": "https://github.com/yajra/pdo-via-oci8/tree/master"
+                "source": "https://github.com/yajra/pdo-via-oci8/tree/v3.7.2"
             },
             "funding": [
                 {
@@ -8371,7 +8371,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2025-01-21T06:29:14+00:00"
+            "time": "2025-09-24T14:47:33+00:00"
         }
     ],
     "packages-dev": [
@@ -10800,9 +10800,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "yajra/laravel-pdo-via-oci8": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
