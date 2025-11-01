@@ -139,11 +139,11 @@ class User extends Authenticatable
     }
 
     public function group(){
-        return $this->hasMany(UserGroup::class,'ic_no','ic_no');
+        return $this->hasMany(UserGroup::class,'user_id','id');
     }
 
     public function groupAccess(){
-        return $this->hasMany(UserGroupAccess::class,'ic_no','ic_no');
+        return $this->hasMany(UserGroupAccess::class,'user_id','id');
     }
 
 

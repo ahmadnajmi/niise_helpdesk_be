@@ -321,7 +321,7 @@ class Incident extends BaseModel
 
         $role = User::getUserRole(Auth::user()->id);
 
-        $group_id = UserGroup::where('ic_no',Auth::user()->ic_no)->pluck('groups_id');
+        $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
 
         $data =  Incident::when($role?->role == Role::JIM, function ($query){
                             $query->where('complaint_user_id',Auth::user()->id);

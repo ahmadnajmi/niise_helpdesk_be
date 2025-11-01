@@ -28,7 +28,7 @@ class WorkbasketController extends Controller
         $role = User::getUserRole(Auth::user()->id);
 
         if($role?->role == Role::CONTRACTOR){
-            $group_id = UserGroup::where('ic_no',Auth::user()->ic_no)->pluck('groups_id');
+            $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
         }
         
         $data = Workbasket::where(function ($query) use ($role,$group_id) {

@@ -16,7 +16,7 @@ class UserGroupResources extends JsonResource
     {
         $return  = [
             'groups_id' => $this->groups_id,
-            'ic_no' => $this->ic_no,
+            'user_id' => $this->user_id,
         ];
 
         if($request->route()->getName() == 'group_management.show'){
