@@ -1,5 +1,6 @@
 debug-env:
   stage: test
+  environment: staging
   script:
     - env | grep DEPLOY
   rules:
@@ -7,6 +8,7 @@ debug-env:
 
 deploy:
   stage: deploy
+  environment: staging
   script:
     - apt-get update -yqq
     - apt-get install -y rsync ssh
