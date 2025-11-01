@@ -11,12 +11,14 @@ deploy:
   environment: staging
   before_script:
   - apt-get update -yqq
-  - apt-get install -y openssh-client rsync
+  - apt-get install -y rsync ssh openssh-client
   - mkdir -p ~/.ssh
+  - ssh-keyscan -p 8822 $DEPLOY_SERVER >> ~/.ssh/known_hosts
   - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
   - chmod 600 ~/.ssh/id_rsa
   - eval $(ssh-agent -s)
   - ssh-add ~/.ssh/id_rsa
+  - echo -e "Host *\n\tPort 8822\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
   script:
     - echo "Deploying to STAGING..."
     - echo "Deploying to $DEPLOY_USER@$DEPLOY_SERVER:$DEPLOY_PATH"
