@@ -102,7 +102,7 @@ class GeneralServices
                                     ->when($contractor && $request->own_group, function ($query) {
                                         return $query->where(function ($subQuery) {
                                             $subQuery->whereHas('userGroup', function ($q)  {
-                                                $q->where('ic_no', Auth::user()->ic_no);
+                                                $q->where('user_id', Auth::user()->id);
                                             })
                                             // ->orWhereHas('userGroupAccess', function ($q)  {
                                             //     $q->where('user_id', Auth::user()->id);
