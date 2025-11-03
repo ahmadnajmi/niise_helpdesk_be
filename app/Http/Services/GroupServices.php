@@ -8,6 +8,8 @@ use App\Http\Resources\GroupResources;
 use App\Models\Group;
 use App\Models\UserGroup;
 use App\Models\User;
+use App\Models\Role;
+use App\Models\UserRole;
 
 class GroupServices
 {
@@ -59,6 +61,15 @@ class GroupServices
                     $create = User::create($user);
 
                     $user_id = $create->id;
+
+                    $role  = Role::where('role',Role::CONTRACTOR)->first();
+
+                    $user_role['user_id'] = $user_id;
+                    $user_role['role_id'] = $role?->id;
+
+                    UserRole::disableAuditing();
+
+                    UserRole::create($user_role);
                 }
 
                 $data['user_id'] = $user_id;
