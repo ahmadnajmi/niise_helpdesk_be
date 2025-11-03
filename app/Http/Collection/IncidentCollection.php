@@ -30,7 +30,6 @@ class IncidentCollection extends BaseResource
                 'branch_details' => $query->branch,
                 'category_id' => $query->category_id,
                 'category_details' => $query->categoryDescription ? new CategoryResources($query->categoryDescription) : null,
-                'complaint_id' => $query->complaint_id,
                 'information' => $query->information,
                 'knowledge_base_id' => $query->knowledge_base_id,
                 'received_via' => $query->received_via,
@@ -47,8 +46,7 @@ class IncidentCollection extends BaseResource
                 'operation_user_details' => $query->operationUser ? new UserResources($query->operationUser) : null,
                 'appendix_file' => $query->appendix_file,
                 'incident_solution' => $query->incidentResolution ? new IncidentResolutionCollection($query->incidentResolution) : null,
-                'complaint_non_user_id' => $query->complaint_id,
-                'complaint_non_user_details' => $query->complaint ?  new ComplaintResources($query->complaint) : null ,
+              
                 'complaint_user_id' => $query->complaint_user_id,
                 'complaint_user_details' => $query->complaintUser ?  new UserResources($query->complaintUser) : null,
 

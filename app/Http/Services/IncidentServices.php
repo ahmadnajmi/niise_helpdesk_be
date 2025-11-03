@@ -47,9 +47,11 @@ class IncidentServices
 
             if(!isset($data['complaint_user_id'])){
 
-                $complaint = Complaint::create($data);
+                $data['user_type'] = User::FROM_COMPLAINT;
 
-                $data['complaint_id'] =  $complaint->id;
+                $complaint = User::create($data);
+
+                $data['complaint_user_id'] =  $complaint->id;
             }
 
             // if(Auth::user()->roles->contains('role', Role::JIM)){

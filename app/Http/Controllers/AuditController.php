@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Traits\ResponseTrait;
 use Illuminate\Http\Request;
-use OwenIt\Auditing\Models\Audit;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Collection\AuditTrailCollection;
 use App\Http\Resources\AuditTrailResources;
-
-use Illuminate\Support\Facades\Auth;
+use App\Http\Traits\ResponseTrait;
+use App\Models\AuditTrail;
 
 class AuditController extends Controller
 {
@@ -18,7 +17,7 @@ class AuditController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
 
-        $data =  Audit::where('user_id',Auth::user()->id)->latest()->paginate($limit);
+        $data =  AuditTrail::filter()->search($request->search)->sortByField($request)->paginate($limit);
 
         return new AuditTrailCollection($data);
 

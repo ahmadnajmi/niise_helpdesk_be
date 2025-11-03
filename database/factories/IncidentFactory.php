@@ -21,7 +21,6 @@ class IncidentFactory extends Factory
     public function definition(): array{
         $sla = Sla::inRandomOrder()->first();
         $sla_version = SlaVersion::where('sla_template_id',$sla?->sla_template_id)->orderBy('version','desc')->first();
-        $complaint = Complaint::inRandomOrder()->first();
         $knowledgebase = KnowledgeBase::inRandomOrder()->first();
         $group = Group::inRandomOrder()->first();
         $user = User::inRandomOrder()->first();
@@ -34,7 +33,6 @@ class IncidentFactory extends Factory
         $data['barcode'] = fake()->numerify('############');
         $data['branch_id'] = $random_branch;
         $data['category_id'] = $sla?->category_id;
-        $data['complaint_id'] = $complaint?->id;
         $data['information'] = $knowledgebase?->solution.' '.fake()->sentence(20);
         $data['knowledge_base_id'] = $knowledgebase?->id;
         $data['received_via'] = fake()->numberBetween(1,4);

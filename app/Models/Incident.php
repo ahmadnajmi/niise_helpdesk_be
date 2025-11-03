@@ -23,7 +23,6 @@ class Incident extends BaseModel
         'barcode',
         'branch_id',
         'category_id',
-        'complaint_id',
         'complaint_user_id',
         'information',
         'knowledge_base_id',
@@ -109,10 +108,6 @@ class Incident extends BaseModel
         return $this->hasOne(RefTable::class,'ref_code','incident_asset_type')->where('code_category', 'incident_asset_type');
     }
 
-    public function complaint(){
-        return $this->hasOne(Complaint::class,'id','complaint_id');
-    }
-
     public function complaintUser(){
         return $this->hasOne(User::class,'id','complaint_user_id');
     }
@@ -190,7 +185,7 @@ class Incident extends BaseModel
                     $search->whereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"]);
                 });
 
-                $q->orWhereHas('complaint', function ($search) use ($keyword) {
+                $q->orWhereHas('complaintUser', function ($search) use ($keyword) {
                     $search->whereRaw('LOWER(phone_no) LIKE ?', ["%{$keyword}%"]);
                 });
 
@@ -243,9 +238,9 @@ class Incident extends BaseModel
                     }
                     elseif($field === 'phone_no') {
 
-                        $query->leftJoin('complaint', 'complaint.id', '=', 'incidents.complaint_id')
+                        $query->leftJoin('user', 'user.id', '=', 'incidents.complaint_user_id')
                                 ->select('incidents.*')
-                                ->orderBy("complaint.$column", $direction);
+                                ->orderBy("user.$column", $direction);
                     }
                 } 
                
@@ -390,12 +385,12 @@ class Incident extends BaseModel
                             });
                         })
                         ->when($request->complaint_by, function ($query) use ($request) {
-                            return $query->whereHas('complaint', function ($query)use($request) {
+                            return $query->whereHas('complaintUser', function ($query)use($request) {
                                     $query->where('name',$request->complaint_by); 
                             });
                         })
                         ->when($request->complaint_phone_no, function ($query) use ($request) {
-                            return $query->whereHas('complaint', function ($query)use($request) {
+                            return $query->whereHas('complaintUser', function ($query)use($request) {
                                     $query->where('phone_no',$request->complaint_phone_no); 
                             });
                         })

@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('barcode',100)->nullable(); 
             $table->unsignedBigInteger('branch_id')->nullable(); 
             $table->unsignedBigInteger('category_id')->nullable(); 
-            $table->unsignedBigInteger('complaint_id')->nullable(); 
             $table->unsignedBigInteger('complaint_user_id')->nullable(); 
             $table->string('information',1200)->nullable(); 
             $table->unsignedBigInteger('knowledge_base_id')->nullable(); 

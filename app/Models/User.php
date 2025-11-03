@@ -193,13 +193,13 @@ class User extends Authenticatable
         return $get_role;
     }
 
-    // public function getIcNoAttribute($value){
-    //     return str_repeat('*', strlen($value) - 4) . substr($value, -4);
-    // }
-
     public function getMaskedIcNoAttribute(){
         $value = $this->attributes['ic_no'];
 
-        return str_repeat('*', strlen($value) - 4) . substr($value, -4);
+        if($value){
+            return str_repeat('*', strlen($value) - 4) . substr($value, -4);
+        }
+
+        return $value;
     }
 }

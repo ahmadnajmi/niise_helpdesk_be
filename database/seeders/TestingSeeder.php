@@ -25,7 +25,6 @@ class TestingSeeder extends Seeder
         SlaTemplate::truncate();
         SlaVersion::truncate();
         Sla::truncate();
-        Complaint::truncate();
         Incident::truncate();
         IncidentResolution::truncate();
         Workbasket::truncate();
@@ -35,7 +34,6 @@ class TestingSeeder extends Seeder
             DB::statement("ALTER SEQUENCE SLA_TEMPLATE_ID_SEQ RESTART START WITH 1");
             DB::statement("ALTER SEQUENCE SLA_VERSION_ID_SEQ RESTART START WITH 1");
             DB::statement("ALTER SEQUENCE SLA_ID_SEQ RESTART START WITH 1");
-            DB::statement("ALTER SEQUENCE COMPLAINT_ID_SEQ RESTART START WITH 1");
             DB::statement("ALTER SEQUENCE INCIDENTS_ID_SEQ RESTART START WITH 1");
             DB::statement("ALTER SEQUENCE INCIDENT_RESOLUTION_ID_SEQ RESTART START WITH 1");
             DB::statement("ALTER SEQUENCE WORKBASKET_ID_SEQ RESTART START WITH 1");
@@ -51,7 +49,6 @@ class TestingSeeder extends Seeder
 
         SlaTemplate::factory()->count(10)->create();
         Sla::factory()->count(20)->create();
-        Complaint::factory()->count(20)->create();
         
         Incident::factory()->count(5)->create(['status' => Incident::OPEN]);
         Incident::factory()->count(5)->create(['status' => Incident::RESOLVED]);
