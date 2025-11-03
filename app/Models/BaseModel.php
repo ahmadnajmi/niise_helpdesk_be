@@ -88,7 +88,11 @@ class BaseModel extends Model implements Auditable
                         );
                     }
                 });
-            } else {
+            }
+            elseif(is_array($value)){
+                $query->whereIn($field, $value);
+            } 
+            else {
                 $query->where($field, $value);
             }
         }
