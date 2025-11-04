@@ -25,6 +25,8 @@ deploy:
         cd $DEPLOY_PATH &&
         git config --global --add safe.directory $DEPLOY_PATH &&
         git reset --hard &&
+        git config --global user.email "najmisidek@heitech.com.my" &&
+        git config --global user.name "Najmi Sidek" &&
         git config --global pull.rebase false && 
         git pull https://$CI_USER:$CI_TOKEN@scm.awanheitech.com/digit/external/niise/hds/hds-be.git &&
         composer install --no-dev --optimize-autoloader &&
