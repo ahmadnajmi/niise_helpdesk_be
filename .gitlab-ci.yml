@@ -25,7 +25,7 @@ deploy:
         cd $DEPLOY_PATH &&
         git config --global --add safe.directory $DEPLOY_PATH &&
         git reset --hard &&
-        git pull &&
+        git pull https://$CI_USER:$CI_TOKEN@scm.awanheitech.com/digit/external/niise/hds/hds-be.git &&
         composer install --no-dev --optimize-autoloader &&
         php artisan migrate --force &&
         php artisan optimize
