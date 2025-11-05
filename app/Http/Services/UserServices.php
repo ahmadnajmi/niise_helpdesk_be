@@ -2,6 +2,8 @@
 
 namespace App\Http\Services;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Lang;
+use App\Http\Traits\ResponseTrait;
 use App\Models\User;
 use App\Models\UserGroup;
 use App\Models\UserRole;
@@ -10,8 +12,6 @@ use App\Models\RefTable;
 use App\Models\Branch;
 use App\Http\Resources\UserResources;
 use Faker\Factory as Faker;
-use Illuminate\Support\Facades\Lang;
-use App\Http\Traits\ResponseTrait;
 
 class UserServices
 {
@@ -24,7 +24,14 @@ class UserServices
 
             if(!$check_user){
                 $data['password'] = Hash::make('P@ssw0rd');
-                $data['user_type'] = isset($data['user_type']) ? $data['user_type'] : User::FROM_HDS;
+
+                if($data['role'] == Role::BTMR || $data['role'] == Role::JIM){
+
+                    $data['user_type'] = User::FROM_IDM;
+                }
+                else{
+                    $data['user_type'] = User::FROM_HDS;
+                }
 
                 $create = User::create($data);
 

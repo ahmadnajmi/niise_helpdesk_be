@@ -19,7 +19,6 @@ class Role extends BaseModel
 
     const JIM = 'JIM';
     const FRONTLINER = 'FRONTLINER';
-    const ICT_SV = 'ICT_SV';
     const BTMR = 'BTMR';
     const CONTRACTOR = 'CONTRACTOR';
 

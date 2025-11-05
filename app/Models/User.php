@@ -60,6 +60,12 @@ class User extends Authenticatable
                 $q->orWhereHas('branch', function ($search) use ($keyword) {
                     $search->whereRaw('LOWER(branch.name) LIKE ?', ["%{$keyword}%"]);
                 });
+                $q->orWhereHas('company', function ($search) use ($keyword) {
+                    $search->whereRaw('LOWER(companies.name) LIKE ?', ["%{$keyword}%"]);
+                });
+                $q->orWhereHas('roles', function ($search) use ($keyword) {
+                    $search->whereRaw('LOWER(role.name) LIKE ?', ["%{$keyword}%"]);
+                });
             });
         }
         return $query;
@@ -78,6 +84,14 @@ class User extends Authenticatable
                         })
                         ->when(request('branch_id'), function ($query) {
                             $query->where('branch_id',request('branch_id'));
+                        })
+                        ->when(request('company_id'), function ($query) {
+                            $query->where('company_id',request('company_id'));
+                        })
+                        ->when(request('role_id'), function ($query) {
+                            $query->whereHas('roles', function ($query)  {
+                                $query->where('role_id',request('role_id'));
+                            });
                         })
                         ->when(request()->has('is_active'), function ($query) {
                             $query->where('is_active',request('is_active') == true ? true : false);
