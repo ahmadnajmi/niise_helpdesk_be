@@ -75,6 +75,12 @@ class AuditTrail extends BaseAudit
                             ->select('audits.*')
                             ->orderBy("users.ic_no", $direction);
                 }
+                elseif($field == 'time_created_at'){
+                   $query->orderByRaw('TO_CHAR(created_at, \'HH24:MI:SS\') ' . $direction);
+                }
+                elseif($field == 'date_created_at'){
+                    $query->orderByRaw('TO_CHAR(created_at, \'YYYY-MM-DD\') ' . $direction);
+                }
                 else{
                     $query->orderBy($field, $direction);
                 }
