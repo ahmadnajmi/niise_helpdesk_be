@@ -31,6 +31,9 @@ class Permission extends BaseModel
         $data = self::whereHas('roles', function ($query)use($user_role) {
                       $query->whereIn('role.id',$user_role); 
                     })
+                    ->when($colum =='module_id', function ($query) {
+                        return $query->whereRaw('LOWER(name) LIKE ?', ["%index%"]); 
+                    })
                     ->pluck($colum);
 
         return $data;
