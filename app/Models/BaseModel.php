@@ -58,7 +58,7 @@ class BaseModel extends Model implements Auditable
                     }
                 }
                 
-                $q->orWhereRaw("LOWER({$column}) LIKE ?", ["%{$keyword}%"]);
+                $q->orWhereRaw("LOWER({$column}) LIKE ?", ['%' . strtolower($keyword) . '%']);
             }
         });
 

@@ -73,11 +73,12 @@ class User extends Authenticatable
 
     public function scopeFilter($query){
 
-        $query = $query->when(request('ic_no'), function ($query) {
-                            $query->where('ic_no',request('ic_no'));
+        $query = $query
+                        ->when(request('ic_no'), function ($query) {
+                           $query->whereRaw('LOWER(ic_no) LIKE ?', ['%' . strtolower(request('ic_no')) . '%']);
                         })
                         ->when(request('name'), function ($query) {
-                            $query->where('name',request('name'));
+                            $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower(request('name')) . '%']);
                         })
                         ->when(request('phone_no'), function ($query) {
                             $query->where('phone_no',request('phone_no'));

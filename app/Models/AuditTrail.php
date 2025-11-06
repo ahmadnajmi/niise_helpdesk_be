@@ -25,7 +25,7 @@ class AuditTrail extends BaseAudit
             $q->orWhere('event', 'like', "%{$keyword}%");
             $q->orWhereDate('created_at', 'like', "%{$keyword}%");
             $q->orWhereHas('user', function ($query)use($keyword) {
-                $query->where('ic_no', 'like', "%{$keyword}%"); 
+                $query->where('ic_no', 'like', '%' . strtolower($keyword) . '%'); 
             });
         });
     }
@@ -44,7 +44,7 @@ class AuditTrail extends BaseAudit
             }
             elseif($field == 'ic_no'){
                 $query->whereHas('user', function ($query)use($value) {
-                        $query->where('ic_no',$value); 
+                        $query->where('ic_no','like', '%' . strtolower($value) . '%');
                     });
             }
             else{
