@@ -93,7 +93,14 @@ class BaseModel extends Model implements Auditable
                 $query->whereIn($field, $value);
             } 
             else {
-                $query->where($field, $value);
+                $sensitive_field = ['name','nickname','email','phone_no','keywords'];
+
+                if (in_array($field, $sensitive_field)) {
+                    $query->whereRaw('LOWER(' . $field . ') LIKE ?', ['%' . strtolower($value) . '%']);
+                }else{
+                    $query->where($field, $value);
+                }
+                
             }
         }
         return $query;
@@ -137,9 +144,15 @@ class BaseModel extends Model implements Auditable
                 $sortable = $sortableFields[$field] ?? null;
 
                 if (!in_array($direction, ['asc', 'desc']) || !$sortable) continue;
-
                 $hasSorting = true;
-                $query->orderBy($sortable, $direction);
+                // $query->orderBy($sortable, $direction);
+                if($sortable == 'category_id'){
+                     $query->leftJoin('categories', 'categories.id', '=', 'knowledge_bases.category_id')
+                            ->select('knowledge_bases.*')
+                            ->orderBy("categories.name", $direction);
+                }else{
+                    $query->orderByRaw('LOWER(' . $sortable . ') ' . $direction);
+                }
             }
         }
 
