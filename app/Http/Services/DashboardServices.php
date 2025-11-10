@@ -22,7 +22,7 @@ class DashboardServices
     public static function index($request){
         $page = $request->page ? $request->page : 1;
         $limit = $request->limit ? $request->limit : 15;
-        
+
         // $role = User::getUserRole(Auth::user()->id);
 
         // $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
@@ -54,9 +54,11 @@ class DashboardServices
     }
 
     public static function getDashboardGraph($request){
-        $request->role = User::getUserRole(Auth::user()->id);
-
-        $request->group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
+        
+        if (Auth::check()) {
+            $request->role = User::getUserRole(Auth::id());
+            $request->group_id = UserGroup::where('user_id', Auth::id())->pluck('groups_id');
+        }
 
         $daily = self::graphTotalIncidentDaily($request);
         $montly = self::graphTotalIncidentMonthly($request);
