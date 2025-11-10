@@ -98,6 +98,10 @@ Route::prefix('idm')->middleware('client.passport')->name('idm.')->group(functio
     Route::post('branch', [BranchController::class, 'idmCreateUpdate'])->name('branch.create');
 });
 
+Route::apiResource('dashboard-all', DashboardController::class)->only('index');
+Route::get('dashboard_graph-all', [DashboardController::class, 'dashboardGraph'])->name('dashboard.graph-all');
+
+
 Route::get('testing', [TestingController::class,'testingJasper']);
 
 Route::get('testing_report', [ReportController::class, 'generateReport']);

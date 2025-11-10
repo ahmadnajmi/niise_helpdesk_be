@@ -22,9 +22,10 @@ class DashboardServices
     public static function index($request){
         $page = $request->page ? $request->page : 1;
         $limit = $request->limit ? $request->limit : 15;
-        $role = User::getUserRole(Auth::user()->id);
+        
+        // $role = User::getUserRole(Auth::user()->id);
 
-        $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
+        // $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
 
         if($request->code == 'by_branch'){
             $data = self::incidentByBranch($request);
