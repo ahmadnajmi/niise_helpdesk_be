@@ -100,7 +100,7 @@ Route::prefix('idm')->middleware('client.passport')->name('idm.')->group(functio
 
 Route::apiResource('dashboard-all', DashboardController::class)->only('index');
 Route::get('dashboard_graph-all', [DashboardController::class, 'dashboardGraph'])->name('dashboard.graph-all');
-Route::get('dynamic_option-all', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option');
+Route::get('dynamic_option-all', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option-all');
 
 
 Route::get('testing', [TestingController::class,'testingJasper']);
