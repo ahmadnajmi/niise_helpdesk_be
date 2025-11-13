@@ -25,7 +25,7 @@ class AuditController extends Controller
 
     public function show($id)
     {
-        $data = Audit::find($id);
+        $data = AuditTrail::find($id);
 
         $data = new AuditTrailResources($data);
 

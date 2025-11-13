@@ -46,6 +46,7 @@ class IncidentFactory extends Factory
         $data['operation_user_id'] = $user?->id;
         $data['sla_version_id'] = $sla_version?->id;
         $data['expected_end_date'] = IncidentServices::calculateDueDateIncident($data);
+        $data['complaint_user_id'] = $user?->id;
 
         $data['service_recipient_id'] =  $user?->id;
         
@@ -102,7 +103,6 @@ class IncidentFactory extends Factory
 
                 $data_workbasket['date'] = date('Y-m-d H:i:s');
                 $data_workbasket['incident_id'] = $incident->id;
-                $data_workbasket['handle_by'] = $incident->operation_user_id;
                 
                 Workbasket::create($data_workbasket);
             }
