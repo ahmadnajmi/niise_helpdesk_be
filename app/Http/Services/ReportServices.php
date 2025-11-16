@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Category;
 use App\Models\Incident;
 use App\Models\SlaTemplate;
@@ -165,15 +166,24 @@ class ReportServices
         $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'csv' ;
 
         $chart_image = $this->uploadDoc($request);
-
-        $parameter  = [
-            "SUBREPORT_DIR" => $this->pathFolder.$file.'/',
-            "image_path" => $this->beUrl."/logo_immigration.png",
-            "chart_image" => $chart_image,
-            "cawangan_id" => $request->branch_id,
-            "kontraktor_id" => $request->contractor_id,
-        ];
         
+        if($request->report_category == 'TO_BREACH' || $request->report_category == 'STATUS'){
+            $parameter  = [
+                "SUBREPORT_DIR" => $this->pathFolder.$file.'/',
+                "image_path" => $this->beUrl."/logo_immigration.png",
+                "chart_image" => $chart_image,
+                "cawangan_id" => $request->branch_id,
+                "kontraktor_id" => $request->contractor_id,
+            ];
+        }
+        else{
+            $parameter  = [
+                "logo_background" => $this->beUrl."/background.png",
+                "logo_tittle" => $this->beUrl."/logo_immigration.png",
+                "user_name" => Auth::user()->name,
+                "graph_picture" => $chart_image,
+            ];
+        }
 
         $data = [
             'reportTemplate' => $file.'/'.$file.'.jasper',
