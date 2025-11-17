@@ -209,7 +209,7 @@ class ReportServices
                 $filename = $json['outputFileName'];
                                             
                 return [
-                    'data' => response($response->body(), 200)->header('Content-Type', $contentType)->header('Content-Disposition', 'inline; filename="'.$filename.'"')
+                    'data' => response($response->body(), 200)->header('Content-Type', $contentType)->header('Content-Disposition', 'attachment; filename="'.$filename.'"')
                     
                 ]; 
             }
