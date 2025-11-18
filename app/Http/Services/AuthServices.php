@@ -108,7 +108,7 @@ class AuthServices
     }
 
     public static function generateToken($credentials){
-        $client = new Client();
+        $client = new Client(['verify' => false]);
 
         $postData = [
             'headers' => [

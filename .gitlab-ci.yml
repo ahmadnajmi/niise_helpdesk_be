@@ -1,35 +1,35 @@
-debug-env:
-  stage: test
-  environment: staging
-  script:
-    - env | grep DEPLOY
-  rules:
-    - when: always
+# debug-env:
+#   stage: test
+#   environment: staging
+#   script:
+#     - env | grep DEPLOY
+#   rules:
+#     - when: always
 
-deploy:
-  stage: deploy
-  environment: staging
-  before_script:
-    - apt-get update -yqq
-    - apt-get install -y rsync ssh openssh-client
-    - mkdir -p ~/.ssh
-    - ssh-keyscan -p 8822 $DEPLOY_SERVER >> ~/.ssh/known_hosts
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - eval $(ssh-agent -s)
-    - ssh-add ~/.ssh/id_rsa
-    - echo -e "Host *\n\tPort 8822\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
-  script:
-    - echo "Deploying to STAGING..."
-    - ssh -p 8822 $DEPLOY_USER@$DEPLOY_SERVER "
-        cd $DEPLOY_PATH &&
-        git config --global --add safe.directory $DEPLOY_PATH &&
-        git reset --hard &&
-        git config --global user.email "najmisidek@heitech.com.my" &&
-        git config --global user.name "Najmi Sidek" &&
-        git config --global pull.rebase false && 
-        git pull https://$CI_USER:$CI_TOKEN@scm.awanheitech.com/digit/external/niise/hds/hds-be.git &&
-        composer install --no-dev --optimize-autoloader &&
-        php artisan migrate --force &&
-        php artisan optimize
-      "
+# deploy:
+#   stage: deploy
+#   environment: staging
+#   before_script:
+#     - apt-get update -yqq
+#     - apt-get install -y rsync ssh openssh-client
+#     - mkdir -p ~/.ssh
+#     - ssh-keyscan -p 8822 $DEPLOY_SERVER >> ~/.ssh/known_hosts
+#     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+#     - chmod 600 ~/.ssh/id_rsa
+#     - eval $(ssh-agent -s)
+#     - ssh-add ~/.ssh/id_rsa
+#     - echo -e "Host *\n\tPort 8822\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+#   script:
+#     - echo "Deploying to STAGING..."
+#     - ssh -p 8822 $DEPLOY_USER@$DEPLOY_SERVER "
+#         cd $DEPLOY_PATH &&
+#         git config --global --add safe.directory $DEPLOY_PATH &&
+#         git reset --hard &&
+#         git config --global user.email "najmisidek@heitech.com.my" &&
+#         git config --global user.name "Najmi Sidek" &&
+#         git config --global pull.rebase false && 
+#         git pull https://$CI_USER:$CI_TOKEN@scm.awanheitech.com/digit/external/niise/hds/hds-be.git &&
+#         composer install --no-dev --optimize-autoloader &&
+#         php artisan migrate --force &&
+#         php artisan optimize
+#       "
