@@ -23,8 +23,8 @@ class CompanyContractCollection extends BaseResource
                 'is_active'=> $query->is_active,
                 'created_at' => $query->created_at->format('d-m-Y'),
                 'updated_at' => $query->updated_at->format('d-m-Y'),
-                'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
-                'updated_by' => $query->updatedBy->name .' - '. $query->updatedBy->email ,
+                'created_by' => $query->createdBy?->name .' - '. $query->createdBy?->email ,
+                'updated_by' => $query->updatedBy?->name .' - '. $query->updatedBy?->email ,
             ];
             return $return;
         });

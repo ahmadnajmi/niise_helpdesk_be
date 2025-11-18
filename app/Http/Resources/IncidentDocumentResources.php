@@ -17,8 +17,8 @@ class IncidentDocumentResources extends JsonResource
         return [
             'id' => $this->id,
             'path'=> $this->path,
-            'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
-            'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
+            'created_by' => $this->createdBy?->name .' - '. $this->createdBy?->email ,
+            'updated_by' => $this->updatedBy?->name .' - '. $this->updatedBy?->email ,
             'created_at' => $this->created_at->format('d-m-Y H:i:s'),
             'updated_at' => $this->updated_at->format('d-m-Y H:i:s'),
         ];

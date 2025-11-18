@@ -29,8 +29,8 @@ class SlaResources extends JsonResource
             'is_active' => $this->is_active == 1,
             'created_at' => $this->created_at->format('d-m-Y'),
             'updated_at' => $this->updated_at->format('d-m-Y'),
-            'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
-            'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
+            'created_by' => $this->createdBy?->name .' - '. $this->createdBy?->email ,
+            'updated_by' => $this->updatedBy?->name .' - '. $this->updatedBy?->email ,
         ];
     }
 }

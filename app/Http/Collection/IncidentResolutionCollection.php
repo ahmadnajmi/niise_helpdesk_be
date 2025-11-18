@@ -22,8 +22,8 @@ class IncidentResolutionCollection extends BaseResource
                 'solution_notes'=> $query->solution_notes,
                 'created_at' => $query->created_at->format('d-m-Y H:i:s'),
                 'updated_at' => $query->updated_at->format('d-m-Y H:i:s'),
-                'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
-                'updated_by' => $query->updatedBy->name .' - '. $query->updatedBy->email ,
+                'created_by' => $query->createdBy?->name .' - '. $query->createdBy?->email ,
+                'updated_by' => $query->updatedBy?->name .' - '. $query->updatedBy?->email ,
             ];
             return $return;
         });

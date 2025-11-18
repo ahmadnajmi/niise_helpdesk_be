@@ -25,8 +25,8 @@ class ComplaintResources extends JsonResource
             'postcode' => $this->postcode,
             'state_id' => $this->state_id,
             'state_desc' => $this->stateDescription?->name,
-            'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
-            'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
+            'created_by' => $this->createdBy?->name .' - '. $this->createdBy?->email ,
+            'updated_by' => $this->updatedBy?->name .' - '. $this->updatedBy?->email ,
             'created_at' => $this->created_at->format('d-m-Y'),
             'updated_at' => $this->updated_at->format('d-m-Y'),
         ];

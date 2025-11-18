@@ -23,8 +23,8 @@ class CategoryResources extends JsonResource
             'is_active' => $this->is_active,
             'category_id' => $this->category_id,
             'category_main_details' => $this->mainCategory ? new CategoryResources($this->mainCategory) : null,
-            'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
-            'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
+            'created_by' => $this->createdBy?->name .' - '. $this->createdBy?->email ,
+            'updated_by' => $this->updatedBy?->name .' - '. $this->updatedBy?->email ,
             'created_at' => $this->created_at->format('d-m-Y'),
             'updated_at' => $this->updated_at->format('d-m-Y'),
         ];

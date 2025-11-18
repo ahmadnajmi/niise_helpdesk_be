@@ -25,8 +25,8 @@ class IncidentResolutionResources extends JsonResource
             'report_contractor_no'=> $this->report_contractor_no,
             'solution_notes'=> $this->solution_notes,
             'notes'=> $this->notes,
-            'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
-            'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
+            'created_by' => $this->createdBy?->name .' - '. $this->createdBy?->email ,
+            'updated_by' => $this->updatedBy?->name .' - '. $this->updatedBy?->email ,
             'created_at' => $this->created_at->format('d-m-Y H:i:s'),
             'updated_at' => $this->updated_at->format('d-m-Y H:i:s'),
         ];

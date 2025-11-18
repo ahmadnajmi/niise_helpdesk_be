@@ -21,8 +21,8 @@ class KnowledgeBaseCollection extends BaseResource
                 'explanation' => $query->explanation,
                 'keywords' => $query->keywords,
                 'solution' => $query->solution,
-                'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
-                'updated_by' => $query->updatedBy->name .' - '. $query->updatedBy->email ,
+                'created_by' => $query->createdBy?->name .' - '. $query->createdBy?->email ,
+                'updated_by' => $query->updatedBy?->name .' - '. $query->updatedBy?->email ,
                 'created_at' => $query->created_at->format('d-m-Y'),
                 'updated_at' => $query->updated_at->format('d-m-Y'),
             ];

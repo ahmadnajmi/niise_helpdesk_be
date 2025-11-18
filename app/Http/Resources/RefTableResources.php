@@ -22,8 +22,8 @@ class RefTableResources extends JsonResource
             'name' => $this->name,
             'ref_code_parent' => $this->ref_code_parent,
             'ref_code_parent_desc' => $this->ref_code_parent ? $this->getParentDesc('severity',$this->ref_code_parent) : null,
-            'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
-            'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
+            'created_by' => $this->createdBy?->name .' - '. $this->createdBy?->email ,
+            'updated_by' => $this->updatedBy?->name .' - '. $this->updatedBy?->email ,
             'created_at' => $this->created_at->format('d-m-Y'),
             'updated_at' => $this->updated_at->format('d-m-Y'),
         ];

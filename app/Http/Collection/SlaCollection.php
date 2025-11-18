@@ -28,8 +28,8 @@ class SlaCollection extends BaseResource
                 'group_id'=> $query->group_id,
                 'group_name' => $query->group?->name,
                 'is_active' => $query->is_active == 1 ? true : false,
-                'created_by' => $query->createdBy->name .' - '. $query->createdBy->email ,
-                'updated_by' => $query->updatedBy->name .' - '. $query->updatedBy->email ,
+                'created_by' => $query->createdBy?->name .' - '. $query->createdBy?->email ,
+                'updated_by' => $query->updatedBy?->name .' - '. $query->updatedBy?->email ,
                 'created_at' => $query->created_at->format('d-m-Y'),
                 'updated_at' => $query->updated_at->format('d-m-Y'),
             ];

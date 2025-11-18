@@ -73,8 +73,8 @@ class IncidentResources extends JsonResource
             'status_desc' => $this->statusDesc?->name,
             'countdown_settlement_date' => $this->calculateCountDownSettlement,
             'breach_time' => $this->calculateBreachTime,
-            'created_by' => $this->createdBy->name .' - '. $this->createdBy->email ,
-            'updated_by' => $this->updatedBy->name .' - '. $this->updatedBy->email ,
+            'created_by' => $this->createdBy?->name .' - '. $this->createdBy?->email ,
+            'updated_by' => $this->updatedBy?->name .' - '. $this->updatedBy?->email ,
             'created_at' => $this->created_at->format('d-m-Y H:i:s'),
             'updated_at' => $this->updated_at->format('d-m-Y H:i:s'),
         ];
