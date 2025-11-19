@@ -1,11 +1,3 @@
-debug-env:
-  stage: test
-  environment: staging
-  script:
-    - env | grep DEPLOY
-  rules:
-    - when: always
-
 # deploy:
 #   stage: deploy
 #   environment: staging
