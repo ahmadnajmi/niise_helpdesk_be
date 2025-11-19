@@ -36,6 +36,8 @@ class IncidentController extends Controller
     {
         $data = IncidentServices::view($incident);
 
+        // $create = IncidentServices::checkPenalty($incident);
+
         return $data;
     }
 
