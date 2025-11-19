@@ -15,7 +15,7 @@
 deploy:
   stage: deploy
   tags:
-    - helpdesk_be
+    - helpdesk_runner
   script:
     - echo "=== START DEPLOY BACKEND BACKEND ==="
     - cd /var/www/html/helpdesk_be
