@@ -16,6 +16,8 @@ deploy:
   stage: deploy
   tags:
     - helpdesk_runner
+  variables:
+    SHELL: "bash --noprofile --norc"
   script:
     - echo "=== START DEPLOY BACKEND BACKEND ==="
     - cd /var/www/html/helpdesk_be
