@@ -16,7 +16,6 @@ deploy:
   stage: deploy
   tags:
     - helpdesk_be
-  environment: staging
   script:
     - echo "=== START DEPLOY BACKEND BACKEND ==="
     - cd /var/www/html/helpdesk_be
@@ -25,5 +24,7 @@ deploy:
     - php artisan optimize
     - php artisan migrate
     - echo "=== DEPLOY FINISHED ==="
+  only:
+    - staging
 
  
