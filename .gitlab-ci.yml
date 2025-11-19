@@ -18,7 +18,7 @@ deploy:
   script:
     - echo "=== START DEPLOY BACKEND BACKEND ==="
     - cd /var/www/html/helpdesk_be
-    # - git remote set-url origin https://$CI_PAT_USERNAME:$CI_PAT_TOKEN@pro-scm.awanheitech.com/digit/hds/niise-hds-be.git
+    - git remote set-url origin https://$CI_PAT_USERNAME:$CI_PAT_TOKEN@pro-scm.awanheitech.com/digit/hds/niise-hds-be.git
     - git pull
     - php artisan optimize
     - php artisan migrate
