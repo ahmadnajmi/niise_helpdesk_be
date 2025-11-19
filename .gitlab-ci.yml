@@ -15,13 +15,11 @@
 deploy:
   stage: deploy
   environment: staging
-  tags:
-    - helpdesk_be
   script:
     - echo "=== START DEPLOY BACKEND BACKEND ==="
     - git config --global --add safe.directory /var/www/html/helpdesk_be
     - cd /var/www/html/helpdesk_be
-    - git remote set-url origin https://$CI_PAT_USERNAME:$CI_PAT_TOKEN@pro-scm.awanheitech.com/digit/hds/niise-hds-be.git
+    # - git remote set-url origin https://$CI_PAT_USERNAME:$CI_PAT_TOKEN@pro-scm.awanheitech.com/digit/hds/niise-hds-be.git
     - git pull
     - php artisan optimize
     - php artisan migrate
