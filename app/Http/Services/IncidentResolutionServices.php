@@ -98,40 +98,7 @@ class IncidentResolutionServices
         return true;
     }
 
-    public static function checkPenalty($data){
-        $get_sla_version = Incident::where('id',$data->incident_id)->first()->slaVersion;
-
-        if($data->action_codes == ActionCode::INITIAL){
-
-            if($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_MINUTE){
-                $unit = 'addMinutes';
-                $penalty_unit = 'diffInMinutes';
-            }
-            elseif($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_HOUR){
-                $unit = 'addHours';
-                $penalty_unit = 'diffInHours';
-            }
-            else{
-                $unit = 'addDay';
-                $penalty_unit = 'diffInDays';
-
-            }
-            $due_date = $data->created_at->copy()->$unit((int) $get_sla_version->response_time);
-
-            if(now()->greaterThan($due_date)){
-                $late_value    = $due_date->$penalty_unit(now()); 
-                dd($late_value/$get_sla_version->response_time);
-                $data_penalty['total_response_time_penalty_minute'] =  $dueDate->diffInMinutes(now());
-                $data_penalty['total_response_time_penalty_price'] =  $late_value * (float) $get_sla_version->response_time_penalty;
-
-                IncidentPenalty::create($data_penalty);
-            }
-        }
-
-        dd('habis');
-
-    }
-
+   
     public static function sendEmail($data){
 
         $group_member =  User::whereHas('group', function ($query)use($data) {
