@@ -167,25 +167,33 @@ class ReportServices
 
         $chart_image = $this->uploadDoc($request);
         
-        if($request->report_category == 'TO_BREACH' || $request->report_category == 'STATUS'){
+        // if($request->report_category == 'TO_BREACH' || $request->report_category == 'STATUS'){
 
-            $parameter  = [
-                "logo_background" => $this->beUrl."/background.png",
-                "logo_tittle" => $this->beUrl."/logo_immigration.png",
-                "user_name" => Auth::user()->name,
-                "graph_picture" => $chart_image,
-            ];
+        //     $parameter  = [
+        //         "logo_background" => $this->beUrl."/background.png",
+        //         "logo_tittle" => $this->beUrl."/logo_immigration.png",
+        //         "user_name" => Auth::user()->name,
+        //         "graph_picture" => $chart_image,
+        //     ];
             
-        }
-        else{
-            $parameter  = [
-                "SUBREPORT_DIR" => $this->pathFolder.$file.'/',
-                "image_path" => $this->beUrl."/logo_immigration.png",
-                "chart_image" => $chart_image,
-                "cawangan_id" => $request->branch_id,
-                "kontraktor_id" => $request->contractor_id,
-            ];
-        }
+        // }
+        // else{
+        //     $parameter  = [
+        //         "SUBREPORT_DIR" => $this->pathFolder.$file.'/',
+        //         "image_path" => $this->beUrl."/logo_immigration.png",
+        //         "chart_image" => $chart_image,
+        //         "cawangan_id" => $request->branch_id,
+        //         "kontraktor_id" => $request->contractor_id,
+        //     ];
+        // }
+
+        $parameter  = [
+            "logo_background" => $this->beUrl."/background.png",
+            "logo_tittle" => $this->beUrl."/logo_immigration.png",
+            "user_name" => Auth::user()->name,
+            "graph_picture" => $chart_image,
+        ];
+
         $data = [
             'reportTemplate' => $file.'/'.$file.'.jasper',
             'outputFileName' => $request->name.'.'.$fileExtension,
