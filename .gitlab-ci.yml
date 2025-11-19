@@ -17,9 +17,6 @@ deploy:
   environment: staging
   script:
     - echo "=== START DEPLOY BACKEND BACKEND ==="
-    - ls -ld /var/www/html/helpdesk_be
-    - ls -l /var/www/html
-    - whoami
     - cd /var/www/html/helpdesk_be
     - git remote set-url origin https://$CI_PAT_USERNAME:$CI_PAT_TOKEN@pro-scm.awanheitech.com/digit/hds/niise-hds-be.git
     - git pull
