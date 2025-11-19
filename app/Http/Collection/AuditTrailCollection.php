@@ -15,6 +15,7 @@ class AuditTrailCollection extends BaseResource
     public function toArray(Request $request)
     {
         return $this->collection->transform(function ($query) use($request){
+            //testing
             return [
                 'id' => $query->id,
                 'user_type' => $query->user_type,
