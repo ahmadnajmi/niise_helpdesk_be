@@ -24,6 +24,7 @@ use App\Models\User;
 use App\Models\Calendar;
 use App\Models\Branch;
 use App\Models\ActionCode;
+use App\Models\IncidentPenalty;
 use Carbon\Carbon;
 
 class IncidentServices
@@ -529,6 +530,32 @@ class IncidentServices
 
         return $date;
     }
+
+    public static function checkPenalty(Incident $incident){
+        $get_sla_version = $incident->slaVersion;
+        $actual   = Carbon::parse($incident->actual_end_date);
+        $expected = Carbon::parse($incident->expected_end_date);
+
+        if ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_MINUTE) {
+            $total_sla_time = $expected->diffInMinutes($actual); 
+        }
+        elseif ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_HOUR) {
+            $total_sla_time = $expected->diffInHours($actual);
+        }
+        else {
+            $total_sla_time = $expected->diffInDays($actual);
+        }
+        $interval_count = intdiv($total_sla_time, $get_sla_version->response_time);
+        $penalty = $interval_count * $get_sla_version->response_time_penalty;
+        // dd(,$interval_count,$total_sla_time,$get_sla_version->response_time,$interval_count,$penalty);
+
+        $data_penalty['total_response_time_penalty_minute'] =  $total_sla_time;
+        $data_penalty['total_response_time_penalty_price'] =  $penalty;
+        $data_penalty['incident_id'] = $incident->id;
+
+        $create = IncidentPenalty::create($data_penalty);
+    }
+
 }
 
 

@@ -108,13 +108,8 @@ class IncidentResolutionServices
 
         $user_operation = User::where('id',$data->operation_user_id)->first();
 
-        if($data->incident->complaint_user_id){
-            $email_complaint = [$data->incident->complaintUser?->email];
-        }
-        else{
-            $email_complaint = [$data->incident->complaint?->email];
-        }
-
+        $email_complaint = [$data->incident->complaintUser?->email];
+        
         if($data->actionCodes->email_recipient_id == ActionCode::SEND_TO_COMPLAINT){
             $send_to = $email_complaint;
             $cc_to = $group_member;
