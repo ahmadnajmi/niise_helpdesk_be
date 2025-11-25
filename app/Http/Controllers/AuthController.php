@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Traits\ResponseTrait;
 use App\Http\Services\AuthServices;
+use App\Http\Requests\AuthRequest;
 
 class AuthController extends Controller
 {
@@ -40,10 +41,20 @@ class AuthController extends Controller
         return $data; 
     }
 
+    public function resetPassword(AuthRequest $request){
+        $data = $request->all();
 
-    
-    
+        $data = AuthServices::resetPassword($data);
+           
+        return $data;
+    }
 
-   
+    public function updatePassword(AuthRequest $request){
+        $data = $request->all();
 
+        $data = AuthServices::updatePassword($data);
+           
+        return $data;
+
+    }
 }

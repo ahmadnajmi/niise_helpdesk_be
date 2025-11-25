@@ -39,6 +39,7 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
     Route::get('auth/token', [AuthController::class, 'authToken'])->name('auth.token');
+    Route::post('auth/update_password', [AuthController::class, 'updatePassword'])->name('auth.update_password');
 
     Route::apiResource('module', ModuleController::class);
     Route::apiResource('permission', PermissionController::class);
@@ -102,7 +103,5 @@ Route::apiResource('dashboard-all', DashboardController::class)->only('index');
 Route::get('dashboard_graph-all', [DashboardController::class, 'dashboardGraph'])->name('dashboard.graph-all');
 Route::get('dynamic_option-all', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option-all');
 
+Route::post('auth/reset_password', [AuthController::class, 'resetPassword'])->name('auth.reset_password');
 
-Route::get('testing', [TestingController::class,'testingJasper']);
-
-Route::get('testing_report', [ReportController::class, 'generateReport']);

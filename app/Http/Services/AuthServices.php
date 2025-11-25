@@ -13,71 +13,70 @@ use App\Models\SsoSession;
 use App\Models\UserRole;
 use App\Models\Permission;
 use App\Models\Module;
+use App\Mail\ForgetPasswordEmail;
+use Illuminate\Support\Facades\Mail;
 
 class AuthServices
 {
     use ResponseTrait;
 
-    public static function login($request){
+    public static function loginSso($request){
+        $user = User::where('ic_no', $request->ic_no)->first();
 
-        if($request->ic_no){
-            $user = User::where('ic_no', $request->ic_no)->first();
+        if($user){
+            Auth::login($user);
 
-            if($user){
-                Auth::login($user);
+            self::storeSsoToken($request);
 
-                self::storeSsoToken($request);
+            $tokenResult = $user->createToken('NetIQSSO');
+            $token = $tokenResult->accessToken;
 
-                $tokenResult = $user->createToken('NetIQSSO');
-                $token = $tokenResult->accessToken;
-
-                $data = [
-                    'token' => $token,
-                    'user' => User::getUserDetails(),
-                    'role' => UserRole::getUserDetails(),
-                    'permission' => Permission::getUserDetails(),
-                    'module' => Module::getUserDetails(),
-                ];
-
-                return self::success('Success Netiq', $data);
-            }
-            else{
-                return self::error('Login failed. Invalid credentials.');
-            }
-        }
-        else{
-
-            $user = User::where('email', $request->email)->first();
-
-            $credentials = [
-                'ic_no' => $user->ic_no,
-                'password' => $request['password'],
+            $data = [
+                'token' => $token,
+                'user' => User::getUserDetails(),
+                'role' => UserRole::getUserDetails(),
+                'permission' => Permission::getUserDetails(),
+                'module' => Module::getUserDetails(),
             ];
 
-            if(Auth::attempt($credentials)){
-                $token = self::generateToken($credentials);
-
-                if(!$token['status']) {
-                    return self::error($token['message']);
-                }
-
-                $user = User::getUserDetails();
-
-                $data = [
-                    'user' => $user,
-                    'token' => $token['data']->access_token,
-                    'role' => UserRole::getUserDetails(),
-                    'permission' => Permission::getUserDetails(),
-                    'module' => Module::getUserDetails(),
-                ];
-
-                return self::success('Success', $data);
-            }
-            else{
-                return self::error('Login failed. Invalid credentials.');
-            }
+            return self::success('Success Netiq', $data);
+        }
+        else{
+            return self::error('Login failed. Invalid credentials.');
         }
     }
+
+    public static function login($request){
+
+        $credentials = [
+            'ic_no' => $request->ic_no,
+            'password' => $request->password,
+        ];
+
+        if(Auth::attempt($credentials)){
+            $token = self::generateToken($credentials);
+
+            if(!$token['status']) {
+                return self::error($token['message']);
+            }
+
+            $user = User::getUserDetails();
+
+            $data = [
+                'user' => $user,
+                'token' => $token['data']->access_token,
+                'role' => UserRole::getUserDetails(),
+                'permission' => Permission::getUserDetails(),
+                'module' => Module::getUserDetails(),
+            ];
+
+            return self::success('Success', $data);
+        }
+        else{
+            return self::error('Login failed. Invalid credentials.');
+        }
+    }
+    
 
     public static function storeSsoToken($request){
 
@@ -177,17 +176,42 @@ class AuthServices
 
         Log::debug('end logout callback');
     }
+// AHMADN034258
+    public static function resetPassword($request){
+        $get_user = User::where('ic_no',$request['ic_no'])->first();
 
-    // public function authDetails(){
-    //     $data['user'] = User::getUserDetails();
-    //     $data['role'] = UserRole::getUserDetails();
-    //     $data['permission'] = Permission::getUserDetails();
-    //     $data['module'] = Module::getUserDetails();
-    //     $data['session_id'] = session()->getId();
+        if($get_user){
+            $clean_name = strtoupper(str_replace(' ', '', $get_user->name));  
+            $first    = substr($clean_name, 0, 6);
+            $last = substr($get_user->ic_no, -6);
 
+            $data['password'] = Hash::make($first.$last);
 
-    //     return $this->success('Success', $data);
-    // }
+            $update = $get_user->update($data);
 
+            if($get_user->email){
+                Mail::to($get_user->email)->queue(new ForgetPasswordEmail());
+            }
 
+            return self::success('Success', $update);
+        }
+        else{
+            return self::error('Reset Password Failed. Invalid Ic Number.');
+        }
+    }
+
+    public static function updatePassword($request){
+        
+        if(Hash::check($request['old_password'],Auth::user()->password)){
+
+            $user = Auth::user();
+            $user->password = Hash::make($request['password']);
+            $user->save();
+
+            return self::success('Success', true);
+        }
+        else{
+            return self::error('Change Password Failed.Old Password Not same.');
+        }
+    }
 }
