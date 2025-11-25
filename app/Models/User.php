@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'nickname',
         'password',
+        'first_time_password',
         'position',
         'branch_id',
         'company_id',
