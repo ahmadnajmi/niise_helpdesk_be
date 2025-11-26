@@ -187,7 +187,7 @@ class User extends Authenticatable
 
 
     public static  function getUserDetails(){
-        $data = self::select('id','name','position','branch_id','email','phone_no','category_office')
+        $data = self::select('id','name','position','branch_id','email','phone_no','category_office','first_time_password')
                     ->with(['branch' => function ($query) {
                         $query->select('id', 'name','state_id','location')
                             ->with(['stateDescription' => function ($query) {
