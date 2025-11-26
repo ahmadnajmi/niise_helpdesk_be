@@ -176,7 +176,7 @@ class AuthServices
 
         Log::debug('end logout callback');
     }
-// AHMADN034258
+
     public static function resetPassword($request){
         $get_user = User::where('ic_no',$request['ic_no'])->first();
 
@@ -186,6 +186,7 @@ class AuthServices
             $last = substr($get_user->ic_no, -6);
 
             $data['password'] = Hash::make($first.$last);
+            $data['first_time_password'] = true;
 
             $update = $get_user->update($data);
 
