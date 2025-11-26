@@ -3,22 +3,28 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
-use Faker\Factory as Faker;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
-use App\Models\Permission;
+use Illuminate\Database\Seeder;
+use App\Imports\RoleImport;
 use App\Models\Role;
-use App\Models\RolePermission;
-use App\Models\Module;
-use App\Models\UserRole;
-use App\Models\User;
 
 class RoleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
-    public function run(): void
+
+    public function run(): void{
+        Role::truncate();
+
+        if (DB::getDriverName() === 'oracle') {
+            DB::statement("ALTER SEQUENCE ROLE_ID_SEQ RESTART START WITH 1");
+        } 
+
+        Excel::import(new RoleImport, 'database/seeders/excel/role.xlsx');
+    }
+    public function runLama()
     {
         DB::table('role')->truncate();
         DB::table('role_permissions')->truncate();
