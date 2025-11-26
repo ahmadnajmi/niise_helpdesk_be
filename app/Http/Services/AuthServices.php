@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Resources\UserResources;
 use GuzzleHttp\Client;
 use App\Models\User;
 use App\Models\SsoSession;
@@ -14,7 +16,6 @@ use App\Models\UserRole;
 use App\Models\Permission;
 use App\Models\Module;
 use App\Mail\ForgetPasswordEmail;
-use Illuminate\Support\Facades\Mail;
 
 class AuthServices
 {
@@ -60,10 +61,8 @@ class AuthServices
                 return self::error($token['message']);
             }
 
-            $user = User::getUserDetails();
-
             $data = [
-                'user' => $user,
+                'user' => new UserResources(Auth::user()),
                 'token' => $token['data']->access_token,
                 'role' => UserRole::getUserDetails(),
                 'permission' => Permission::getUserDetails(),

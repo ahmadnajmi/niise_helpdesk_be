@@ -19,6 +19,7 @@ class UserResources extends JsonResource
             'ic_no' => $this->masked_ic_no,
             'name' => $this->name,
             'nickname'  =>$this->nickname,
+            'first_time_password' => $this->first_time_password == 1,
             'position' => $this->position,
             'branch' => $this->branch,
             'email' => $this->email,
