@@ -34,25 +34,7 @@ class ModuleSeeder extends Seeder
                 'code' => 'dashboard',
                 'description' =>'A central overview screen displaying key metrics, statistics, and summaries for quick system insights.',
                 'permission' =>[
-                    'dashboard.index',
-
-                    'dashboard.card.total-incidents',
-                    'dashboard.card.total-sla',
-                    'dashboard.card.total-reports',
-
-                    'dashboard.idle-incidents.index',
-
-                    'dashboard.total-incidents-created.grand-total-this-year',
-                    'dashboard.total-incidents-created.monthly.all',
-                    'dashboard.total-incidents-created.monthly.self',
-
-                    'dashboard.total-incidents-created.grand-total-this-month',
-                    'dashboard.total-incidents-created.daily.all',
-                    'dashboard.total-incidents-created.daily.self',
-
-                    'dashboard.total-incidents-created.grand-total-today',
-                    'dashboard.total-incidents-created.hourly.all',
-                    'dashboard.total-incidents-created.hourly.self',
+                    'dashboard.index'
                 ],
                 'svg_path' => "<path transform='translate(-1.4,-1.2) scale(1.12)' fill-rule='evenodd' clip-rule='evenodd' fill='currentColor' opacity='0.5' d='M10.1259 2.21864C11.2216 1.34212 12.7784 1.34212 13.8741 2.21864L21.5041 8.32262C22.5088 9.12637 22.8891 10.4813 22.4494 11.6905L19.4185 20.0252C18.9874 21.2108 17.8607 22 16.5992 22H7.40087C6.13935 22 5.01261 21.2108 4.58149 20.0252L1.55067 11.6905C1.11097 10.4813 1.49127 9.12637 2.49596 8.32262L10.1259 2.21864Z'/><circle cy='12.7' cx='12' r='3' fill='currentColor'/>",
                 'order_by' => 1,
@@ -62,7 +44,7 @@ class ModuleSeeder extends Seeder
                 'name' => 'Pentadbiran Sistem',
                 'name_en' => 'System Administration',
                 'code' => 'system_administration',
-                'permission' => ['index'],
+                'permission' => ['system_administration.index'],
                 'description' =>'Controls user access, system-level settings, and configurations for managing the application.',
                 'svg_path' => "<g transform='translate(-2.1,-2.2) scale(1.18)'><path opacity='0.4' d='M16.19 2H7.81C4.17 2 2 4.17 2 7.81V16.18C2 19.83 4.17 22 7.81 22H16.18C19.82 22 21.99 19.83 21.99 16.19V7.81C22 4.17 19.83 2 16.19 2Z' fill='currentColor'></path>
                                 <path d='M15.5801 19.2501C15.1701 19.2501 14.8301 18.9101 14.8301 18.5001V14.6001C14.8301 14.1901 15.1701 13.8501 15.5801 13.8501C15.9901 13.8501 16.3301 14.1901 16.3301 14.6001V18.5001C16.3301 18.9101 15.9901 19.2501 15.5801 19.2501Z' fill='currentColor'></path>
@@ -77,7 +59,7 @@ class ModuleSeeder extends Seeder
                     [
                         'name' =>'Pengurusan Orang',
                         'name_en' => 'People Management',
-                        'permission' => ['index'],
+                        'permission' => ['people.index'],
                         'code' => 'people',
                         'description' =>'Manages records and data for individuals within the organization or user base.',
                         'svg_path' => '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
@@ -141,7 +123,7 @@ class ModuleSeeder extends Seeder
                         'code' => 'operations',
                         'name' =>'Pengurusan Operasi',
                         'name_en' =>'Operations Management',
-                        'permission' => ['index'],
+                        'permission' => ['operations.index'],
                         'description' => 'Oversees and configures daily system operations and workflows.',
                         'svg_path' => '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />',
                         'lower_sub_module' => [
@@ -204,7 +186,7 @@ class ModuleSeeder extends Seeder
                         'code' => 'sla',
                         'name' =>'Pengurusan SLA',
                         'name_en' =>'SLA management',
-                        'permission' => ['index'],
+                        'permission' => ['sla_management.index'],
                         'description' => 'Handles Service Level Agreements (SLAs), defining time-based response and resolution expectations.',
                         'svg_path' => '<rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
                         'lower_sub_module' => [
@@ -243,7 +225,7 @@ class ModuleSeeder extends Seeder
                         'code' => 'system_configuration',
                         'name' =>'Konfigurasi Sistem',
                         'name_en' =>'System Configuration',
-                        'permission' => ['index'],
+                        'permission' => ['system_configuration.index'],
                         'description' => 'Advanced system settings such as time zone, language, integration endpoints, etc.',
                         'svg_path' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />',
                         'lower_sub_module' => [
@@ -295,7 +277,7 @@ class ModuleSeeder extends Seeder
                 'code' => 'incidents',
                 'name' => 'Pengurusan Insiden',
                 'name_en' =>'Incident Management',
-                'permission' => ['index'],
+                'permission' => ['incident_management.index'],
                 'description' => 'Tracks and manages incidents, tickets, or issues reported by users or detected by the system.',
                 'svg_path' => "<g transform='translate(-1.2,-1.2) scale(1.10)'>
                                 <path opacity='0.5' d='M4 16V21.25H20V16C20 11.5817 16.4183 8 12 8C7.58172 8 4 11.5817 4 16Z' fill='currentColor'></path>
@@ -381,7 +363,14 @@ class ModuleSeeder extends Seeder
                 'code' => 'knowledge_base',
                 'name' => 'Knowledge Base',
                 'name_en' =>'Knowledge Base',
-                'permission' => ['index'],
+                // 'permission' => ['knowledge_base.index'],
+                'permission' =>[
+                    'knowledge-base.index',
+                    'knowledge-base.create',
+                    'knowledge-base.view',
+                    'knowledge-base.update',
+                    'knowledge-base.delete',
+                ],
                 'description' => 'A collection of helpful articles, FAQs, and documentation to guide users and reduce support load.',
                 'svg_path' => "<g id='SVGRepo_iconCarrier' transform='translate(-2.2,-2.1) scale(1.18)'>
                                 <path opacity='0.5' d='M16.5 3H7.5C6.39543 3 5.5 3.52941 5 5.11765L2.15737 14.9263C2.20285 14.7794 2.26148 14.6491 2.33706 14.5294C2.48298 14.2982 2.67048 14.0996 2.88886 13.9451C3.39331 13.5882 4.09554 13.5882 5.5 13.5882H18.5C19.9045 13.5882 20.6067 13.5882 21.1111 13.9451C21.3295 14.0996 21.517 14.2982 21.6629 14.5294C21.7435 14.6571 21.8049 14.7968 21.8515 14.9557L19 5.11765C18.5 3.52941 17.6046 3 16.5 3Z' fill='currentColor'></path>
@@ -389,44 +378,24 @@ class ModuleSeeder extends Seeder
                                 </g>
                                 ",
                 'order_by' => 6,
-                'sub_module' => [
-                    [
-                        'code' => 'knowledge_entries',
-                        'name' =>'Knowledge Entries',
-                        'name_en' =>'Knowledge Entries',
-                        'description' => 'The individual articles or content items inside the knowledge base.',
-                        'permission' =>[
-                            'knowledge-base.index',
-                            'knowledge-base.create',
-                            'knowledge-base.view',
-                            'knowledge-base.update',
-                            'knowledge-base.delete',
-                        ]
-                    ],
-                ]
+                // 'sub_module' => [
+                //     [
+                //         'code' => 'knowledge_entries',
+                //         'name' =>'Knowledge Entries',
+                //         'name_en' =>'Knowledge Entries',
+                //         'description' => 'The individual articles or content items inside the knowledge base.',
+                //         'permission' =>[
+                //             'knowledge-base.index',
+                //             'knowledge-base.create',
+                //             'knowledge-base.view',
+                //             'knowledge-base.update',
+                //             'knowledge-base.delete',
+                //         ]
+                //     ],
+                // ]
             ],
-
-            // [
-            //     'name' => 'Notifikasi',
-            //     'name_en' =>'Notifications',
-            //     'permission' => ['index'],
-            //     'description' => 'Alerts and messages sent to users about system events, tasks, or updates.',
-            //     'svg_path' => '<path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />',
-            //     'sub_module' => [
-            //         [
-            //             'name' =>'Emel',
-            //             'name_en' =>'Email',
-            //             'description' => 'Manages incoming/outgoing email messages, configurations, and logs.',
-            //             'permission' =>[
-            //                 'email-notification.index',
-            //                 'email-notification.view',
-            //                 'email-notification.receive'
-            //             ]
-            //         ],
-            //     ]
-        // ],
-
         ];
+        
 
         foreach($modules as $module){
             
@@ -475,7 +444,12 @@ class ModuleSeeder extends Seeder
             'dashboard.total-incidents-created.hourly.all' => 'View all users’ incidents created hourly.',
             'dashboard.total-incidents-created.hourly.self' => 'View logged-in user’s incidents created hourly.',
 
-            'index' => 'General index view permission.',
+            'system_administration.index' => 'General index view permission.',
+            'incident_management.index' => 'General index view permission.',
+            'people.index' => 'General index view permission.',
+            'operations.index' => 'General index view permission.',
+            'sla_management.index' => 'General index view permission.',
+            'system_configuration.index' => 'General index view permission.',
 
             'individual.index' => 'View the list of individuals.',
             'individual.create' => 'Create a new individual.',
