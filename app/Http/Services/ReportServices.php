@@ -210,7 +210,9 @@ class ReportServices
     public function callMicroServices($api_url,$method,$json) {
 
         try{
-            $response = Http::$method($this->baseUrl.$api_url, $json);
+            // $response = Http::$method($this->baseUrl.$api_url, $json);
+            $response = Http::withOptions(['verify' => false])->$method($this->baseUrl . $api_url, $json);
+
             
             if ($response->successful()) {
                 $contentType = $this->getContentType($json['report_format']);
