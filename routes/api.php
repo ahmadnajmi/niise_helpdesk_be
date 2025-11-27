@@ -78,8 +78,6 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::get('user_search', [UserController::class, 'searchIcNo'])->name('user.search');
     Route::get('user_search_group', [UserController::class, 'searchIcNoContractor'])->name('user.search.group');
 
-    Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');
-
     Route::get('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranch']);
     Route::delete('operating_time/{branch_id}/operating_branch', [OperatingTimeController::class, 'operantingTimeBranchDelete']);
 
