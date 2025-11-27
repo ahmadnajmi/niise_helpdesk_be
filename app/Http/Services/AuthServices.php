@@ -65,7 +65,7 @@ class AuthServices
                 'user' => new UserResources(Auth::user()),
                 'token' => $token['data']->access_token,
                 'role' => UserRole::getUserDetails(),
-                'permission' => Permission::getUserDetails(),
+                'permission' => Permission::getPermission(),
                 'module' => Module::getUserDetails(),
             ];
 

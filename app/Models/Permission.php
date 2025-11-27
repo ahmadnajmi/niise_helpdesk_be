@@ -26,7 +26,7 @@ class Permission extends BaseModel
         return $this->belongsToMany(Role::class, 'role_permissions');
     }
 
-    public static  function getUserDetails($colum = 'name'){
+    public static  function getPermission($colum = 'name'){
         $user_role = UserRole::where('user_id',Auth::user()->id)->pluck('role_id');
         $data = self::whereHas('roles', function ($query)use($user_role) {
                       $query->whereIn('role.id',$user_role); 
