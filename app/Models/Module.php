@@ -55,26 +55,26 @@ class Module extends BaseModel
 
         $get_permission = Permission::getPermission('module_id');
 
-       $data = self::select('id','code','module_id','name','name_en','svg_path')
-                    ->with([
-                        'subModuleRecursive' => function ($q) use ($get_permission) {
+        $data = self::select('id','code','module_id','name','name_en','svg_path')
+                        ->with([
+                            'subModuleRecursive' => function ($q) use ($get_permission) {
+                                $q->whereIn('id', $get_permission)
+                                ->with(['subModuleRecursive' => function ($q2) use ($get_permission) {
+                                    $q2->whereIn('id', $get_permission);
+                                }, 'route']);
+                            },
+                            'route:id,module_id,name'
+                        ])
+                        ->whereNull('module_id')
+                        ->where('is_active', true)
+                        ->where(function ($q) use ($get_permission) {
                             $q->whereIn('id', $get_permission)
-                            ->with(['subModuleRecursive' => function ($q2) use ($get_permission) {
-                                $q2->whereIn('id', $get_permission);
-                            }, 'route']);
-                        },
-                        'route:id,module_id,name'
-                    ])
-                    ->whereNull('module_id')
-                    ->where('is_active', true)
-                    ->where(function ($q) use ($get_permission) {
-                        $q->whereIn('id', $get_permission)
-                        ->orWhereHas('subModule', function ($sub) use ($get_permission) {
-                            $sub->whereIn('id', $get_permission);
-                        });
-                    })
-                    ->orderBy('order_by', 'asc')
-                    ->get();
+                            ->orWhereHas('subModule', function ($sub) use ($get_permission) {
+                                $sub->whereIn('id', $get_permission);
+                            });
+                        })
+                        ->orderBy('order_by', 'asc')
+                        ->get();
 
     return $data;
     
