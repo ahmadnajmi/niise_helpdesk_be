@@ -27,6 +27,7 @@ class JasperServices
         $client = new Client([
             'base_uri' => $this->baseUrl,
             'auth' => [ $this->username, $this->password],
+            'verify' => false,
         ]);
 
         $postData = [
