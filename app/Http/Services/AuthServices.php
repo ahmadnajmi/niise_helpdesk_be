@@ -206,6 +206,7 @@ class AuthServices
 
             $user = Auth::user();
             $user->password = Hash::make($request['password']);
+            $user->first_time_password = false;
             $user->save();
 
             return self::success('Success', true);
