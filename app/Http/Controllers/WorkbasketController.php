@@ -31,13 +31,13 @@ class WorkbasketController extends Controller
         if($role?->role == Role::CONTRACTOR){
             $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
         }
-
+        
         $data = Workbasket::when($role?->role == Role::CONTRACTOR, function ($query)use($group_id) {
                                 $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
 
                                 return $query->whereHas('incident', function ($query)use($group_id) {
-                                        $query->whereHas('incidentResolutionLatest', function ($query) use($group_id){
-                                            $query->whereIn('group_id',$group_id)->where('action_codes',ActionCode::ESCALATE);
+                                        $query->whereHas('incidentResolutionEscalateLatest', function ($query) use($group_id){
+                                            $query->whereIn('group_id',$group_id);
                                     }); 
                                 });
                             })
