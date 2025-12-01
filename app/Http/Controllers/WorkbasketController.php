@@ -46,7 +46,7 @@ class WorkbasketController extends Controller
                                 });
                             })
                             ->when($role?->role == Role::FRONTLINER, function ($query) {
-                                return $query->where('frontliner_view',true);
+                                return $query->where('escalate_frontliner',true);
                             })
                             ->orderBy('updated_at','desc')
                             ->paginate($limit);
