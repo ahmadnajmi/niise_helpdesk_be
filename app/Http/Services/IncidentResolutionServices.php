@@ -89,19 +89,21 @@ class IncidentResolutionServices
             if($data->action_codes == ActionCode::ACTR){
                 $data_incident['status']  =  Incident::RESOLVED; 
                 $data_incident['resolved_user_id'] = auth()->user()->id;
-
+                
                 $incident->update($data_incident);
             }
 
             $incident->workbasket()->update([
                 'status' => Workbasket::NEW,
                 'status_complaint' => Workbasket::IN_PROGRESS,
+                'escalate_frontliner' => false,
             ]);
         }
         else{
             $incident->workbasket()->update([
                 'status' => Workbasket::IN_PROGRESS,
-                'status_complaint' => Workbasket::IN_PROGRESS
+                'status_complaint' => Workbasket::IN_PROGRESS,
+                'escalate_frontliner' => false,
             ]);
         }
 
