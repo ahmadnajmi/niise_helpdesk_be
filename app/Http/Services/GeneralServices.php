@@ -185,6 +185,7 @@ class GeneralServices
 
                                             return $query->whereIn('nickname',$list_action);
                                         })
+                                        ->where('nickname', '!=', ActionCode::INITIAL)
                                         ->where('is_active',true)
                                         ->get();
                 
