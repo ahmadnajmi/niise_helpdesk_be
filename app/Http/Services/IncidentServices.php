@@ -131,16 +131,20 @@ class IncidentServices
 
             $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
 
+            if($incident->status == Incident::CLOSED){
+                $incident->workbasket?->delete();
+                $data['resolved_user_id'] = auth()->user()->id;
+
+                // self::calculatePenalty($incident);
+            }
+
             $create = $incident->update($data);
 
             $create_document = self::uploadDoc($data,$incident);
 
-
             $return = self::callAssetIncident($incident);
 
-            if($incident->status == Incident::RESOLVED || $incident->status == Incident::CLOSED){
-                // self::calculatePenalty($incident);
-            }
+          
 
             return self::generalResponse($return);
         }

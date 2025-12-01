@@ -181,7 +181,9 @@ class GeneralServices
                 
                 $data[$code] = ActionCode::select('name','nickname','description')
                                         ->when($contractor, function ($query) use ($request) {
-                                            return $query->whereNot('nickname',ActionCode::CLOSED);
+                                            $list_action = [ActionCode::ESCALATE,ActionCode::ACTR,ActionCode::UPDATE,ActionCode::VERIFY];
+
+                                            return $query->whereIn('nickname',$list_action);
                                         })
                                         ->where('is_active',true)
                                         ->get();

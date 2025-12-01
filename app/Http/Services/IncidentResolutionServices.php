@@ -13,6 +13,7 @@ use App\Models\SlaTemplate;
 use App\Models\User;
 use App\Models\Workbasket;
 use App\Models\EmailTemplate;
+use App\Models\Role;
 use App\Http\Resources\IncidentResolutionResources;
 use App\Mail\ActionCodeEmail;
 
@@ -61,27 +62,39 @@ class IncidentResolutionServices
     public static function actionCode($data){
         $incident = $data->incident;
 
-        if($data->action_codes == ActionCode::ACTR || $data->action_codes == ActionCode::CLOSED){
+        $role = User::getUserRole(Auth::user()->id);
 
-            $data_incident['status']  = $data->action_codes == ActionCode::ACTR ? Incident::RESOLVED : Incident::CLOSED; 
+        if($role?->role == Role::CONTRACTOR){
 
-            if($data->action_codes == ActionCode::CLOSED){
+            if($data->action_codes == ActionCode::ACTR){
+                $data_incident['status']  =  Incident::RESOLVED; 
                 $data_incident['resolved_user_id'] = auth()->user()->id;
+
+                $data_workbasket['escalate_frontliner'] = true;
+                $data_workbasket['status'] = Workbasket::NEW;
+
+                $incident->update($data_incident);
             }
-            $incident->update($data_incident);
+            else{
+                $data_workbasket['status'] = Workbasket::IN_PROGRESS;
+            }
+
+            $data_workbasket['status_complaint'] = Workbasket::IN_PROGRESS;
+
+            $incident->workbasket()->update($data_workbasket);
         }
+        elseif($data->action_codes == ActionCode::ACTR || $data->action_codes == ActionCode::ESCALATE){
 
-        if($incident->status == Incident::CLOSED){
-            $incident->workbasket?->delete();
+            if($data->action_codes == ActionCode::ACTR){
+                $data_incident['status']  =  Incident::RESOLVED; 
+                $data_incident['resolved_user_id'] = auth()->user()->id;
 
-            $data_incident['actual_end_date']  = date('Y-m-d H:i:s');
+                $incident->update($data_incident);
+            }
 
-            $incident->update($data_incident);
-        }
-        elseif($data->action_codes == ActionCode::RESOLVED || $data->action_codes == ActionCode::ACTR || $data->action_codes == ActionCode::ESCALATE){
             $incident->workbasket()->update([
                 'status' => Workbasket::NEW,
-                'status_complaint' => Workbasket::IN_PROGRESS
+                'status_complaint' => Workbasket::IN_PROGRESS,
             ]);
         }
         else{

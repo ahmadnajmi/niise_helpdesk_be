@@ -60,6 +60,12 @@ class ActionCodeSeeder extends Seeder
                 "nickname" => "RSLVD",
                 'description' => 'Log telah diselesaikan oleh contractor',
                 'send_email' => 0,
+            ],
+            [
+                "name" => "Verfiy",
+                "nickname" => "VRFY",
+                'description' => 'Log yang verify',
+                'send_email' => 0,
             ]
         ];
 
