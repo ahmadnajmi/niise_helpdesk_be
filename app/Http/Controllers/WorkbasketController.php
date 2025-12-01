@@ -45,7 +45,7 @@ class WorkbasketController extends Controller
                                     $query->where('complaint_user_id',Auth::user()->id);
                                 });
                             })
-                            ->when($role?->role == Role::FRONTLINER, function ($q) {
+                            ->when($role?->role == Role::FRONTLINER, function ($query) {
                                 return $query->where('frontliner_view',true);
                             })
                             ->orderBy('updated_at','desc')
