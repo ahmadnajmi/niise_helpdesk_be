@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->boolean('first_time_password')->default(true);
+        Schema::table('workbasket', function (Blueprint $table) {
+            $table->boolean('escalate_frontliner')->default(false);
 
         });
     }
@@ -22,8 +22,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('first_time_password');
+        Schema::table('workbasket', function (Blueprint $table) {
+            $table->dropColumn('escalate_frontliner');
         });
     }
 };

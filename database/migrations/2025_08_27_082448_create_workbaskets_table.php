@@ -17,6 +17,7 @@ return new class extends Migration
             $table->date('date');
             $table->smallInteger('status')->default(1);
             $table->smallInteger('status_complaint')->default(1);
+            $table->boolean('escalate_frontliner')->default(false);
             $table->log();
         });
     }

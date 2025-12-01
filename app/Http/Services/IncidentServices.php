@@ -248,6 +248,7 @@ class IncidentServices
     public static function createWorkbasket($id){
         $data['date'] = date('Y-m-d H:i:s');
         $data['incident_id'] = $id;
+        $data['escalate_frontliner'] = true;
 
         Workbasket::create($data);
 

@@ -14,7 +14,8 @@ class Workbasket extends BaseModel
         'date',
         'incident_id',
         'status',
-        'status_complaint'
+        'status_complaint',
+        'escalate_frontliner'
     ];
 
     protected $casts = [

@@ -30,25 +30,24 @@ class WorkbasketController extends Controller
         if($role?->role == Role::CONTRACTOR){
             $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
         }
-        
-        $data = Workbasket::where(function ($query) use ($role,$group_id) {
-                                $query->when($role?->role == Role::FRONTLINER, function ($q) {
-                                    return $q->whereIn('status', [Workbasket::NEW, Workbasket::IN_PROGRESS]);
-                                })
-                                ->when($role?->role == Role::CONTRACTOR, function ($query)use($group_id) {
-                                    return $query->whereHas('incident', function ($query)use($group_id) {
-                                            $query->whereHas('incidentResolutionLatest', function ($query) use($group_id){
-                                                $query->whereIn('group_id',$group_id); 
-                                        }); 
-                                    });
+
+        $data = Workbasket::when($role?->role == Role::CONTRACTOR, function ($query)use($group_id) {
+                                $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
+
+                                return $query->whereHas('incident', function ($query)use($group_id) {
+                                        $query->whereHas('incidentResolutionLatest', function ($query) use($group_id){
+                                            $query->whereIn('group_id',$group_id); 
+                                    }); 
                                 });
                             })
-                            ->orWhere(function ($query) {
-                                $query->whereHas('incident', function ($query) {
+                            ->when($role?->role == Role::JIM || $role?->role == Role::BTMR  , function ($query) {
+                                return $query->whereHas('incident', function ($query) {
                                     $query->where('complaint_user_id',Auth::user()->id);
                                 });
                             })
-                           
+                            ->when($role?->role == Role::FRONTLINER, function ($q) {
+                                return $query->where('frontliner_view',true);
+                            })
                             ->orderBy('updated_at','desc')
                             ->paginate($limit);
 

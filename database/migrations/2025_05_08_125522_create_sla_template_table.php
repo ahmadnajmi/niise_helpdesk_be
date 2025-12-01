@@ -24,18 +24,24 @@ return new class extends Migration
             $table->string('response_time')->nullable();
             $table->smallInteger('response_time_type')->nullable();
             $table->string('response_time_penalty',20)->nullable();
+            $table->smallInteger('response_time_penalty_type')->nullable();
+
 
             $table->string('resolution_time')->nullable();
             $table->smallInteger('resolution_time_type')->nullable();
             $table->string('resolution_time_penalty',20)->nullable();
+            $table->smallInteger('resolution_time_penalty_type')->nullable();
 
             $table->string('response_time_location')->nullable();
             $table->smallInteger('response_time_location_type')->nullable();
             $table->string('response_time_location_penalty',20)->nullable();
+            $table->smallInteger('response_time_location_penalty_type')->nullable();
+
 
             $table->string('temporary_resolution_time')->nullable();
             $table->smallInteger('temporary_resolution_time_type')->nullable();
             $table->string('temporary_resolution_time_penalty',20)->nullable();
+            $table->smallInteger('temporary_resolution_time_penalty_type')->nullable();
 
             $table->string('dispatch_time')->nullable();
             $table->smallInteger('dispatch_time_type')->nullable();
