@@ -323,7 +323,7 @@ class Incident extends BaseModel
                         })
                         ->when($role?->role == Role::CONTRACTOR, function ($query)use($group_id){
                             return $query->whereHas('incidentResolutionLatest', function ($query)use($group_id) {
-                                $query->whereIn('group_id',$group_id)->where('action_code',ActionCode::ESCALATE); 
+                                $query->whereIn('group_id',$group_id)->where('action_codes',ActionCode::ESCALATE); 
                             });
                         })
                         ->when($request->status, function ($query) use ($request) {

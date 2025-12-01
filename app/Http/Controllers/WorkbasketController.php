@@ -8,7 +8,8 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\UserRole;
 use App\Models\Workbasket;
-use  App\Models\UserGroup;
+use App\Models\UserGroup;
+use App\Models\ActionCode;
 use Illuminate\Http\Request;
 use App\Http\Traits\ResponseTrait;
 use Illuminate\Support\Facades\Auth;
@@ -36,7 +37,7 @@ class WorkbasketController extends Controller
 
                                 return $query->whereHas('incident', function ($query)use($group_id) {
                                         $query->whereHas('incidentResolutionLatest', function ($query) use($group_id){
-                                            $query->whereIn('group_id',$group_id); 
+                                            $query->whereIn('group_id',$group_id)->where('action_codes',ActionCode::ESCALATE);
                                     }); 
                                 });
                             })
