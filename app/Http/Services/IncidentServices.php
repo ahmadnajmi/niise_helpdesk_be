@@ -160,16 +160,13 @@ class IncidentServices
 
             $resolution = $incident->incidentResolutionLatest;
 
-            if($resolution->operation_user_id == Auth::user()->id){
+            $data_workbasket['status'] = Workbasket::OPENED;
 
-                $data_workbasket['status'] = Workbasket::OPENED;
-
-                if(!$resolution->pickup_date){
-                    $resolution->pickup_date = Carbon::now();
-                    $resolution->save();
-                }
+            if(!$resolution->pickup_date){
+                $resolution->pickup_date = Carbon::now();
+                $resolution->save();
             }
-
+            
             $incident->workbasket()->update($data_workbasket);
         }
         $data = new IncidentResources($incident);
