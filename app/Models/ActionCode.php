@@ -29,6 +29,8 @@ class ActionCode extends BaseModel
     const RETURN = 'RETURN';
     const DISC = 'DISC';
     const ONSITE = 'ONSITE';
+    const STARTD = 'STARTD';
+    const STOPD = 'STOPD';
 
 
 

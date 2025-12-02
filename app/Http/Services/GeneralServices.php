@@ -183,14 +183,14 @@ class GeneralServices
                 
                 $data[$code] = ActionCode::select('name','nickname','description')
                                         ->when($contractor, function ($query) use ($request) {
-                                            $list_action = [ActionCode::PROG,ActionCode::ACTR,ActionCode::RETURN,ActionCode::DISC,ActionCode::ONSITE];
+                                            $list_action = [ActionCode::PROG,ActionCode::ACTR,ActionCode::RETURN,ActionCode::DISC,ActionCode::ONSITE,ActionCode::STARTD,ActionCode::STOPD];
 
                                             return $query->whereIn('nickname',$list_action);
                                         })
                                         ->when($frontliner, function ($query) use ($request) {
-                                            $list_action = [ActionCode::UPDATE,ActionCode::ACTR,ActionCode::DISC,ActionCode::VERIFY,ActionCode::CLOSED];
+                                            $not_list_action = [ActionCode::INIT];
 
-                                            return $query->whereIn('nickname',$list_action);
+                                            return $query->whereNotIn('nickname',$not_list_action);
                                         })
                                         ->where('nickname', '!=', ActionCode::INITIAL)
                                         ->where('is_active',true)
