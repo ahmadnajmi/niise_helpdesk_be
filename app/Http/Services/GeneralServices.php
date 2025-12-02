@@ -188,7 +188,7 @@ class GeneralServices
                                             return $query->whereIn('nickname',$list_action);
                                         })
                                         ->when($frontliner, function ($query) use ($request) {
-                                            $not_list_action = [ActionCode::INIT];
+                                            $not_list_action = [ActionCode::INITIAL];
 
                                             return $query->whereNotIn('nickname',$not_list_action);
                                         })
