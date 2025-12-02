@@ -178,6 +178,8 @@ class GeneralServices
 
             if($code == 'action_code'){
                 $contractor = Auth::user()->roles->contains('role', Role::CONTRACTOR);
+                $frontliner = Auth::user()->roles->contains('role', Role::FRONTLINER);
+
                 
                 $data[$code] = ActionCode::select('name','nickname','description')
                                         ->when($contractor, function ($query) use ($request) {
@@ -185,8 +187,8 @@ class GeneralServices
 
                                             return $query->whereIn('nickname',$list_action);
                                         })
-                                        ->when($contractor, function ($query) use ($request) {
-                                            $list_action = [ActionCode::UPDT,ActionCode::ACTR,ActionCode::DISC,ActionCode::VRFY,ActionCode::CLSD];
+                                        ->when($frontliner, function ($query) use ($request) {
+                                            $list_action = [ActionCode::UPDATE,ActionCode::ACTR,ActionCode::DISC,ActionCode::VRFY,ActionCode::CLSD];
 
                                             return $query->whereIn('nickname',$list_action);
                                         })
