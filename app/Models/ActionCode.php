@@ -28,6 +28,7 @@ class ActionCode extends BaseModel
     const PROG = 'PROG';
     const RETURN = 'RETURN';
     const DISC = 'DISC';
+    const ONSITE = 'ONSITE';
 
 
 

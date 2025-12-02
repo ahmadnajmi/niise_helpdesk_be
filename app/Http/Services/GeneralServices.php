@@ -183,7 +183,7 @@ class GeneralServices
                 
                 $data[$code] = ActionCode::select('name','nickname','description')
                                         ->when($contractor, function ($query) use ($request) {
-                                            $list_action = [ActionCode::PROG,ActionCode::ACTR,ActionCode::RETURN,ActionCode::DISC];
+                                            $list_action = [ActionCode::PROG,ActionCode::ACTR,ActionCode::RETURN,ActionCode::DISC,Action::ONSITE];
 
                                             return $query->whereIn('nickname',$list_action);
                                         })
