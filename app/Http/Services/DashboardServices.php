@@ -24,9 +24,15 @@ class DashboardServices
         $page = $request->page ? $request->page : 1;
         $limit = $request->limit ? $request->limit : 15;
 
-        // $role = User::getUserRole(Auth::user()->id);
+        if (Auth::check()) {
+            $role = User::getUserRole(Auth::user()->id);
 
-        // $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
+            if($role?->role == Role::JIM){
+                $request->merge([
+                    'branch_id' => Auth::user()->branch_id
+                ]);
+            }
+        }
 
         if($request->code == 'by_branch'){
             $data = self::incidentByBranch($request);
@@ -59,7 +65,17 @@ class DashboardServices
         if (Auth::check()) {
             $request->role = User::getUserRole(Auth::id());
             $request->group_id = UserGroup::where('user_id', Auth::id())->pluck('groups_id');
+
+            $role = User::getUserRole(Auth::user()->id);
+
+            if($role?->role == Role::JIM){
+                $request->merge([
+                    'branch_id' => Auth::user()->branch_id
+                ]);
+            }
         }
+
+       
 
         $daily = self::graphTotalIncidentDaily($request);
         $montly = self::graphTotalIncidentMonthly($request);
@@ -127,9 +143,6 @@ class DashboardServices
         $get_branch = Branch::select('id','name')
                             ->when($request->branch_id, function ($query) use ($request) {
                                 return $query->where('id',$request->branch_id); 
-                            })
-                            ->when($role?->role == Role::JIM, function ($query){
-                                return $query->where('id',Auth::user()->branch_id); 
                             })
                             ->get();
 
