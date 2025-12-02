@@ -34,11 +34,13 @@ class WorkbasketController extends Controller
         
         $data = Workbasket::when($role?->role == Role::CONTRACTOR, function ($query)use($group_id) {
                                 $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
-
-                                return $query->whereHas('incident', function ($query)use($group_id) {
-                                        $query->whereHas('incidentResolutionEscalateLatest', function ($query) use($group_id){
-                                            $query->whereIn('group_id',$group_id);
-                                    }); 
+                                ///kalau contractor esclate or actr ke frontliner kat wb still muncul
+                                //tapi kena ingat yg contractor boleh wat verify...kalau wat verify boleh hilang wb kalau tukar ke function incidentResolutionlatest
+                                return $query->where('status',Workbasket::NEW)
+                                            ->whereHas('incident', function ($query)use($group_id) {
+                                            $query->whereHas('incidentResolutionEscalateLatest', function ($query) use($group_id){
+                                                $query->whereIn('group_id',$group_id);
+                                        }); 
                                 });
                             })
                             ->when($role?->role == Role::JIM || $role?->role == Role::BTMR  , function ($query) {
@@ -47,7 +49,7 @@ class WorkbasketController extends Controller
                                 });
                             })
                             ->when($role?->role == Role::FRONTLINER, function ($query) {
-                                return $query->where('escalate_frontliner',true);
+                                return $query->where('escalate_frontliner',true)->where('status',Workbasket::NEW);
                             })
                             ->orderBy('updated_at','desc')
                             ->paginate($limit);
