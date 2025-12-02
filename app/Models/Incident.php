@@ -465,7 +465,7 @@ class Incident extends BaseModel
         if ($request->role?->role == Role::JIM) {
             $query->where('incidents.created_by', auth()->id());
         } elseif ($request->role?->role == Role::CONTRACTOR) {
-            $query->whereHas('incidentResolution', function ($q) use ($request) {
+            $query->whereHas('incidentResolutionEscalateLatest', function ($q) use ($request) {
                 $q->whereIn('group_id', $request->group_id);
             });
         }

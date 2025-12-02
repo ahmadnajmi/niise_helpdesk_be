@@ -14,6 +14,7 @@ use App\Models\Category;
 use App\Models\Company;
 use App\Models\User;
 use App\Models\UserGroup;
+use App\Models\Role;
 
 class DashboardServices
 {
