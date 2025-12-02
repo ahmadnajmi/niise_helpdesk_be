@@ -188,7 +188,7 @@ class GeneralServices
                                             return $query->whereIn('nickname',$list_action);
                                         })
                                         ->when($frontliner, function ($query) use ($request) {
-                                            $list_action = [ActionCode::UPDATE,ActionCode::ACTR,ActionCode::DISC,ActionCode::VERIFY,ActionCode::CLSD];
+                                            $list_action = [ActionCode::UPDATE,ActionCode::ACTR,ActionCode::DISC,ActionCode::VERIFY,ActionCode::CLOSED];
 
                                             return $query->whereIn('nickname',$list_action);
                                         })
