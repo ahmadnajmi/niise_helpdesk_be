@@ -29,7 +29,7 @@ class ActionCodeEmail extends Mailable implements  ShouldQueue
     {
         return new Envelope(
             from: new Address($this->email_template?->sender_email, $this->email_template?->sender_name),
-            subject: 'Action Code Email',
+            subject: 'Penyaluran Insiden -'.$this->incident->incident_no.' '.$this->incident->complaintUser?->branch?->name,
         );
     }
 
