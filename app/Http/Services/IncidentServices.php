@@ -160,7 +160,7 @@ class IncidentServices
 
             $resolution = $incident->incidentResolutionLatest;
 
-            if($resolution->action_codes == ActionCode::ESCALATE && $resolution->operation_user_id == Auth::user()->id){
+            if($resolution->operation_user_id == Auth::user()->id){
 
                 $data_workbasket['status'] = Workbasket::OPENED;
 
