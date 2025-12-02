@@ -128,7 +128,7 @@ class DashboardServices
                             ->when($request->branch_id, function ($query) use ($request) {
                                 return $query->where('id',$request->branch_id); 
                             })
-                            ->when($role?->role == Role::JIM, function ($query)use($group_id){
+                            ->when($role?->role == Role::JIM, function ($query){
                                 return $query->where('id',Auth::user()->branch_id); 
                             })
                             ->get();
