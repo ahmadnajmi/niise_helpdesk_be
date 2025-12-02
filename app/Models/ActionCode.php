@@ -18,13 +18,18 @@ class ActionCode extends BaseModel
         'email_recipient_id',
         'skip_penalty'
     ];
-
+    
     const INITIAL = 'INIT';
     const ESCALATE = 'ESCL';
     const ACTR = 'ACTR';
     const CLOSED = 'CLSD';
     const UPDATE = 'UPDT';
     const VERIFY = 'VRFY';
+    const PROG = 'PROG';
+    const RETURN = 'RETURN';
+    const DISC = 'DISC';
+
+
 
     const SEND_TO_COMPLAINT = 1;
     const SEND_TO_GROUP = 2;
