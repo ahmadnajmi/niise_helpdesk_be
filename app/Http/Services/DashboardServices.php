@@ -24,16 +24,14 @@ class DashboardServices
         $page = $request->page ? $request->page : 1;
         $limit = $request->limit ? $request->limit : 15;
 
-        if (Auth::check()) {
-            $role = User::getUserRole(Auth::user()->id);
+        $role = User::getUserRole(Auth::user()->id);
 
-            if($role?->role == Role::JIM){
-                $request->merge([
-                    'branch_id' => Auth::user()->branch_id
-                ]);
-            }
+        if($role?->role == Role::JIM){
+            $request->merge([
+                'branch_id' => Auth::user()->branch_id
+            ]);
         }
-
+        
         if($request->code == 'by_branch'){
             $data = self::incidentByBranch($request);
         }
@@ -61,21 +59,13 @@ class DashboardServices
     }
 
     public static function getDashboardGraph($request){
-        
-        if (Auth::check()) {
-            $request->role = User::getUserRole(Auth::id());
-            $request->group_id = UserGroup::where('user_id', Auth::id())->pluck('groups_id');
+        $role = User::getUserRole(Auth::user()->id);
 
-            $role = User::getUserRole(Auth::user()->id);
-
-            if($role?->role == Role::JIM){
-                $request->merge([
-                    'branch_id' => Auth::user()->branch_id
-                ]);
-            }
+        if($role?->role == Role::JIM){
+            $request->merge([
+                'branch_id' => Auth::user()->branch_id
+            ]);
         }
-
-       
 
         $daily = self::graphTotalIncidentDaily($request);
         $montly = self::graphTotalIncidentMonthly($request);

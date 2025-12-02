@@ -457,16 +457,18 @@ class Incident extends BaseModel
 
 
     public function scopeApplyFilters($query, $request){
+        $role = User::getUserRole(Auth::id());
+        $group_id = UserGroup::where('user_id', Auth::id())->pluck('groups_id');
 
         if ($request->branch_id) {
             $query->where('incidents.branch_id', $request->branch_id); 
         }
 
-        if ($request->role?->role == Role::JIM) {
+        if ($role?->role == Role::JIM) {
             $query->where('complaint_user_id',Auth::user()->id);
-        } elseif ($request->role?->role == Role::CONTRACTOR) {
-            $query->whereHas('incidentResolutionEscalateLatest', function ($q) use ($request) {
-                $q->whereIn('group_id', $request->group_id);
+        } elseif ($role?->role == Role::CONTRACTOR) {
+            $query->whereHas('incidentResolutionEscalateLatest', function ($q) use ($group_id) {
+                $q->whereIn('group_id', $group_id);
             });
         }
 
