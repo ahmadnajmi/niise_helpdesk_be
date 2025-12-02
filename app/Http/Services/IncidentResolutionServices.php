@@ -76,6 +76,10 @@ class IncidentResolutionServices
 
                 $incident->update($data_incident);
             }
+            elseif($data->action_codes == ActionCode::RETURN) {
+                $data_workbasket['escalate_frontliner'] = true;
+                $data_workbasket['status'] = Workbasket::IN_PROGRESS;
+            }
             else{
                 $data_workbasket['status'] = Workbasket::IN_PROGRESS;
             }
