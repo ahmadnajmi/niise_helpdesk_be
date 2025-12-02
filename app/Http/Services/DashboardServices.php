@@ -120,9 +120,15 @@ class DashboardServices
     }
 
     public static function incidentByBranch($request){
+
+        $role = User::getUserRole(Auth::user()->id);
+
         $get_branch = Branch::select('id','name')
                             ->when($request->branch_id, function ($query) use ($request) {
                                 return $query->where('id',$request->branch_id); 
+                            })
+                            ->when($role?->role == Role::JIM, function ($query)use($group_id){
+                                return $query->where('id',Auth::user()->branch_id); 
                             })
                             ->get();
 
