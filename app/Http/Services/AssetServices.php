@@ -17,7 +17,8 @@ class AssetServices
     public function callApiAsset($api_url,$method,$json) {
         $client = new Client();
 
-        $client = new Client(['base_uri' => $this->baseUrl]);
+        // $client = new Client(['base_uri' => $this->baseUrl]);
+        $client = new Client(['base_uri' => $this->baseUrl,'verify' => false]);
 
         $postData = [
             'headers' => [
