@@ -115,6 +115,11 @@ class ActionCodeSeeder extends Seeder
         ];
 
         foreach($action_codes as $action_code){
+
+            if(isset($action_code['role_id'])){
+                $action_code['role_id'] = json_encode($action_code['role_id']);
+            }
+
             $create = ActionCode::create($action_code);
         }
     }
