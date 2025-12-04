@@ -12,14 +12,12 @@ use App\Models\RefTable;
 use App\Models\Report;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use App\Http\Traits\ApiTrait;
 
 class ReportServices
 {
-    protected string $baseUrl;
-
+    use ApiTrait;
     public function __construct(){
-        $this->baseUrl = config('app.microservices.url');
-        $this->pathFolder = config('app.microservices.path');
         $this->beUrl = config('app.url');
     }
 
@@ -166,26 +164,6 @@ class ReportServices
         $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'csv' ;
 
         $chart_image = $this->uploadDoc($request);
-        
-        // if($request->report_category == 'TO_BREACH' || $request->report_category == 'STATUS'){
-
-        //     $parameter  = [
-        //         "logo_background" => $this->beUrl."/background.png",
-        //         "logo_tittle" => $this->beUrl."/logo_immigration.png",
-        //         "user_name" => Auth::user()->name,
-        //         "graph_picture" => $chart_image,
-        //     ];
-            
-        // }
-        // else{
-        //     $parameter  = [
-        //         "SUBREPORT_DIR" => $this->pathFolder.$file.'/',
-        //         "image_path" => $this->beUrl."/logo_immigration.png",
-        //         "chart_image" => $chart_image,
-        //         "cawangan_id" => $request->branch_id,
-        //         "kontraktor_id" => $request->contractor_id,
-        //     ];
-        // }
 
         $parameter  = [
             "logo_background" => $this->beUrl."/background.png",
@@ -200,56 +178,10 @@ class ReportServices
             'reportTitle' => $request->tittle,
             'report_format' => $fileExtension,
             'parameters' => $parameter
-        ];
-        
-        $generate = $this->callMicroServices('testing/generate','POST',$data);
+        ];        
+        $generate = self::callApi('jasper','testing/generate','POST',$data);
         
         return $generate;
-    }
-
-    public function callMicroServices($api_url,$method,$json) {
-
-        try{
-            // $response = Http::$method($this->baseUrl.$api_url, $json);
-            $response = Http::withOptions(['verify' => false])->$method($this->baseUrl . $api_url, $json);
-
-            
-            if ($response->successful()) {
-                $contentType = $this->getContentType($json['report_format']);
-                $filename = $json['outputFileName'];
-                                            
-                return [
-                    'data' => response($response->body(), 200)->header('Content-Type', $contentType)->header('Content-Disposition', 'attachment; filename="'.$filename.'"')
-                    
-                ]; 
-            }
-            else{
-                
-                return ['data' => null ,'status' => $response->status(),'message' => 'Failed to generate report'.$response->body()];
-            }
-        }
-        catch (\GuzzleHttp\Exception\BadResponseException $e){ 
-            $message = 'Something went wrong on the server.Error Code = '. $e->getCode();
-
-            Log::channel('external_api')->error("API Response: {$e->getCode()}, {$this->baseUrl}{$api_url}", [
-                'message' => $e->getMessage(),
-            ]);
-            
-            return ['data' => null,'status' =>null,'message' => $e->getMessage()];
-        }
-
-    }
-
-    private function getContentType($reportFormat) {
-        switch($reportFormat) {
-            case 'pdf':
-                return 'application/pdf';
-            case 'csv':
-            case 'excel':
-                return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-            default:
-                return 'application/pdf';
-        }
     }
 
     public function uploadDoc($request){

@@ -7,7 +7,8 @@ use App\Http\Traits\ResponseTrait;
 use App\Http\Collection\ActionCodeCollection;
 use App\Http\Resources\ActionCodeResources;
 use App\Http\Requests\ActionCodeRequest;
-use App\Models\ActionCode;
+use App\Http\Services\ActionCodeServices;
+use App\Models\ActionCode;  
 
 class ActionCodeController extends Controller
 {
@@ -24,18 +25,11 @@ class ActionCodeController extends Controller
 
     public function store(ActionCodeRequest $request)
     {
-        try {
-            $data = $request->all();
+        $data = $request->all();
 
-            $create = ActionCode::create($data);
-           
-            $data = new ActionCodeResources($create);
-
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        $create = ActionCodeServices::create($data);
+        
+        return $create;
     }
 
     public function show(ActionCode $action_code)
@@ -47,24 +41,17 @@ class ActionCodeController extends Controller
 
     public function update(ActionCodeRequest $request, ActionCode $action_code)
     {
-        try {
-            $data = $request->all();
+        $data = $request->all();
 
-            $update = $action_code->update($data);
+        $update = ActionCodeServices::update($action_code,$data);
 
-            $data = new ActionCodeResources($action_code);
-
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return $update;
     }
 
     public function destroy(ActionCode $action_code)
     {
-        $action_code->delete();
+        $delete = ActionCodeServices::delete($action_code);
 
-        return $this->success('Success', null);
+        return $delete;
     }
 }

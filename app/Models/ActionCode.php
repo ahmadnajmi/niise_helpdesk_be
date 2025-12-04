@@ -44,4 +44,12 @@ class ActionCode extends BaseModel
     public function emailRecipientDescription(){
         return $this->hasOne(RefTable::class,'ref_code','email_recipient_id')->where('code_category', 'action_code_email_recipient');
     }
+
+    public function getRoleDesc($role_id){
+        $role_id = isset($role_id) ? json_decode($role_id,true) : []; 
+        
+        $data = Role::whereIn('id', $role_id)
+                        ->pluck('name');  
+        return $data;
+    }
 }

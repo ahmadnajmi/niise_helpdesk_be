@@ -23,6 +23,8 @@ class ActionCodeResources extends JsonResource
             'email_recipient_desc' => $this->emailRecipientDescription?->name,
             'description' => $this->description,
             'skip_penalty' => $this->skip_penalty,
+            'role_id' => $this->role_id,
+            'role_desc' => $this->getRoleDesc($this->role_id),
             'is_active' => $this->is_active,
             'created_by' => $this->createdBy?->name .' - '. $this->createdBy?->email ,
             'updated_by' => $this->updatedBy?->name .' - '. $this->updatedBy?->email ,

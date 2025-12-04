@@ -5,63 +5,11 @@ use Illuminate\Support\Facades\Http;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Http\Traits\ApiTrait;
 
 class AssetServices
 {
-    protected string $baseUrl;
-
-    public function __construct(){
-        $this->baseUrl = config('app.asset.url');
-    }
-
-    public function callApiAsset($api_url,$method,$json) {
-        $client = new Client();
-
-        // $client = new Client(['base_uri' => $this->baseUrl]);
-        $client = new Client(['base_uri' => $this->baseUrl,'verify' => false]);
-
-        $postData = [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-                'Client-ID' => config('app.asset.client_id'),
-                'Client-Secret' => config('app.asset.client_secret'),
-            ],
-        ];
-
-        if (strtoupper($method) === 'GET') {
-            $postData['query'] = $json; 
-        } else {
-            $postData['json'] = $json; 
-        }
-
-        
-        Log::channel('external_api')->info("API Request: {$method},{$this->baseUrl}{$api_url}", [
-            'body' => $json,
-        ]);
-        
-        try{
-            $call_api = $client->$method($api_url, $postData);
-            $response = $call_api->getBody()->getContents();
-
-            Log::channel('external_api')->info("API Response: {$call_api->getStatusCode()},{$this->baseUrl}{$api_url}", [
-                'user_id' => Auth::user()?->id,
-                'body' => json_decode($response, true),
-            ]);
-
-            return ['data' => json_decode($response),'status' =>true];
-
-        } catch (\GuzzleHttp\Exception\BadResponseException $e){ 
-            $message = 'Something went wrong on the server.Error Code = '. $e->getCode();
-
-            Log::channel('external_api')->error("API Response: {$e->getCode()}, {$this->baseUrl}{$api_url}", [
-                'message' => $e->getMessage(),
-            ]);
-            
-            return ['data' => null,'status' =>null,'message' => $e->getMessage()];
-        }
-
-    }
+    use ApiTrait;
 
     public function createIncident($data){
         if($data->complaint_user_id){
@@ -69,18 +17,10 @@ class AssetServices
             $data_asset["phone_number"] =  $data->complaintUser?->phone_no;
             $data_asset["office_phone_number"] = null;
         }
-        else{
-            $data_asset["reporter_name"] =  $data->complaint?->name;
-            $data_asset["phone_number"] =  $data->complaint?->phone_no;
-            $data_asset["office_phone_number"] = $data->complaint?->office_phone_no;
-        }
         $data_asset["spec_batch_item_id"] = $data->asset_parent_id ? [$data->asset_parent_id] : json_decode($data->asset_component_id) ;
         $data_asset["incident_no"] =  $data->incident_no;
         $data_asset["incident_date"] = $data->incident_date?->format('Y-m-d'); 
-       
         $data_asset["description"] =  $data->information;
-        // $data_asset["ptj_code"] =  $data->branch->id;
-        // $data_asset["branch_code"] =   $data->branch->id;
         $data_asset["location_id"] =  null;
         $data_asset["ic_number"] =  Auth::user()->ic_no;
         $data_asset["status"] =  $data->status;
@@ -89,7 +29,8 @@ class AssetServices
         $data_asset["police_report_date"] =  $data->date_report_police?->format('Y-m-d');
         $data_asset["police_report_reference"] =  $data->report_police_no;
 
-        $call_api = $this->callApiAsset('ext/logIncidentFromHelpDesk','POST',$data_asset);
+        // $call_api = $this->callApiAsset('ext/logIncidentFromHelpDesk','POST',$data_asset);
+        $call_api = self::callApi('asset','ext/logIncidentFromHelpDesk','POST',$data_asset);
 
         return $call_api;
     }
@@ -97,7 +38,7 @@ class AssetServices
     public function getAsset($id){
         $parameter['spec_batch_item_id'] = $id;
 
-        $call_api = $this->callApiAsset('ext/getAsset','GET',$parameter);
+        $call_api = self::callApi('asset','ext/getAsset','GET',$parameter);
 
         if($call_api['data']){
             $data = $call_api['data'];

@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 use App\Http\Traits\ResponseTrait;
+use App\Http\Traits\ApiTrait;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
@@ -9,7 +10,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\UserResources;
-use GuzzleHttp\Client;
 use App\Models\User;
 use App\Models\SsoSession;
 use App\Models\UserRole;
@@ -19,7 +19,7 @@ use App\Mail\ForgetPasswordEmail;
 
 class AuthServices
 {
-    use ResponseTrait;
+    use ResponseTrait,ApiTrait;
 
     public static function loginSso($request){
         $user = User::where('ic_no', $request->ic_no)->first();
@@ -68,7 +68,7 @@ class AuthServices
                 'permission' => Permission::getPermission(),
                 'module' => Module::getUserDetails(),
             ];
-
+            
             return self::success('Success', $data);
         }
         else{
@@ -103,43 +103,6 @@ class AuthServices
 
         return true;
 
-    }
-
-    public static function generateToken($credentials){
-        $client = new Client(['verify' => false]);
-
-        $postData = [
-            'headers' => [
-                'Content-Type' => 'application/json',
-                'Accept' => 'application/json',
-            ],
-            'json' => [
-                'url' => config('app.passport_token.login_url'),
-                'grant_type' => 'password',
-                'client_id' => config('app.passport_token.client_id'),
-                'client_secret' => config('app.passport_token.client_secret'),
-                'username' => $credentials['ic_no'],
-                'password' => $credentials['password'],
-            ]
-        ];
-        // dd($postData);
-        try{
-            $response = $client->post(config('app.passport_token.login_url'), $postData)->getBody()->getContents();
-
-            return ['data' => json_decode($response),'status' =>true];
-
-        } catch (\GuzzleHttp\Exception\BadResponseException $e){
-            if ($e->getCode() == 400){
-                $message = 'Invalid Request. Please enter a username or a password.Error Code = ' .$e->getCode();
-            } else if ($e->getCode() == 401){
-                $message = 'Your credentials are incorrect. Please try again.Error Code = ' .$e->getCode();
-            }
-            else{
-                $message = 'Something went wrong on the server.Error Code = '. $e->getCode();
-            }
-            return ['data' => null,'status' =>null,'message' => $message];
-
-        }
     }
 
     public static function getToken(){
