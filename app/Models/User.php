@@ -35,6 +35,8 @@ class User extends Authenticatable
         'fax_no',
         'is_active',
         'user_type',
+        'is_disabled',
+        'failed_attempts',
     ];
 
     const FROM_IDM = 1;

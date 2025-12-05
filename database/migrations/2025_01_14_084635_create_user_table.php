@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('nickname',100)->nullable(); 
             $table->string('password')->nullable(); 
             $table->boolean('first_time_password')->default(true);
+            $table->smallInteger('failed_attempts')->default(0);
+            $table->boolean('is_disabled')->default(false);
             $table->string('position',100)->nullable(); 
             $table->unsignedBigInteger('branch_id')->nullable(); 
             $table->unsignedBigInteger('company_id')->nullable();

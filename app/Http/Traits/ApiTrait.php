@@ -50,7 +50,7 @@ trait ApiTrait {
             'body' => $json,
         ]);
         
-        // try{
+        try{
             $call_api = $client->$method($api_url, $postData);
 
             if($function == 'asset'){
@@ -81,15 +81,15 @@ trait ApiTrait {
             else{
                 return ['data' => json_decode($response),'status' =>true];
             }
-        // } catch (\GuzzleHttp\Exception\BadResponseException $e){ 
-        //     $message = 'Something went wrong on the server.Error Code = '. $e->getCode();
+        } catch (\GuzzleHttp\Exception\BadResponseException $e){ 
+            $message = 'Something went wrong on the server.Error Code = '. $e->getCode();
 
-        //     Log::channel('external_api')->error("API Response: {$e->getCode()}, {$url}{$api_url}", [
-        //         'message' => $e->getMessage(),
-        //     ]);
+            Log::channel('external_api')->error("API Response: {$e->getCode()}, {$url}{$api_url}", [
+                'message' => $e->getMessage(),
+            ]);
             
-        //     return ['data' => null,'status' =>null,'message' => $e->getMessage()];
-        // }
+            return ['data' => null,'status' =>null,'message' => $e->getMessage()];
+        }
 
     }
 
@@ -105,7 +105,7 @@ trait ApiTrait {
         }
     }
 
-    public static function generateToken($credentials){
+    public static function generatePassportToken($credentials){
         $client = self::getClient(config('app.passport_token.login_url'));
 
         $postData = [

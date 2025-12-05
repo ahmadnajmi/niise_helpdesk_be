@@ -48,14 +48,10 @@ class AuthServices
     }
 
     public static function login($request){
+        $user = self::logAttemptLogin($request);
 
-        $credentials = [
-            'ic_no' => $request->ic_no,
-            'password' => $request->password,
-        ];
-
-        if(Auth::attempt($credentials)){
-            $token = self::generateToken($credentials);
+        if($user['status']){
+            $token = self::generatePassportToken($user['data']);
 
             if(!$token['status']) {
                 return self::error($token['message']);
@@ -72,11 +68,49 @@ class AuthServices
             return self::success('Success', $data);
         }
         else{
-            return self::error('Login failed. Invalid credentials.');
+            return self::error($user['message']);
+        }
+    }
+
+    public static function logAttemptLogin($request){
+        $maxAttempts = 3;
+
+        $user = User::where('ic_no', $request->ic_no)->first();
+
+        if(!$user){
+            return ['status' => false, 'message' => 'Login failed. Invalid credentials.'];
+        }
+
+        if($user->is_disabled){
+            return ['status' => false, 'message' => 'Login failed. Your account is disabled.'];
+        }
+
+        $credentials = [
+            'ic_no' => $request->ic_no,
+            'password' => $request->password,
+        ];
+
+        if(Auth::attempt($credentials)){
+            $user = Auth::user();
+            $user->failed_attempts = 0 ;
+            $user->save();
+
+            return ['status' => true, 'data' => $credentials];
+        }
+        else{
+            $user->failed_attempts += 1;
+
+            if($user->failed_attempts >= $maxAttempts){
+                $user->is_disabled = true;
+            }
+            $user->save();
+
+            $attemptsLeft = $maxAttempts - $user->failed_attempts;
+
+            return ['status' => false, 'message' => 'Login failed. Invalid credentials.Attempts left: '.$attemptsLeft];
         }
     }
     
-
     public static function storeSsoToken($request){
 
         if (!empty($request->id_token)) {

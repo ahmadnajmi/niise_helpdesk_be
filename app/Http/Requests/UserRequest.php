@@ -44,6 +44,7 @@ class UserRequest extends FormRequest
             'group_user' => 'array|nullable',
             'group_user_access' => 'array|nullable',
             'role' => 'required',
+            'is_disabled' => 'nullable',
         ];
         
         if ($this->routeIs('user.store')) {

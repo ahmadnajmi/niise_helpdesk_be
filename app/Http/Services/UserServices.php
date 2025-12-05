@@ -67,6 +67,12 @@ class UserServices
     public static function update(User $user,$data){
 
         try {
+
+            if($data['is_disabled'] == false){
+                $data['is_disabled'] = false;
+                $data['failed_attempts'] = 0;
+            }
+
             $update = $user->update($data);
 
             $data = self::groupUser($data,$user->id);
