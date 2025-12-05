@@ -48,7 +48,7 @@ class IncidentRequest extends FormRequest
             'asset_file' => 'nullable|array',
             'asset_file.*' => 'file|mimes:jpg,jpeg,png,mp4,pdf,doc,docx|max:5120',
             'name' => 'required_without:complaint_user_id',
-            'email' => 'required_without:complaint_user_id',
+            'email' => 'nullable',
             'phone_no' => 'required_without:complaint_user_id',
             'office_phone_no'=> 'nullable',
             'service_recipient_id' => 'nullable',

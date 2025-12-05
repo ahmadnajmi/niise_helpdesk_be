@@ -346,11 +346,11 @@ class IncidentServices
 
         $incident_date = self::shiftToNextWorkingPeriod($incident_date, $operating_times, $public_holidays);
 
-        if ($sla->response_time_type == SlaTemplate::SLA_TYPE_DAY) {
-            $due_date = self::calculateDueDateByDays($incident_date, (int)$sla->response_time, $operating_times, $public_holidays,$incident_no);
+        if ($sla->resolution_time_type == SlaTemplate::SLA_TYPE_DAY) {
+            $due_date = self::calculateDueDateByDays($incident_date, (int)$sla->resolution_time, $operating_times, $public_holidays,$incident_no);
         }
         else{
-            $sla_minutes = $sla->response_time_type == SlaTemplate::SLA_TYPE_HOUR ? (int)$sla->response_time * 60  : (int)$sla->response_time;
+            $sla_minutes = $sla->resolution_time_type == SlaTemplate::SLA_TYPE_HOUR ? (int)$sla->resolution_time * 60  : (int)$sla->resolution_time;
 
             $due_date =  self::calculateDueDateByMinutes($incident_date, $sla_minutes, $operating_times, $public_holidays,$incident_no);
         }
