@@ -28,6 +28,9 @@ class IncidentResolutionCollection extends BaseResource
 
                 $permission_edit = $group_id ? true : false;
             }
+            elseif($role?->role == Role::BTMR && $role?->role == Role::FRONTLINER){
+                $permission_edit = true;
+            }
 
             $return =  [
                 'id' => $query->id,
