@@ -358,6 +358,84 @@ class IncidentServices
         return $due_date;
     }
 
+    private static function calculateDueDateByDays($date, $sla_days, $operating_times, $public_holidays,$incident_no){
+        $loop_guard = 0;
+        $startTime = $date->format('H:i:s'); 
+        $date = $date->copy()->addDay()->startOfDay();
+
+
+        $logs[] = [
+            'incident_no' => $incident_no,
+            'type' => 'Days',
+            'step' => 'start',
+            'start_date' => $date->format('l, d F Y h:i A'),
+            'sla_days' => $sla_days
+        ];
+
+        while ($sla_days > 0 && $loop_guard++ < 365){
+            $date = self::shiftToNextWorkingPeriod($date, $operating_times, $public_holidays);
+
+            $current_day = $date->isoWeekday();
+
+            $period = $operating_times->first(function ($op) use ($current_day){
+                return $op->day_start <= $current_day && $op->day_end >= $current_day;
+            });
+
+            if (!$period) {
+                $logs[] = [
+                    'step' => 'skip',
+                    'day' => $date->format('l, d F Y'),
+                    'note' => 'No operating period for this day'
+                ];
+
+                $date->addDay()->startOfDay();
+                continue;
+            }
+            
+            $end = $date->copy()->setTimeFromTimeString($period->operation_end);
+
+            $sla_days--;
+
+            $logs[] = [
+                'step' => 'loop',
+                'day' => $date->format('l, d F Y'),
+                'period_end' => $end->format('h:i A'),
+                'sla_days_remaining' => $sla_days
+            ];
+
+            if ($sla_days === 0){
+
+                $logs[] = [
+                    'step' => 'finished',
+                    'final_due_date' => $end->format('l, d F Y h:i A')
+                ];
+
+                if($incident_no){
+                    Log::channel('incident_details')->info('Due Date Calculation for incident Number : '.$incident_no, $logs);
+                }
+
+                $due = $date->copy()->setTimeFromTimeString($startTime);
+
+                if ($due->between(
+                    $date->copy()->setTimeFromTimeString($period->operation_start),
+                    $date->copy()->setTimeFromTimeString($period->operation_end)
+                )) {
+                    return $due;
+                }
+
+                return $date->copy()->setTimeFromTimeString($period->operation_end);
+            }
+
+            $date = $date->copy()->setTimeFromTimeString($period->operation_end)->addSecond();
+        }
+
+        if($incident_no){
+            Log::channel('incident_details')->info('Due Date Calculation (exhausted) for incident Number : '.$incident_no, $logs);
+        }
+
+        return $date;
+    }
+
     private static function shiftToNextWorkingPeriod($date, $operating_times, $public_holidays){
         $loop_guard = 0;
 
@@ -453,82 +531,6 @@ class IncidentServices
 
         if($incident_no){
             Log::channel('incident_details')->info('Due Date Calculation for incident Number : '.$incident_no, $logs);
-        }
-
-        return $date;
-    }
-
-    private static function calculateDueDateByDays($date, $sla_days, $operating_times, $public_holidays,$incident_no){
-        $loop_guard = 0;
-        $startTime = $date->format('H:i:s'); 
-
-        $logs[] = [
-            'incident_no' => $incident_no,
-            'type' => 'Days',
-            'step' => 'start',
-            'start_date' => $date->format('l, d F Y h:i A'),
-            'sla_days' => $sla_days
-        ];
-
-        while ($sla_days > 0 && $loop_guard++ < 365){
-            $date = self::shiftToNextWorkingPeriod($date, $operating_times, $public_holidays);
-
-            $current_day = $date->isoWeekday();
-
-            $period = $operating_times->first(function ($op) use ($current_day){
-                return $op->day_start <= $current_day && $op->day_end >= $current_day;
-            });
-
-            if (!$period) {
-                $logs[] = [
-                    'step' => 'skip',
-                    'day' => $date->format('l, d F Y'),
-                    'note' => 'No operating period for this day'
-                ];
-
-                $date->addDay()->startOfDay();
-                continue;
-            }
-            
-            $end = $date->copy()->setTimeFromTimeString($period->operation_end);
-
-            $sla_days--;
-
-            $logs[] = [
-                'step' => 'loop',
-                'day' => $date->format('l, d F Y'),
-                'period_end' => $end->format('h:i A'),
-                'sla_days_remaining' => $sla_days
-            ];
-
-            if ($sla_days === 0){
-
-                $logs[] = [
-                    'step' => 'finished',
-                    'final_due_date' => $end->format('l, d F Y h:i A')
-                ];
-
-                if($incident_no){
-                    Log::channel('incident_details')->info('Due Date Calculation for incident Number : '.$incident_no, $logs);
-                }
-
-                $due = $date->copy()->setTimeFromTimeString($startTime);
-
-                if ($due->between(
-                    $date->copy()->setTimeFromTimeString($period->operation_start),
-                    $date->copy()->setTimeFromTimeString($period->operation_end)
-                )) {
-                    return $due;
-                }
-
-                return $date->copy()->setTimeFromTimeString($period->operation_end);
-            }
-
-            $date = $date->copy()->setTimeFromTimeString($period->operation_end)->addSecond();
-        }
-
-        if($incident_no){
-            Log::channel('incident_details')->info('Due Date Calculation (exhausted) for incident Number : '.$incident_no, $logs);
         }
 
         return $date;

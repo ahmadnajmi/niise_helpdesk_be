@@ -23,10 +23,10 @@
 
                 <div class="px-4 py-2">
                     <x-input-label for="incident_no" :value="__('Sla Version')" />
-                    <select id="sla_version_id" name="sla_version_id" class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring focus:border-blue-300">
+                    <select id="sla_template_id" name="sla_template_id" class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring focus:border-blue-300">
                         <option value="">-- Please select --</option>
-                        @foreach($list_sla_version as $sla_version)
-                        <option value="{{ $sla_version->id }}" @if(old('branch_id', request()->sla_version_id) == $sla_version->id) selected @endif >{{ $sla_version?->response_time.' '.$sla_version?->responseTimeTypeDescription?->name }}</option>
+                        @foreach($list_sla_template as $sla_template)
+                        <option value="{{ $sla_template->id }}" @if(old('sla_template_id', request()->sla_template_id) == $sla_template->id) selected @endif >{{ $sla_template->code}}</option>
                         @endforeach 
                     </select>
             </div>

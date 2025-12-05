@@ -22,7 +22,11 @@ class SlaVersion extends BaseModel
         'resolution_time_penalty',
     ];  
 
-     public function responseTimeTypeDescription(){
+    public function responseTimeTypeDescription(){
         return $this->hasOne(RefTable::class,'ref_code','response_time_type')->where('code_category', 'sla_type');
+    }
+
+    public function slaTemplate(){
+        return $this->hasOne(SlaTemplate::class,'id','sla_template_id');
     }
 }
