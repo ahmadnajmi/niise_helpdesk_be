@@ -26,6 +26,7 @@ use App\Models\Branch;
 use App\Models\ActionCode;
 use App\Models\IncidentPenalty;
 use Carbon\Carbon;
+use ZipArchive;
 
 class IncidentServices
 {
@@ -556,6 +557,43 @@ class IncidentServices
         $data_penalty['incident_id'] = $incident->id;
 
         $create = IncidentPenalty::create($data_penalty);
+    }
+
+    public static function downloadAssetFile($incident_no){
+
+        $incident =  Incident::where('incident_no',$incident_no)->first();
+
+        $documents = $incident?->incidentDocumentAsset;
+        $documents = $incident?->incidentDocumentAppendix;
+
+        if(!$documents) {
+            return self::error('File not found');
+        }
+
+        $zip_file_name = 'incident_'.$incident->incident_no.'_documents.zip';
+        $zip_path = storage_path('app/temp/'.$zip_file_name);
+
+        if (!file_exists(dirname($zip_path))) {
+            mkdir(dirname($zip_path), 0777, true);
+        }
+
+        $zip = new ZipArchive;
+
+        if ($zip->open($zip_path, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+
+            foreach ($documents as $doc) {
+                $fullPath = storage_path('app/private/'.$doc->path);
+
+                if (file_exists($fullPath)) {
+                    $zip->addFile($fullPath, basename($fullPath));
+                }
+            }
+
+            $zip->close();
+        }
+
+        return response()->download($zip_path)->deleteFileAfterSend(true);
+        
     }
 
 }
