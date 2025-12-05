@@ -14,7 +14,7 @@ class IncidentResolutionResources extends JsonResource
      */
     public function toArray(Request $request): array
     {
-         return [
+        return [
             'id' => $this->id,
             'action_codes'=> $this->action_codes,
             'action_codes_details' => new ActionCodeResources($this->actionCodes),

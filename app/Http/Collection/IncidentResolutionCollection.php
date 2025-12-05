@@ -4,6 +4,10 @@ namespace App\Http\Collection;
 
 use Illuminate\Http\Request;
 use App\Http\Resources\ActionCodeResources;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Role;
+use App\Models\User;
+use App\Models\UserGroup;
 
 class IncidentResolutionCollection extends BaseResource
 {
@@ -14,12 +18,23 @@ class IncidentResolutionCollection extends BaseResource
      */
     public function toArray(Request $request)
     {
-        return $this->collection->transform(function ($query) use($request){
+        $role = User::getUserRole(Auth::user()->id);
+
+        return $this->collection->transform(function ($query) use($request,$role){
+            $permission_edit = false;
+
+            if($role?->role == Role::CONTRACTOR){
+                $group_id = UserGroup::where('user_id',$query->created_by)->where('groups_id',$query->group_id)->exists();
+
+                $permission_edit = $group_id ? true : false;
+            }
+
             $return =  [
                 'id' => $query->id,
                 'action_codes'=> $query->action_codes,
                 'action_codes_details' => new ActionCodeResources($query->actionCodes),
                 'solution_notes'=> $query->solution_notes,
+                'permission_edit' => $permission_edit,
                 'created_at' => $query->created_at->format('d-m-Y H:i:s'),
                 'updated_at' => $query->updated_at->format('d-m-Y H:i:s'),
                 'created_by' => $query->createdBy?->name .' - '. $query->createdBy?->email ,

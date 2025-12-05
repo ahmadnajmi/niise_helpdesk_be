@@ -24,15 +24,9 @@ class WorkbasketController extends Controller
     public function index(Request $request)
     {
         $limit = $request->limit ?? 15;
-        $group_id = [];
-
         $role = User::getUserRole(Auth::user()->id);
-
-        if($role?->role == Role::CONTRACTOR){
-            $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
-        }
         
-        $data = Workbasket::when($role?->role == Role::CONTRACTOR, function ($query)use($group_id) {
+        $data = Workbasket::when($role?->role == Role::CONTRACTOR, function ($query) {
                                 $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
                                 ///kalau contractor esclate or actr ke frontliner kat wb still muncul
                                 //tapi kena ingat yg contractor boleh wat verify...kalau wat verify boleh hilang wb kalau tukar ke function incidentResolutionlatest
@@ -43,9 +37,14 @@ class WorkbasketController extends Controller
                                         }); 
                                 });
                             })
-                            ->when($role?->role == Role::JIM || $role?->role == Role::BTMR  , function ($query) {
+                            ->when($role?->role == Role::JIM, function ($query) {
                                 return $query->whereHas('incident', function ($query) {
                                     $query->where('complaint_user_id',Auth::user()->id);
+                                });
+                            })
+                            ->when($role?->role == Role::BTMR, function ($query) {
+                                return $query->whereHas('incident', function ($query) {
+                                    $query->where('created_by',Auth::user()->id);
                                 });
                             })
                             ->when($role?->role == Role::FRONTLINER, function ($query) {
