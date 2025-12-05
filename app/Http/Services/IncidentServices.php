@@ -56,27 +56,8 @@ class IncidentServices
                 $data['complaint_user_id'] =  $complaint->id;
             }
 
-            // if(Auth::user()->roles->contains('role', Role::JIM)){
-            //     $data['complaint_user_id'] = Auth::user()->id;
-            //     $user_details = User::where('id',$data['complaint_id'])->first();
-
-            //     if(isset($data['complaint_user_id']) && $user_details){
-            //         $data_complaint['name'] = $user_details->name;
-            //         $data_complaint['email'] = $user_details->email;
-            //         $data_complaint['phone_no'] = $user_details->phone_no;
-            //         $data_complaint['address'] = $user_details->address;
-            //         $data_complaint['state_id'] = $user_details->state_id;
-            //         $data_complaint['postcode'] = $user_details->postcode;
-
-            //         $complaint = Complaint::create($data_complaint);
-
-            //         $data['complaint_id'] =  $complaint->id; 
-            //     }
-            // }
-
             if($category_code){
                 $category = Category::whereRaw('LOWER(name) = ?', [strtolower($category_code)])->first();
-
 
                 $data['category_id'] = $category?->id;
 
@@ -121,11 +102,8 @@ class IncidentServices
 
         try{
             DB::beginTransaction();
-
-            $data['incident_no'] = $incident->incident_no;
-            $data['incident_date'] = $incident->incident_date;
         
-            if($incident->categoryDescription?->name == 'MOBILE'){
+            if($incident->code_sla !=  $data['code_sla']){
                 $data['sla_version_id'] = self::getSlaVersion($data);
                 $data['expected_end_date'] = self::calculateDueDateIncident($data);
             }
@@ -144,8 +122,6 @@ class IncidentServices
             $create_document = self::uploadDoc($data,$incident);
 
             $return = self::callAssetIncident($incident);
-
-          
 
             return self::generalResponse($return);
         }
