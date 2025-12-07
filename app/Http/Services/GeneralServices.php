@@ -189,23 +189,22 @@ class GeneralServices
             }
 
             if($code == 'action_code'){
-                $contractor = Auth::user()->roles->contains('role', Role::CONTRACTOR);
-                $frontliner = Auth::user()->roles->contains('role', Role::FRONTLINER);
-
-                
+                $role = User::getUserRole(Auth::user()->id);
+                // dd($role);
                 $data[$code] = ActionCode::select('name','nickname','description')
-                                        ->when($contractor, function ($query) use ($request) {
-                                            $list_action = [ActionCode::PROG,ActionCode::ACTR,ActionCode::RETURN,ActionCode::DISC,ActionCode::ONSITE,ActionCode::STARTD,ActionCode::STOPD];
-
-                                            return $query->whereIn('nickname',$list_action);
-                                        })
-                                        ->when($frontliner, function ($query) use ($request) {
-                                            $not_list_action = [ActionCode::INITIAL];
-
-                                            return $query->whereNotIn('nickname',$not_list_action);
-                                        })
                                         ->where('nickname', '!=', ActionCode::INITIAL)
                                         ->where('is_active',true)
+                                        // ->whereRaw("JSON_EXISTS(role_id, 'strict $[*]?(@ == $role->id)')")
+                                        ->whereRaw(
+                                            "EXISTS (
+                                                SELECT 1 FROM JSON_TABLE(
+                                                    role_id, '$[*]' 
+                                                    COLUMNS (value NUMBER PATH '$')
+                                                ) jt 
+                                                WHERE jt.value = ?
+                                            )", 
+                                            [$role->id]
+                                        )   
                                         ->get();
                 
             }
