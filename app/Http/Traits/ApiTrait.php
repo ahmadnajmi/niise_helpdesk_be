@@ -69,9 +69,9 @@ trait ApiTrait {
                 $contentType = self::getContentType($json['report_format']);
                 $filename = $json['outputFileName'];
 
-                if ($response->successful()) {
+                if ($call_api->getStatusCode() >= 200 && $call_api->getStatusCode() < 300) {
                     return [
-                        'data' => response($response->body(), 200)->header('Content-Type', $contentType)->header('Content-Disposition', 'attachment; filename="'.$filename.'"')
+                        'data' => response($response->getBody()->getContents(), 200)->header('Content-Type', $contentType)->header('Content-Disposition', 'attachment; filename="'.$filename.'"')
                     ]; 
                 }
                 else{
