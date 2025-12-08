@@ -133,7 +133,7 @@ class Incident extends BaseModel
     }
 
     public function incidentResolutionEscalateLatest(){
-        return $this->hasOne(IncidentResolution::class, 'incident_id','id')->where('action_codes',ActionCode::ESCALATE)->orderBy('created_at', 'desc');
+        return $this->hasOne(IncidentResolution::class, 'incident_id','id')->where('action_codes',ActionCode::ESCALATE)->ofMany('id', 'max');
     }
 
     public function incidentDocumentAppendix(){

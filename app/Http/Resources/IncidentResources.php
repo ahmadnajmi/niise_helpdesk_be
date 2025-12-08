@@ -4,9 +4,13 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Collection\IncidentResolutionCollection;
 use App\Http\Collection\IncidentDocumentCollection;
 use App\Http\Services\AssetServices;
+use App\Models\User;
+use App\Models\Role;
+
 
 class IncidentResources extends JsonResource
 {
@@ -18,6 +22,8 @@ class IncidentResources extends JsonResource
     public function toArray(Request $request): array
     {
         $asset_information = [];
+        $role = User::getUserRole(Auth::user()->id);
+
 
         $asset_id = $this->asset_parent_id ? [$this->asset_parent_id] : json_decode($this->asset_component_id);
 
@@ -27,6 +33,17 @@ class IncidentResources extends JsonResource
             $asset_service = new AssetServices();
 
             $asset_information =  $asset_service->getAsset($asset_id);
+        }
+
+        if($role?->role == Role::CONTRACTOR){
+            
+            $permission_reso_create = $this->workbasket?->escalate_frontliner ? true : false;
+        }
+        elseif($role?->role == Role::FRONTLINER){
+            $permission_reso_create = $this->workbasket?->escalate_frontliner ? false : true;
+        }
+        else{
+            $permission_reso_create = false;
         }
 
         return [
@@ -73,6 +90,7 @@ class IncidentResources extends JsonResource
             'status_desc' => $this->statusDesc?->name,
             'countdown_settlement_date' => $this->calculateCountDownSettlement,
             'breach_time' => $this->calculateBreachTime,
+            'permission_reso_create' => $permission_reso_create,
             'created_by' => $this->createdBy?->name .' - '. $this->createdBy?->email ,
             'updated_by' => $this->updatedBy?->name .' - '. $this->updatedBy?->email ,
             'created_at' => $this->created_at->format('d-m-Y H:i:s'),
