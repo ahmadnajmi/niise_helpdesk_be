@@ -54,7 +54,7 @@ trait ApiTrait {
             $call_api = $client->$method($api_url, $postData);
 
             if($function == 'asset'){
-                $response = $call_api->getBody()->getContents();
+                $response = json_decode($call_api->getBody()->getContents(),true);
             }
             else{
                 $response = $call_api;
@@ -62,7 +62,7 @@ trait ApiTrait {
 
             Log::channel('external_api')->info("API Response: {$call_api->getStatusCode()},{$url}{$api_url}", [
                 'user_id' => Auth::user()?->id,
-                'body' => json_decode($response, true),
+                'body' => $response,
             ]);
 
             if($function == 'jasper'){
