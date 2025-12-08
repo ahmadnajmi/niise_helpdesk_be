@@ -78,7 +78,7 @@ class IncidentResolutionServices
             }
             elseif($data->action_codes == ActionCode::RETURN) {
                 $data_workbasket['escalate_frontliner'] = true;
-                $data_workbasket['status'] = Workbasket::IN_PROGRESS;
+                $data_workbasket['status'] = Workbasket::NEW;
             }
             else{
                 $data_workbasket['status'] = Workbasket::IN_PROGRESS;
