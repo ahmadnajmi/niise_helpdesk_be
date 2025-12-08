@@ -18,7 +18,8 @@ class ReportServices
 {
     use ApiTrait;
     public function __construct(){
-        $this->beUrl = config('app.url');
+        // $this->beUrl = config('app.url');
+        $this->beUrl = '/var/www/html/helpdesk/jasper_report/reports';
     }
 
     public static function index($request){
@@ -189,6 +190,7 @@ class ReportServices
         $destination = storage_path('app/public/report'); 
 
         $file_name = asset("empty.png");
+        $file_name = '/var/www/html/helpdesk/jasper_report/reports/empty.png';
 
         if (!file_exists($destination)) {
             mkdir($destination, 0777, true);
