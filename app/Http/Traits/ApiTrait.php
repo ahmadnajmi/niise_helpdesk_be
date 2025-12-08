@@ -66,7 +66,7 @@ trait ApiTrait {
             ]);
 
             if($function == 'jasper'){
-                $contentType = $this->getContentType($json['report_format']);
+                $contentType = self::getContentType($json['report_format']);
                 $filename = $json['outputFileName'];
 
                 if ($response->successful()) {
@@ -93,7 +93,7 @@ trait ApiTrait {
 
     }
 
-    private function getContentType($reportFormat) {
+    private static function getContentType($reportFormat) {
         switch($reportFormat) {
             case 'pdf':
                 return 'application/pdf';

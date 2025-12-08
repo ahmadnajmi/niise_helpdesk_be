@@ -31,7 +31,7 @@ class IncidentRequest extends FormRequest
             'category_id' => 'sometimes',
             'complaint_user_id' => 'nullable',
             'information' => 'required',
-            'code_sla' => 'required',
+            'code_sla' => 'nullable',
             'knowledge_base_id'   => 'nullable',
             'received_via'   => 'sometimes',
             'report_no'   => 'nullable',

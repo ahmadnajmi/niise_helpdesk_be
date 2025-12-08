@@ -104,8 +104,8 @@ class IncidentServices
             DB::beginTransaction();
         
             if($incident->code_sla !=  $data['code_sla']){
-                $data['sla_version_id'] = self::getSlaVersion($data);
-                $data['expected_end_date'] = self::calculateDueDateIncident($data);
+                $data['sla_version_id'] = self::getSlaVersion($incident);
+                $data['expected_end_date'] = self::calculateDueDateIncident($incident);
             }
 
             $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
