@@ -17,7 +17,7 @@ class AssetServices
             $data_asset["phone_number"] =  $data->complaintUser?->phone_no;
             $data_asset["office_phone_number"] = null;
         }
-        $data_asset["spec_batch_item_id"] = $data->asset_parent_id ? [$data->asset_parent_id] : json_decode($data->asset_component_id) ;
+        $data_asset["spec_batch_item_id"] = $data->asset_parent_id ? [$data->asset_parent_id] : $data->asset_component_id ;
         $data_asset["incident_no"] =  $data->incident_no;
         $data_asset["incident_date"] = $data->incident_date?->format('Y-m-d'); 
         $data_asset["description"] =  $data->information;
