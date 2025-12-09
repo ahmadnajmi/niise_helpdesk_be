@@ -30,5 +30,9 @@ class Group extends BaseModel
     public function users(){
         return $this->hasManyThrough(User::class, UserGroup::class, 'groups_id', 'id', 'id', 'user_id');
     }
+ 
+    public function incidents(){
+        return $this->hasMany(Incident::class,'assign_group_id');
+    }
     
 }

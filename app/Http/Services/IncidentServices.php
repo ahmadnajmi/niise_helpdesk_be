@@ -112,8 +112,6 @@ class IncidentServices
 
             if($incident->status == Incident::CLOSED){
                 $incident->workbasket?->delete();
-                $data['resolved_user_id'] = auth()->user()->id;
-
                 // self::calculatePenalty($incident);
             }
 

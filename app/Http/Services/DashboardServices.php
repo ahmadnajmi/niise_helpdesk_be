@@ -134,6 +134,11 @@ class DashboardServices
                             ->when($request->branch_id, function ($query) use ($request) {
                                 return $query->where('id',$request->branch_id); 
                             })
+                            ->when(!$request->branch_id, function ($query) use ($request) {
+                                return $query->whereHas('incidents', function ($query) use ($request) {
+                                    $query->applyFilters($request); 
+                                }); 
+                            })
                             ->get();
 
         $total_incident = Incident::query()
@@ -166,18 +171,33 @@ class DashboardServices
     }
 
     public static function incidentToBeBreach($request){
+        $dateRange = [now()->startOfDay(), now()->addDays(4)->endOfDay()];
+
         $allCategories = Category::select('id', 'category_id', 'name')
+                                ->whereHas('incidents', function ($query) use ($request, $dateRange) {
+                                    $query
+                                        ->where('status', Incident::OPEN)
+                                        ->whereBetween('expected_end_date', $dateRange)
+                                        // ->whereHas('sla.slaTemplate', function ($query) {
+                                        //     $query->whereIn('severity_id', [RefTable::SEVERITY_CRITICAL,RefTable::SEVERITY_IMPORTANT,RefTable::SEVERITY_MEDIUM]);
+                                        // })
+                                        ->applyFilters($request); 
+                                })                            
                                 ->orderBy('category_id', 'desc')
                                 ->orderBy('name', 'asc')
                                 ->get();
 
-        $dateRange = [now()->startOfDay(), now()->addDays(4)->endOfDay()];
 
         $counts = Incident::selectRaw('sla_template.severity_id as severity_id, incidents.category_id as category_id, COUNT(*) as total')
                             ->join('sla', 'sla.code', '=', 'incidents.code_sla')
                             ->join('sla_template', 'sla_template.id', '=', 'sla.sla_template_id')
                             ->where('incidents.status', Incident::OPEN)
                             ->whereBetween('incidents.expected_end_date', $dateRange)
+                            ->whereIn('sla_template.severity_id', [
+                                RefTable::SEVERITY_CRITICAL,
+                                RefTable::SEVERITY_IMPORTANT,
+                                RefTable::SEVERITY_MEDIUM
+                            ])
                             ->applyFilters($request)
                             ->groupBy('sla_template.severity_id', 'incidents.category_id')
                             ->get();
@@ -225,16 +245,33 @@ class DashboardServices
             ];
         });
 
+        return $data->filter(function($item) {
+            return $item['total_incident_critical'] > 0 
+                || $item['total_incident_important'] > 0 
+                || $item['total_incident_medium'] > 0;
+        })->values();
+
         return $data->values();
     }
 
     public static function incidentByContractor($request){
+        $role = User::getUserRole(Auth::user()->id);
+
         $get_company = Company::select('id','name')
+                            ->when($role?->role == Role::CONTRACTOR, function ($query) use ($request){
+                                $query->where('id',Auth::user()->company_id);
+                            })
+                            ->whereHas('user.group.groupDetails.incidents')
                             ->get();
 
         $incidentCounts = Incident::selectRaw('sla_template.company_id, sla_template.severity_id, COUNT(*) as total')
                                     ->join('sla', 'sla.code', '=', 'incidents.code_sla')
                                     ->join('sla_template', 'sla_template.id', '=', 'sla.sla_template_id')
+                                    ->whereHas('assignGroup', function ($query)use($get_company) {
+                                        $query->whereHas('users', function ($query)use($get_company) {
+                                            $query->whereIn('company_id',$get_company->pluck('id')->toArray()); 
+                                        }); 
+                                    })
                                     ->applyFilters($request)
                                     ->groupBy('sla_template.company_id', 'sla_template.severity_id')
                                     ->get();
@@ -246,9 +283,8 @@ class DashboardServices
 
             $total_incident = $companyIncidents->sum('total');
 
-            $critical_incident = $companyIncidents
-                ->where('severity_id', RefTable::SEVERITY_CRITICAL)
-                ->sum('total');
+            $critical_incident = $companyIncidents->where('severity_id', RefTable::SEVERITY_CRITICAL)
+                                                    ->sum('total');
 
             $data[] = [
                 'id' => $company->id,
@@ -303,13 +339,13 @@ class DashboardServices
     public static function countIncidentCategory($request,$category_id){
         
         $total_incident = Incident::whereIn('category_id',$category_id)
-                                    // ->applyFilters($request)
+                                    ->applyFilters($request)
                                     ->count();
 
         $total_incident_critical = Incident::whereHas('sla.slaTemplate', function ($q) {
                                             $q->where('severity_id', RefTable::SEVERITY_CRITICAL);
                                         })
-                                        // ->applyFilters($request)
+                                        ->applyFilters($request)
                                         ->whereIn('category_id',$category_id)
                                         ->count();
 
@@ -321,10 +357,13 @@ class DashboardServices
 
     public static function incidentByCategory($request){
         $allCategories = Category::select('id', 'category_id', 'name')
+                                // ->whereHas('incidents', function ($query) use ($request) {
+                                //     $query->applyFilters($request); 
+                                // })     
                                 ->get()
                                 ->keyBy('id');
 
-        $categoryHierarchy = self::buildCategoryHierarchy($allCategories);
+                                $categoryHierarchy = self::buildCategoryHierarchy($allCategories);
 
         $allCategoryIds = $allCategories->pluck('id')->toArray();
 
@@ -335,10 +374,8 @@ class DashboardServices
         return collect($data);
     }   
 
-
     private static function buildHierarchicalData($allCategories, $incidentCounts, $parentId = null, $level = 0){
         $data = [];
-        
         $categories = $allCategories->where('category_id', $parentId)->sortBy('name');
 
         foreach ($categories as $category) {
@@ -354,6 +391,13 @@ class DashboardServices
             $children = self::buildHierarchicalData($allCategories, $incidentCounts, $category->id, $level + 1);
             $data = array_merge($data, $children);
         }
+
+        return collect($data)
+                ->filter(function($item) {
+                    return $item['total_incident'] > 0;
+                })
+                ->values()
+                ->toArray();
 
         return $data;
     }

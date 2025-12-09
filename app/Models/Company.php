@@ -31,5 +31,9 @@ class Company extends BaseModel
     public function contract(){
         return $this->hasMany(CompanyContract::class,'company_id','id');
     }
+
+    public function user(){
+        return $this->hasMany(User::class,'company_id','id');
+    }
     
 }

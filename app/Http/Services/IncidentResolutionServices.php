@@ -62,6 +62,7 @@ class IncidentResolutionServices
 
     public static function actionCode($data){
         $incident = $data->incident;
+        $data_workbasket['status_complaint'] = Workbasket::IN_PROGRESS;
 
         $role = User::getUserRole(Auth::user()->id);
 
@@ -80,36 +81,31 @@ class IncidentResolutionServices
                 $data_workbasket['escalate_frontliner'] = true;
                 $data_workbasket['status'] = Workbasket::NEW;
             }
-            else{
-                $data_workbasket['status'] = Workbasket::IN_PROGRESS;
-            }
 
-            $data_workbasket['status_complaint'] = Workbasket::IN_PROGRESS;
-
-            $incident->workbasket()->update($data_workbasket);
         }
         elseif($data->action_codes == ActionCode::ACTR || $data->action_codes == ActionCode::ESCALATE){
 
             if($data->action_codes == ActionCode::ACTR){
                 $data_incident['status']  =  Incident::RESOLVED; 
                 $data_incident['resolved_user_id'] = auth()->user()->id;
-                
-                $incident->update($data_incident);
             }
-
-            $incident->workbasket()->update([
-                'status' => Workbasket::NEW,
-                'status_complaint' => Workbasket::IN_PROGRESS,
-                'escalate_frontliner' => false,
-            ]);
+            else{
+                $data_incident['assign_group_id'] = $data->group_id;
+            }
+            $data_workbasket['escalate_frontliner'] = false;
+            $data_workbasket['status'] = Workbasket::NEW;
         }
         else{
-            $incident->workbasket()->update([
-                'status' => Workbasket::IN_PROGRESS,
-                'status_complaint' => Workbasket::IN_PROGRESS,
-                'escalate_frontliner' => false,
-            ]);
+            $data_workbasket['escalate_frontliner'] = false;
+            $data_workbasket['status'] = Workbasket::IN_PROGRESS;
         }
+
+        if(isset($data_incident)){
+            $incident->update($data_incident);
+        }
+
+        $incident->workbasket()->update($data_workbasket);
+
 
         if($data->actionCodes->send_email){
             self::sendEmail($data);

@@ -23,12 +23,10 @@ class Category extends BaseModel
 
     protected array $filterable = ['code','description','name','is_active'];
 
-
     public function childCategoryRecursive(){
         return $this->hasMany(Category::class, 'category_id', 'id')
                     ->with('childCategoryRecursive');
     }
-
 
     public function mainCategory(){
         return $this->hasOne(Category::class, 'id','category_id');
@@ -38,8 +36,13 @@ class Category extends BaseModel
         return $this->hasMany(Category::class,'category_id','id');
     }
 
-
     public function sla(){
         return $this->hasOne(Sla::class, 'category_id','id');
     }
+
+    public function incidents(){
+        return $this->hasOne(Incident::class, 'category_id','id');
+    }
 }
+
+

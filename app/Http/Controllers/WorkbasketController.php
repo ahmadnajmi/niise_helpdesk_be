@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\WorkbasketRequest;
 use App\Http\Resources\WorkbasketResources;
 use App\Http\Collection\WorkbasketCollection;
+use App\Http\Services\WorkbasketServices;
+
 
 class WorkbasketController extends Controller
 {
@@ -23,36 +25,12 @@ class WorkbasketController extends Controller
 
     public function index(Request $request)
     {
-        $limit = $request->limit ?? 15;
-        $role = User::getUserRole(Auth::user()->id);
-        
-        $data = Workbasket::when($role?->role == Role::CONTRACTOR, function ($query) {
-                                $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
-                                ///kalau contractor esclate or actr ke frontliner kat wb still muncul
-                                //tapi kena ingat yg contractor boleh wat verify...kalau wat verify boleh hilang wb kalau tukar ke function incidentResolutionlatest
-                                return $query->where('status',Workbasket::NEW)
-                                            ->whereHas('incident', function ($query)use($group_id) {
-                                            $query->whereHas('incidentResolutionEscalateLatest', function ($query) use($group_id){
-                                                $query->whereIn('group_id',$group_id);
-                                        }); 
-                                });
-                            })
-                            ->when($role?->role == Role::JIM, function ($query) {
-                                return $query->whereHas('incident', function ($query) {
-                                    $query->where('complaint_user_id',Auth::user()->id);
-                                });
-                            })
-                            ->when($role?->role == Role::BTMR, function ($query) {
-                                return $query->whereHas('incident', function ($query) {
-                                    $query->where('created_by',Auth::user()->id);
-                                });
-                            })
-                            ->when($role?->role == Role::FRONTLINER, function ($query) {
-                                return $query->where('escalate_frontliner',true)->where('status',Workbasket::NEW);
-                            })
-                            ->orderBy('updated_at','desc')
-                            ->paginate($limit);
+        $data = WorkbasketServices::index($request);
 
-        return new WorkbasketCollection($data);
+        return $data;
+
+        $limit = $request->limit ?? 5;
+       
+
     }
 }

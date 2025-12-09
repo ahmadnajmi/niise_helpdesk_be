@@ -101,4 +101,8 @@ class Branch extends Model
     public function stateDescription(){
         return $this->hasOne(RefTable::class,'ref_code','state_id')->where('code_category', 'state');
     }
+
+    public function incidents(){
+        return $this->hasMany(Incident::class, 'branch_id','id');
+    }
 }

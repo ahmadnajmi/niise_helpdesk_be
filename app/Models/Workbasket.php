@@ -24,7 +24,6 @@ class Workbasket extends BaseModel
 
     const NEW = 1;
     const IN_PROGRESS = 2;
-    const OPENED = 3;
 
     public function incident(){
         return $this->belongsTo(Incident::class, 'incident_id');

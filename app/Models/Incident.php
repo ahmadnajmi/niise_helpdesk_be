@@ -33,7 +33,6 @@ class Incident extends BaseModel
         'date_report_police',
         'report_police_no',
         'asset_siri_no',
-        'group_id',
         'operation_user_id',
         'expected_end_date',
         'actual_end_date',
@@ -43,6 +42,7 @@ class Incident extends BaseModel
         'sla_version_id',
         'service_recipient_id',
         'resolved_user_id',
+        'assign_group_id'
     ];
 
     protected $casts = [
@@ -148,8 +148,8 @@ class Incident extends BaseModel
         return $this->hasOne(Category::class,'id','category_id');
     }
 
-    public function group(){
-        return $this->hasOne(Group::class, 'id','group_id');
+    public function assignGroup(){
+        return $this->hasOne(Group::class, 'id','assign_group_id');
     }
     
     public function operationUser(){
@@ -318,18 +318,7 @@ class Incident extends BaseModel
     public static function filterIncident($request){
         $limit = $request->limit ? $request->limit : 15;
 
-        $role = User::getUserRole(Auth::user()->id);
-
-        $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
-
-        $data =  Incident::when($role?->role == Role::JIM, function ($query){
-                            $query->where('complaint_user_id',Auth::user()->id);
-                        })
-                        ->when($role?->role == Role::CONTRACTOR, function ($query)use($group_id){
-                            return $query->whereHas('incidentResolutionEscalateLatest', function ($query)use($group_id) {
-                                $query->whereIn('group_id',$group_id);
-                            });
-                        })
+        $data =  Incident::applyFilters($request)
                         ->when($request->status, function ($query) use ($request) {
                             if (is_array($request->status)) {
                                 return $query->whereIn('status', $request->status);
@@ -355,9 +344,6 @@ class Incident extends BaseModel
                                             now()->addDays(2)->endOfDay()   
                                         ]);
                         })
-                        ->when($request->branch_id, function ($query) use ($request) {
-                            return $query->where('branch_id',$request->branch_id);
-                        })
                         ->when($request->category_id, function ($query) use ($request) {
                             return $query->whereHas('categoryDescription', function ($query)use($request) {
                                     $query->where('id',$request->category_id); 
@@ -369,7 +355,6 @@ class Incident extends BaseModel
                                         ->orWhere('id',$request->main_category_id); 
                             });
                         })
-                        
                         ->when($request->severity_id, function ($query) use ($request) {
                             return $query->whereHas('sla', function ($query)use($request) {
                                     $query->whereHas('slaTemplate', function ($query)use($request) {
@@ -436,13 +421,6 @@ class Incident extends BaseModel
                                 $query->where('group_id',$request->group_id); 
                             });
                         })
-                        ->when($request->company_id, function ($query) use ($request) {
-                            return $query->whereHas('sla', function ($query)use($request) {
-                                    $query->whereHas('slaTemplate', function ($query)use($request) {
-                                        $query->where('company_id',$request->company_id); 
-                                }); 
-                            });
-                        })
                         ->when($request->status_workbasket, function ($query) use ($request) {
                             return $query->whereHas('workbasket', function ($query)use($request) {
                                     $query->where('status',$request->status_workbasket); 
@@ -457,20 +435,26 @@ class Incident extends BaseModel
 
 
     public function scopeApplyFilters($query, $request){
-        $role = User::getUserRole(Auth::id());
-        $group_id = UserGroup::where('user_id', Auth::id())->pluck('groups_id');
+        $role = User::getUserRole(Auth::user()->id);
+        
+        $query->when($role?->role == Role::JIM, function ($query){
+                $query->where('complaint_user_id',Auth::user()->id);
+            })
+            ->when($role?->role == Role::CONTRACTOR, function ($query){
+                $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
 
-        if ($request->branch_id) {
-            $query->where('incidents.branch_id', $request->branch_id); 
-        }
-
-        if ($role?->role == Role::JIM) {
-            $query->where('complaint_user_id',Auth::user()->id);
-        } elseif ($role?->role == Role::CONTRACTOR) {
-            $query->whereHas('incidentResolutionEscalateLatest', function ($q) use ($group_id) {
-                $q->whereIn('group_id', $group_id);
+                return $query->whereIn('incidents.assign_group_id',$group_id);
+            })
+            ->when($request->company_id, function ($query) use ($request) {
+                return $query->whereHas('assignGroup', function ($query)use($request) {
+                    $query->whereHas('users', function ($query)use($request) {
+                        $query->where('company_id',$request->company_id); 
+                    }); 
+                });
+            })
+            ->when($request->branch_id, function ($query) use ($request) {
+                return $query->where('incidents.branch_id',$request->branch_id);
             });
-        }
 
         return $query;
     }

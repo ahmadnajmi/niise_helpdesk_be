@@ -27,7 +27,7 @@ class WorkbasketCollection extends BaseResource
                 'category_details' => $query->incident?->categoryDescription ? new CategoryResources($query->incident->categoryDescription) : null,
                 'sla_template_details' => $query->incident?->sla?->slaTemplate ? new SlaTemplateResources($query->incident->sla->slaTemplate) : null,
                 'information' => $query->incident?->information,
-                'group_details' =>  $query->incident?->group ? new GroupResources($query->incident->group) : null,
+                'group_details' =>  $query->incident?->assignGroup ? new GroupResources($query->incident->assignGroup) : null,
                 'handle_by' => $query->handle_by,
                 'status' => $query->status,
                 'status_desc' => $query->statusDesc?->translated_name,
