@@ -43,7 +43,7 @@ class AssetServices
         if($call_api['data']){
             $data = $call_api['data'];
 
-            return $data->data;
+            return $data;
         }
         else{
             return [];

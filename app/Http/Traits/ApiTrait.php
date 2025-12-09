@@ -79,7 +79,7 @@ trait ApiTrait {
                 }
             }
             else{
-                return ['data' => json_decode($response),'status' =>true];
+                return ['data' => $response['data'],'status' =>true];
             }
         } catch (\GuzzleHttp\Exception\BadResponseException $e){ 
             $message = 'Something went wrong on the server.Error Code = '. $e->getCode();
