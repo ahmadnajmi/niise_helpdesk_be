@@ -132,6 +132,7 @@ class IncidentServices
 
         if (request()->source == 'workbasket') {
             $data_workbasket['status_complaint'] =  Workbasket::IN_PROGRESS;
+            $data_workbasket['status'] =  Workbasket::IN_PROGRESS;
 
             $resolution = $incident->incidentResolutionLatest;
 
