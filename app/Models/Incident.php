@@ -51,6 +51,8 @@ class Incident extends BaseModel
         'date_report_police' => 'datetime:Y-m-d',
         'expected_end_date' => 'datetime:Y-m-d',
         'actual_end_date' => 'datetime:Y-m-d',
+        'asset_component_id' => 'array',
+
     ];
 
     protected static $sortable = [
