@@ -105,7 +105,7 @@ class AuthServices
             }
             $user->save();
 
-            $attemptsLeft = $maxAttempts - $user->failed_attempts;
+            $attemptsLeft = ($maxAttempts + 1) - $user->failed_attempts;
 
             return ['status' => false, 'message' => 'Login failed. Invalid credentials.Attempts left: '.$attemptsLeft];
         }

@@ -24,7 +24,7 @@ class WorkbasketServices
                                     $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
 
                                     $query->whereIn('assign_group_id',$group_id);
-                                });
+                                })->where('status',Workbasket::NEW)->where('escalate_frontliner',false);
                             })
                             ->when($role?->role == Role::JIM, function ($query) {
                                 return $query->whereHas('incident', function ($query) {

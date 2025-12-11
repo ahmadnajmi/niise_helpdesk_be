@@ -29,4 +29,8 @@ class SlaVersion extends BaseModel
     public function slaTemplate(){
         return $this->hasOne(SlaTemplate::class,'id','sla_template_id');
     }
+
+    public function resolutionTimeTypeDescription(){
+        return $this->hasOne(RefTable::class,'ref_code','resolution_time_type')->where('code_category', 'sla_type');
+    }
 }

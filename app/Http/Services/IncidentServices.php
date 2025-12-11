@@ -110,12 +110,12 @@ class IncidentServices
 
             $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
 
+            $create = $incident->update($data);
+
             if($incident->status == Incident::CLOSED){
                 $incident->workbasket?->delete();
                 // self::calculatePenalty($incident);
             }
-
-            $create = $incident->update($data);
 
             $create_document = self::uploadDoc($data,$incident);
 
@@ -129,8 +129,17 @@ class IncidentServices
     }
 
     public static function view(Incident $incident){
+        $role = User::getUserRole(Auth::user()->id);
+        $update_workbasket = false;
 
-        if (request()->source == 'workbasket') {
+        if($role?->role == Role::FRONTLINER && $incident->workbasket?->escalate_frontliner){
+            $update_workbasket = true;
+        }
+        elseif($role?->role == Role::CONTRACTOR && !$incident->workbasket?->escalate_frontliner){
+            $update_workbasket = true;
+        }
+
+        if (request()->source == 'workbasket' && $update_workbasket) {
             $data_workbasket['status_complaint'] =  Workbasket::IN_PROGRESS;
             $data_workbasket['status'] =  Workbasket::IN_PROGRESS;
 
@@ -158,6 +167,43 @@ class IncidentServices
         $incident->delete();
 
         return self::success('Success', true);
+    }
+
+    public static function downloadAssetFile($incident_no){
+
+        $incident =  Incident::where('incident_no',$incident_no)->first();
+
+        $documents = $incident?->incidentDocumentAsset;
+        $documents = $incident?->incidentDocumentAppendix;
+
+        if(!$documents) {
+            return self::error('File not found');
+        }
+
+        $zip_file_name = 'incident_'.$incident->incident_no.'_documents.zip';
+        $zip_path = storage_path('app/temp/'.$zip_file_name);
+
+        if (!file_exists(dirname($zip_path))) {
+            mkdir(dirname($zip_path), 0777, true);
+        }
+
+        $zip = new ZipArchive;
+
+        if ($zip->open($zip_path, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+
+            foreach ($documents as $doc) {
+                $fullPath = storage_path('app/private/'.$doc->path);
+
+                if (file_exists($fullPath)) {
+                    $zip->addFile($fullPath, basename($fullPath));
+                }
+            }
+
+            $zip->close();
+        }
+
+        return response()->download($zip_path)->deleteFileAfterSend(true);
+        
     }
 
     public static function uploadDoc($data,Incident $incident){
@@ -257,7 +303,32 @@ class IncidentServices
         }
         return $return;
     }
-    
+
+    public static function checkPenalty(Incident $incident){
+        $get_sla_version = $incident->slaVersion;
+        $actual   = Carbon::parse($incident->actual_end_date);
+        $expected = Carbon::parse($incident->expected_end_date);
+
+        if ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_MINUTE) {
+            $total_sla_time = $expected->diffInMinutes($actual); 
+        }
+        elseif ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_HOUR) {
+            $total_sla_time = $expected->diffInHours($actual);
+        }
+        else {
+            $total_sla_time = $expected->diffInDays($actual);
+        }
+        $interval_count = intdiv($total_sla_time, $get_sla_version->response_time);
+        $penalty = $interval_count * $get_sla_version->response_time_penalty;
+        // dd(,$interval_count,$total_sla_time,$get_sla_version->response_time,$interval_count,$penalty);
+
+        $data_penalty['total_response_time_penalty_minute'] =  $total_sla_time;
+        $data_penalty['total_response_time_penalty_price'] =  $penalty;
+        $data_penalty['incident_id'] = $incident->id;
+
+        $create = IncidentPenalty::create($data_penalty);
+    }
+
     public static function getSlaVersion($data){
 
         $code = isset($data['code_sla']) ? $data['code_sla'] : null;
@@ -268,7 +339,6 @@ class IncidentServices
 
         return $get_sla_details?->id;
     }
-
 
     public static function getOperatingTime($branch_id){
 
@@ -319,6 +389,11 @@ class IncidentServices
 
         $incident_date = self::shiftToNextWorkingPeriod($incident_date, $operating_times, $public_holidays);
 
+        Log::info('SLA Type Check', [
+            'resolution_time_type' => $sla->resolution_time_type,
+            'resolution_time' => $sla->resolution_time,
+            'is_day_type' => $sla->resolution_time_type == SlaTemplate::SLA_TYPE_DAY
+        ]);
         if ($sla->resolution_time_type == SlaTemplate::SLA_TYPE_DAY) {
             $due_date = self::calculateDueDateByDays($incident_date, (int)$sla->resolution_time, $operating_times, $public_holidays,$incident_no);
         }
@@ -331,82 +406,18 @@ class IncidentServices
         return $due_date;
     }
 
-    private static function calculateDueDateByDays($date, $sla_days, $operating_times, $public_holidays,$incident_no){
-        $loop_guard = 0;
-        $startTime = $date->format('H:i:s'); 
-        $date = $date->copy()->addDay()->startOfDay();
-
-
-        $logs[] = [
-            'incident_no' => $incident_no,
-            'type' => 'Days',
-            'step' => 'start',
-            'start_date' => $date->format('l, d F Y h:i A'),
-            'sla_days' => $sla_days
-        ];
-
-        while ($sla_days > 0 && $loop_guard++ < 365){
-            $date = self::shiftToNextWorkingPeriod($date, $operating_times, $public_holidays);
-
-            $current_day = $date->isoWeekday();
-
-            $period = $operating_times->first(function ($op) use ($current_day){
-                return $op->day_start <= $current_day && $op->day_end >= $current_day;
-            });
-
-            if (!$period) {
-                $logs[] = [
-                    'step' => 'skip',
-                    'day' => $date->format('l, d F Y'),
-                    'note' => 'No operating period for this day'
-                ];
-
-                $date->addDay()->startOfDay();
-                continue;
-            }
-            
-            $end = $date->copy()->setTimeFromTimeString($period->operation_end);
-
-            $sla_days--;
-
-            $logs[] = [
-                'step' => 'loop',
-                'day' => $date->format('l, d F Y'),
-                'period_end' => $end->format('h:i A'),
-                'sla_days_remaining' => $sla_days
-            ];
-
-            if ($sla_days === 0){
-
-                $logs[] = [
-                    'step' => 'finished',
-                    'final_due_date' => $end->format('l, d F Y h:i A')
-                ];
-
-                if($incident_no){
-                    Log::channel('incident_details')->info('Due Date Calculation for incident Number : '.$incident_no, $logs);
-                }
-
-                $due = $date->copy()->setTimeFromTimeString($startTime);
-
-                if ($due->between(
-                    $date->copy()->setTimeFromTimeString($period->operation_start),
-                    $date->copy()->setTimeFromTimeString($period->operation_end)
-                )) {
-                    return $due;
-                }
-
-                return $date->copy()->setTimeFromTimeString($period->operation_end);
-            }
-
-            $date = $date->copy()->setTimeFromTimeString($period->operation_end)->addSecond();
+    private static function isWithinOperatingDays($current_day, $day_start, $day_end) {
+        // Handle normal range (e.g., Monday=1 to Friday=5)
+        if ($day_start <= $day_end) {
+            return $current_day >= $day_start && $current_day <= $day_end;
         }
+        
+        // Handle week wrap (e.g., Sunday=7 to Thursday=4)
+        return $current_day >= $day_start || $current_day <= $day_end;
+    }
 
-        if($incident_no){
-            Log::channel('incident_details')->info('Due Date Calculation (exhausted) for incident Number : '.$incident_no, $logs);
-        }
-
-        return $date;
+    private static function isOvernightShift($operation_start, $operation_end) {
+        return $operation_start > $operation_end;
     }
 
     private static function shiftToNextWorkingPeriod($date, $operating_times, $public_holidays){
@@ -422,7 +433,7 @@ class IncidentServices
             }
 
             $period = $operating_times->first(function ($op) use ($current_day) {
-                return $op->day_start <= $current_day && $op->day_end >= $current_day;
+                return self::isWithinOperatingDays($current_day, $op->day_start, $op->day_end);
             });
 
             if (!$period) {
@@ -432,9 +443,14 @@ class IncidentServices
 
             $start = $date->copy()->setTimeFromTimeString($period->operation_start);
             $end   = $date->copy()->setTimeFromTimeString($period->operation_end);
+            
+            // Handle overnight shift (e.g., 16:00 to 01:00 next day)
+            if (self::isOvernightShift($period->operation_start, $period->operation_end)) {
+                $end->addDay();
+            }
 
             if ($date->lt($start)) return $start;
-            if ($date->between($start, $end)) return $date;
+            if ($date->lte($end)) return $date;
 
             $date = $date->addDay()->startOfDay();
         }
@@ -442,7 +458,7 @@ class IncidentServices
         return $date; 
     }
 
-    private static function calculateDueDateByMinutes($date, $sla_minutes, $operating_times, $public_holidays,$incident_no){
+    private static function calculateDueDateByMinutes($date, $sla_minutes, $operating_times, $public_holidays, $incident_no){
         $loop_guard = 0;
 
         $logs = [
@@ -457,12 +473,12 @@ class IncidentServices
             $date = self::shiftToNextWorkingPeriod($date, $operating_times, $public_holidays);
 
             $current_day = $date->isoWeekday();
+            
             $period = $operating_times->first(function ($op) use ($current_day) {
-                return $op->day_start <= $current_day && $op->day_end >= $current_day;
+                return self::isWithinOperatingDays($current_day, $op->day_start, $op->day_end);
             });
 
             if (!$period) {
-
                 $logs['steps'][] = [
                     'day' => $date->format('l, d F Y'),
                     'note' => 'No operating period, move to next day'
@@ -472,13 +488,22 @@ class IncidentServices
                 continue;
             }
 
+            $start = $date->copy()->setTimeFromTimeString($period->operation_start);
             $end = $date->copy()->setTimeFromTimeString($period->operation_end);
+            
+            // Handle overnight shift
+            if (self::isOvernightShift($period->operation_start, $period->operation_end)) {
+                $end->addDay();
+            }
+
             $available = $date->diffInMinutes($end);
 
             $logs['steps'][] = [
-                'day' => $date->format('l, d F Y'),
+                'day' => $date->format('l, d F Y h:i A'),
                 'period_start' => $period->operation_start,
                 'period_end'   => $period->operation_end,
+                'is_overnight' => self::isOvernightShift($period->operation_start, $period->operation_end),
+                'end_datetime' => $end->format('l, d F Y h:i A'),
                 'available_minutes' => $available,
                 'sla_remaining' => $sla_minutes
             ];
@@ -509,66 +534,91 @@ class IncidentServices
         return $date;
     }
 
-    public static function checkPenalty(Incident $incident){
-        $get_sla_version = $incident->slaVersion;
-        $actual   = Carbon::parse($incident->actual_end_date);
-        $expected = Carbon::parse($incident->expected_end_date);
+    private static function calculateDueDateByDays($date, $sla_days, $operating_times, $public_holidays, $incident_no){
+        $loop_guard = 0;
+        $startTime = $date->format('H:i:s'); 
+        $date = $date->copy()->addDay()->startOfDay();
 
-        if ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_MINUTE) {
-            $total_sla_time = $expected->diffInMinutes($actual); 
-        }
-        elseif ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_HOUR) {
-            $total_sla_time = $expected->diffInHours($actual);
-        }
-        else {
-            $total_sla_time = $expected->diffInDays($actual);
-        }
-        $interval_count = intdiv($total_sla_time, $get_sla_version->response_time);
-        $penalty = $interval_count * $get_sla_version->response_time_penalty;
-        // dd(,$interval_count,$total_sla_time,$get_sla_version->response_time,$interval_count,$penalty);
+        $logs[] = [
+            'incident_no' => $incident_no,
+            'type' => 'Days',
+            'step' => 'start',
+            'start_date' => $date->format('l, d F Y h:i A'),
+            'sla_days' => $sla_days
+        ];
 
-        $data_penalty['total_response_time_penalty_minute'] =  $total_sla_time;
-        $data_penalty['total_response_time_penalty_price'] =  $penalty;
-        $data_penalty['incident_id'] = $incident->id;
+        while ($sla_days > 0 && $loop_guard++ < 365){
+            $date = self::shiftToNextWorkingPeriod($date, $operating_times, $public_holidays);
 
-        $create = IncidentPenalty::create($data_penalty);
-    }
+            $current_day = $date->isoWeekday();
 
-    public static function downloadAssetFile($incident_no){
+            $period = $operating_times->first(function ($op) use ($current_day){
+                return self::isWithinOperatingDays($current_day, $op->day_start, $op->day_end);
+            });
 
-        $incident =  Incident::where('incident_no',$incident_no)->first();
+            if (!$period) {
+                $logs[] = [
+                    'step' => 'skip',
+                    'day' => $date->format('l, d F Y'),
+                    'note' => 'No operating period for this day'
+                ];
 
-        $documents = $incident?->incidentDocumentAsset;
-        $documents = $incident?->incidentDocumentAppendix;
-
-        if(!$documents) {
-            return self::error('File not found');
-        }
-
-        $zip_file_name = 'incident_'.$incident->incident_no.'_documents.zip';
-        $zip_path = storage_path('app/temp/'.$zip_file_name);
-
-        if (!file_exists(dirname($zip_path))) {
-            mkdir(dirname($zip_path), 0777, true);
-        }
-
-        $zip = new ZipArchive;
-
-        if ($zip->open($zip_path, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-
-            foreach ($documents as $doc) {
-                $fullPath = storage_path('app/private/'.$doc->path);
-
-                if (file_exists($fullPath)) {
-                    $zip->addFile($fullPath, basename($fullPath));
-                }
+                $date->addDay()->startOfDay();
+                continue;
+            }
+            
+            $end = $date->copy()->setTimeFromTimeString($period->operation_end);
+            
+            // Handle overnight shift
+            if (self::isOvernightShift($period->operation_start, $period->operation_end)) {
+                $end->addDay();
             }
 
-            $zip->close();
+            $sla_days--;
+
+            $logs[] = [
+                'step' => 'loop',
+                'day' => $date->format('l, d F Y'),
+                'period_end' => $end->format('l, d F Y h:i A'),
+                'sla_days_remaining' => $sla_days
+            ];
+
+            if ($sla_days === 0){
+
+                $logs[] = [
+                    'step' => 'finished',
+                    'final_due_date' => $end->format('l, d F Y h:i A')
+                ];
+
+                if($incident_no){
+                    Log::channel('incident_details')->info('Due Date Calculation for incident Number : '.$incident_no, $logs);
+                }
+
+                $due = $date->copy()->setTimeFromTimeString($startTime);
+
+                // Check if due time is within operating hours (considering overnight shift)
+                $opStart = $date->copy()->setTimeFromTimeString($period->operation_start);
+                $opEnd = $date->copy()->setTimeFromTimeString($period->operation_end);
+                
+                if (self::isOvernightShift($period->operation_start, $period->operation_end)) {
+                    $opEnd->addDay();
+                }
+
+                if ($due->between($opStart, $opEnd)) {
+                    return $due;
+                }
+
+                return $opEnd;
+            }
+
+            $date = $end->copy()->addSecond();
         }
 
-        return response()->download($zip_path)->deleteFileAfterSend(true);
-        
+        if($incident_no){
+            Log::channel('incident_details')->info('Due Date Calculation (exhausted) for incident Number : '.$incident_no, $logs);
+        }
+
+        return $date;
     }
 
 }

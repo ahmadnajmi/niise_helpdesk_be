@@ -45,7 +45,7 @@ class IncidentResolutionServices
         try{
             $create = $incident_solution->update($data);
 
-            self::actionCode($incident_solution);
+            // self::actionCode($incident_solution);
 
             // self::checkPenalty($incident_solution);
 

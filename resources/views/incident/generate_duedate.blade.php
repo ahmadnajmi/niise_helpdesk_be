@@ -10,6 +10,11 @@
             <form method="GET" action="{{ route('web.incident.generate_duedate') }}">
                 @csrf
 
+                <div class="px-4 py-2">
+                    <x-input-label for="incident_date" :value="__('Incident Date')" />
+                    <input type="datetime-local" id="incident_date" name="incident_date" value="{{ request()->incident_date}}" class="block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:outline-none focus:ring focus:border-blue-300">
+                </div>
+
 
                 <div class="px-4 py-2">
                     <x-input-label for="incident_no" :value="__('Branch')" />
@@ -48,6 +53,11 @@
                 <div class="w-2/2">
                     <span class="px-4 py-2">
                         Expected Due Date = {{ $generate_due_date->format('l,d F Y h:i A') }}
+                    </span>
+                </div>
+                <div class="w-2/2">
+                    <span class="px-4 py-2">
+                        Resolution Time  = {{ $sla_version->resolution_time  . ' ' . $sla_version?->resolutionTimeTypeDescription?->name }}
                     </span>
                 </div>
             @endif

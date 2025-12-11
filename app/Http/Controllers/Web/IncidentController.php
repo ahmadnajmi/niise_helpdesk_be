@@ -35,8 +35,9 @@ class IncidentController extends Controller
     public function generateDueDateIncident(Request $request){
 
         $generate_due_date = null;
+        $sla_version = null;
         $public_holiday = [];
-        $incident_date = Carbon::now();
+        $incident_date = $request->incident_date ? Carbon::parse($request->incident_date) : Carbon::now();
 
         $data['sla_template_id'] = $request->sla_template_id;
         $data['incident_date'] = $incident_date;
@@ -67,6 +68,6 @@ class IncidentController extends Controller
 
         
 
-        return view('incident.generate_duedate',compact('generate_due_date','list_branch','list_sla_template','operating_time','public_holiday','incident_date'));
+        return view('incident.generate_duedate',compact('generate_due_date','list_branch','list_sla_template','operating_time','public_holiday','incident_date','sla_version'));
     }
 }
