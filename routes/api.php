@@ -103,3 +103,4 @@ Route::get('dynamic_option-all', [GeneralController::class, 'dynamicOption'])->n
 
 Route::post('auth/reset_password', [AuthController::class, 'resetPassword'])->name('auth.reset_password');
 
+Broadcast::routes(['middleware' => ['auth:api']]);

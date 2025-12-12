@@ -65,10 +65,10 @@ class UserServices
     }
 
     public static function update(User $user,$data){
-
         try {
+            $is_disabled = isset($data['is_disabled']) ? $data['is_disabled'] : $user->is_disabled;
 
-            if($data['is_disabled'] == false){
+            if($is_disabled == false){
                 $data['is_disabled'] = false;
                 $data['failed_attempts'] = 0;
             }

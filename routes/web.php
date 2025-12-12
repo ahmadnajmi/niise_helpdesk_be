@@ -14,6 +14,7 @@ Route::get('/welcome', function () {
     return view('welcome');
 })->name('welcome');
 
+
 Route::middleware(['web','web.token'])->name('web.')->group(function () {
     Route::get('dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
     Route::get('incident', [IncidentController::class, 'index'])->name('incident.index');

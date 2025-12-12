@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Http\Traits\ResponseTrait;
 use App\Http\Resources\IncidentResources;
+use App\Events\WorkbasketUpdated;
 use App\Models\Incident;
 use App\Models\IncidentDocument;
 use App\Models\Complaint;
@@ -85,7 +86,7 @@ class IncidentServices
 
             $create_resolution = self::createResolution($create->id);
 
-            $create_workbasket = self::createWorkbasket($create->id);
+            $create_workbasket = self::createWorkbasket($create);
 
             $create->refresh();
 
@@ -131,12 +132,20 @@ class IncidentServices
     public static function view(Incident $incident){
         $role = User::getUserRole(Auth::user()->id);
         $update_workbasket = false;
+        $trigger_workbasket = [
+            'frontliner' => false,
+            'contractor' => false,
+            'btmr' => false,
+            'jim' => false
+        ];
 
         if($role?->role == Role::FRONTLINER && $incident->workbasket?->escalate_frontliner){
             $update_workbasket = true;
+            $trigger_workbasket['frontliner'] = true;
         }
         elseif($role?->role == Role::CONTRACTOR && !$incident->workbasket?->escalate_frontliner){
             $update_workbasket = true;
+            $trigger_workbasket['contractor'] = true;
         }
 
         if (request()->source == 'workbasket' && $update_workbasket) {
@@ -149,8 +158,19 @@ class IncidentServices
                 $resolution->pickup_date = Carbon::now();
                 $resolution->save();
             }
+
+            $role_created = User::getUserRole($incident->created_by);
+
+            if($role_created?->role == Role::BTMR && $incident->workbasket()->status_complaint == Workbasket::NEW){
+                $trigger_workbasket['btmr'] = true;
+            }
+            elseif($role_created?->role == Role::JIM && $incident->workbasket()->status_complaint == Workbasket::NEW){
+                $trigger_workbasket['jim'] = true;
+            }
             
             $incident->workbasket()->update($data_workbasket);
+
+            event(new WorkbasketUpdated($incident,$trigger_workbasket));
         }
         $data = new IncidentResources($incident);
 
@@ -266,12 +286,31 @@ class IncidentServices
         return true;
     }
 
-    public static function createWorkbasket($id){
+    public static function createWorkbasket($incident){
         $data['date'] = date('Y-m-d H:i:s');
-        $data['incident_id'] = $id;
+        $data['incident_id'] = $incident->id;
         $data['escalate_frontliner'] = true;
 
         Workbasket::create($data);
+
+        $role = User::getUserRole(Auth::user()->id);
+
+        $trigger_workbasket = [
+            'frontliner' => false,
+            'contractor' => false,
+            'btmr' => false,
+            'jim' => false
+        ];
+        $trigger_workbasket['frontliner'] = true;
+
+        if($role?->role == Role::BTMR){
+            $trigger_workbasket['btmr'] = true;
+        }
+        elseif($role?->role == Role::JIM){
+            $trigger_workbasket['jim'] = true;
+        }
+
+        event(new WorkbasketUpdated($incident,$trigger_workbasket));
 
         return true;
     }

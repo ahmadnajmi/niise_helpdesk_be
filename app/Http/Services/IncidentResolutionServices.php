@@ -17,6 +17,7 @@ use App\Models\EmailTemplate;
 use App\Models\Role;
 use App\Http\Resources\IncidentResolutionResources;
 use App\Mail\ActionCodeEmail;
+use App\Events\WorkbasketUpdated;
 
 class IncidentResolutionServices
 {
@@ -66,6 +67,14 @@ class IncidentResolutionServices
 
         $role = User::getUserRole(Auth::user()->id);
 
+        $trigger_workbasket = [
+            'frontliner' => false,
+            'contractor' => false,
+            'btmr' => false,
+            'jim' => false
+        ];
+
+        
         if($role?->role == Role::CONTRACTOR){
 
             if($data->action_codes == ActionCode::ACTR){
@@ -76,12 +85,15 @@ class IncidentResolutionServices
                 $data_workbasket['status'] = Workbasket::NEW;
 
                 $incident->update($data_incident);
+
+                $trigger_workbasket['frontliner'] = true;
             }
             elseif($data->action_codes == ActionCode::RETURN) {
                 $data_workbasket['escalate_frontliner'] = true;
                 $data_workbasket['status'] = Workbasket::NEW;
-            }
 
+                $trigger_workbasket['frontliner'] = true;
+            }
         }
         elseif($data->action_codes == ActionCode::ACTR || $data->action_codes == ActionCode::ESCALATE){
 
@@ -91,9 +103,12 @@ class IncidentResolutionServices
             }
             else{
                 $data_incident['assign_group_id'] = $data->group_id;
+                $data_workbasket['status'] = Workbasket::NEW;
+
+                $trigger_workbasket['contractor'] = true;
             }
+
             $data_workbasket['escalate_frontliner'] = false;
-            $data_workbasket['status'] = Workbasket::NEW;
         }
         else{
             $data_workbasket['escalate_frontliner'] = false;
@@ -106,11 +121,13 @@ class IncidentResolutionServices
 
         $incident->workbasket()->update($data_workbasket);
 
-
         if($data->actionCodes->send_email){
             self::sendEmail($data);
         }
 
+        if($trigger_workbasket['frontliner']  == true || $trigger_workbasket['contractor'] == true){
+            event(new WorkbasketUpdated($incident,$trigger_workbasket));
+        }
         return true;
     }
 
