@@ -305,12 +305,11 @@ class IncidentServices
         $role = User::getUserRole(Auth::user()->id);
 
         $trigger_workbasket = [
-            'frontliner' => false,
+            'frontliner' => true,
             'contractor' => false,
             'btmr' => false,
             'jim' => false
         ];
-        $trigger_workbasket['frontliner'] = true;
 
         if($role?->role == Role::BTMR){
             $trigger_workbasket['btmr'] = true;

@@ -19,6 +19,10 @@ class WorkbasketUpdated implements ShouldBroadcast
         $this->trigger = $trigger;
     }
 
+    public function broadcastAs(){
+        return 'WorkbasketUpdated';
+    }
+
     public function broadcastOn()
     {
         $channels = [];
