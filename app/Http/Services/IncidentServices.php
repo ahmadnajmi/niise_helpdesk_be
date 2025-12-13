@@ -115,6 +115,15 @@ class IncidentServices
 
             if($incident->status == Incident::CLOSED){
                 $incident->workbasket?->delete();
+
+                $trigger_workbasket = [
+                    'frontliner' => false,
+                    'contractor' => false,
+                    'btmr' => true,
+                    'jim' => true
+                ];
+                event(new WorkbasketUpdated($incident,$trigger_workbasket));
+
                 // self::calculatePenalty($incident);
             }
 
@@ -161,10 +170,10 @@ class IncidentServices
 
             $role_created = User::getUserRole($incident->created_by);
 
-            if($role_created?->role == Role::BTMR && $incident->workbasket()->status_complaint == Workbasket::NEW){
+            if($role_created?->role == Role::BTMR && $incident->workbasket?->status_complaint == Workbasket::NEW){
                 $trigger_workbasket['btmr'] = true;
             }
-            elseif($role_created?->role == Role::JIM && $incident->workbasket()->status_complaint == Workbasket::NEW){
+            elseif($role_created?->role == Role::JIM && $incident->workbasket?->status_complaint == Workbasket::NEW){
                 $trigger_workbasket['jim'] = true;
             }
             
