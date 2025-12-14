@@ -9,7 +9,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class WorkbasketUpdated implements ShouldBroadcastNow
+class WorkbasketUpdated implements ShouldBroadcast
 {
     public $incident;
     public $trigger;
