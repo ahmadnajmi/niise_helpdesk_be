@@ -4,11 +4,12 @@ namespace App\Events;
 
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class WorkbasketUpdated implements ShouldBroadcast
+class WorkbasketUpdated implements ShouldBroadcastNow
 {
     public $incident;
     public $trigger;
