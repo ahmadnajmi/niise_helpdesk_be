@@ -101,13 +101,6 @@ class IncidentResolutionServices
                 $data_incident['status']  =  Incident::RESOLVED; 
                 $data_incident['resolved_user_id'] = auth()->user()->id;
             }
-            elseif($data->action_codes == ActionCode::CLOSED){
-                $data_incident['status']  =  Incident::CLOSED; 
-                $incident->workbasket?->delete();
-
-                $trigger_workbasket['btmr'] = true;
-                $trigger_workbasket['jim'] = true;
-            }
             else{
                 $data_incident['assign_group_id'] = $data->group_id;
                 $data_workbasket['status'] = Workbasket::NEW;
@@ -116,6 +109,13 @@ class IncidentResolutionServices
             }
 
             $data_workbasket['escalate_frontliner'] = false;
+        }
+        elseif($data->action_codes == ActionCode::CLOSED){
+            $data_incident['status']  =  Incident::CLOSED; 
+            $incident->workbasket?->delete();
+
+            $trigger_workbasket['btmr'] = true;
+            $trigger_workbasket['jim'] = true;
         }
         else{
             $data_workbasket['escalate_frontliner'] = false;
