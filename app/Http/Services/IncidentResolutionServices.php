@@ -110,6 +110,13 @@ class IncidentResolutionServices
 
             $data_workbasket['escalate_frontliner'] = false;
         }
+        elseif($data->action_codes == ActionCode::CLOSED){
+            $data_incident['status']  =  Incident::CLOSED; 
+            $incident->workbasket?->delete();
+
+            $trigger_workbasket['btmr'] = true;
+            $trigger_workbasket['jim'] = true;
+        }
         else{
             $data_workbasket['escalate_frontliner'] = false;
             $data_workbasket['status'] = Workbasket::IN_PROGRESS;
@@ -124,8 +131,8 @@ class IncidentResolutionServices
         if($data->actionCodes->send_email){
             self::sendEmail($data);
         }
-
-        if($trigger_workbasket['frontliner']  == true || $trigger_workbasket['contractor'] == true){
+        
+        if (in_array(true, $trigger_workbasket, true)) {
             event(new WorkbasketUpdated($incident,$trigger_workbasket));
         }
         return true;
