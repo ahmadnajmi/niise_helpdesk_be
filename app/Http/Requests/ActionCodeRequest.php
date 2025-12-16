@@ -26,7 +26,7 @@ class ActionCodeRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'nickname' => 'required',
+            'nickname' => 'string',
             'send_email' => 'nullable',
             'email_recipient_id' =>  'nullable',
             'description' => 'nullable',
@@ -34,6 +34,11 @@ class ActionCodeRequest extends FormRequest
             'skip_penalty' => 'nullable',
             'role_id' => 'nullable'
         ];
+
+          if ($this->routeIs('action_code.store')) {
+            $rules['nickname'] .= '|required'; 
+
+        }
     }
 
     protected function failedValidation(Validator $validator)

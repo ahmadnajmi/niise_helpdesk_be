@@ -13,7 +13,7 @@
 
                 <div>
                     <x-input-label for="incident_no" :value="__('Incident Number')" />
-                    <x-text-input id="incident_no" class="block mt-1 w-full" type="text" name="incident_no"  required autofocus  />
+                    <x-text-input id="incident_no" class="block mt-1 w-full" type="text" name="incident_no"  required autofocus value="{{ request()->incident_no}}" />
                 </div>
 
                 <div class="flex items-center justify-end mt-4">
@@ -60,6 +60,7 @@
                             <td> : </td>
                             <td class="px-4"> {{ $get_incident->actual_end_date?->format('d F Y h:i A') }}</td>
                         </tr>
+                        
                         <tr>
                             <td class="px-4"> SLA CODE </td>
                             <td> : </td>
@@ -69,6 +70,16 @@
                             <td class="px-4"> SLA Response Time </td>
                             <td> : </td>
                             <td class="px-4"> {{ $get_incident->slaVersion?->response_time.' '.$get_incident->slaVersion?->responseTimeTypeDescription?->name }}  </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4"> SLA Resolution Time </td>
+                            <td> : </td>
+                            <td class="px-4"> {{ $get_incident->slaVersion?->resolution_time.' '.$get_incident->slaVersion?->resolutionTimeTypeDescription?->name }}  </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4"> Renew Generate Due Date </td>
+                            <td> : </td>
+                            <td class="px-4"> {{ $generate_due_date?->format('d F Y h:i A') }}</td>
                         </tr>
                     </table>
                 </div>

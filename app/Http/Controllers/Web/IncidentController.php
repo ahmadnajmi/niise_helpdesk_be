@@ -19,6 +19,7 @@ class IncidentController extends Controller
     public function index(Request $request)
     {
         $public_holiday = [];
+        $generate_due_date = null;
         $get_incident = Incident::where('incident_no',$request->incident_no)->first();
 
         $operating_time = OperatingTime::where('branch_id',$get_incident?->branch_id)->get();
@@ -26,10 +27,18 @@ class IncidentController extends Controller
         $state_id = $get_incident?->branch?->state_id;
 
         if($state_id){
-            $public_holiday = Calendar::whereRaw("JSON_EXISTS(state_id, '$?(@ == $state_id)')")->get();
+            $public_holiday = Calendar::where(function($query) use ($state_id) {
+                                        $query->whereRaw("JSON_EXISTS(state_id, '$?(@ == 0)')") 
+                                        ->orWhereRaw("JSON_EXISTS(state_id, '$?(@ == $state_id)')"); 
+                                    })
+                                    ->get();
         }
-        
-        return view('incident.index',compact('get_incident','operating_time','public_holiday'));
+
+        if($get_incident){
+            $generate_due_date = IncidentServices::calculateDueDateIncident($get_incident);
+        }
+
+        return view('incident.index',compact('get_incident','operating_time','public_holiday','generate_due_date'));
     }
 
     public function generateDueDateIncident(Request $request){
@@ -58,15 +67,16 @@ class IncidentController extends Controller
         
         if($branch_details){
             $state_id = $branch_details->state_id;
-            $public_holiday = Calendar::whereRaw("JSON_EXISTS(state_id, '$?(@ == $state_id)')")
-                                    ->where('start_date','>=',$incident_date)
+            $public_holiday = Calendar::where('start_date','>=',$incident_date)
                                     ->when($generate_due_date, function ($query) use ($generate_due_date) {
                                         return $query->where('end_date','<=',$generate_due_date); 
                                     })
+                                    ->where(function($query) use ($state_id) {
+                                        $query->whereRaw("JSON_EXISTS(state_id, '$?(@ == 0)')")
+                                        ->orWhereRaw("JSON_EXISTS(state_id, '$?(@ == $state_id)')");
+                                    })
                                     ->get();
         }
-
-        
 
         return view('incident.generate_duedate',compact('generate_due_date','list_branch','list_sla_template','operating_time','public_holiday','incident_date','sla_version'));
     }

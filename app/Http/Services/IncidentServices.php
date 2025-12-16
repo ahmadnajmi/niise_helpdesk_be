@@ -402,7 +402,11 @@ class IncidentServices
         $get_branch = Branch::select('state_id')->where('id',$branch_id)->first();
         $state_id = (int) $get_branch?->state_id;
 
-        $calendar = Calendar::whereRaw("JSON_EXISTS(state_id, '$?(@ == $state_id)')")->get(['start_date', 'end_date']);
+        $calendar = Calendar::where(function($query) use ($state_id) {
+                                $query->whereRaw("JSON_EXISTS(state_id, '$?(@ == 0)')")
+                                ->orWhereRaw("JSON_EXISTS(state_id, '$?(@ == $state_id)')");
+                            })
+                            ->get(['start_date', 'end_date']);
 
         $public_holidays = [];
 
