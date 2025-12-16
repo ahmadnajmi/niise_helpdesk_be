@@ -416,7 +416,7 @@ class Incident extends BaseModel
                             $query->where('asset_siri_no',$request->asset_siri_no);
                         })
                         ->when($request->incident_no, function ($query) use ($request){
-                            $query->where('incident_no',$request->incident_no);
+                            $query->whereRaw('LOWER(incident_no) LIKE ?', ["%{$request->incident_no}%"]);
                         })
                         ->when($request->group_id, function ($query)use($request){
                             return $query->whereHas('incidentResolution', function ($query)use($request) {
