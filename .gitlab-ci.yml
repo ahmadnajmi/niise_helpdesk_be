@@ -5,7 +5,7 @@ stages:
 deploy_staging:
   stage: deploy
   tags:
-    - helpdesk_niise_be  # Runner tag for Staging server
+    - helpdesk_niise_staging_be  # Runner tag for Staging server
   script:
     - echo "Deploying to Staging..."
     
