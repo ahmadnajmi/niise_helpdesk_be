@@ -1,30 +1,93 @@
-# deploy:
-#   stage: deploy
-#   environment: staging
-#   tags:
-#     - deploy backend helpdesk
-#   script:
-#     - echo "=== START DEPLOY BACKEND BACKEND ==="
-#     - cd /var/www/html/ificsbe-niise
-#     - git remote set-url origin https://$CI_PAT_USERNAME:$CI_PAT_TOKEN@scm.awanheitech.com/digit/external/niise/ams/ams-fe.git
-#     - git pull
-#     - php artisan optimize
-#     - php artisan migrate
-#     - echo "=== DEPLOY FINISHED ==="
+stages:
+  - deploy
 
-deploy:
+# Deploy to Staging
+deploy_staging:
   stage: deploy
   tags:
-    - helpdesk_runner
+    - helpdesk_niise_be  # Runner tag for Staging server
   script:
-    - echo "=== START DEPLOY BACKEND BACKEND ==="
-    - cd /var/www/html/helpdesk_be
-    - git remote set-url origin https://$CI_PAT_USERNAME:$CI_PAT_TOKEN@pro-scm.awanheitech.com/digit/hds/niise-hds-be.git
-    - git pull
+    - echo "Deploying to Staging..."
+    
+    # Navigate to Staging folder on Staging
+    - cd /var/www/html/helpdesk_be  # Change to your actual path
+    
+    # Pull latest code
+    - git pull origin staging
+    
+    # Install/update and build
+    - npm install
+    - npm run build
+    
+    # Laravel commands
+    - php artisan migrate --force
     - php artisan optimize
-    - php artisan migrate
-    - echo "=== DEPLOY FINISHED ==="
+    
+    - echo "Staging deployment completed!"
+  when: manual
   only:
     - staging
+  environment:
+    name: staging
 
- 
+# Deploy to Pre Prod 1 - Interim
+# deploy_preprod1_interim:
+#   stage: deploy
+#   tags:
+#     - preprod1  # Same runner tag for Pre Prod 1 server
+#   script:
+#     - echo "Deploying to Pre Prod 1 - Interim..."
+    
+#     # Navigate to Interim folder on Pre Prod 1
+#     - cd /var/www/interim  # Change to your actual path
+    
+#     # Pull latest code
+#     - git pull origin main
+    
+#     # Install/update and build
+#     - npm install
+#     - npm run build
+    
+#     # Laravel commands
+#     - php artisan migrate --force
+#     - php artisan optimize
+    
+#     - echo "Pre Prod 1 - Interim deployment completed!"
+#   when: manual
+#   only:
+#     - main
+#   environment:
+#     name: preprod1-interim
+
+# ============================================
+# PRE PROD 2 DEPLOYMENT (1 environment)
+# ============================================
+
+# Deploy to Pre Prod 2 - SIT
+# deploy_preprod2_sit:
+#   stage: deploy
+#   tags:
+#     - preprod2  # Runner tag for Pre Prod 2 server
+#   script:
+#     - echo "Deploying to Pre Prod 2 - SIT..."
+    
+#     # Navigate to SIT folder on Pre Prod 2
+#     - cd /var/www/sit  # Change to your actual path
+    
+#     # Pull latest code
+#     - git pull origin main
+    
+#     # Install/update and build
+#     - npm install
+#     - npm run build
+    
+#     # Laravel commands
+#     - php artisan migrate --force
+#     - php artisan optimize
+    
+#     - echo "Pre Prod 2 - SIT deployment completed!"
+#   when: manual
+#   only:
+#     - main
+#   environment:
+#     name: preprod2-sit
