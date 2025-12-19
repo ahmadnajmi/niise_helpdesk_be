@@ -43,14 +43,14 @@ class RoleController extends Controller
     public function update(RoleRequest $request, Role $role){
         $data = $request->all();
 
-        $data = RoleServices::update($sla,$data);
+        $data = RoleServices::update($role,$data);
 
         return $data;
     }
 
     public function destroy(Role $role){
 
-        RoleServices::delete($sla);
+        RoleServices::delete($role);
 
         return $this->success('Success', null);
     }

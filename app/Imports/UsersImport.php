@@ -26,8 +26,15 @@ class UsersImport implements ToModel
         $data['email'] =   $row[3];
         $data['phone_no'] =   $row[4];
         $data['category_office'] =   $row[5];
-        $data['ic_no'] =   $this->generateDummyIC();
         $data['state_id'] = $state?->ref_code;
+      
+        
+        if(isset($row[7])){
+            $data['ic_no'] =   $row[7];
+        }
+        else{
+            $data['ic_no'] =   $this->generateDummyIC();
+        }
 
         $create = User::create($data);
 
@@ -39,7 +46,8 @@ class UsersImport implements ToModel
             $role = Role::inRandomOrder()->first();
             $role =  $role->id;
         }
-
+      
+       
         $data_userrole['user_id'] = $create->id;
         $data_userrole['role_id'] = $role;
 
