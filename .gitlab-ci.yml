@@ -5,24 +5,15 @@ stages:
 deploy_staging:
   stage: deploy
   tags:
-    - helpdesk_niise_staging_be  # Runner tag for Staging server
+    - server_staging  
   script:
     - echo "Deploying to Staging..."
-    
-    # Navigate to Staging folder on Staging
-    - cd /var/www/html/helpdesk_be  # Change to your actual path
-    
-    # Pull latest code
+    - cd /var/www/html/helpdesk_be  
     - git pull origin staging
-    
-    # Install/update and build
     - npm install
     - npm run build
-    
-    # Laravel commands
     - php artisan migrate --force
     - php artisan optimize
-    
     - echo "Staging deployment completed!"
   when: manual
   only:
@@ -30,34 +21,46 @@ deploy_staging:
   environment:
     name: staging
 
-# Deploy to Pre Prod 1 - Interim
-# deploy_preprod1_interim:
-#   stage: deploy
-#   tags:
-#     - preprod1  # Same runner tag for Pre Prod 1 server
-#   script:
-#     - echo "Deploying to Pre Prod 1 - Interim..."
-    
-#     # Navigate to Interim folder on Pre Prod 1
-#     - cd /var/www/interim  # Change to your actual path
-    
-#     # Pull latest code
-#     - git pull origin main
-    
-#     # Install/update and build
-#     - npm install
-#     - npm run build
-    
-#     # Laravel commands
-#     - php artisan migrate --force
-#     - php artisan optimize
-    
-#     - echo "Pre Prod 1 - Interim deployment completed!"
-#   when: manual
-#   only:
-#     - main
-#   environment:
-#     name: preprod1-interim
+# Deploy to Pre Prod 1 - SIT
+deploy_preprod1_SIT:
+  stage: deploy
+  tags:
+    - server_preprod1  
+  script:
+    - echo "Deploying to Pre Prod 1 - SIT ..."
+    - cd /var/www/helpdesk/be  
+    - git pull origin main
+    - npm install
+    - npm run build
+    - php artisan migrate --force
+    - php artisan optimize
+    - echo "Pre Prod 1 - SIT deployment completed!"
+  when: manual
+  only:
+    - staging
+  environment:
+    name: preprod1-sit
+
+# Deploy to Pre Prod 1 - INTERIM
+deploy_preprod1_SIT:
+  stage: deploy
+  tags:
+    - server_preprod1  
+  script:
+    - echo "Deploying to Pre Prod 1 - INTERIM ..."
+    - cd /var/www/interim/be  
+    - git pull origin main
+    - npm install
+    - npm run build
+    - php artisan migrate --force
+    - php artisan optimize
+    - echo "Pre Prod 1 - INTERIM deployment completed!"
+  when: manual
+  only:
+    - staging
+  environment:
+    name: preprod1-interim
+
 
 # ============================================
 # PRE PROD 2 DEPLOYMENT (1 environment)
