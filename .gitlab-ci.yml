@@ -83,7 +83,7 @@ deploy_preprod2_SIT:
 
 
 # Deploy to Production 1
-deploy_production:
+Deploy Production 1:
   stage: deploy
   tags:
     - server_production_1
@@ -103,7 +103,7 @@ deploy_production:
     name: production1
 
 # Deploy to Production 2
-deploy_production:
+Deploy Production 2:
   stage: deploy
   tags:
     - server_production_2
