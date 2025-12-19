@@ -28,7 +28,7 @@ deploy_preprod1_SIT:
     - server_preprod1  
   script:
     - echo "Deploying to Pre Prod 1 - SIT ..."
-    - cd /var/www/helpdesk/be  
+    - cd /var/www/html/helpdesk/be  
     - git pull origin main
     - npm install
     - npm run build
@@ -42,13 +42,13 @@ deploy_preprod1_SIT:
     name: preprod1-sit
 
 # Deploy to Pre Prod 1 - INTERIM
-deploy_preprod1_SIT:
+deploy_preprod1_INTERIM:
   stage: deploy
   tags:
     - server_preprod1  
   script:
     - echo "Deploying to Pre Prod 1 - INTERIM ..."
-    - cd /var/www/interim/be  
+    - cd /var/www/html/interim/be  
     - git pull origin main
     - npm install
     - npm run build
@@ -60,6 +60,28 @@ deploy_preprod1_SIT:
     - staging
   environment:
     name: preprod1-interim
+
+
+
+# Deploy to Pre Prod 2 - SIT
+deploy_preprod2_SIT:
+  stage: deploy
+  tags:
+    - server_preprod2
+  script:
+    - echo "Deploying to Pre Prod 2 - SIT ..."
+    - cd /var/www/html/helpdesk/be  
+    - git pull origin main
+    - npm install
+    - npm run build
+    - php artisan migrate --force
+    - php artisan optimize
+    - echo "Pre Prod 2 - SIT deployment completed!"
+  when: manual
+  only:
+    - staging
+  environment:
+    name: preprod2-sit
 
 
 # ============================================
