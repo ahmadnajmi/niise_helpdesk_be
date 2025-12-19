@@ -61,8 +61,6 @@ deploy_preprod1_INTERIM:
   environment:
     name: preprod1-interim
 
-
-
 # Deploy to Pre Prod 2 - SIT
 deploy_preprod2_SIT:
   stage: deploy
@@ -84,35 +82,43 @@ deploy_preprod2_SIT:
     name: preprod2-sit
 
 
-# ============================================
-# PRE PROD 2 DEPLOYMENT (1 environment)
-# ============================================
+# Deploy to Production 1
+deploy_production:
+  stage: deploy
+  tags:
+    - server_production_1
+  script:
+    - echo "Deploying to Production 1 ..."
+    - cd /var/www/html/helpdesk/be  
+    - git pull origin master
+    - npm install
+    - npm run build
+    - php artisan migrate --force
+    - php artisan optimize
+    - echo "Production 1 - deployment completed!"
+  when: manual
+  only:
+    - master
+  environment:
+    name: production1
 
-# Deploy to Pre Prod 2 - SIT
-# deploy_preprod2_sit:
-#   stage: deploy
-#   tags:
-#     - preprod2  # Runner tag for Pre Prod 2 server
-#   script:
-#     - echo "Deploying to Pre Prod 2 - SIT..."
-    
-#     # Navigate to SIT folder on Pre Prod 2
-#     - cd /var/www/sit  # Change to your actual path
-    
-#     # Pull latest code
-#     - git pull origin main
-    
-#     # Install/update and build
-#     - npm install
-#     - npm run build
-    
-#     # Laravel commands
-#     - php artisan migrate --force
-#     - php artisan optimize
-    
-#     - echo "Pre Prod 2 - SIT deployment completed!"
-#   when: manual
-#   only:
-#     - main
-#   environment:
-#     name: preprod2-sit
+# Deploy to Production 2
+deploy_production:
+  stage: deploy
+  tags:
+    - server_production_2
+  script:
+    - echo "Deploying to Production 2 ..."
+    - cd /var/www/html/helpdesk/be  
+    - git pull origin master
+    - npm install
+    - npm run build
+    - php artisan migrate --force
+    - php artisan optimize
+    - echo "Production 2 - deployment completed!"
+  when: manual
+  only:
+    - master
+  environment:
+    name: production2
+
