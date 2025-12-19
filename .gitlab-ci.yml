@@ -24,7 +24,7 @@ Deploy Staging:
     name: staging
 
 # Deploy to Pre Prod 1 - SIT
-Deploy Preprod 1 Staging:
+Deploy Preprod 1 SIT:
   stage: Deploy SIT & INTERIM
   tags:
     - server_preprod1  
