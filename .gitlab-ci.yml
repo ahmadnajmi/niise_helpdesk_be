@@ -1,9 +1,11 @@
 stages:
-  - deploy
+  - Deploy Staging 
+  - Deploy SIT & INTERIM
+  - Deploy Production
   
 # Deploy to Staging
 Deploy Staging:
-  stage: deploy
+  stage: Deploy Staging 
   tags:
     - server_staging  
   script:
@@ -23,7 +25,7 @@ Deploy Staging:
 
 # Deploy to Pre Prod 1 - SIT
 Deploy Preprod 1 Staging:
-  stage: deploy
+  stage: Deploy SIT & INTERIM
   tags:
     - server_preprod1  
   script:
@@ -43,7 +45,7 @@ Deploy Preprod 1 Staging:
 
 # Deploy to Pre Prod 1 - INTERIM
 Deploy Preprod 1 INTERIM:
-  stage: deploy
+  stage: Deploy SIT & INTERIM
   tags:
     - server_preprod1  
   script:
@@ -63,7 +65,7 @@ Deploy Preprod 1 INTERIM:
 
 # Deploy to Pre Prod 2 - SIT
 Deploy Preprod 2 SIT:
-  stage: deploy
+  stage: Deploy SIT & INTERIM
   tags:
     - server_preprod2
   script:
@@ -83,13 +85,13 @@ Deploy Preprod 2 SIT:
 
 # Deploy to Production 1
 Deploy Production 1:
-  stage: deploy
+  stage: Deploy Production
   tags:
     - server_production_1
   script:
     - echo "Deploying to Production 1 ..."
     - cd /var/www/html/helpdesk/be  
-    - git pull origin master
+    - git pull origin staging
     - npm install
     - npm run build
     - php artisan migrate --force
@@ -97,19 +99,19 @@ Deploy Production 1:
     - echo "Production 1 - deployment completed!"
   when: manual
   only:
-    - master
+    - staging
   environment:
     name: production1
 
 # Deploy to Production 2
 Deploy Production 2:
-  stage: deploy
+  stage: Deploy Production
   tags:
     - server_production_2
   script:
     - echo "Deploying to Production 2 ..."
     - cd /var/www/html/helpdesk/be  
-    - git pull origin master
+    - git pull origin staging
     - npm install
     - npm run build
     - php artisan migrate --force
@@ -117,7 +119,7 @@ Deploy Production 2:
     - echo "Production 2 - deployment completed!"
   when: manual
   only:
-    - master
+    - staging
   environment:
     name: production2
 
