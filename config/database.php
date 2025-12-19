@@ -112,6 +112,32 @@ return [
             'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'true'),
         ],
 
+        'oracle' => [
+            'driver' =>'oracle',
+            'host' => env('DB_HOST'),
+            'port' => env('DB_PORT'),
+            'database' => env('DB_DATABASE'),
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
+            'service_name' => env('DB_SERVICE_NAME'),
+            'charset' => 'AL32UTF8',
+            'prefix' => '',
+            'schema'        => env('DB_SCHEMA')
+        ],
+
+        'oracle_identity_management' => [
+            'driver' => env('DB_CONNECTION'),
+            'host' => env('DB_HOST'),
+            'port' => env('DB_PORT'),
+            'database' => env('DB_DATABASE'),
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
+            'service_name' => env('DB_SERVICE_NAME'),
+            'schema'        => env('DB_SCHEMA_IM'),
+            'charset' => 'AL32UTF8',
+            'prefix' => '',
+        ],
+
     ],
 
     /*

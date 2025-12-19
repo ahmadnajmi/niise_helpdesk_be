@@ -118,9 +118,45 @@ return [
     |
     */
 
+    'admin_token' => env('ADMIN_TOKEN','404'),
+
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+    
+    'passport_token' => [
+        'login_url' => env('APP_URL') . '/oauth/token',
+        'client_id' => env('PASSPORT_CLIENT_ID'),
+        'client_secret' => env('PASSPORT_CLIENT_SECRET')
+    ],
 
+    'netiq' => [
+        'client_id' => env('OIDC_CLIENT_ID'), 
+        'client_secret' => env('OIDC_CLIENT_SECRET'), 
+        'redirect_url' =>  env('OIDC_REDIRECT_URI'),
+        'token_url' => env('OIDC_TOKEN_URL'),
+        'auth_url' => env('OIDC_AUTH_URL'),
+        'userinfo_url' => env('OIDC_USERINFO_URL')
+    ],
+
+    'asset' => [
+        'client_id' => env('ASSET_CLIENT_ID'),
+        'client_secret' => env('ASSET_SECRET'),
+        'url' => env('ASSET_API_URL')
+    ],
+
+    'jasper_server' => [
+        'url' => env('JASPER_URL'),
+        'username' => env('JASPER_USERNAME'),
+        'password' => env('JASPER_PASSWORD')
+    ],
+
+    'microservices' => [
+        'url' => env('MICROSERVICE_URL'),
+        'path' => env('MICROSERVICE_PATH'),
+    ]
+
+  
 ];
+ 

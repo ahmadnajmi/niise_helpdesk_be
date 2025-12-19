@@ -2,63 +2,65 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Traits\ResponseTrait;
 use Illuminate\Http\Request;
+use App\Http\Resources\RoleResources;
+use App\Http\Collection\RoleCollection;
+use App\Http\Requests\RoleRequest;
+use App\Http\Requests\RolePermissionRequest;
+use App\Http\Services\RoleServices;
+use App\Models\Role;
+use App\Models\Permission;
+use App\Models\RolePermission;
+use App\Models\Module;
 
 class RoleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+    use ResponseTrait;
+
+    public function index(Request $request){
+        $limit = $request->limit ? $request->limit : 15;
+
+        $data =  Role::paginate($limit);
+
+        return new RoleCollection($data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+    public function store(RoleRequest $request){
+        $data = $request->all();
+
+        $data = RoleServices::create($data);
+           
+        return $data; 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+    public function show(Role $Role){
+        $data = new RoleResources($Role);
+
+        return $this->success('Success', $data);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+    public function update(RoleRequest $request, Role $role){
+        $data = $request->all();
+
+        $data = RoleServices::update($role,$data);
+
+        return $data;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+    public function destroy(Role $role){
+
+        RoleServices::delete($role);
+
+        return $this->success('Success', null);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+    public function updateRolePermission(RolePermissionRequest $request){
+        $data = $request->all();
+
+        $data = RoleServices::updateRolePermission($data);
+           
+        return $data; 
     }
 }

@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 
-class Report extends Model
+class Report extends BaseModel
 {
-    public $timestamps = false;
+    protected $table = 'report';
 
-    public $incrementing = false;
+    protected $fillable = [ 
+        'code',
+        'file_name',
+    ];
 
-    protected $table = 'HD_Report_Info';
-
-    protected $primaryKey = 'ri_report_code';
 }

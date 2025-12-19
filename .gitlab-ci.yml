@@ -1,23 +1,124 @@
-image: docker:stable
-
 stages:
-  - Build image
+  - deploy
 
-variables:
-  IMAGE_VERSION: $CI_BUILD_TAG
-  TOKEN_NAME: $TOKEN_NAME
-  ACCESS_TOKEN: $ACCESS_TOKEN
-
-before_script:
-  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-
-docker build:
-  stage: Build image
+# Deploy to Staging
+deploy_staging:
+  stage: deploy
+  tags:
+    - server_staging  
   script:
-  - echo $CI_REGISTRY_IMAGE
-  - echo $CI_BUILD_TAG
-  - docker info
-  - docker build --no-cache --no-cache --build-arg ACCESS_TOKEN=$ACCESS_TOKEN --build-arg TOKEN_NAME=$TOKEN_NAME -t $CI_REGISTRY_IMAGE:$IMAGE_VERSION .
-  - docker push $CI_REGISTRY_IMAGE:$IMAGE_VERSION
+    - echo "Deploying to Staging..."
+    - cd /var/www/html/helpdesk_be  
+    - git pull origin staging
+    - npm install
+    - npm run build
+    - php artisan migrate --force
+    - php artisan optimize
+    - echo "Staging deployment completed!"
+  when: manual
   only:
-    - tags
+    - staging
+  environment:
+    name: staging
+
+# Deploy to Pre Prod 1 - SIT
+deploy_preprod1_SIT:
+  stage: deploy
+  tags:
+    - server_preprod1  
+  script:
+    - echo "Deploying to Pre Prod 1 - SIT ..."
+    - cd /var/www/html/helpdesk/be  
+    - git pull origin staging
+    - npm install
+    - npm run build
+    - php artisan migrate --force
+    - php artisan optimize
+    - echo "Pre Prod 1 - SIT deployment completed!"
+  when: manual
+  only:
+    - staging
+  environment:
+    name: preprod1-sit
+
+# Deploy to Pre Prod 1 - INTERIM
+deploy_preprod1_INTERIM:
+  stage: deploy
+  tags:
+    - server_preprod1  
+  script:
+    - echo "Deploying to Pre Prod 1 - INTERIM ..."
+    - cd /var/www/html/interim/be  
+    - git pull origin staging
+    - npm install
+    - npm run build
+    - php artisan migrate --force
+    - php artisan optimize
+    - echo "Pre Prod 1 - INTERIM deployment completed!"
+  when: manual
+  only:
+    - staging
+  environment:
+    name: preprod1-interim
+
+# Deploy to Pre Prod 2 - SIT
+deploy_preprod2_SIT:
+  stage: deploy
+  tags:
+    - server_preprod2
+  script:
+    - echo "Deploying to Pre Prod 2 - SIT ..."
+    - cd /var/www/html/helpdesk/be  
+    - git pull origin staging
+    - npm install
+    - npm run build
+    - php artisan migrate --force
+    - php artisan optimize
+    - echo "Pre Prod 2 - SIT deployment completed!"
+  when: manual
+  only:
+    - staging
+  environment:
+    name: preprod2-sit
+
+
+# Deploy to Production 1
+deploy_production:
+  stage: deploy
+  tags:
+    - server_production_1
+  script:
+    - echo "Deploying to Production 1 ..."
+    - cd /var/www/html/helpdesk/be  
+    - git pull origin master
+    - npm install
+    - npm run build
+    - php artisan migrate --force
+    - php artisan optimize
+    - echo "Production 1 - deployment completed!"
+  when: manual
+  only:
+    - master
+  environment:
+    name: production1
+
+# Deploy to Production 2
+deploy_production:
+  stage: deploy
+  tags:
+    - server_production_2
+  script:
+    - echo "Deploying to Production 2 ..."
+    - cd /var/www/html/helpdesk/be  
+    - git pull origin master
+    - npm install
+    - npm run build
+    - php artisan migrate --force
+    - php artisan optimize
+    - echo "Production 2 - deployment completed!"
+  when: manual
+  only:
+    - master
+  environment:
+    name: production2
+

@@ -3,62 +3,43 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Services\ReportServices;
+use App\Http\Traits\ResponseTrait;
+use App\Http\Requests\ReportRequest;
 
 class ReportController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+    use ResponseTrait;
+
+    public function index(Request $request){
+        $data = ReportServices::index($request);
+
+        return $this->success('Success', $data);
+    }
+    
+    public function generateReport(ReportRequest $request){
+
+        $filePath = 'dummy-pdf_2.pdf'; 
+
+        $report_service = new ReportServices();
+
+
+        $return = $report_service->generateReport($request);
+        
+        if($return['data']){
+            return $return['data'];
+        }
+        else{
+            return $this->error($return['message']);
+        }
+
+        // if (Storage::disk('local')->exists($filePath)) { 
+        //     return Storage::disk('local')->download($filePath);
+        // }
+
+        // return $this->error('File failed to generate');
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

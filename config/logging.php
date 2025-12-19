@@ -126,6 +126,24 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+        
+        'api_log' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/api.log'),
+        ],
+
+        'incident_details' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/incident.log'),
+            'level' => 'debug',
+        ],
+
+        // untuk API external (3rd party)
+        'external_api' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/external_api.log'),
+            'level' => 'debug',
+        ],
 
     ],
 

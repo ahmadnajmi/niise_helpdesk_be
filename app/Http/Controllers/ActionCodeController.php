@@ -2,102 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Traits\ResponseTrait;
-use App\Models\ActionCode;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use App\Http\Traits\ResponseTrait;
+use App\Http\Collection\ActionCodeCollection;
+use App\Http\Resources\ActionCodeResources;
+use App\Http\Requests\ActionCodeRequest;
+use App\Http\Services\ActionCodeServices;
+use App\Models\ActionCode;  
 
 class ActionCodeController extends Controller
 {
     use ResponseTrait;
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        if(isset($request->perPage)) {
-            $perPage = $request->perPage;
-        } else {
-            $perPage = 10;
-        }
+        $limit = $request->limit ? $request->limit : 15;
+        
+        $data =  ActionCode::filter()->search($request->search)->sortByField($request)->paginate($limit);
 
-        $actionCodes = ActionCode::orderBy('ac_status_rec')->paginate($perPage);
-
-        return $this->success('Success', $actionCodes);
+        return new ActionCodeCollection($data);
     }
 
-    /**
-     * Search function for action codes.
-     */
-    public function search(Request $request)
+    public function store(ActionCodeRequest $request)
     {
-        $searchTerm = $request->input('search'); // The term to search for
-        $query = DB::table('refAction'); // Replace with your table name
+        $data = $request->all();
 
-        // Get all column names for the table
-        $columns = Schema::getColumnListing('refAction');
-
-        // Loop through columns and apply the search term
-        $query->where(function ($q) use ($columns, $searchTerm) {
-            foreach ($columns as $column) {
-                $q->orWhere($column, 'LIKE', "%{$searchTerm}%");
-            }
-        });
-
-        $results = $query->paginate($request->input("perPage"));
-
-        return $this->success('Success',  $results);
+        $create = ActionCodeServices::create($data);
+        
+        return $create;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function show(ActionCode $action_code)
     {
-        //
+        $data = new ActionCodeResources($action_code);
+
+        return $this->success('Success', $data);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function update(ActionCodeRequest $request, ActionCode $action_code)
     {
-        //
+        $data = $request->all();
+
+        $update = ActionCodeServices::update($action_code,$data);
+
+        return $update;
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function destroy(ActionCode $action_code)
     {
-        $actionCode = ActionCode::where('ac_code', $id)->first();
+        $delete = ActionCodeServices::delete($action_code);
 
-        return $this->success('Action code fetched successfully.', $actionCode);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return $delete;
     }
 }

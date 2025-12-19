@@ -2,63 +2,56 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Group;
 use Illuminate\Http\Request;
+use App\Http\Traits\ResponseTrait;
+use App\Http\Collection\GroupCollection;
+use App\Http\Resources\GroupResources;
+use App\Http\Requests\GroupRequest;
+use App\Http\Services\GroupServices;
 
 class GroupController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    use ResponseTrait;
+
+    public function index(Request $request)
     {
-        //
+        $limit = $request->limit ? $request->limit : 15;
+        
+        $data =  Group::filter()->search($request->search)->sortByField($request)->paginate($limit);
+
+        return new GroupCollection($data);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+    public function store(GroupRequest $request){
+        $data = $request->all();
+
+        $data = GroupServices::create($data);
+           
+        return $data; 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function show(Group $group_management)
     {
-        //
+        $data = new GroupResources($group_management);
+
+        return $this->success('Success', $data);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(GroupRequest $request, Group $group_management)
     {
-        //
+        $data = $request->all();
+
+        $data = GroupServices::update($group_management,$data);
+           
+        return $data; 
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function destroy(Group $group_management)
     {
-        //
+        $data = GroupServices::delete($group_management);
+           
+        return $data; 
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

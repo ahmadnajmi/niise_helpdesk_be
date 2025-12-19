@@ -2,59 +2,59 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Traits\ResponseTrait;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Traits\ResponseTrait;
+use App\Http\Services\AuthServices;
+use App\Http\Requests\AuthRequest;
 
 class AuthController extends Controller
 {
     use ResponseTrait;
 
-    /**
-     * Login
-     */
-    public function login(Request $request)
-    {
-        $username = $request->input('username');
-        $password = $request->input('password');
-
-        $request->validate([
-            'username' => 'required',
-            'password' => 'required',
-        ]);
-
-        // $user = User::where('ID', $username)->first();
-
-        $user = new User();
-        $user->ID = 'suhanims';
-        $user->EMAIL_ID = 'suhanims@heitech.com.my';
-        $user->name = 'SUHANI BINTI MOHD SUKOR';
-
-        // if(Auth::attempt(['ID' => $username, 'password' => $password])) {
-        if($user->count() > 0) {
-            // Auth::login($user);
-            // $token = Auth::user()->createToken('authToken')->accessToken;
-
-            $data = [
-                // 'user' => Auth::user(),
-                'user' => $user,
-                // 'token' => $token,
-            ];
-
-            return $this->success('Login successful.', $data);
-        } else {
-            return $this->error('Login failed. Invalid credentials.');
-        }
+    public function dashboard(Request $request){
+        return view('dashboard');
     }
 
-    /**
-     * Logout
-     */
-    public function logout()
-    {
-        Auth::logout();
-        return $this->success('Logout successful.');
+    public function login(Request $request){
+        $data = AuthServices::login($request);
+           
+        return $data;  
     }
 
+    public function logout(){
+       
+        $data = AuthServices::logout();
+           
+        return $data; 
+    }
+
+    public function logoutCallback(Request $request){
+       
+        $data = AuthServices::logoutCallback($request);
+           
+        return $data; 
+    }
+
+    public function authToken(Request $request){
+        $data = AuthServices::getToken();
+           
+        return $data; 
+    }
+
+    public function resetPassword(AuthRequest $request){
+        $data = $request->all();
+
+        $data = AuthServices::resetPassword($data);
+           
+        return $data;
+    }
+
+    public function updatePassword(AuthRequest $request){
+        $data = $request->all();
+
+        $data = AuthServices::updatePassword($data);
+           
+        return $data;
+
+    }
 }

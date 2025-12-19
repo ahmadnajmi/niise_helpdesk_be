@@ -2,75 +2,74 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Traits\ResponseTrait;
-use App\Models\Incident;
+
 use Illuminate\Http\Request;
+use App\Models\Incident;
+use App\Http\Traits\ResponseTrait;
+use App\Http\Collection\IncidentCollection;
+use App\Http\Resources\IncidentResources;
+use App\Http\Requests\IncidentRequest;
+use App\Http\Services\IncidentServices;
+use Illuminate\Support\Facades\Storage;
 
 class IncidentController extends Controller
 {
     use ResponseTrait;
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
-        if(isset($request->perPage)) {
-            $perPage = $request->perPage;
-        } else {
-            $perPage = 10;
+        $data = IncidentServices::index($request);
+
+        return new IncidentCollection($data);
+    }
+
+    public function store(IncidentRequest $request)
+    {
+        $data = $request->all();
+
+        $data = IncidentServices::create($data,$request);
+
+        return $data; 
+    }
+
+    public function show(Incident $incident)
+    {
+        $data = IncidentServices::view($incident);
+
+        // $create = IncidentServices::checkPenalty($incident);
+
+        return $data;
+    }
+
+    public function update(IncidentRequest $request, Incident $incident)
+    {
+        $data = $request->all();
+
+        $data = IncidentServices::update($incident,$data,$request);
+
+        return $data;
+    }
+
+    public function destroy(Incident $incident)
+    {
+        $data = IncidentServices::delete($incident);
+
+        return $data;
+    }
+    
+    public function downloadFile($filename){
+        $filePath = 'incident/'.$filename; 
+
+        if (Storage::disk('local')->exists($filePath)) { 
+            return Storage::disk('local')->download($filePath);
         }
 
-        $incidents = Incident::orderBy('cm_log_no')->paginate($perPage);
-
-        return $this->success('Success', $incidents);
+        return $this->error('File not found');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    public function downloadAssetFile($incident_no){
+        $data = IncidentServices::downloadAssetFile($incident_no);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return $data;
     }
 }
