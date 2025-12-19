@@ -12,6 +12,7 @@ use App\Http\Requests\CompanyContractRequest;
 
 class CompanyContractController extends Controller
 {
+    //testing
     use ResponseTrait;
 
     public function index(Request $request)

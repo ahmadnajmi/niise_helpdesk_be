@@ -11,7 +11,7 @@ use App\Http\Services\ActionCodeServices;
 use App\Models\ActionCode;  
 
 class ActionCodeController extends Controller
-{//test
+{
     use ResponseTrait;
 
     public function index(Request $request)
