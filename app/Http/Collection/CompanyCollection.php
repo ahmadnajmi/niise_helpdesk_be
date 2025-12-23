@@ -18,6 +18,7 @@ class CompanyCollection extends BaseResource
                 'id' => $query->id,
                 'name' => $query->name,
                 'nickname'  =>$query->nickname,
+                'description' => $query->description,
                 'email' => $query->email,
                 'phone_no' => $query->phone_no,
                 'address' => $query->address,

@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::dropIfExists('complaint');
+        Schema::table('company_contracts', function (Blueprint $table) {
+            $table->string('contract_id',100)->nullable();
+        });
     }
 
     /**
@@ -19,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('complaint');
+        Schema::table('company_contracts', function (Blueprint $table) {
+            $table->dropColumn('contract_id');
+        });
     }
 };

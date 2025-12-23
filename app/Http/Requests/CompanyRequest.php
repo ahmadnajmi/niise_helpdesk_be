@@ -38,6 +38,7 @@ class CompanyRequest extends FormRequest
             'city' => 'nullable',
             'state_id' => 'nullable',
             'fax_no' => 'nullable',
+            'description' => 'nullable'
         ];
     }
 

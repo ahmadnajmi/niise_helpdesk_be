@@ -60,7 +60,7 @@ class ActionCodeSeeder extends Seeder
                 'description' => 'Kemaskini status terkini',
                 'send_email' => 1,
                 'email_recipient_id' => 1,
-                'role_id' => [$frontliner]
+                'role_id' => [$frontliner,$contractor]
 
             ],
             [

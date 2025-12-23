@@ -30,6 +30,7 @@ class CompanyContractRequest extends FormRequest
             'start_date' => 'nullable',
             'end_date' => 'nullable',
             'company_id' => 'required',
+            'contractor_id' => 'required',
             'is_active' => 'nullable'
         ];
     }

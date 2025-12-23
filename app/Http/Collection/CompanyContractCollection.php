@@ -20,6 +20,7 @@ class CompanyContractCollection extends BaseResource
                 'start_date'=> $query->start_date?->format('Y-m-d'),
                 'end_date'=> $query->end_date?->format('Y-m-d'),
                 'company_id'=> $query->company_id,
+                'contractor_id'=> $query->contractor_id,
                 'is_active'=> $query->is_active,
                 'created_at' => $query->created_at->format('d-m-Y'),
                 'updated_at' => $query->updated_at->format('d-m-Y'),
