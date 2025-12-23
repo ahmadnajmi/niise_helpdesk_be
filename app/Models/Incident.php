@@ -62,7 +62,8 @@ class Incident extends BaseModel
         'information' => 'information',
         'branch' => 'branch.name', 
         'severity' => 'sla.slaTemplate.severityDescription.name',
-        'phone_no' => 'complaint.phone_no'
+        'phone_no' => 'complaint.phone_no',
+        'status' => 'status.statusDesc.name',
     ];
 
     const OPEN = 1;
@@ -247,6 +248,13 @@ class Incident extends BaseModel
                         $query->leftJoin('user', 'user.id', '=', 'incidents.complaint_user_id')
                                 ->select('incidents.*')
                                 ->orderBy("user.$column", $direction);
+                    }
+                    elseif($field === 'status') {
+                        $query->leftJoin('ref_table', function ($join) {
+                            $join->on('ref_table.ref_code', '=', 'incidents.status')
+                                ->where('ref_table.code_category', '=', 'incident_status');
+                        })
+                        ->orderByRaw("LOWER(ref_table.name) {$direction}");
                     }
                 } 
                
