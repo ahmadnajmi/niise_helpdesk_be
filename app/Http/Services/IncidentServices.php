@@ -680,8 +680,8 @@ class IncidentServices
 
     private static function is24HourOperation($operating_times) {
         foreach ($operating_times as $op) {
-            if ($op->operation_start === '00:00:00' && 
-                (in_array($op->operation_end, ['23:59:00', '23:59:59']))) {
+            if ($op->operation_start === '00:00' && 
+                (in_array($op->operation_end, ['23:59', '23:59:59']))) {
                 return true;
             }
         }
