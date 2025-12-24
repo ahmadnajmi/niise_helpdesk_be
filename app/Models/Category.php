@@ -37,7 +37,7 @@ class Category extends BaseModel
     }
 
     public function sla(){
-        return $this->hasMany(Sla::class, 'category_id','id');
+        return $this->hasOne(Sla::class, 'category_id','id');
     }
 
     public function incidents(){
