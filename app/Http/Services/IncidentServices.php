@@ -438,20 +438,24 @@ class IncidentServices
         $operating_times = self::getOperatingTime($data['branch_id']);
         $public_holidays = self::getPublicHoliday($data['branch_id']);
 
-        $incident_date = self::shiftToNextWorkingPeriod($incident_date, $operating_times, $public_holidays);
+        $is24Hour = self::is24HourOperation($operating_times);
+
+        $incident_date = self::shiftToNextWorkingPeriod($incident_date, $operating_times, $public_holidays,$is24Hour);
 
         Log::info('SLA Type Check', [
             'resolution_time_type' => $sla->resolution_time_type,
             'resolution_time' => $sla->resolution_time,
-            'is_day_type' => $sla->resolution_time_type == SlaTemplate::SLA_TYPE_DAY
+            'is_day_type' => $sla->resolution_time_type == SlaTemplate::SLA_TYPE_DAY,
+            'is_24_hour_operation' => $is24Hour
         ]);
+
         if ($sla->resolution_time_type == SlaTemplate::SLA_TYPE_DAY) {
-            $due_date = self::calculateDueDateByDays($incident_date, (int)$sla->resolution_time, $operating_times, $public_holidays,$incident_no);
+            $due_date = self::calculateDueDateByDays($incident_date, (int)$sla->resolution_time, $operating_times, $public_holidays,$incident_no,$is24Hour);
         }
         else{
             $sla_minutes = $sla->resolution_time_type == SlaTemplate::SLA_TYPE_HOUR ? (int)$sla->resolution_time * 60  : (int)$sla->resolution_time;
 
-            $due_date =  self::calculateDueDateByMinutes($incident_date, $sla_minutes, $operating_times, $public_holidays,$incident_no);
+            $due_date =  self::calculateDueDateByMinutes($incident_date, $sla_minutes, $operating_times, $public_holidays,$incident_no,$is24Hour);
         }
 
         return $due_date;
@@ -471,14 +475,14 @@ class IncidentServices
         return $operation_start > $operation_end;
     }
 
-    private static function shiftToNextWorkingPeriod($date, $operating_times, $public_holidays){
+    private static function shiftToNextWorkingPeriod($date, $operating_times, $public_holidays,$is24Hour = false){
         $loop_guard = 0;
 
         while ($loop_guard++ < 365) {
             $date_str = $date->toDateString();
             $current_day = $date->isoWeekday();
 
-            if (in_array($date_str, $public_holidays)) {
+            if (!$is24Hour && in_array($date_str, $public_holidays)) {
                 $date->addDay()->startOfDay();
                 continue;
             }
@@ -509,7 +513,7 @@ class IncidentServices
         return $date; 
     }
 
-    private static function calculateDueDateByMinutes($date, $sla_minutes, $operating_times, $public_holidays, $incident_no){
+    private static function calculateDueDateByMinutes($date, $sla_minutes, $operating_times, $public_holidays, $incident_no,$is24Hour = false){
         $loop_guard = 0;
 
         $logs = [
@@ -517,11 +521,12 @@ class IncidentServices
             'type' => 'minutes',
             'start_date' => $date->format('l, d F Y h:i A'),
             'sla_minutes' => $sla_minutes,
+            'is_24_hour_operation' => $is24Hour,
             'steps' => []
         ];
 
         while ($sla_minutes > 0 && $loop_guard++ < 365) {
-            $date = self::shiftToNextWorkingPeriod($date, $operating_times, $public_holidays);
+            $date = self::shiftToNextWorkingPeriod($date, $operating_times, $public_holidays,$is24Hour);
 
             $current_day = $date->isoWeekday();
             
@@ -585,7 +590,7 @@ class IncidentServices
         return $date;
     }
 
-    private static function calculateDueDateByDays($date, $sla_days, $operating_times, $public_holidays, $incident_no){
+    private static function calculateDueDateByDays($date, $sla_days, $operating_times, $public_holidays, $incident_no,$is24Hour = false){
         $loop_guard = 0;
         $startTime = $date->format('H:i:s'); 
         $date = $date->copy()->addDay()->startOfDay();
@@ -595,11 +600,12 @@ class IncidentServices
             'type' => 'Days',
             'step' => 'start',
             'start_date' => $date->format('l, d F Y h:i A'),
+            'is_24_hour_operation' => $is24Hour,
             'sla_days' => $sla_days
         ];
 
         while ($sla_days > 0 && $loop_guard++ < 365){
-            $date = self::shiftToNextWorkingPeriod($date, $operating_times, $public_holidays);
+            $date = self::shiftToNextWorkingPeriod($date, $operating_times, $public_holidays,$is24Hour);
 
             $current_day = $date->isoWeekday();
 
@@ -670,6 +676,16 @@ class IncidentServices
         }
 
         return $date;
+    }
+
+    private static function is24HourOperation($operating_times) {
+        foreach ($operating_times as $op) {
+            if ($op->operation_start === '00:00:00' && 
+                (in_array($op->operation_end, ['23:59:00', '23:59:59']))) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
