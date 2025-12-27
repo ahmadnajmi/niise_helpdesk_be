@@ -182,7 +182,6 @@ class ReportServices
             'report_format' => $fileExtension == 'csv' ? 'excel' : 'pdf',
             'parameters' => $parameter
         ]; 
-        dd($data);
         $generate = self::callApi('jasper','reports/generate','POST',$data);
         
         return $generate;
