@@ -172,7 +172,7 @@ class ReportServices
             "user_name" => Auth::user()->name,
         ];
 
-        if($chart_image){
+        if($chart_image && $request->report_category != 'TO_BREACH' && $request->report_category != 'STATUS'){
             $parameter['graph_picture'] = $chart_image;
         }
 
@@ -182,7 +182,7 @@ class ReportServices
             'report_format' => $fileExtension,
             'parameters' => $parameter
         ]; 
-              
+
         $generate = self::callApi('jasper','reports/generate','POST',$data);
         
         return $generate;
