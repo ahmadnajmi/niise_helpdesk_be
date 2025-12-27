@@ -162,7 +162,7 @@ class ReportServices
 
         $file = $report ? $report->file_name : 'outstanding';
        
-        $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'csv' ;
+        $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'excel' ;
 
         $chart_image = $this->uploadDoc($request);
 
