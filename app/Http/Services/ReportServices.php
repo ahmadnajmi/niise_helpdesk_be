@@ -160,27 +160,30 @@ class ReportServices
 
         $report = Report::where('code',$request->report_category)->first();
 
-        $file = $report ? $report->file_name : 'unattendedDailyReport';
+        $file = $report ? $report->file_name : 'outstanding';
        
         $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'csv' ;
 
         $chart_image = $this->uploadDoc($request);
 
         $parameter  = [
-            "logo_background" => $this->beUrl."/background.png",
-            "logo_tittle" => $this->beUrl."/logo_immigration.png",
+            "logo_background" => public_path("background.png"),
+            "logo_tittle" => public_path("logo_immigration.png"),
             "user_name" => Auth::user()->name,
-            "graph_picture" => $chart_image,
         ];
+
+        if($chart_image){
+            $parameter['graph_picture'] = $chart_image;
+        }
 
         $data = [
             'reportTemplate' => $file.'/'.$file.'.jasper',
-            'outputFileName' => $request->name.'.'.$fileExtension,
-            'reportTitle' => $request->tittle,
+            'outputFileName' => $report->file_name.'.'.$fileExtension,
             'report_format' => $fileExtension,
             'parameters' => $parameter
-        ];        
-        $generate = self::callApi('jasper','testing/generate','POST',$data);
+        ]; 
+              
+        $generate = self::callApi('jasper','reports/generate','POST',$data);
         
         return $generate;
     }
@@ -189,8 +192,7 @@ class ReportServices
         
         $destination = storage_path('app/public/report'); 
 
-        $file_name = asset("empty.png");
-        $file_name = '/var/www/html/helpdesk/jasper_report/reports/empty.png';
+        $file_name = null;
 
         if (!file_exists($destination)) {
             mkdir($destination, 0777, true);
@@ -207,10 +209,8 @@ class ReportServices
         
             file_put_contents($destination . '/' . $file_name, $fileContents);
 
-            $file_name = asset('storage/report/' . $file_name);
-        }
-        // $file_name = $this->beUrl."/empty.png";
-        
+            $file_name = public_path('storage/report/' . $file_name);
+        }        
         return $file_name;
     }
 }

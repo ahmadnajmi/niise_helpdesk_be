@@ -21,8 +21,8 @@ class ReportSeeder extends Seeder
         } 
 
         $reports = [
-            ["code" => "IDLE", "file_name" => "unattendedDailyReport"],
-            ["code" => "OUTSTANDING", "file_name" => "OutstandingReport"],
+            ["code" => "IDLE", "file_name" => "idle_report"],
+            ["code" => "OUTSTANDING", "file_name" => "outstanding"],
             ["code" => "TO_BREACH","file_name" => "to_be_breach_report"],
             ["code" => "STATUS" ,"file_name" => "sla_breach_report"],
         ];
