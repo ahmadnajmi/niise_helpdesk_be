@@ -162,7 +162,7 @@ class ReportServices
 
         $file = $report ? $report->file_name : 'outstanding';
        
-        $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'excel' ;
+        $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'csv' ;
 
         $chart_image = $this->uploadDoc($request);
 
@@ -179,10 +179,10 @@ class ReportServices
         $data = [
             'reportTemplate' => $file.'/'.$file.'.jasper',
             'outputFileName' => $report->file_name.'.'.$fileExtension,
-            'report_format' => $fileExtension,
+            'report_format' => $fileExtension == 'csv' ? 'excel' : 'pdf',
             'parameters' => $parameter
         ]; 
-
+        dd($data);
         $generate = self::callApi('jasper','reports/generate','POST',$data);
         
         return $generate;
