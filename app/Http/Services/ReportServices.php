@@ -10,6 +10,8 @@ use App\Models\Incident;
 use App\Models\SlaTemplate;
 use App\Models\RefTable;
 use App\Models\Report;
+use App\Models\User;
+use App\Models\Role;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use App\Http\Traits\ApiTrait;
@@ -17,12 +19,16 @@ use App\Http\Traits\ApiTrait;
 class ReportServices
 {
     use ApiTrait;
-    public function __construct(){
-        // $this->beUrl = config('app.url');
-        $this->beUrl = '/var/www/html/helpdesk/jasper_report/reports';
-    }
-
+ 
     public static function index($request){
+
+        $role = User::getUserRole(Auth::user()->id);
+
+        if($role?->role == Role::CONTRACTOR){
+            $request->merge([
+                'contractor_id' => Auth::user()->company_id
+            ]);
+        }
 
         $data['to_be_breach'] = self::toBeBreach($request);
         $data['total_incident'] = self::totalIncident($request);
@@ -55,7 +61,7 @@ class ReportServices
                                         return $query->where('branch_id',$request->branch_id);
                                     })
                                     ->when($request->contractor_id, function ($query)use($request) {
-                                        return $query->where('group_id',$request->contractor_id);
+                                        return $query->where('assign_group_id',$request->contractor_id);
                                     })
                                     ->where('category_id',$category->id)
                                     ->get();
@@ -85,7 +91,7 @@ class ReportServices
                                         return $query->where('branch_id',$request->branch_id);
                                     })
                                     ->when($request->contractor_id, function ($query)use($request) {
-                                        return $query->where('group_id',$request->contractor_id);
+                                        return $query->where('assign_group_id',$request->contractor_id);
                                     })
                                     ->count();
 
@@ -107,7 +113,7 @@ class ReportServices
                                 $query->where('branch_id', $request->branch_id);
                             }
                             if ($request->contractor_id) {
-                                $query->where('group_id', $request->contractor_id);
+                                $query->where('assign_group_id', $request->contractor_id);
                             }
                         }])
                         ->get()
@@ -133,7 +139,7 @@ class ReportServices
                                         return $query->where('branch_id',$request->branch_id);
                                     })
                                     ->when($request->contractor_id, function ($query)use($request) {
-                                        return $query->where('group_id',$request->contractor_id);
+                                        return $query->where('assign_group_id',$request->contractor_id);
                                     })
                                     ->groupBy('category_id')
                                     ->pluck('total', 'category_id'); 
@@ -171,6 +177,8 @@ class ReportServices
             "logo_tittle" => public_path("logo_immigration.png"),
             "user_name" => Auth::user()->name,
         ];
+
+        $parameter = array_merge($request->only(['start_date', 'end_date','branch_id','severity_id','status','state_id','company_id']), $parameter);
 
         if($chart_image && $request->report_category != 'TO_BREACH' && $request->report_category != 'STATUS'){
             $parameter['graph_picture'] = $chart_image;
