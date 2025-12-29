@@ -44,8 +44,8 @@ class ReportServices
                                 // ->whereDoesntHave('childCategory')
                                 ->whereHas('incidents', function ($query) use ($request){
                                     $query->where('status',Incident::OPEN)
-                                            ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
-                                            // ->whereDate('expected_end_date', '>', now())
+                                            ->whereDate('expected_end_date', '<=', now()->addDays(4))
+                                            ->whereDate('expected_end_date', '>', now())
                                             ->when($request->branch_id, function ($query)use($request) {
                                                 return $query->where('branch_id',$request->branch_id);
                                             })
@@ -78,8 +78,8 @@ class ReportServices
                                     })
                                     ->where('category_id',$category->id)
                                     ->where('status',Incident::OPEN)
-                                    ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
-                                    // ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay())
+                                    ->whereDate('expected_end_date', '<=', now()->addDays(4))
+                                    ->whereDate('expected_end_date', '>', now())
                                     ->get();
 
             $counts = $get_incident->groupBy('sla.slaTemplate.severity_id')->map->count();
@@ -101,8 +101,10 @@ class ReportServices
         $get_category = Category::whereDoesntHave('childCategory')
                                 ->whereHas('incidents', function ($query) use ($request) {
                                     $query->whereIn('status',[Incident::OPEN,Incident::TEMPORARY_FIX,Incident::RESOLVED,Incident::ON_HOLD])
-                                            ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
-                                            ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay())
+                                            ->whereHas('incidentResolutionLatest', function ($query) use ($request) {
+                                                    $query->whereDate('expected_end_date', '<=', now()->addDays(4))
+                                                    ->whereDate('expected_end_date', '>', now());
+                                            })
                                             ->when($request->branch_id, function ($query)use($request) {
                                                 return $query->where('branch_id',$request->branch_id);
                                             })
@@ -121,10 +123,10 @@ class ReportServices
                                     ->when($request->contractor_id, function ($query)use($request) {
                                         return $query->where('assign_group_id',$request->contractor_id);
                                     })
-                                    ->whereHas('incidents', function ($query) use ($request) {
-                                        $query->whereIn('status',[Incident::OPEN,Incident::TEMPORARY_FIX,Incident::RESOLVED,Incident::ON_HOLD])
-                                              ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
-                                              ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay());
+                                    ->whereIn('status',[Incident::OPEN,Incident::TEMPORARY_FIX,Incident::RESOLVED,Incident::ON_HOLD])
+                                    ->whereHas('incidentResolutionLatest', function ($query) use ($request) {
+                                        $query->whereDate('expected_end_date', '<=', now()->addDays(4))
+                                        ->whereDate('expected_end_date', '>', now());
                                     })
                                     ->count();
 
