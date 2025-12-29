@@ -24,7 +24,7 @@ class ReportSeeder extends Seeder
             ["code" => "IDLE", "file_name" => "idle_report"],
             ["code" => "OUTSTANDING", "file_name" => "outstanding"],
             ["code" => "TO_BREACH","file_name" => "to_be_breach_report"],
-            ["code" => "STATUS" ,"file_name" => "sla_breach_report"],
+            ["code" => "SLA_BREACH" ,"file_name" => "sla_breach_report"],
         ];
 
         foreach($reports as $report){
