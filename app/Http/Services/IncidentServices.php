@@ -111,10 +111,9 @@ class IncidentServices
 
             $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
 
-            $create = $incident->update($data);
-
             if($incident->status == Incident::CLOSED){
                 $incident->workbasket?->delete();
+                $data['actual_end_date'] = Carbon::now();
 
                 $trigger_workbasket = [
                     'frontliner' => false,
@@ -126,6 +125,8 @@ class IncidentServices
 
                 // self::calculatePenalty($incident);
             }
+
+            $create = $incident->update($data);
 
             $create_document = self::uploadDoc($data,$incident);
 
