@@ -15,7 +15,10 @@ class User extends Authenticatable
     use HasApiTokens;
 
     protected $table = 'users';
-
+    public $incrementing = false;
+    protected $keyType = 'string';
+    public $usesUuid = true;
+    
     protected $fillable = [
         'ic_no',
         'name',
@@ -42,6 +45,16 @@ class User extends Authenticatable
     const FROM_IDM = 1;
     const FROM_HDS = 2;
     const FROM_COMPLAINT = 3;
+
+    protected static function boot() {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (property_exists($model, 'usesUuid') && $model->usesUuid && empty($model->{$model->getKeyName()})) {
+                $model->{$model->getKeyName()} = (string) Str::orderedUuid();
+            }
+        });
+    }
 
     protected static $sortable = [
         'name' => 'name',

@@ -198,6 +198,13 @@ class BaseModel extends Model implements Auditable
                     $model->updated_by = 1;
                 }
             }
+
+            if (property_exists($model, 'usesUuid') && $model->usesUuid && empty($model->{$model->getKeyName()}) ) {
+                $uuid = (string) Str::orderedUuid();
+                $model->{$model->getKeyName()} = $uuid;
+                
+                $model->setAttribute($model->getKeyName(), $uuid);
+            }
             
         });
 

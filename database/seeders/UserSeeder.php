@@ -22,9 +22,9 @@ class UserSeeder extends Seeder
         
         // DB::statement("ALTER SEQUENCE USER_ROLE_ID_SEQ RESTART START WITH 1");
 
-        if (DB::getDriverName() === 'oracle') {
-            DB::statement("ALTER SEQUENCE USERS_ID_SEQ RESTART START WITH 1");
-        }
+        // if (DB::getDriverName() === 'oracle') {
+        //     DB::statement("ALTER SEQUENCE USERS_ID_SEQ RESTART START WITH 1");
+        // }
 
         Excel::import(new UsersImport, 'database/seeders/excel/user_niise_baru.xlsx');
     }
