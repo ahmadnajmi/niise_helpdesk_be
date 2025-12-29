@@ -218,7 +218,7 @@ class ReportServices
         $chart_image = $this->uploadDoc($request);
 
         $parameter  = [
-            "logo_background" => public_path("background.png"),
+            // "logo_background" => public_path("background.png"),
             "logo_tittle" => public_path("logo_immigration.png"),
             "user_name" => Auth::user()->name,
         ];
