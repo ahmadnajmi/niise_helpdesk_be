@@ -31,7 +31,7 @@ class ReportServices
         }
 
         $data['to_be_breach'] = self::toBeBreach($request);
-        $data['total_incident'] = self::totalIncident($request);
+        $data['total_incident'] = self::idleReport($request);
         $data['total_incident_status'] = self::totalIncidentStatus($request);
         $data['outstanding_incident'] = self::outstandingIncident($request);
 
@@ -40,7 +40,14 @@ class ReportServices
 
     public static function toBeBreach($request){
         $data = [];
-        $get_category = Category::select('id','category_id','name')->whereDoesntHave('childCategory')->get();
+        $get_category = Category::select('id','category_id','name')
+                                ->whereDoesntHave('childCategory')
+                                ->whereHas('incidents', function ($query){
+                                    $query->where('status',Incident::OPEN)
+                                          ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
+                                          ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay());
+                                })
+                                ->get();
 
         $severity = [SlaTemplate::SEVERITY_CRITICAL,SlaTemplate::SEVERITY_IMPORTANT,SlaTemplate::SEVERITY_MEDIUM];
 
@@ -54,7 +61,7 @@ class ReportServices
 
             $get_incident = Incident::with('sla.slaTemplate')
                                     ->whereHas('sla', function ($query)use($severity) {
-                                    $query->whereHas('slaTemplate', function ($query)use($severity) {
+                                        $query->whereHas('slaTemplate', function ($query)use($severity) {
                                             $query->whereIn('severity_id',$severity);});
                                     })
                                     ->when($request->branch_id, function ($query)use($request) {
@@ -64,6 +71,9 @@ class ReportServices
                                         return $query->where('assign_group_id',$request->contractor_id);
                                     })
                                     ->where('category_id',$category->id)
+                                    ->where('status',Incident::OPEN)
+                                    ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
+                                    ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay())
                                     ->get();
 
             $counts = $get_incident->groupBy('sla.slaTemplate.severity_id')->map->count();
@@ -80,9 +90,15 @@ class ReportServices
         return $data;
     }
 
-    public static function totalIncident($request){
+    public static function idleReport($request){
         $data = [];
-        $get_category = Category::whereDoesntHave('childCategory')->get();
+        $get_category = Category::whereDoesntHave('childCategory')
+                                ->whereHas('incidents', function ($query) {
+                                    $query->whereIn('status',[Incident::OPEN,Incident::TEMPORARY_FIX,Incident::RESOLVED,Incident::ON_HOLD])
+                                          ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
+                                          ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay());
+                                })
+                                ->get();
 
         foreach($get_category as $category){
 
@@ -92,6 +108,11 @@ class ReportServices
                                     })
                                     ->when($request->contractor_id, function ($query)use($request) {
                                         return $query->where('assign_group_id',$request->contractor_id);
+                                    })
+                                    ->whereHas('incidents', function ($query) {
+                                        $query->whereIn('status',[Incident::OPEN,Incident::TEMPORARY_FIX,Incident::RESOLVED,Incident::ON_HOLD])
+                                              ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
+                                              ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay());
                                     })
                                     ->count();
 
@@ -132,7 +153,12 @@ class ReportServices
         $data = [];
 
         $ref_tables = RefTable::where('code_category','severity')->orderBy('ref_code','asc')->get();
-        $get_category = Category::select('id','category_id','name')->whereDoesntHave('childCategory')->get();
+        $get_category = Category::select('id','category_id','name')
+                                ->whereDoesntHave('childCategory')
+                                ->whereHas('incidents', function ($query) {
+                                    $query->where('status',Incident::OPEN);
+                                })
+                                ->get();
 
         $incident_counts = Incident::select('category_id', DB::raw('COUNT(*) as total'))
                                     ->when($request->branch_id, function ($query)use($request) {
@@ -141,6 +167,7 @@ class ReportServices
                                     ->when($request->contractor_id, function ($query)use($request) {
                                         return $query->where('assign_group_id',$request->contractor_id);
                                     })
+                                    ->where('status',Incident::OPEN)
                                     ->groupBy('category_id')
                                     ->pluck('total', 'category_id'); 
 

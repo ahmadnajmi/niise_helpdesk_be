@@ -109,7 +109,7 @@ class DashboardServices
     
     public static function incidentFourDays($request){
 
-        $data['more_day'] = Incident::whereDate('expected_end_date', '<', now()->subDays(4)->startOfDay())
+        $data['more_day'] = Incident::whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
                                     ->where('status', '=', Incident::OPEN)
                                     ->applyFilters($request)
                                     ->count();
