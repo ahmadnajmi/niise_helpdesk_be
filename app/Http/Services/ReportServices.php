@@ -45,7 +45,7 @@ class ReportServices
                                 ->whereHas('incidents', function ($query) use ($request){
                                     $query->where('status',Incident::OPEN)
                                             ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
-                                            ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay())
+                                            // ->whereDate('expected_end_date', '>', now())
                                             ->when($request->branch_id, function ($query)use($request) {
                                                 return $query->where('branch_id',$request->branch_id);
                                             })
@@ -79,7 +79,7 @@ class ReportServices
                                     ->where('category_id',$category->id)
                                     ->where('status',Incident::OPEN)
                                     ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
-                                    ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay())
+                                    // ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay())
                                     ->get();
 
             $counts = $get_incident->groupBy('sla.slaTemplate.severity_id')->map->count();
