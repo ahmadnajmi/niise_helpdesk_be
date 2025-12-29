@@ -41,7 +41,7 @@ class ReportServices
     public static function toBeBreach($request){
         $data = [];
         $get_category = Category::select('id','category_id','name')
-                                ->whereDoesntHave('childCategory')
+                                // ->whereDoesntHave('childCategory')
                                 ->whereHas('incidents', function ($query) use ($request){
                                     $query->where('status',Incident::OPEN)
                                             ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
