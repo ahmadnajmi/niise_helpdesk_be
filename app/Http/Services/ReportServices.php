@@ -42,10 +42,16 @@ class ReportServices
         $data = [];
         $get_category = Category::select('id','category_id','name')
                                 ->whereDoesntHave('childCategory')
-                                ->whereHas('incidents', function ($query){
+                                ->whereHas('incidents', function ($query) use ($request){
                                     $query->where('status',Incident::OPEN)
-                                          ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
-                                          ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay());
+                                            ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
+                                            ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay())
+                                            ->when($request->branch_id, function ($query)use($request) {
+                                                return $query->where('branch_id',$request->branch_id);
+                                            })
+                                            ->when($request->contractor_id, function ($query)use($request) {
+                                                return $query->where('assign_group_id',$request->contractor_id);
+                                            });
                                 })
                                 ->get();
 
@@ -93,10 +99,16 @@ class ReportServices
     public static function idleReport($request){
         $data = [];
         $get_category = Category::whereDoesntHave('childCategory')
-                                ->whereHas('incidents', function ($query) {
+                                ->whereHas('incidents', function ($query) use ($request) {
                                     $query->whereIn('status',[Incident::OPEN,Incident::TEMPORARY_FIX,Incident::RESOLVED,Incident::ON_HOLD])
-                                          ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
-                                          ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay());
+                                            ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
+                                            ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay())
+                                            ->when($request->branch_id, function ($query)use($request) {
+                                                return $query->where('branch_id',$request->branch_id);
+                                            })
+                                            ->when($request->contractor_id, function ($query)use($request) {
+                                                return $query->where('assign_group_id',$request->contractor_id);
+                                            });
                                 })
                                 ->get();
 
@@ -109,7 +121,7 @@ class ReportServices
                                     ->when($request->contractor_id, function ($query)use($request) {
                                         return $query->where('assign_group_id',$request->contractor_id);
                                     })
-                                    ->whereHas('incidents', function ($query) {
+                                    ->whereHas('incidents', function ($query) use ($request) {
                                         $query->whereIn('status',[Incident::OPEN,Incident::TEMPORARY_FIX,Incident::RESOLVED,Incident::ON_HOLD])
                                               ->whereDate('expected_end_date', '<=', now()->subDays(4)->startOfDay())
                                               ->whereDate('expected_end_date', '>', now()->subDays(4)->startOfDay());
@@ -155,8 +167,14 @@ class ReportServices
         $ref_tables = RefTable::where('code_category','severity')->orderBy('ref_code','asc')->get();
         $get_category = Category::select('id','category_id','name')
                                 ->whereDoesntHave('childCategory')
-                                ->whereHas('incidents', function ($query) {
-                                    $query->where('status',Incident::OPEN);
+                                ->whereHas('incidents', function ($query) use ($request) {
+                                    $query->where('status',Incident::OPEN)
+                                        ->when($request->branch_id, function ($query)use($request) {
+                                            return $query->where('branch_id',$request->branch_id);
+                                        })
+                                        ->when($request->contractor_id, function ($query)use($request) {
+                                            return $query->where('assign_group_id',$request->contractor_id);
+                                        });
                                 })
                                 ->get();
 
