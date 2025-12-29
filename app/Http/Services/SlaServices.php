@@ -3,6 +3,7 @@
 namespace App\Http\Services;
 use App\Models\Sla;
 use App\Models\Category;
+use App\Models\Branch;
 use App\Http\Resources\SlaResources;
 use App\Http\Traits\ResponseTrait;
 
@@ -12,7 +13,7 @@ class SlaServices
 
     public static function create($data){
         // try{
-            $sla_id = $messages = [];
+            $sla_id = $messages = $validBranches =  [];
 
             foreach($data['sla_category'] as $sla_category){
                 foreach($data['branch_id'] as $branch_id){
@@ -52,7 +53,7 @@ class SlaServices
                 $code = 200;
             } 
             else{
-                $message =  __('sla.message.sla_exists');
+                $message = $messages;
                 $data = null;
                 $code = 500;
             }   
