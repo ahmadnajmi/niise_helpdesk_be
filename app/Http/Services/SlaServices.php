@@ -15,8 +15,14 @@ class SlaServices
         // try{
             $sla_id = $messages = $validBranches =  [];
 
+            $branchIds = $data['branch_id'];
+
+            if (is_string($branchIds)) {
+                $branchIds = json_decode($branchIds, true);
+            }
+
             foreach($data['sla_category'] as $sla_category){
-                foreach($data['branch_id'] as $branch_id){
+                foreach($branchIds as $branch_id){
                     $sla_exists = Sla::where('category_id',$sla_category)
                                 ->where(function ($q) use ($branch_id) {
                                     $q->orWhereRaw(
