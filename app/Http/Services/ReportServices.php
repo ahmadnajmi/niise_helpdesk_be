@@ -102,7 +102,7 @@ class ReportServices
                                 ->whereHas('incidents', function ($query) use ($request) {
                                     $query->whereIn('status',[Incident::OPEN,Incident::TEMPORARY_FIX,Incident::RESOLVED,Incident::ON_HOLD])
                                             ->whereHas('incidentResolutionLatest', function ($query) use ($request) {
-                                                    $query->whereDate('updated_at', '<', now()->addDays(4));
+                                                    $query->whereDate('updated_at', '<', now()->subDays(4));
                                             })
                                             ->when($request->branch_id, function ($query)use($request) {
                                                 return $query->where('branch_id',$request->branch_id);
@@ -124,7 +124,7 @@ class ReportServices
                                     })
                                     ->whereIn('status',[Incident::OPEN,Incident::TEMPORARY_FIX,Incident::RESOLVED,Incident::ON_HOLD])
                                     ->whereHas('incidentResolutionLatest', function ($query) use ($request) {
-                                        $query->whereDate('updated_at', '<', now()->addDays(4));
+                                        $query->whereDate('updated_at', '<', now()->subDays(4));
                                     })
                                     ->count();
 
