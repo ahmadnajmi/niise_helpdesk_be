@@ -16,9 +16,7 @@ Deploy Staging:
     - npm install
     - php artisan optimize
     - npm run build
-    - chgrp -R www-data storage bootstrap/cache public/build
     - chmod -R 775 storage bootstrap/cache
-    - chmod -R 755 public/build
     - php artisan migrate --force
     - php artisan migrate --path=database/migrations/alter_table --force
   when: manual
@@ -40,9 +38,7 @@ Deploy Preprod 1 SIT:
     - npm install
     - php artisan optimize
     - npm run build
-    - chgrp -R www-data storage bootstrap/cache public/build
     - chmod -R 775 storage bootstrap/cache
-    - chmod -R 755 public/build
     - php artisan migrate --force
     - echo "Pre Prod 1 - SIT deployment completed!"
     - php artisan migrate --path=database/migrations/alter_table --force
@@ -65,9 +61,7 @@ Deploy Preprod 1 INTERIM:
     - npm install
     - php artisan optimize
     - npm run build
-    - chgrp -R www-data storage bootstrap/cache public/build
     - chmod -R 775 storage bootstrap/cache
-    - chmod -R 755 public/build
     - php artisan migrate --force
     - echo "Pre Prod 1 - INTERIM deployment completed!"
     - php artisan migrate --path=database/migrations/alter_table --force
@@ -90,9 +84,7 @@ Deploy Preprod 2 SIT:
     - npm install
     - php artisan optimize
     - npm run build
-    - chgrp -R www-data storage bootstrap/cache public/build
     - chmod -R 775 storage bootstrap/cache
-    - chmod -R 755 public/build
     - php artisan migrate --force
     - echo "Pre Prod 2 - SIT deployment completed!"
     - php artisan migrate --path=database/migrations/alter_table --force
@@ -115,9 +107,7 @@ Deploy Production 1:
     - npm install
     - php artisan optimize
     - npm run build
-    - chgrp -R www-data storage bootstrap/cache public/build
     - chmod -R 775 storage bootstrap/cache
-    - chmod -R 755 public/build
     - php artisan migrate --force
     - echo "Production 1 - deployment completed!"
     - php artisan migrate --path=database/migrations/alter_table --force
@@ -140,9 +130,7 @@ Deploy Production 2:
     - npm install
     - php artisan optimize
     - npm run build
-    - chgrp -R www-data storage bootstrap/cache public/build
     - chmod -R 775 storage bootstrap/cache
-    - chmod -R 755 public/build
     - php artisan migrate --force
     - echo "Production 2 - deployment completed!"
     - php artisan migrate --path=database/migrations/alter_table --force
