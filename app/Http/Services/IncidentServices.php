@@ -123,7 +123,7 @@ class IncidentServices
                 ];
                 event(new WorkbasketUpdated($incident,$trigger_workbasket));
 
-                // self::calculatePenalty($incident);
+                self::checkPenalty($incident);
             }
 
             $create = $incident->update($data);
