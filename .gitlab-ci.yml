@@ -98,7 +98,7 @@ Deploy Production 1:
   script:
     - echo "Deploying to Production 1 ..."
     - cd /var/www/html/helpdesk/be  
-    - git pull origin staging
+    - git pull origin main
     - rm -rf node_modules package-lock.json
     - npm install
     - php artisan optimize
@@ -108,7 +108,7 @@ Deploy Production 1:
     - php artisan migrate --path=database/migrations/alter_table --force
   when: manual
   only:
-    - staging
+    - main
   environment:
     name: production1
 
@@ -120,7 +120,7 @@ Deploy Production 2:
   script:
     - echo "Deploying to Production 2 ..."
     - cd /var/www/html/helpdesk/be  
-    - git pull origin staging
+    - git pull origin main
     - rm -rf node_modules package-lock.json
     - npm install
     - php artisan optimize
@@ -130,7 +130,7 @@ Deploy Production 2:
     - php artisan migrate --path=database/migrations/alter_table --force
   when: manual
   only:
-    - staging
+    - main
   environment:
     name: production2
 

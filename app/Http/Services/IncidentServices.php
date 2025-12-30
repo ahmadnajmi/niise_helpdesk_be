@@ -296,6 +296,8 @@ class IncidentServices
         if (!file_exists($destination)) {
             mkdir($destination, 0777, true);
         }
+        
+        $disk = config('filesystems.default');
 
         foreach($data as $document){
             if($document instanceof \Illuminate\Http\UploadedFile && $document->isValid()) {
@@ -304,7 +306,6 @@ class IncidentServices
                 $file_name = time() . '_' . Str::random(10).'.'.$mimeType;
 
                 $path = 'incident/'.$folder.'/'.$file_name;
-                $disk = config('filesystems.default');
 
                 Storage::disk($disk)->put(
                     $path,
