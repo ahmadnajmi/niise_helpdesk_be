@@ -23,7 +23,7 @@
                 </div>
             </form>
         </div>
-        @if(isset($get_incident))
+        @if(isset($incident))
         <div class="max-w-7xl mx-auto sm:px-12 lg:px-8">
             <div class="flex gap-8">
                 
@@ -33,54 +33,65 @@
                         <tr>
                             <td class="px-4"> Incident  No</td>
                             <td> : </td>
-                            <td class="px-4"> {{ $get_incident->incident_no }}</td>
+                            <td class="px-4"> {{ $incident->incident_no }}</td>
                         </tr>
                         <tr>
                             <td class="px-4"> State </td>
                             <td> : </td>
-                            <td class="px-4"> {{ $get_incident->branch?->stateDescription?->name }}</td>
+                            <td class="px-4"> {{ $incident->branch?->stateDescription?->name }}</td>
                         </tr>
                         <tr>
                             <td class="px-4"> Branch </td>
                             <td> : </td>
-                            <td class="px-4"> {{ $get_incident->branch?->name }}</td>
+                            <td class="px-4"> {{ $incident->branch?->name }}</td>
                         </tr>
                         <tr>
                             <td class="px-4"> Incident Date </td>
                             <td> : </td>
-                            <td class="px-4"> {{ $get_incident->incident_date->format('d F Y h:i A') }}</td>
+                            <td class="px-4"> {{ $incident->incident_date->format('d F Y h:i A') }}</td>
                         </tr>
                         <tr>
                             <td class="px-4"> Expected Due Date </td>
                             <td> : </td>
-                            <td class="px-4"> {{ $get_incident->expected_end_date?->format('d F Y h:i A') }}</td>
+                            <td class="px-4"> {{ $incident->expected_end_date?->format('d F Y h:i A') }}</td>
                         </tr>
                         <tr>
                             <td class="px-4"> Actual Due Date </td>
                             <td> : </td>
-                            <td class="px-4"> {{ $get_incident->actual_end_date?->format('d F Y h:i A') }}</td>
+                            <td class="px-4"> {{ $incident->actual_end_date?->format('d F Y h:i A') }}</td>
                         </tr>
                         
                         <tr>
                             <td class="px-4"> SLA CODE </td>
                             <td> : </td>
-                            <td class="px-4"> {{ $get_incident->code_sla }}</td>
+                            <td class="px-4"> {{ $incident->code_sla }}</td>
                         </tr>
                         <tr>
                             <td class="px-4"> SLA Response Time </td>
                             <td> : </td>
-                            <td class="px-4"> {{ $get_incident->slaVersion?->response_time.' '.$get_incident->slaVersion?->responseTimeTypeDescription?->name }}  </td>
+                            <td class="px-4"> {{ $incident->slaVersion?->response_time.' '.$incident->slaVersion?->responseTimeTypeDescription?->name }}  </td>
                         </tr>
                         <tr>
                             <td class="px-4"> SLA Resolution Time </td>
                             <td> : </td>
-                            <td class="px-4"> {{ $get_incident->slaVersion?->resolution_time.' '.$get_incident->slaVersion?->resolutionTimeTypeDescription?->name }}  </td>
+                            <td class="px-4"> {{ $incident->slaVersion?->resolution_time.' '.$incident->slaVersion?->resolutionTimeTypeDescription?->name }}  </td>
                         </tr>
                         <tr>
                             <td class="px-4"> Renew Generate Due Date </td>
                             <td> : </td>
                             <td class="px-4"> {{ $generate_due_date?->format('d F Y h:i A') }}</td>
                         </tr>
+                        <tr>
+                            <td class="px-4"> Total Response Time SLA </td>
+                            <td> : </td>
+                            <td class="px-4"> {{ $incident->incidentPenalty?->total_response_time_penalty_minute }}</td>
+                        </tr>
+                         <tr>
+                            <td class="px-4"> Total Penalty Price</td>
+                            <td> : </td>
+                            <td class="px-4"> RM {{ $incident->incidentPenalty?->total_response_time_penalty_price }}</td>
+                        </tr>
+
                     </table>
                 </div>
             </div>

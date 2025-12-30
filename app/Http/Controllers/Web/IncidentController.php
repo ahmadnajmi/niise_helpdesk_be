@@ -20,11 +20,11 @@ class IncidentController extends Controller
     {
         $public_holiday = [];
         $generate_due_date = null;
-        $get_incident = Incident::where('incident_no',$request->incident_no)->first();
+        $incident = Incident::where('incident_no',$request->incident_no)->first();
 
-        $operating_time = OperatingTime::where('branch_id',$get_incident?->branch_id)->get();
+        $operating_time = OperatingTime::where('branch_id',$incident?->branch_id)->get();
 
-        $state_id = $get_incident?->branch?->state_id;
+        $state_id = $incident?->branch?->state_id;
 
         if($state_id){
             $public_holiday = Calendar::where(function($query) use ($state_id) {
@@ -34,11 +34,14 @@ class IncidentController extends Controller
                                     ->get();
         }
 
-        if($get_incident){
-            $generate_due_date = IncidentServices::calculateDueDateIncident($get_incident);
+        if($incident){
+            $generate_due_date = IncidentServices::calculateDueDateIncident($incident);
+
+            $generate_penalty  = IncidentServices::checkPenalty($incident);
         }
 
-        return view('incident.index',compact('get_incident','operating_time','public_holiday','generate_due_date'));
+
+        return view('incident.index',compact('incident','operating_time','public_holiday','generate_due_date'));
     }
 
     public function generateDueDateIncident(Request $request){

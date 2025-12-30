@@ -172,6 +172,10 @@ class Incident extends BaseModel
         return $this->hasOne(Workbasket::class,'incident_id','id');
     }
 
+    public function incidentPenalty(){
+        return $this->hasOne(IncidentPenalty::class,'incident_id','id');
+    }
+
     public function scopeSearch($query, $keyword){
         if (!empty($keyword)) {
             $keyword = strtolower($keyword);
