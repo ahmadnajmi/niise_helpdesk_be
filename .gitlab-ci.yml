@@ -12,11 +12,15 @@ Deploy Staging:
     - echo "Deploying to Staging..."
     - cd /var/www/html/helpdesk_be  
     - git pull origin staging
+    - rm -rf node_modules package-lock.json
     - npm install
-    - npm run build
-    - php artisan migrate --force
     - php artisan optimize
-    - echo "Staging deployment completed!"
+    - npm run build
+    - chgrp -R www-data storage bootstrap/cache public/build
+    - chmod -R 775 storage bootstrap/cache
+    - chmod -R 755 public/build
+    - php artisan migrate --force
+    - php artisan migrate --path=database/migrations/alter_table --force
   when: manual
   only:
     - staging
@@ -32,11 +36,16 @@ Deploy Preprod 1 SIT:
     - echo "Deploying to Pre Prod 1 - SIT ..."
     - cd /var/www/html/helpdesk/be  
     - git pull origin staging
+    - rm -rf node_modules package-lock.json
     - npm install
-    - npm run build
-    - php artisan migrate --force
     - php artisan optimize
+    - npm run build
+    - chgrp -R www-data storage bootstrap/cache public/build
+    - chmod -R 775 storage bootstrap/cache
+    - chmod -R 755 public/build
+    - php artisan migrate --force
     - echo "Pre Prod 1 - SIT deployment completed!"
+    - php artisan migrate --path=database/migrations/alter_table --force
   when: manual
   only:
     - staging
@@ -52,11 +61,16 @@ Deploy Preprod 1 INTERIM:
     - echo "Deploying to Pre Prod 1 - INTERIM ..."
     - cd /var/www/html/interim/be  
     - git pull origin staging
+    - rm -rf node_modules package-lock.json
     - npm install
-    - npm run build
-    - php artisan migrate --force
     - php artisan optimize
+    - npm run build
+    - chgrp -R www-data storage bootstrap/cache public/build
+    - chmod -R 775 storage bootstrap/cache
+    - chmod -R 755 public/build
+    - php artisan migrate --force
     - echo "Pre Prod 1 - INTERIM deployment completed!"
+    - php artisan migrate --path=database/migrations/alter_table --force
   when: manual
   only:
     - staging
@@ -72,11 +86,16 @@ Deploy Preprod 2 SIT:
     - echo "Deploying to Pre Prod 2 - SIT ..."
     - cd /var/www/html/helpdesk/be  
     - git pull origin staging
+    - rm -rf node_modules package-lock.json
     - npm install
-    - npm run build
-    - php artisan migrate --force
     - php artisan optimize
+    - npm run build
+    - chgrp -R www-data storage bootstrap/cache public/build
+    - chmod -R 775 storage bootstrap/cache
+    - chmod -R 755 public/build
+    - php artisan migrate --force
     - echo "Pre Prod 2 - SIT deployment completed!"
+    - php artisan migrate --path=database/migrations/alter_table --force
   when: manual
   only:
     - staging
@@ -92,11 +111,16 @@ Deploy Production 1:
     - echo "Deploying to Production 1 ..."
     - cd /var/www/html/helpdesk/be  
     - git pull origin staging
+    - rm -rf node_modules package-lock.json
     - npm install
-    - npm run build
-    - php artisan migrate --force
     - php artisan optimize
+    - npm run build
+    - chgrp -R www-data storage bootstrap/cache public/build
+    - chmod -R 775 storage bootstrap/cache
+    - chmod -R 755 public/build
+    - php artisan migrate --force
     - echo "Production 1 - deployment completed!"
+    - php artisan migrate --path=database/migrations/alter_table --force
   when: manual
   only:
     - staging
@@ -112,11 +136,16 @@ Deploy Production 2:
     - echo "Deploying to Production 2 ..."
     - cd /var/www/html/helpdesk/be  
     - git pull origin staging
+    - rm -rf node_modules package-lock.json
     - npm install
-    - npm run build
-    - php artisan migrate --force
     - php artisan optimize
+    - npm run build
+    - chgrp -R www-data storage bootstrap/cache public/build
+    - chmod -R 775 storage bootstrap/cache
+    - chmod -R 755 public/build
+    - php artisan migrate --force
     - echo "Production 2 - deployment completed!"
+    - php artisan migrate --path=database/migrations/alter_table --force
   when: manual
   only:
     - staging
