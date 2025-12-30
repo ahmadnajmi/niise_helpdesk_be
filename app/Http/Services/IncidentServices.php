@@ -248,14 +248,46 @@ class IncidentServices
         return true;
     }
 
+    // public static function createIncidentDocument($data,$document_type,$incident_id){
+
+    //     if($document_type == IncidentDocument::APPENDIX){
+    //         $folder = 'appendix';
+    //     }
+    //     else{
+    //         $folder = 'asset';
+    //     }
+
+    //     $data_document['incident_id']  = $incident_id;
+
+    //     $destination = storage_path('app/private/incident/'.$folder); 
+
+    //     if (!file_exists($destination)) {
+    //         mkdir($destination, 0777, true);
+    //     }
+
+    //     foreach($data as $document){
+    //         if($document instanceof \Illuminate\Http\UploadedFile && $document->isValid()) {
+
+    //             $mimeType = $document->getClientOriginalExtension();
+    //             $file_name = time() . '_' . Str::random(10).'.'.$mimeType;
+
+    //             $fileContents = file_get_contents($document->getRealPath());
+        
+    //             file_put_contents($destination . '/' . $file_name, $fileContents);
+            
+    //             $data_document['path'] = 'incident/'.$folder.'/'.$file_name;
+    //             $data_document['type'] = $document_type;
+
+    //             IncidentDocument::create($data_document);
+    //         }
+    //     }
+
+    //     return true;
+    // }
+
     public static function createIncidentDocument($data,$document_type,$incident_id){
 
-        if($document_type == IncidentDocument::APPENDIX){
-            $folder = 'appendix';
-        }
-        else{
-            $folder = 'asset';
-        }
+        $folder = $document_type == IncidentDocument::APPENDIX ? 'appendix' : 'asset';
 
         $data_document['incident_id']  = $incident_id;
 
@@ -271,11 +303,15 @@ class IncidentServices
                 $mimeType = $document->getClientOriginalExtension();
                 $file_name = time() . '_' . Str::random(10).'.'.$mimeType;
 
-                $fileContents = file_get_contents($document->getRealPath());
-        
-                file_put_contents($destination . '/' . $file_name, $fileContents);
-            
-                $data_document['path'] = 'incident/'.$folder.'/'.$file_name;
+                $path = 'incident/'.$folder.'/'.$file_name;
+                $disk = config('filesystems.default');
+
+                Storage::disk($disk)->put(
+                    $path,
+                    file_get_contents($document->getRealPath())
+                );
+
+                $data_document['path'] = $path;
                 $data_document['type'] = $document_type;
 
                 IncidentDocument::create($data_document);
