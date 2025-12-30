@@ -111,7 +111,7 @@ class IncidentServices
 
             $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
 
-            if($incident->status == Incident::CLOSED){
+            if($data['status'] == Incident::CLOSED){
                 $incident->workbasket?->delete();
                 $data['actual_end_date'] = Carbon::now();
 
