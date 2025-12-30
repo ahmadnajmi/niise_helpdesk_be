@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('incident_document', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('incident_id')->nullable(); 
+            $table->uuid('incident_id')->nullable();
             $table->smallInteger('type')->default(1);
             $table->string('path',100)->nullable(); 
 

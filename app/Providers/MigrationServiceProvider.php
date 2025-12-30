@@ -21,8 +21,8 @@ class MigrationServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Blueprint::macro('log', function () {
-            $this->unsignedBigInteger('created_by');
-            $this->unsignedBigInteger('updated_by');
+            $this->uuid('created_by');
+            $this->uuid('updated_by');
             $this->timestamps();
         });
     }
