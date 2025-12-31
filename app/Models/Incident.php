@@ -88,9 +88,28 @@ class Incident extends BaseModel
         });
     }
 
-    public static function generateIncidentNo(){
-        $get_incident = self::orderBy('incident_no','desc')->first();
+    // public static function generateIncidentNo(){
+    //     $get_incident = self::orderBy('incident_no','desc')->first();
 
+    //     if($get_incident){
+    //         $code = $get_incident->incident_no;
+    //         $old_code = substr($code, -5);
+    //         $incremented = (int)$old_code + 1;
+    //         $next_number = str_pad($incremented, 5, '0', STR_PAD_LEFT);
+    //     } else {
+    //         $next_number = '00001';
+    //     }
+
+    //     return 'TN'.date('Ymd').$next_number;
+    // }
+    public static function generateIncidentNo(){
+        $today = date('Ymd');
+        $prefix = 'TN' . $today;
+        
+        $get_incident = self::where('incident_no', 'LIKE', $prefix . '%')
+                            ->orderBy('incident_no', 'desc')
+                            ->first();
+        
         if($get_incident){
             $code = $get_incident->incident_no;
             $old_code = substr($code, -5);
@@ -99,8 +118,8 @@ class Incident extends BaseModel
         } else {
             $next_number = '00001';
         }
-
-        return 'TN'.date('Ymd').$next_number;
+        
+        return $prefix . $next_number;
     }
 
     public function branch(){

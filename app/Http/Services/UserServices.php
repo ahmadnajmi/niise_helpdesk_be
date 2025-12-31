@@ -24,7 +24,11 @@ class UserServices
             $check_user = User::where('ic_no',$data['ic_no'])->exists();
 
             if(!$check_user){
-                $data['password'] = Hash::make('P@ssw0rd');
+                $clean_name = strtoupper(str_replace(' ', '', $data['name']));  
+                $first    = substr($clean_name, 0, 6);
+                $last = substr($data['ic_no'], -6);
+
+                $data['password'] = Hash::make($first.$last);
 
                 if($data['role'] == Role::BTMR || $data['role'] == Role::JIM){
 

@@ -27,7 +27,7 @@ class SlaTemplateRequest extends FormRequest
     {
         return [
             'severity_id' => 'required',
-            'service_level' => 'required',
+            'service_level' => 'nullable',
             'response_time' => 'nullable',
             'response_time_type' => 'nullable',
             'response_time_penalty' => 'nullable',
