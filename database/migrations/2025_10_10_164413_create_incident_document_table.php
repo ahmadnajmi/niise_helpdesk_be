@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('incident_document', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->unique()->primary();
             $table->uuid('incident_id')->nullable();
             $table->smallInteger('type')->default(1);
             $table->string('path',100)->nullable(); 

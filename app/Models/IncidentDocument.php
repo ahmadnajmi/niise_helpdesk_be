@@ -16,6 +16,10 @@ class IncidentDocument extends BaseModel
         'path',
     ];
 
+    public $incrementing = false;
+    protected $keyType = 'string';
+    public $usesUuid = true;
+
     const APPENDIX = 1;
     const ASSET = 2;
 

@@ -15,6 +15,7 @@ class Incident extends BaseModel
 {
     use HasFactory;
     protected $table = 'incidents';
+    
     public $incrementing = false;
     protected $keyType = 'string';
     public $usesUuid = true;
