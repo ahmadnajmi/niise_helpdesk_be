@@ -141,7 +141,7 @@ class GeneralServices
             }
 
             if($code == 'company'){
-                $data[$code] = Company::select('id','name','nickname')
+                $data[$code] = Company::select('id','name','nickname','description')
                                     ->where('is_active',true)
                                     ->orderBy('name','asc')
                                     ->get();
@@ -179,7 +179,7 @@ class GeneralServices
             }
 
             if($code == 'company_contract'){
-                $data[$code] = CompanyContract::select('id','name','company_id')->where('is_active',true)
+                $data[$code] = CompanyContract::select('id','name','company_id','contract_no')->where('is_active',true)
                                             ->when($request->company_id, function ($query) use ($request) {
                                                 return $query->where('company_id',$request->company_id);
                                             })

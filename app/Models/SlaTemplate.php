@@ -104,6 +104,10 @@ class SlaTemplate extends BaseModel
                 $q->orWhereHas('companyContract', function ($search) use ($keyword) {
                     $search->whereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"]);
                 });
+
+                $q->orWhereHas('companyContract', function ($search) use ($keyword) {
+                    $search->whereRaw('LOWER(contract_no) LIKE ?', ["%{$keyword}%"]);
+                });
             });
         }
         return $query;
@@ -116,6 +120,12 @@ class SlaTemplate extends BaseModel
                         })
                         ->when(request('severity_id'), function ($query) {
                             $query->where('severity_id',request('severity_id'));
+                        })
+                        ->when(request('contract_no'), function ($query) {
+                            $query->WhereHas('companyContract', function ($search) {
+                                $keyword = request('contract_no');
+                                $search->whereRaw('LOWER(contract_no) LIKE ?', ["%{$keyword}%"]);;
+                            });
                         });
 
         return $query;

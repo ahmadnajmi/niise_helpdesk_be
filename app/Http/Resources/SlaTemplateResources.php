@@ -23,9 +23,11 @@ class SlaTemplateResources extends JsonResource
 
             'company_id' => $this->company_id,
             'company_name' => $this->company?->name,
+            'company_description' => $this->company?->description,
 
             'company_contract_id' => $this->company_contract_id,
             'company_contract_name' => $this->companyContract?->name,
+            'company_contract_no' => $this->companyContract?->contract_no,
             'company_contract_details' => $this->companyContract ? new CompanyContractResources($this->companyContract) : null,
 
             'response_time' => $this->response_time,
