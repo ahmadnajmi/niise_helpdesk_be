@@ -105,6 +105,7 @@ class IncidentServices
             DB::beginTransaction();
         
             if($incident->code_sla !=  $data['code_sla'] || !$incident->sla_version_id){
+                $data['incident_date'] = $incident->incident_date;
                 $data['sla_version_id'] = self::getSlaVersion($data);
                 $data['expected_end_date'] = self::calculateDueDateIncident($data);
             }
