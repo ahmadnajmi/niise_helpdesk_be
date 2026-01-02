@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('incident_penalty', function (Blueprint $table) {
             $table->id();
             $table->uuid('incident_id')->nullable(); 
-            $table->string('total_response_time_penalty_price',20)->nullable();
-            $table->string('total_response_time_penalty_minute',20)->nullable();
-
+            $table->decimal('penalty_irt',10,2)->nullable();
             $table->log();
         });
     }

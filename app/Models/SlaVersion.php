@@ -16,10 +16,17 @@ class SlaVersion extends BaseModel
         'response_time',
         'response_time_type',
         'response_time_penalty',
+        'response_time_penalty_type',
 
         'resolution_time',
         'resolution_time_type',
         'resolution_time_penalty',
+        'resolution_time_penalty_type',
+
+        'response_time_location',
+        'response_time_location_type',
+        'response_time_location_penalty',
+        'response_time_location_penalty_type',
     ];  
 
     public function responseTimeTypeDescription(){

@@ -62,9 +62,17 @@ class SlaTemplateServices
         $data_version['response_time'] = $data->response_time;
         $data_version['response_time_type'] = $data->response_time_type;
         $data_version['response_time_penalty'] = $data->response_time_penalty;
+        $data_version['response_time_penalty_type'] = $data->response_time_penalty_type;
+
         $data_version['resolution_time'] = $data->resolution_time;
         $data_version['resolution_time_type'] = $data->resolution_time_type;
         $data_version['resolution_time_penalty'] = $data->resolution_time_penalty;
+        $data_version['resolution_time_penalty_type'] = $data->resolution_time_penalty_type;
+
+        $data_version['response_time_location'] = $data->response_time_location;
+        $data_version['response_time_location_type'] = $data->response_time_location_type;
+        $data_version['response_time_location_penalty'] = $data->response_time_location_penalty;
+        $data_version['response_time_location_penalty_type'] = $data->response_time_location_penalty_type;
 
         $create = SlaVersion::create($data_version);
     }

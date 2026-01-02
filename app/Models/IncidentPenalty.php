@@ -11,9 +11,7 @@ class IncidentPenalty extends BaseModel
 
     protected $fillable = [ 
         'incident_id',
-        'total_response_time_penalty_price',
-        'total_response_time_penalty_minute',
-
+        'penalty_irt',
     ];
 
 }

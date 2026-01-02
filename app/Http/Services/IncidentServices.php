@@ -105,7 +105,7 @@ class IncidentServices
             DB::beginTransaction();
         
             if($incident->code_sla !=  $data['code_sla'] || !$incident->sla_version_id){
-                $data['sla_version_id'] = self::getSlaVersion($incident);
+                $data['sla_version_id'] = self::getSlaVersion($data);
                 $data['expected_end_date'] = self::calculateDueDateIncident($incident);
             }
 
@@ -325,7 +325,6 @@ class IncidentServices
     public static function createResolution($id){
         
         $data['incident_id'] = $id;
-        $data['operation_user_id'] = 1;
         $data['action_codes'] = ActionCode::INITIAL;
     
         IncidentResolution::create($data);
@@ -390,26 +389,30 @@ class IncidentServices
     }
 
     public static function checkPenalty(Incident $incident){
+
         $get_sla_version = $incident->slaVersion;
-        $actual   = Carbon::parse($incident->actual_end_date);
-        $expected = Carbon::parse($incident->expected_end_date);
 
-        if ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_MINUTE) {
-            $total_sla_time = $expected->diffInMinutes($actual); 
-        }
-        elseif ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_HOUR) {
-            $total_sla_time = $expected->diffInHours($actual);
-        }
-        else {
-            $total_sla_time = $expected->diffInDays($actual);
-        }
-        $interval_count = intdiv($total_sla_time, $get_sla_version->response_time);
-        $penalty = $interval_count * $get_sla_version->response_time_penalty;
-        // dd(,$interval_count,$total_sla_time,$get_sla_version->response_time,$interval_count,$penalty);
+        $penalty_irt = self::penaltyInitialResponseTime($incident,$get_sla_version);
 
-        $data_penalty['total_response_time_penalty_minute'] =  $total_sla_time;
-        $data_penalty['total_response_time_penalty_price'] =  $penalty;
+        // $actual   = Carbon::parse($incident->actual_end_date);
+        // $expected = Carbon::parse($incident->expected_end_date);
+
+        // if ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_MINUTE) {
+        //     $total_sla_time = $expected->diffInMinutes($actual); 
+        // }
+        // elseif ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_HOUR) {
+        //     $total_sla_time = $expected->diffInHours($actual);
+        // }
+        // else {
+        //     $total_sla_time = $expected->diffInDays($actual);
+        // }
+        // $interval_count = intdiv($total_sla_time, $get_sla_version->response_time);
+        // $penalty = $interval_count * $get_sla_version->response_time_penalty;
+
+        // $data_penalty['total_response_time_penalty_minute'] =  $total_sla_time;
+        // $data_penalty['total_response_time_penalty_price'] =  $penalty;
         $data_penalty['incident_id'] = $incident->id;
+        $data_penalty['penalty_irt'] = $penalty_irt;
 
         $create = IncidentPenalty::create($data_penalty);
     }
@@ -724,6 +727,78 @@ class IncidentServices
             }
         }
         return false;
+    }
+
+    // private static function penaltyInitialResponseTime($incident,$get_sla_version){
+    //     $penalty_irt = 0;
+    //     $late = 0;
+
+    //     $get_init = IncidentResolution::where('incident_id',$incident->id)
+    //                                     ->where('action_codes',ActionCode::INITIAL)
+    //                                     ->first();
+
+    //     if($get_init && $get_sla_version){
+    //         $start   = Carbon::parse($incident->incident_date);
+    //         $pickup_date = Carbon::parse($get_init->pickup_date);
+
+    //         if ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_MINUTE) {
+    //             $late = $start->diffInMinutes($pickup_date) - $get_sla_version->response_time;
+    //         }
+    //         elseif ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_HOUR) {
+    //             $late = $start->diffInHours($pickup_date) - $get_sla_version->response_time;
+    //         }
+    //         else {
+    //             $late = $start->diffInDays($pickup_date) - $get_sla_version->response_time;
+    //         }
+
+    //         $penalty_irt = $late * $get_sla_version->response_time_penalty;
+    //     }
+    //     dd($penalty_irt,$late,$get_sla_version->response_time_penalty);
+
+    //     return $penalty_irt;
+
+    // }
+
+    private static function penaltyInitialResponseTime($incident, $get_sla_version){
+        $penalty_irt = 0;
+
+        $get_init = IncidentResolution::where('incident_id', $incident->id)
+                                        ->where('action_codes', ActionCode::INITIAL)
+                                        ->first();
+
+        if($get_init && $get_sla_version){
+            $start = Carbon::parse($incident->incident_date);
+            $pickup_date = Carbon::parse($get_init->pickup_date);
+            $actualSeconds = $start->diffInSeconds($pickup_date);
+
+            $response_time_type = (int) $get_sla_version->response_time_type;
+
+            $slaLimitSeconds = match ($response_time_type) {
+                SlaTemplate::SLA_TYPE_MINUTE => $get_sla_version->response_time * 60,
+                SlaTemplate::SLA_TYPE_HOUR   => $get_sla_version->response_time * 3600,
+                SlaTemplate::SLA_TYPE_DAY    => $get_sla_version->response_time * 86400,
+            };
+
+            $lateSeconds = max(0, $actualSeconds - $slaLimitSeconds);
+            
+            if ($lateSeconds === 0) {
+                return 0;
+            }
+
+            $penalty_time_type = (int) $get_sla_version->response_time_penalty_type;
+
+            $penaltyUnitSeconds = match ($penalty_time_type) {
+                SlaTemplate::SLA_TYPE_MINUTE => 60,
+                SlaTemplate::SLA_TYPE_HOUR   => 3600,
+                SlaTemplate::SLA_TYPE_DAY    => 86400,
+            };
+
+            $lateUnits = $lateSeconds / $penaltyUnitSeconds;
+
+            $penalty_irt = round($lateUnits * $get_sla_version->response_time_penalty, 2);
+        }
+
+        return $penalty_irt;
     }
 
 }
