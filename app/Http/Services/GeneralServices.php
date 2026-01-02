@@ -220,7 +220,11 @@ class GeneralServices
                                             $query->select('id','code','category_id');
                                         }])
                                         ->with(['childCategoryRecursive' => function ($query) {
-                                            $query->select('id','category_id','name','level','code')->where('is_active',true);
+                                            $query->select('id','category_id','name','level','code')
+                                                ->with(['sla' => function ($query) {
+                                                    $query->select('id','code','category_id');
+                                                }])
+                                                ->where('is_active',true);
                                         }])
                                         ->whereNull('category_id')
                                         ->where('is_active',true)
