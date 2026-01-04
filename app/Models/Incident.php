@@ -312,9 +312,10 @@ class Incident extends BaseModel
         return Attribute::get(function () {
 
             if(!$this->actual_end_date){
-                $diff = $this->incident_date->diff($this->expected_end_date);
+                $now  = now(); 
+                $diff = $now->lessThan($this->expected_end_date)? $now->diff($this->expected_end_date): null;
 
-                return $diff->d .' Hari : ' . $diff->h . ' Jam : ' .$diff->i  .' Minit';
+                return $diff ? $diff->d .' Hari : ' . $diff->h . ' Jam : ' .$diff->i  .' Minit' : '00 Hari : 00 Jam : 00 Minit';
             }
             else{
                 return '00 Hari : 00 Jam : 00 Minit';
@@ -452,7 +453,9 @@ class Incident extends BaseModel
                             $query->where('asset_siri_no',$request->asset_siri_no);
                         })
                         ->when($request->incident_no, function ($query) use ($request){
-                            $query->whereRaw('LOWER(incident_no) LIKE ?', ["%{$request->incident_no}%"]);
+                            // $query->whereRaw('LOWER(incident_no) LIKE ?', ["%{$request->incident_no}%"]);
+                            $query->where('incident_no', 'LIKE', "%{$request->incident_no}%");
+
                         })
                         ->when($request->group_id, function ($query)use($request){
                             return $query->whereHas('incidentResolution', function ($query)use($request) {

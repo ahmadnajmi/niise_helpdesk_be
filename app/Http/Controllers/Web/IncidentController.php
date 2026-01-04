@@ -20,6 +20,8 @@ class IncidentController extends Controller
     {
         $public_holiday = [];
         $generate_due_date = null;
+        $generate_penalty = null;
+
         $incident = Incident::where('incident_no',$request->incident_no)->first();
 
         $operating_time = OperatingTime::where('branch_id',$incident?->branch_id)->get();
@@ -37,11 +39,11 @@ class IncidentController extends Controller
         if($incident){
             $generate_due_date = IncidentServices::calculateDueDateIncident($incident);
 
-            $generate_penalty  = IncidentServices::checkPenalty($incident);
+            // $generate_penalty  = IncidentServices::checkPenalty($incident);
         }
 
 
-        return view('incident.index',compact('incident','operating_time','public_holiday','generate_due_date'));
+        return view('incident.index',compact('incident','operating_time','public_holiday','generate_due_date','generate_penalty'));
     }
 
     public function generateDueDateIncident(Request $request){

@@ -124,7 +124,7 @@ class IncidentServices
                 ];
                 event(new WorkbasketUpdated($incident,$trigger_workbasket));
 
-                self::checkPenalty($incident);
+                self::generatePenalty($incident);
             }
 
             $create = $incident->update($data);
@@ -389,11 +389,22 @@ class IncidentServices
         return $return;
     }
 
+    public static function generatePenalty(Incident $incident){
+
+        $data_penalty = self::checkPenalty($incident);
+        $data_penalty['incident_id'] = $incident->id;
+
+        $create = IncidentPenalty::create($data_penalty);
+        
+    }
+
     public static function checkPenalty(Incident $incident){
 
         $get_sla_version = $incident->slaVersion;
 
-        $penalty_irt = self::penaltyInitialResponseTime($incident,$get_sla_version);
+        $data['penalty_irt'] = self::penaltyInitialResponseTime($incident,$get_sla_version);
+
+        return $data;
 
         // $actual   = Carbon::parse($incident->actual_end_date);
         // $expected = Carbon::parse($incident->expected_end_date);
@@ -412,10 +423,7 @@ class IncidentServices
 
         // $data_penalty['total_response_time_penalty_minute'] =  $total_sla_time;
         // $data_penalty['total_response_time_penalty_price'] =  $penalty;
-        $data_penalty['incident_id'] = $incident->id;
-        $data_penalty['penalty_irt'] = $penalty_irt;
-
-        $create = IncidentPenalty::create($data_penalty);
+        
     }
 
     public static function getSlaVersion($data){
