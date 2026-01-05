@@ -47,6 +47,9 @@ class IncidentResources extends JsonResource
         elseif($role?->role == Role::FRONTLINER){
             $permission_reso_create = $this->workbasket?->escalate_frontliner ? true : false;
         }
+        elseif($role?->role == Role::BTMR){
+            $permission_reso_create = true;
+        }
         else{
             $permission_reso_create = false;
         }
