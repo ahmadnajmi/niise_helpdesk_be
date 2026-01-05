@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\UserGroup;
+use App\Models\ActionCode;
 
 class IncidentResolutionCollection extends BaseResource
 {
@@ -24,9 +25,14 @@ class IncidentResolutionCollection extends BaseResource
             $permission_edit = false;
 
             if($role?->role == Role::CONTRACTOR){
-                $group_id = UserGroup::where('user_id',$query->created_by)->where('groups_id',$query->group_id)->exists();
+                if ($query->incident->incidentResolution->contains('action_codes', ActionCode::ACTR)) {
+                    $permission_edit = false;
+                } 
+                else{
+                    $group_id = UserGroup::where('user_id',$query->created_by)->where('groups_id',$query->group_id)->exists();
 
-                $permission_edit = $group_id ? true : false;
+                    $permission_edit = $group_id ? true : false;
+                }
             }
             elseif($role?->role == Role::BTMR && $role?->role == Role::FRONTLINER){
                 $permission_edit = true;
