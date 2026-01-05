@@ -24,18 +24,23 @@ class IncidentResolutionCollection extends BaseResource
         return $this->collection->transform(function ($query) use($request,$role){
             $permission_edit = false;
 
-            if($role?->role == Role::CONTRACTOR){
-                if ($query->incident->incidentResolution->contains('action_codes', ActionCode::ACTR)) {
-                    $permission_edit = false;
-                } 
-                else{
-                    $group_id = UserGroup::where('user_id',$query->created_by)->where('groups_id',$query->group_id)->exists();
-
-                    $permission_edit = $group_id ? true : false;
-                }
+            if($query->action_codes == 'INIT'){
+                $permission_edit = false;
             }
-            elseif($role?->role == Role::BTMR && $role?->role == Role::FRONTLINER){
-                $permission_edit = true;
+            else{
+                if($role?->role == Role::CONTRACTOR){
+                    if ($query->incident->incidentResolution->contains('action_codes', ActionCode::ACTR)) {
+                        $permission_edit = false;
+                    } 
+                    else{
+                        $group_id = UserGroup::where('user_id',$query->created_by)->where('groups_id',$query->group_id)->exists();
+
+                        $permission_edit = $group_id ? true : false;
+                    }
+                }
+                elseif($role?->role == Role::BTMR || $role?->role == Role::FRONTLINER){
+                    $permission_edit = true;
+                }
             }
 
             $return =  [

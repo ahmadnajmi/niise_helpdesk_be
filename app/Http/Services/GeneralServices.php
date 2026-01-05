@@ -90,9 +90,6 @@ class GeneralServices
                                                     ->with(['temporaryResolutionTimePenaltyTypeDescription' => function ($query) {
                                                         $query->select('ref_code','name','name_en');
                                                     }])
-                                                    ->with(['dispatchTimeTypeDescription' => function ($query) {
-                                                        $query->select('ref_code','name','name_en');
-                                                    }])
                                                     ->with(['company' => function ($query) {
                                                         $query->select('id','name');
                                                     }])
