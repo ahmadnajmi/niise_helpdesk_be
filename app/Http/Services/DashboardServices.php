@@ -258,12 +258,12 @@ class DashboardServices
     public static function incidentByContractor($request){
         $role = User::getUserRole(Auth::user()->id);
 
-       
-
         $get_group = Group::select('id','name')
-                            // ->when($role?->role == Role::CONTRACTOR, function ($query) use ($request){
-                            //     $query->where('id',Auth::user()->group_id);
-                            // })
+                            ->when($role?->role == Role::CONTRACTOR, function ($query) use ($request){
+                                $query->whereHas('userGroup', function ($query) {
+                                    $query->where('user_id', Auth::user()->id);
+                                });
+                            })
                             ->whereHas('incidents')
                             ->get();
 
