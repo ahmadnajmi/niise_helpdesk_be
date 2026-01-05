@@ -18,6 +18,8 @@ use App\Models\Role;
 use App\Http\Resources\IncidentResolutionResources;
 use App\Mail\ActionCodeEmail;
 use App\Events\WorkbasketUpdated;
+use App\Http\Services\IncidentServices;
+use Carbon\Carbon;
 
 class IncidentResolutionServices
 {
@@ -114,10 +116,14 @@ class IncidentResolutionServices
         }
         elseif($data->action_codes == ActionCode::CLOSED){
             $data_incident['status']  =  Incident::CLOSED; 
+            $data_incident['actual_end_date'] = Carbon::now();
+
             $incident->workbasket?->delete();
 
             $trigger_workbasket['btmr'] = true;
             $trigger_workbasket['jim'] = true;
+
+            IncidentServices::generatePenalty($incident);
         }
         else{
             $data_workbasket['status'] = Workbasket::IN_PROGRESS;
