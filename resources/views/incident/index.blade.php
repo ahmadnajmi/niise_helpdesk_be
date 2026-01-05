@@ -61,21 +61,7 @@
                             <td class="px-4"> {{ $incident->actual_end_date?->format('d F Y h:i A') }}</td>
                         </tr>
                         
-                        <tr>
-                            <td class="px-4"> SLA CODE </td>
-                            <td> : </td>
-                            <td class="px-4"> {{ $incident->code_sla }}</td>
-                        </tr>
-                        <tr>
-                            <td class="px-4"> SLA Response Time </td>
-                            <td> : </td>
-                            <td class="px-4"> {{ $incident->slaVersion?->response_time.' '.$incident->slaVersion?->responseTimeTypeDescription?->name }}  </td>
-                        </tr>
-                        <tr>
-                            <td class="px-4"> SLA Resolution Time </td>
-                            <td> : </td>
-                            <td class="px-4"> {{ $incident->slaVersion?->resolution_time.' '.$incident->slaVersion?->resolutionTimeTypeDescription?->name }}  </td>
-                        </tr>
+                       
                         <tr>
                             <td class="px-4"> Renew Generate Due Date </td>
                             <td> : </td>
@@ -90,6 +76,57 @@
                             <td class="px-4"> Total Penalty Price</td>
                             <td> : </td>
                             <td class="px-4"> RM {{ $incident->incidentPenalty?->total_response_time_penalty_price }}</td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div class="w-2/2">
+                    SLA TEMPLATE {{ $incident->sla?->slaTemplate?->code }} Version =  {{$incident->slaVersion?->version}}
+                    <table> 
+                        <tr>
+                            <td class="px-4"> SLA CODE </td>
+                            <td> : </td>
+                            <td class="px-4"> {{ $incident->code_sla }}</td>
+                        </tr>
+                        <tr>
+                            <td class="px-4"> Initial Response Time (IRT) </td>
+                            <td> : </td>
+                            <td class="px-4"> {{ $incident->slaVersion?->response_time.' '.$incident->slaVersion?->responseTimeTypeDescription?->name }}  </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4"> Penalty (IRT) </td>
+                            <td> : </td>
+                            <td class="px-4"> RM {{ $incident->slaVersion?->response_time_penalty.' Per '.$incident->slaVersion?->responseTimePenaltyTypeDescription?->name }}  </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4"> OnSite Response Time (ORT) </td>
+                            <td> : </td>
+                            <td class="px-4"> {{ $incident->slaVersion?->response_time_location.' '.$incident->slaVersion?->responseTimeLocationTypeDescription?->name }}  </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4"> Penalty (ORT) </td>
+                            <td> : </td>
+                            <td class="px-4"> RM {{ $incident->slaVersion?->response_time_location_penalty.' Per '.$incident->slaVersion?->responseTimeLocationPenaltyTypeDescription?->name }}  </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4"> Problem Resolution Time (PRT) </td>
+                            <td> : </td>
+                            <td class="px-4"> {{ $incident->slaVersion?->resolution_time.' '.$incident->slaVersion?->resolutionTimeTypeDescription?->name }}  </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4"> Penalty (PRT) </td>
+                            <td> : </td>
+                            <td class="px-4"> RM {{ $incident->slaVersion?->resolution_time_penalty.' Per '.$incident->slaVersion?->resolutionTimePenaltyTypeDescription?->name }}  </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4"> Verify Problem Resolution Time (VPRT) </td>
+                            <td> : </td>
+                            <td class="px-4"> {{ $incident->slaVersion?->verify_resolution_time.' '.$incident->slaVersion?->verifyResolutionTimeTypeDescription?->name }}  </td>
+                        </tr>
+                        <tr>
+                            <td class="px-4"> Penalty (VPRT) </td>
+                            <td> : </td>
+                            <td class="px-4"> RM {{ $incident->slaVersion?->verify_resolution_time_penalty.' Per '.$incident->slaVersion?->verifyResolutionTimePenaltyTypeDescription?->name }}  </td>
                         </tr>
 
                     </table>

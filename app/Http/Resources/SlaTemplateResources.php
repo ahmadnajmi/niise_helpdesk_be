@@ -58,9 +58,12 @@ class SlaTemplateResources extends JsonResource
             'temporary_resolution_time_penalty_type' => $this->temporary_resolution_time_penalty_type,
             'temporary_resolution_time_penalty_type_desc' => $this->temporaryResolutionTimePenaltyTypeDescription?->name,
 
-            'dispatch_time' => $this->dispatch_time,
-            'dispatch_time_type' => $this->dispatch_time_type,
-            'dispatch_time_type_desc' => $this->dispatchTimeTypeDescription?->name,
+            'verify_resolution_time' => $this->verify_resolution_time,
+            'verify_resolution_time_type' => $this->verify_resolution_time_type,
+            'verify_resolution_time_type_desc' => $this->verifyResolutionTimeTypeDescription?->name,
+            'verify_resolution_time_penalty' => $this->verify_resolution_time_penalty,
+            'verify_resolution_time_penalty_type' => $this->verify_resolution_time_penalty_type,
+            'verify_resolution_time_penalty_type_desc' => $this->verifyResolutionTimePenaltyTypeDescription?->name,
 
             'notes' => $this->notes,
             'created_by' => $this->createdBy?->name .' - '. $this->createdBy?->email ,

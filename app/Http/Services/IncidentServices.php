@@ -394,35 +394,14 @@ class IncidentServices
         $data_penalty = self::checkPenalty($incident);
         $data_penalty['incident_id'] = $incident->id;
 
-        $create = IncidentPenalty::create($data_penalty);
-        
-    }
+        $check_penalty = IncidentPenalty::where('incident_id',$incident->id)->first();
 
-    public static function checkPenalty(Incident $incident){
-
-        $get_sla_version = $incident->slaVersion;
-
-        $data['penalty_irt'] = self::penaltyInitialResponseTime($incident,$get_sla_version);
-
-        return $data;
-
-        // $actual   = Carbon::parse($incident->actual_end_date);
-        // $expected = Carbon::parse($incident->expected_end_date);
-
-        // if ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_MINUTE) {
-        //     $total_sla_time = $expected->diffInMinutes($actual); 
-        // }
-        // elseif ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_HOUR) {
-        //     $total_sla_time = $expected->diffInHours($actual);
-        // }
-        // else {
-        //     $total_sla_time = $expected->diffInDays($actual);
-        // }
-        // $interval_count = intdiv($total_sla_time, $get_sla_version->response_time);
-        // $penalty = $interval_count * $get_sla_version->response_time_penalty;
-
-        // $data_penalty['total_response_time_penalty_minute'] =  $total_sla_time;
-        // $data_penalty['total_response_time_penalty_price'] =  $penalty;
+        if($check_penalty){
+            $check_penalty->update($data_penalty);
+        }
+        else{
+            IncidentPenalty::create($data_penalty);
+        }
         
     }
 
@@ -738,35 +717,36 @@ class IncidentServices
         return false;
     }
 
-    // private static function penaltyInitialResponseTime($incident,$get_sla_version){
-    //     $penalty_irt = 0;
-    //     $late = 0;
+    public static function checkPenalty(Incident $incident){
 
-    //     $get_init = IncidentResolution::where('incident_id',$incident->id)
-    //                                     ->where('action_codes',ActionCode::INITIAL)
-    //                                     ->first();
+        $get_sla_version = $incident->slaVersion;
 
-    //     if($get_init && $get_sla_version){
-    //         $start   = Carbon::parse($incident->incident_date);
-    //         $pickup_date = Carbon::parse($get_init->pickup_date);
+        $data['penalty_irt'] = self::penaltyInitialResponseTime($incident,$get_sla_version);
+        $data['penalty_ort'] = self::penaltyOnSiteResponseTime($incident,$get_sla_version);
+        $data['penalty_prt'] = self::penaltyProblemResolutionTime($incident,$get_sla_version);
+        $data['penalty_vprt'] = self::penaltyVerifyProblemResolutionTime($incident,$get_sla_version);
 
-    //         if ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_MINUTE) {
-    //             $late = $start->diffInMinutes($pickup_date) - $get_sla_version->response_time;
-    //         }
-    //         elseif ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_HOUR) {
-    //             $late = $start->diffInHours($pickup_date) - $get_sla_version->response_time;
-    //         }
-    //         else {
-    //             $late = $start->diffInDays($pickup_date) - $get_sla_version->response_time;
-    //         }
+        return $data;
 
-    //         $penalty_irt = $late * $get_sla_version->response_time_penalty;
-    //     }
-    //     dd($penalty_irt,$late,$get_sla_version->response_time_penalty);
+        // $actual   = Carbon::parse($incident->actual_end_date);
+        // $expected = Carbon::parse($incident->expected_end_date);
 
-    //     return $penalty_irt;
+        // if ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_MINUTE) {
+        //     $total_sla_time = $expected->diffInMinutes($actual); 
+        // }
+        // elseif ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_HOUR) {
+        //     $total_sla_time = $expected->diffInHours($actual);
+        // }
+        // else {
+        //     $total_sla_time = $expected->diffInDays($actual);
+        // }
+        // $interval_count = intdiv($total_sla_time, $get_sla_version->response_time);
+        // $penalty = $interval_count * $get_sla_version->response_time_penalty;
 
-    // }
+        // $data_penalty['total_response_time_penalty_minute'] =  $total_sla_time;
+        // $data_penalty['total_response_time_penalty_price'] =  $penalty;
+        
+    }
 
     private static function penaltyInitialResponseTime($incident, $get_sla_version){
         $penalty_irt = 0;
@@ -776,40 +756,159 @@ class IncidentServices
                                         ->first();
 
         if($get_init && $get_sla_version){
-            $start = Carbon::parse($incident->incident_date);
-            $pickup_date = Carbon::parse($get_init->pickup_date);
-            $actualSeconds = $start->diffInSeconds($pickup_date);
+            $start_date = Carbon::parse($incident->incident_date);
+            $end_date = Carbon::parse($get_init->pickup_date);
 
-            $response_time_type = (int) $get_sla_version->response_time_type;
-
-            $slaLimitSeconds = match ($response_time_type) {
-                SlaTemplate::SLA_TYPE_MINUTE => $get_sla_version->response_time * 60,
-                SlaTemplate::SLA_TYPE_HOUR   => $get_sla_version->response_time * 3600,
-                SlaTemplate::SLA_TYPE_DAY    => $get_sla_version->response_time * 86400,
-            };
-
-            $lateSeconds = max(0, $actualSeconds - $slaLimitSeconds);
-            
-            if ($lateSeconds === 0) {
-                return 0;
-            }
-
-            $penalty_time_type = (int) $get_sla_version->response_time_penalty_type;
-
-            $penaltyUnitSeconds = match ($penalty_time_type) {
-                SlaTemplate::SLA_TYPE_MINUTE => 60,
-                SlaTemplate::SLA_TYPE_HOUR   => 3600,
-                SlaTemplate::SLA_TYPE_DAY    => 86400,
-            };
-
-            $lateUnits = $lateSeconds / $penaltyUnitSeconds;
-
-            $penalty_irt = round($lateUnits * $get_sla_version->response_time_penalty, 2);
+            $penalty_irt = self::formulaCalculation($start_date,$end_date,$get_sla_version,'irt');
         }
 
         return $penalty_irt;
     }
 
+    private static function penaltyOnSiteResponseTime($incident, $get_sla_version){
+        $penalty_ort = 0;
+
+        $get_onsite = IncidentResolution::where('incident_id', $incident->id)
+                                        ->where('action_codes', ActionCode::ONSITE)
+                                        ->first();
+        
+        $get_escalate_contractor = IncidentResolution::where('incident_id', $incident->id)
+                                        ->where('action_codes', ActionCode::ESCALATE)
+                                        ->where('group_id', $incident->assign_group_id)
+                                        ->first();
+
+        if($get_onsite && $get_sla_version && $get_escalate_contractor){
+            $start_date = Carbon::parse($get_escalate_contractor->created_at);
+            $end_date = Carbon::parse($get_onsite->created_at);
+
+            $penalty_ort = self::formulaCalculation($start_date,$end_date,$get_sla_version,'ort');
+        }
+
+        return $penalty_ort;
+    }
+
+    private static function penaltyProblemResolutionTime($incident,$get_sla_version){
+        $penalty_prt = 0;
+
+        $end_date = IncidentResolution::where('incident_id', $incident->id)
+                                        ->where('action_codes', ActionCode::ACTR)
+                                        ->first();
+        
+        $start_date = IncidentResolution::where('incident_id', $incident->id)
+                                        ->where('action_codes', ActionCode::ESCALATE)
+                                        ->where('group_id', $incident->assign_group_id)
+                                        ->first();
+        if($end_date && $start_date && $get_sla_version){
+            $start_date = Carbon::parse($start_date->created_at);
+            $end_date = Carbon::parse($end_date->created_at);
+
+            $penalty_prt = self::formulaCalculation($start_date,$end_date,$get_sla_version,'prt');
+        }
+
+
+        return $penalty_prt;
+        
+    }
+
+    private static function penaltyVerifyProblemResolutionTime($incident,$get_sla_version){
+        $penalty_vprt = 0;
+
+        $end_date = IncidentResolution::where('incident_id', $incident->id)
+                                        ->where('action_codes', ActionCode::ACTR)
+                                        ->first();
+        
+        $start_date = IncidentResolution::where('incident_id', $incident->id)
+                                        ->where('action_codes', ActionCode::VERIFY)
+                                        ->first();
+
+        if($end_date && $start_date && $get_sla_version){
+            $start_date = Carbon::parse($start_date->created_at);
+            $end_date = Carbon::parse($end_date->created_at);
+
+            $penalty_vprt = self::formulaCalculation($start_date,$end_date,$get_sla_version,'vprt');
+        }
+
+
+        return $penalty_vprt;
+        
+    }
+
+    private static function formulaCalculation($start_date,$end_date,$sla_version,$type){
+
+        $get_penalty_details = self::penaltyDetails($sla_version,$type);
+
+        if (collect($get_penalty_details)->contains(fn ($v) => $v === null || $v === '')) {
+            return 0;
+        }
+
+        $actualSeconds = $start_date->diffInSeconds($end_date);
+
+        $type = (int) $get_penalty_details['time_type'];
+
+        $slaLimitSeconds = match ($type) {
+            SlaTemplate::SLA_TYPE_MINUTE => $get_penalty_details['time'] * 60,
+            SlaTemplate::SLA_TYPE_HOUR   => $get_penalty_details['time'] * 3600,
+            SlaTemplate::SLA_TYPE_DAY    => $get_penalty_details['time'] * 86400,
+        };
+
+        $lateSeconds = max(0, $actualSeconds - $slaLimitSeconds);
+        
+        if ($lateSeconds === 0) {
+            return 0;
+        }
+
+        $penalty_time_type = (int) $get_penalty_details['penalty_type'];
+
+        $penaltyUnitSeconds = match ($penalty_time_type) {
+            SlaTemplate::SLA_TYPE_MINUTE => 60,
+            SlaTemplate::SLA_TYPE_HOUR   => 3600,
+            SlaTemplate::SLA_TYPE_DAY    => 86400,
+        };
+
+        $lateUnits = $lateSeconds / $penaltyUnitSeconds;
+
+        $penalty_price = round($lateUnits * $get_penalty_details['penalty'], 2);
+
+        return $penalty_price;
+    }
+
+    private static function penaltyDetails($get_sla_version,$type){
+        $data = [
+            'time' => null,
+            'time_type' => null,
+            'penalty' => null,
+            'penalty_type' => null
+        ];
+
+        if($type == 'irt'){
+            $data['time'] = $get_sla_version->response_time;
+            $data['time_type'] = $get_sla_version->response_time_type;
+            $data['penalty'] = $get_sla_version->response_time_penalty;
+            $data['penalty_type'] = $get_sla_version->response_time_penalty_type; 
+        }
+        elseif($type == 'prt'){
+
+            $data['time'] = $get_sla_version->resolution_time;
+            $data['time_type'] = $get_sla_version->resolution_time_type;
+            $data['penalty'] = $get_sla_version->resolution_time_penalty;
+            $data['penalty_type'] = $get_sla_version->resolution_time_penalty_type; 
+        }
+        elseif($type == 'ort'){
+            $data['time'] = $get_sla_version->response_time_location;
+            $data['time_type'] = $get_sla_version->response_time_location_type;
+            $data['penalty'] = $get_sla_version->response_time_location_penalty;
+            $data['penalty_type'] = $get_sla_version->response_time_location_penalty_type; 
+        }
+        elseif($type == 'vprt'){
+            $data['time'] = $get_sla_version->resolution_time_location;
+            $data['time_type'] = $get_sla_version->resolution_time_location_type;
+            $data['penalty'] = $get_sla_version->resolution_time_location_penalty;
+            $data['penalty_type'] = $get_sla_version->resolution_time_location_penalty_type; 
+        }
+
+       
+        return $data;
+    }
 }
 
 

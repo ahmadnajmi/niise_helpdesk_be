@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->uuid('incident_id')->nullable(); 
             $table->decimal('penalty_irt',10,2)->nullable();
+            $table->decimal('penalty_ort',10,2)->nullable();
+            $table->decimal('penalty_prt',10,2)->nullable();
+            $table->decimal('penalty_vprt',10,2)->nullable();
             $table->log();
         });
     }

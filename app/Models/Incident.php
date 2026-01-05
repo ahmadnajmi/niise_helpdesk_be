@@ -311,7 +311,7 @@ class Incident extends BaseModel
     protected function calculateCountDownSettlement(): Attribute{
         return Attribute::get(function () {
 
-            if(!$this->actual_end_date){
+            if(!$this->actual_end_date && $this->expected_end_date){
                 $now  = now(); 
                 $diff = $now->lessThan($this->expected_end_date)? $now->diff($this->expected_end_date): null;
 

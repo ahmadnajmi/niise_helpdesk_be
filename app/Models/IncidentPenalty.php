@@ -12,6 +12,9 @@ class IncidentPenalty extends BaseModel
     protected $fillable = [ 
         'incident_id',
         'penalty_irt',
+        'penalty_ort',
+        'penalty_prt',
+        'penalty_vprt',
     ];
 
 }

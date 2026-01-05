@@ -10,7 +10,7 @@ use App\Http\Collection\IncidentDocumentCollection;
 use App\Http\Services\AssetServices;
 use App\Models\User;
 use App\Models\Role;
-
+use App\Models\ActionCode;
 
 class IncidentResources extends JsonResource
 {
@@ -36,11 +36,16 @@ class IncidentResources extends JsonResource
         }
 
         if($role?->role == Role::CONTRACTOR){
-            
-            $permission_reso_create = $this->workbasket?->escalate_frontliner ? true : false;
+
+            if ($this->incidentResolution->contains('action_codes', ActionCode::ACTR)) {
+                $permission_reso_create = false;
+            } 
+            else {
+                $permission_reso_create = $this->workbasket?->escalate_frontliner ? false : true;
+            }    
         }
         elseif($role?->role == Role::FRONTLINER){
-            $permission_reso_create = $this->workbasket?->escalate_frontliner ? false : true;
+            $permission_reso_create = $this->workbasket?->escalate_frontliner ? true : false;
         }
         else{
             $permission_reso_create = false;
@@ -51,7 +56,6 @@ class IncidentResources extends JsonResource
             'code_sla' => $this->code_sla,
             'sla_details'=> $this->sla ? new SlaResources($this->sla) : null,
             'incident_no' =>  $this->incident_no,
-            // 'incident_date' => $this->incident_date?->format('d-m-Y'),
             'barcode' => $this->barcode,
             'branch_id' => $this->branch_id,
             'branch_details' => $this->branch,

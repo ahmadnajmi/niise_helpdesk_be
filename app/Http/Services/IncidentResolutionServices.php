@@ -60,7 +60,6 @@ class IncidentResolutionServices
         
     }
 
-
     public static function actionCode($data){
         $incident = $data->incident;
         $data_workbasket['status_complaint'] = Workbasket::IN_PROGRESS;
@@ -94,6 +93,9 @@ class IncidentResolutionServices
 
                 $trigger_workbasket['frontliner'] = true;
             }
+            else{
+                $data_workbasket['escalate_frontliner'] = false;
+            }
         }
         elseif($data->action_codes == ActionCode::ACTR || $data->action_codes == ActionCode::ESCALATE){
 
@@ -110,15 +112,7 @@ class IncidentResolutionServices
 
             $data_workbasket['escalate_frontliner'] = false;
         }
-        elseif($data->action_codes == ActionCode::CLOSED){
-            $data_incident['status']  =  Incident::CLOSED; 
-            $incident->workbasket?->delete();
-
-            $trigger_workbasket['btmr'] = true;
-            $trigger_workbasket['jim'] = true;
-        }
         else{
-            $data_workbasket['escalate_frontliner'] = false;
             $data_workbasket['status'] = Workbasket::IN_PROGRESS;
         }
 
@@ -138,7 +132,6 @@ class IncidentResolutionServices
         return true;
     }
 
-   
     public static function sendEmail($data){
 
         $group_member =  User::whereHas('group', function ($query)use($data) {
