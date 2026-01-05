@@ -15,6 +15,7 @@ use App\Models\Company;
 use App\Models\User;
 use App\Models\UserGroup;
 use App\Models\Role;
+use App\Models\Group;
 
 class DashboardServices
 {
@@ -257,38 +258,32 @@ class DashboardServices
     public static function incidentByContractor($request){
         $role = User::getUserRole(Auth::user()->id);
 
-        $get_company = Company::select('id','name')
-                            ->when($role?->role == Role::CONTRACTOR, function ($query) use ($request){
-                                $query->where('id',Auth::user()->company_id);
-                            })
-                            ->whereHas('user.group.groupDetails.incidents')
-                            ->get();
+       
 
-        $incidentCounts = Incident::selectRaw('sla_template.company_id, sla_template.severity_id, COUNT(*) as total')
-                                    ->join('sla', 'sla.code', '=', 'incidents.code_sla')
-                                    ->join('sla_template', 'sla_template.id', '=', 'sla.sla_template_id')
-                                    ->whereHas('assignGroup', function ($query)use($get_company) {
-                                        $query->whereHas('users', function ($query)use($get_company) {
-                                            $query->whereIn('company_id',$get_company->pluck('id')->toArray()); 
-                                        }); 
-                                    })
-                                    ->applyFilters($request)
-                                    ->groupBy('sla_template.company_id', 'sla_template.severity_id')
-                                    ->get();
+        $get_group = Group::select('id','name')
+                            // ->when($role?->role == Role::CONTRACTOR, function ($query) use ($request){
+                            //     $query->where('id',Auth::user()->group_id);
+                            // })
+                            ->whereHas('incidents')
+                            ->get();
 
         $data = [];
 
-        foreach($get_company as $company){
-            $companyIncidents = $incidentCounts->where('company_id', $company->id);
+        foreach($get_group as $group){
+            $incidentCounts = Incident::applyFilters($request) ->where('assign_group_id', $group->id);
 
-            $total_incident = $companyIncidents->sum('total');
+            $total_incident = $incidentCounts->count();
 
-            $critical_incident = $companyIncidents->where('severity_id', RefTable::SEVERITY_CRITICAL)
-                                                    ->sum('total');
+            $critical_incident = $incidentCounts->whereHas('sla', function ($query)use($request) {
+                                                    $query->whereHas('slaTemplate', function ($query)use($request) {
+                                                        $query->where('severity_id',$request->severity_id); 
+                                                    }); 
+                                                })
+                                                ->count();
 
             $data[] = [
-                'id' => $company->id,
-                'name' => $company->name,
+                'id' => $group->id,
+                'name' => $group->name,
                 'total_incident' => $total_incident,
                 'total_incident_critical' => $critical_incident,
             ];

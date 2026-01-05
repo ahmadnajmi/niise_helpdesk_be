@@ -112,6 +112,13 @@ class IncidentResolutionServices
 
             $data_workbasket['escalate_frontliner'] = false;
         }
+        elseif($data->action_codes == ActionCode::CLOSED){
+            $data_incident['status']  =  Incident::CLOSED; 
+            $incident->workbasket?->delete();
+
+            $trigger_workbasket['btmr'] = true;
+            $trigger_workbasket['jim'] = true;
+        }
         else{
             $data_workbasket['status'] = Workbasket::IN_PROGRESS;
         }

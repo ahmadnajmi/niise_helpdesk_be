@@ -32,7 +32,7 @@ class Group extends BaseModel
     }
  
     public function incidents(){
-        return $this->hasMany(Incident::class,'assign_group_id');
+        return $this->hasMany(Incident::class,'assign_group_id','id');
     }
     
 }

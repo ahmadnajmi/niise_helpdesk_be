@@ -31,8 +31,7 @@ class ActionCode extends BaseModel
     const ONSITE = 'ONSITE';
     const STARTD = 'STARTD';
     const STOPD = 'STOPD';
-
-
+    const CLOSED = 'CLSD';
 
     const SEND_TO_COMPLAINT = 1;
     const SEND_TO_GROUP = 2;
