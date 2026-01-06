@@ -481,8 +481,33 @@ class IncidentServices
         if ($sla->resolution_time_type == SlaTemplate::SLA_TYPE_DAY) {
             $due_date = self::calculateDueDateByDays($incident_date, (int)$sla->resolution_time, $operating_times, $public_holidays,$incident_no,$is24Hour);
         }
+        else if ($sla->resolution_time_type == SlaTemplate::SLA_TYPE_HOUR) {
+            $total_hours = (int)$sla->resolution_time;
+            
+            if ($total_hours >= 24) {
+                $days = floor($total_hours / 24);
+                $remaining_hours = $total_hours % 24;
+                
+                Log::info('Converting hours to days', [
+                    'incident_no' => $incident_no,
+                    'total_hours' => $total_hours,
+                    'days' => $days,
+                    'remaining_hours' => $remaining_hours
+                ]);
+                
+                $due_date = self::calculateDueDateByDays($incident_date, $days, $operating_times, $public_holidays, $incident_no, $is24Hour);
+                
+                if ($remaining_hours > 0) {
+                    $remaining_minutes = $remaining_hours * 60;
+                    $due_date = self::calculateDueDateByMinutes($due_date, $remaining_minutes, $operating_times, $public_holidays, $incident_no, $is24Hour);
+                }
+            } else {
+                $sla_minutes = $total_hours * 60;
+                $due_date = self::calculateDueDateByMinutes($incident_date, $sla_minutes, $operating_times, $public_holidays, $incident_no, $is24Hour);
+            }
+        }
         else{
-            $sla_minutes = $sla->resolution_time_type == SlaTemplate::SLA_TYPE_HOUR ? (int)$sla->resolution_time * 60  : (int)$sla->resolution_time;
+            $sla_minutes = (int)$sla->resolution_time;
 
             $due_date =  self::calculateDueDateByMinutes($incident_date, $sla_minutes, $operating_times, $public_holidays,$incident_no,$is24Hour);
         }
