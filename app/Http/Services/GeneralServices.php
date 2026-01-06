@@ -36,8 +36,11 @@ class GeneralServices
                                                 $query->whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $request->branch_id)')");
                                             });
                                         })
-                                        ->with(['sla' => function ($query) {
-                                            $query->select('id','code','category_id');
+                                        ->with(['sla' => function ($query)use($request) {
+                                            $query->select('id','code','category_id')
+                                                    ->when($request->branch_id, function ($query) use ($request) {
+                                                        return $query->whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $request->branch_id)')");
+                                                    });
                                         }])
                                         ->where('is_active',true)
                                         ->orderBy('name','asc')
@@ -214,7 +217,10 @@ class GeneralServices
                                             });
                                         })
                                         ->with(['sla' => function ($query) {
-                                            $query->select('id','code','category_id');
+                                            $query->select('id','code','category_id')
+                                                    ->when($request->branch_id, function ($query) use ($request) {
+                                                        return $query->whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $request->branch_id)')");
+                                                    });
                                         }])
                                         ->with(['childCategoryRecursive' => function ($query) {
                                             $query->select('id','category_id','name','level','code')
