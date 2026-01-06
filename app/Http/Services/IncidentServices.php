@@ -471,13 +471,6 @@ class IncidentServices
 
         $incident_date = self::shiftToNextWorkingPeriod($incident_date, $operating_times, $public_holidays,$is24Hour);
 
-        Log::info('SLA Type Check', [
-            'resolution_time_type' => $sla->resolution_time_type,
-            'resolution_time' => $sla->resolution_time,
-            'is_day_type' => $sla->resolution_time_type == SlaTemplate::SLA_TYPE_DAY,
-            'is_24_hour_operation' => $is24Hour
-        ]);
-
         if ($sla->resolution_time_type == SlaTemplate::SLA_TYPE_DAY) {
             $due_date = self::calculateDueDateByDays($incident_date, (int)$sla->resolution_time, $operating_times, $public_holidays,$incident_no,$is24Hour);
         }
@@ -487,29 +480,28 @@ class IncidentServices
             if ($total_hours >= 24) {
                 $days = floor($total_hours / 24);
                 $remaining_hours = $total_hours % 24;
-                
-                Log::info('Converting hours to days', [
-                    'incident_no' => $incident_no,
-                    'total_hours' => $total_hours,
-                    'days' => $days,
-                    'remaining_hours' => $remaining_hours
-                ]);
-                
-                $due_date = self::calculateDueDateByDays($incident_date, $days, $operating_times, $public_holidays, $incident_no, $is24Hour);
-                
-                if ($remaining_hours > 0) {
-                    $remaining_minutes = $remaining_hours * 60;
-                    $due_date = self::calculateDueDateByMinutes($due_date, $remaining_minutes, $operating_times, $public_holidays, $incident_no, $is24Hour);
-                }
+            
+            Log::info('Converting hours to days', [
+                'incident_no' => $incident_no,
+                'total_hours' => $total_hours,
+                'days' => $days,
+                'remaining_hours' => $remaining_hours
+            ]);
+            
+            $due_date = self::calculateDueDateByDays($incident_date, $days, $operating_times, $public_holidays, $incident_no, $is24Hour);
+            
+            if ($remaining_hours > 0) {
+                $remaining_minutes = $remaining_hours * 60;
+                $due_date = self::calculateDueDateByMinutes($due_date, $remaining_minutes, $operating_times, $public_holidays, $incident_no, $is24Hour);
+            }
             } else {
                 $sla_minutes = $total_hours * 60;
                 $due_date = self::calculateDueDateByMinutes($incident_date, $sla_minutes, $operating_times, $public_holidays, $incident_no, $is24Hour);
             }
         }
-        else{
+        else {
             $sla_minutes = (int)$sla->resolution_time;
-
-            $due_date =  self::calculateDueDateByMinutes($incident_date, $sla_minutes, $operating_times, $public_holidays,$incident_no,$is24Hour);
+            $due_date = self::calculateDueDateByMinutes($incident_date, $sla_minutes, $operating_times, $public_holidays, $incident_no, $is24Hour);
         }
 
         return $due_date;
@@ -644,22 +636,25 @@ class IncidentServices
         return $date;
     }
 
-    private static function calculateDueDateByDays($date, $sla_days, $operating_times, $public_holidays, $incident_no,$is24Hour = false){
+    private static function calculateDueDateByDays($date, $sla_days, $operating_times, $public_holidays, $incident_no, $is24Hour = false){
         $loop_guard = 0;
-        $startTime = $date->format('H:i:s'); 
-        $date = $date->copy()->addDay()->startOfDay();
-
+        $startTime = $date->format('H:i:s'); // Save original incident time (12:18:00)
+        
         $logs[] = [
             'incident_no' => $incident_no,
             'type' => 'Days',
             'step' => 'start',
             'start_date' => $date->format('l, d F Y h:i A'),
+            'original_time' => $startTime,
             'is_24_hour_operation' => $is24Hour,
             'sla_days' => $sla_days
         ];
 
+        // Count the days WITHOUT moving to next day first
         while ($sla_days > 0 && $loop_guard++ < 365){
-            $date = self::shiftToNextWorkingPeriod($date, $operating_times, $public_holidays,$is24Hour);
+            // Move to next day for counting
+            $date = $date->copy()->addDay()->startOfDay();
+            $date = self::shiftToNextWorkingPeriod($date, $operating_times, $public_holidays, $is24Hour);
 
             $current_day = $date->isoWeekday();
 
@@ -673,16 +668,7 @@ class IncidentServices
                     'day' => $date->format('l, d F Y'),
                     'note' => 'No operating period for this day'
                 ];
-
-                $date->addDay()->startOfDay();
                 continue;
-            }
-            
-            $end = $date->copy()->setTimeFromTimeString($period->operation_end);
-            
-            // Handle overnight shift
-            if (self::isOvernightShift($period->operation_start, $period->operation_end)) {
-                $end->addDay();
             }
 
             $sla_days--;
@@ -690,46 +676,40 @@ class IncidentServices
             $logs[] = [
                 'step' => 'loop',
                 'day' => $date->format('l, d F Y'),
-                'period_end' => $end->format('l, d F Y h:i A'),
                 'sla_days_remaining' => $sla_days
             ];
-
-            if ($sla_days === 0){
-
-                $logs[] = [
-                    'step' => 'finished',
-                    'final_due_date' => $end->format('l, d F Y h:i A')
-                ];
-
-                if($incident_no){
-                    Log::channel('incident_details')->info('Due Date Calculation for incident Number : '.$incident_no, $logs);
-                }
-
-                $due = $date->copy()->setTimeFromTimeString($startTime);
-
-                // Check if due time is within operating hours (considering overnight shift)
-                $opStart = $date->copy()->setTimeFromTimeString($period->operation_start);
-                $opEnd = $date->copy()->setTimeFromTimeString($period->operation_end);
-                
-                if (self::isOvernightShift($period->operation_start, $period->operation_end)) {
-                    $opEnd->addDay();
-                }
-
-                if ($due->between($opStart, $opEnd)) {
-                    return $due;
-                }
-
-                return $opEnd;
-            }
-
-            $date = $end->copy()->addSecond();
         }
+
+        // Now set the time back to the original incident time
+        $due = $date->copy()->setTimeFromTimeString($startTime);
+
+        // Check if the original time falls within operating hours
+        $opStart = $date->copy()->setTimeFromTimeString($period->operation_start);
+        $opEnd = $date->copy()->setTimeFromTimeString($period->operation_end);
+        
+        if (self::isOvernightShift($period->operation_start, $period->operation_end)) {
+            $opEnd->addDay();
+        }
+
+        // If original time is BEFORE operating hours, move to operation start
+        if ($due->lt($opStart)) {
+            $due = $opStart->copy();
+        }
+        // If original time is AFTER operating hours, keep it as is (will be handled by minutes calculation)
+        // Don't force it to operation end!
+
+        $logs[] = [
+            'step' => 'finished',
+            'final_date' => $date->format('l, d F Y'),
+            'original_time' => $startTime,
+            'final_due_date' => $due->format('l, d F Y h:i A')
+        ];
 
         if($incident_no){
-            Log::channel('incident_details')->info('Due Date Calculation (exhausted) for incident Number : '.$incident_no, $logs);
+            Log::channel('incident_details')->info('Due Date Calculation for incident Number : '.$incident_no, $logs);
         }
 
-        return $date;
+        return $due;
     }
 
     private static function is24HourOperation($operating_times) {
