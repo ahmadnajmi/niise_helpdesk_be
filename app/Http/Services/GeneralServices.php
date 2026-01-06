@@ -216,7 +216,7 @@ class GeneralServices
                                                 $query->whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $request->branch_id)')");
                                             });
                                         })
-                                        ->with(['sla' => function ($query) {
+                                        ->with(['sla' => function ($query) use ($request) {
                                             $query->select('id','code','category_id')
                                                     ->when($request->branch_id, function ($query) use ($request) {
                                                         return $query->whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $request->branch_id)')");
