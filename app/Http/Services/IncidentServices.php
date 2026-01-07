@@ -392,16 +392,19 @@ class IncidentServices
     public static function generatePenalty(Incident $incident){
 
         $data_penalty = self::checkPenalty($incident);
-        $data_penalty['incident_id'] = $incident->id;
 
         $check_penalty = IncidentPenalty::where('incident_id',$incident->id)->first();
 
         if($check_penalty){
-            $check_penalty->update($data_penalty);
+            $update = $check_penalty->update($data_penalty);
         }
         else{
+            $data_penalty['incident_id'] = $incident->id;
+
             IncidentPenalty::create($data_penalty);
         }
+
+        return $data_penalty;
         
     }
 

@@ -458,9 +458,7 @@ class Incident extends BaseModel
 
                         })
                         ->when($request->group_id, function ($query)use($request){
-                            return $query->whereHas('incidentResolution', function ($query)use($request) {
-                                $query->where('group_id',$request->group_id); 
-                            });
+                            $query->where('assign_group_id',$request->group_id); 
                         })
                         ->when($request->status_workbasket, function ($query) use ($request) {
                             return $query->whereHas('workbasket', function ($query)use($request) {
