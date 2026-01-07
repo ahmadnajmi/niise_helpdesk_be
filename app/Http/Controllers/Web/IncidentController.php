@@ -39,7 +39,7 @@ class IncidentController extends Controller
         if($incident){
             $generate_due_date = IncidentServices::calculateDueDateIncident($incident);
 
-            // $generate_penalty  = IncidentServices::checkPenalty($incident);
+            $generate_penalty  = IncidentServices::checkPenalty($incident);
         }
 
 

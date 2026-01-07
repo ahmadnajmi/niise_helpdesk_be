@@ -352,13 +352,13 @@ class DashboardServices
 
     public static function incidentByCategory($request){
         $allCategories = Category::select('id', 'category_id', 'name')
-                                // ->whereHas('incidents', function ($query) use ($request) {
-                                //     $query->applyFilters($request); 
-                                // })     
+                                ->whereHas('incidents', function ($query) use ($request) {
+                                    $query->applyFilters($request); 
+                                })     
                                 ->get()
                                 ->keyBy('id');
 
-                                $categoryHierarchy = self::buildCategoryHierarchy($allCategories);
+        $categoryHierarchy = Category::buildCategoryHierarchy($allCategories);
 
         $allCategoryIds = $allCategories->pluck('id')->toArray();
 
@@ -396,34 +396,6 @@ class DashboardServices
 
         return $data;
     }
-
-
-    private static function buildCategoryHierarchy($categories){
-        $hierarchy = collect();
-        $childrenMap = $categories->groupBy('category_id');
-
-        foreach ($categories as $category) {
-            $descendants = collect([$category->id]);
-            $toProcess = collect([$category->id]);
-
-            while ($toProcess->isNotEmpty()) {
-                $currentId = $toProcess->shift();
-                $children = $childrenMap->get($currentId, collect());
-                
-                foreach ($children as $child) {
-                    if (!$descendants->contains($child->id)) {
-                        $descendants->push($child->id);
-                        $toProcess->push($child->id);
-                    }
-                }
-            }
-
-            $hierarchy->put($category->id, $descendants);
-        }
-
-        return $hierarchy;
-    }
-
 
     private static function bulkCountIncidents($request, array $categoryIds, $categoryHierarchy){
         $rawTotalIncidents = Incident::selectRaw('category_id, COUNT(*) as count')

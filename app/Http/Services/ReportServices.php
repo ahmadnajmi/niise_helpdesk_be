@@ -225,7 +225,7 @@ class ReportServices
 
         $parameter = array_merge($request->only(['start_date', 'end_date','branch_id','severity_id','status','state_id','company_id']), $parameter);
 
-        if($chart_image && $request->report_category != 'TO_BREACH' && $request->report_category != 'STATUS'){
+        if($chart_image && $request->report_category != 'TO_BREACH'){
             $parameter['graph_picture'] = $chart_image;
         }
 
