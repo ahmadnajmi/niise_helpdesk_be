@@ -64,6 +64,13 @@ class User extends Authenticatable
         'branch_id' => 'branch.name'
     ];
 
+    public function scopeHideSuperAdmin($query){
+        return $query->whereDoesntHave('roles', function ($query) {
+            $query->where('role', Role::SUPER_ADMIN);
+        });
+    }
+
+
     public function scopeSearch($query, $keyword){
         if (!empty($keyword)) {
             $keyword = strtolower($keyword);

@@ -136,6 +136,7 @@ class GeneralServices
                                         return $query->where('branch_id',$request->branch_id);
                                     })
                                     ->where('is_active',true)
+                                    ->hideSuperAdmin()
                                     ->orderBy('name','asc')
                                     ->get();
             }

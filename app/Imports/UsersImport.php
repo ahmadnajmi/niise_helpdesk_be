@@ -15,20 +15,24 @@ class UsersImport implements ToModel
 {
     public function model(array $row)
     {
-        $state = RefTable::inRandomOrder()->where('code_category','state')->first();
-        $get_branch = Branch::where('state_id', $state?->ref_code)->inRandomOrder()->first();
+        $role = isset($row[6]) ? $row[6] : null;
+        if($row[6] != 'SUPER_ADMIN'){
+            $state = RefTable::inRandomOrder()->where('code_category','state')->first();
+            $get_branch = Branch::where('state_id', $state?->ref_code)->inRandomOrder()->first();
+
+            $data['branch_id'] = $get_branch ? $get_branch->id : null;
+            $data['state_id'] = $state?->ref_code;
+        }       
 
         $data['name']  = $row[0];
         $data['nickname']  = $row[0];
         $data['password']  = Hash::make('P@ssw0rd');
         $data['position']    = $row[1];
-        $data['branch_id'] = $get_branch ? $get_branch->id : null;
         $data['email'] =   $row[3];
         $data['phone_no'] =   $row[4];
         $data['category_office'] =   $row[5];
-        $data['state_id'] = $state?->ref_code;
+        $data['first_time_password'] = isset($row[8]) ? false : true;
       
-        
         if(isset($row[7])){
             $data['ic_no'] =   $row[7];
         }
@@ -46,7 +50,6 @@ class UsersImport implements ToModel
             $role = Role::inRandomOrder()->first();
             $role =  $role->id;
         }
-      
        
         $data_userrole['user_id'] = $create->id;
         $data_userrole['role_id'] = $role;

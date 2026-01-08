@@ -255,7 +255,7 @@ class UserServices
     }
 
     public static function searchIcNoContractor($request){
-        $user = User::filter()->first();
+        $user = User::hideSuperAdmin()->filter()->first();
 
         if($user){
             $return  = [
