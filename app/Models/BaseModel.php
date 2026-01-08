@@ -156,9 +156,15 @@ class BaseModel extends Model implements Auditable
             }
         }
 
-        if (!$hasSorting && $this->timestamps) {
-            $query->orderByDesc('updated_at');
+        if (!$hasSorting) {
+            if (property_exists($this, 'defaultSort') && !empty($this->defaultSort)) {
+                foreach ($this->defaultSort as $field => $direction) {
+                    $query->orderBy($field, $direction);
+                }
+            } elseif ($this->timestamps) {
+                $query->orderByDesc('updated_at');
         }
+    }
 
         return $query;
     }
