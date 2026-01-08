@@ -20,12 +20,30 @@ class ReportSeeder extends Seeder
             DB::statement("ALTER SEQUENCE REPORT_ID_SEQ RESTART START WITH 1");
         } 
 
-        $reports = [
-            ["code" => "IDLE", "file_name" => "idle_report"],
-            ["code" => "OUTSTANDING", "file_name" => "outstanding"],
-            ["code" => "TO_BREACH","file_name" => "to_be_breach_report"],
-            ["code" => "SLA_BREACH" ,"file_name" => "sla_breach_report"],
-            ["code" => "STATUS" ,"file_name" => "status_report"],
+        $reports = [ 
+            [
+                "code" => "IDLE", 
+                "jasper_file_name" => "idle_report",
+                "output_name" => 'Laporan insiden tanpa tindakan'
+            ],
+            [
+                "code" => "OUTSTANDING",
+                "jasper_file_name" => "outstanding",
+                "output_name" => 'Laporan belum selesai'
+            ],
+            [
+                "code" => "TO_BREACH",
+                "jasper_file_name" => "to_be_breach_report",
+            ],
+            [
+                "code" => "SLA_BREACH" ,
+                "jasper_file_name" => "sla_breach_report"
+            ],
+            [
+                "code" => "STATUS" ,
+                "jasper_file_name" => "status_report",
+                "output_name" => 'Laporan Jumlah Insiden (Status)'
+            ],
 
         ];
 

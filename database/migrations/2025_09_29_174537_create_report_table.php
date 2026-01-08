@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('report', function (Blueprint $table) {
             $table->id();
             $table->string('code')->nullable();
-            $table->string('file_name')->nullable();           
+            $table->string('jasper_file_name')->nullable();     
+            $table->string('output_name')->nullable();           
             $table->log();
         });
     }

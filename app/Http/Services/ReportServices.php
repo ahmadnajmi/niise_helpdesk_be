@@ -211,7 +211,7 @@ class ReportServices
 
         $report = Report::where('code',$request->report_category)->first();
 
-        $file = $report ? $report->file_name : 'outstanding';
+        $file = $report ? $report->jasper_file_name : 'outstanding';
        
         $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'csv' ;
 
@@ -229,9 +229,18 @@ class ReportServices
             $parameter['graph_picture'] = $chart_image;
         }
 
+        if($request->report_category == 'STATUS'){
+            $file_name = 'Laporan Jumlah Insiden (Status)';
+        }
+        else if($request->report_category == 'SEVERITY'){
+            $file_name = 'Laporan Jumlah Insiden (Status)';
+        }
+
+        $output_file_name = $report->output_name ? $report->output_name : $report->jasper_file_name;
+
         $data = [
             'reportTemplate' => $file.'/'.$file.'.jasper',
-            'outputFileName' => $report->file_name.'.'.$fileExtension,
+            'outputFileName' => $output_file_name.'.'.$fileExtension,
             'report_format' => $fileExtension == 'csv' ? 'excel' : 'pdf',
             'parameters' => $parameter
         ]; 
