@@ -159,9 +159,10 @@ class Incident extends BaseModel
         return $this->hasOne(IncidentResolution::class, 'incident_id','id')->orderBy('created_at', 'desc'); 
     }
 
-    public function incidentResolutionEscalateLatest(){
-        return $this->hasOne(IncidentResolution::class, 'incident_id','id')->where('action_codes',ActionCode::ESCALATE)->ofMany('id', 'max');
+    public function incidentResolutionActr(){
+        return $this->hasOne(IncidentResolution::class, 'incident_id','id')->where('action_codes',ActionCode::ACTR)->orderBy('created_at','asc');
     }
+
 
     public function incidentDocumentAppendix(){
         return $this->hasMany(IncidentDocument::class, 'incident_id','id')->where('type',IncidentDocument::APPENDIX)->orderBy('created_at','desc');
@@ -325,12 +326,13 @@ class Incident extends BaseModel
 
     protected function calculateBreachTime(): Attribute{
         return Attribute::get(function () {
+            $date_actr = $this->incidentResolutionActr?->created_at;
 
-            if (!$this->actual_end_date || $this->actual_end_date->lessThanOrEqualTo($this->expected_end_date)) {
+            if (!$date_actr || $date_actr->lessThanOrEqualTo($this->expected_end_date)) {
                 return '00 Hari : 00 Jam : 00 Minit';
             }
             else{
-                $diff = $this->expected_end_date->diff($this->actual_end_date);
+                $diff = $this->expected_end_date->diff($date_actr);
 
                 return $diff->d .' Hari : ' . $diff->h . ' Jam : ' .$diff->i  .' Minit';
             }
