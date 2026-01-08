@@ -34,10 +34,12 @@ class ReportSeeder extends Seeder
             [
                 "code" => "TO_BREACH",
                 "jasper_file_name" => "to_be_breach_report",
+                "output_name" => 'Laporan akan melebihi masa sla'
             ],
             [
                 "code" => "SLA_BREACH" ,
-                "jasper_file_name" => "sla_breach_report"
+                "jasper_file_name" => "sla_breach_report",
+                "output_name" => 'Laporan yang melebihi masa sla'
             ],
             [
                 "code" => "STATUS" ,
