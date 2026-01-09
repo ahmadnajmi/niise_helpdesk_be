@@ -21,7 +21,6 @@ Deploy Staging:
         - "Database\\Seeders\\RoleSeeder"
         - "Database\\Seeders\\RefTableSeeder"
         - "Database\\Seeders\\ReportSeeder"
-      description: "Optional: select seeder to run (empty = skip)"
   script:
     - echo "Deploying to Staging..."
     - cd /var/www/html/helpdesk_be  
