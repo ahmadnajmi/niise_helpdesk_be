@@ -8,6 +8,20 @@ Deploy Staging:
   stage: Deploy Staging 
   tags:
     - server_staging  
+  variables:
+    SEEDER_CLASS:
+      value: ""
+      options:
+        - ""
+        - "Database\\Seeders\\ActionCodeSeeder"
+        - "Database\\Seeders\\BranchSeeder"
+        - "Database\\Seeders\\CategorySeeder"
+        - "Database\\Seeders\\ModuleSeeder"
+        - "Database\\Seeders\\PermissionSeeder"
+        - "Database\\Seeders\\RoleSeeder"
+        - "Database\\Seeders\\RefTableSeeder"
+        - "Database\\Seeders\\ReportSeeder"
+      description: "Optional: select seeder to run (empty = skip)"
   script:
     - echo "Deploying to Staging..."
     - cd /var/www/html/helpdesk_be  
@@ -18,6 +32,13 @@ Deploy Staging:
     - npm run build
     - php artisan migrate --force
     - php artisan migrate --path=database/migrations/alter_table --force
+    - |
+      if [ -n "$SEEDER_CLASS" ]; then
+        echo "Running seeder: $SEEDER_CLASS"
+        php artisan db:seed --class="$SEEDER_CLASS" --force
+      else
+        echo "No seeder selected. Skipping seeding."
+      fi
   when: manual
   only:
     - staging
