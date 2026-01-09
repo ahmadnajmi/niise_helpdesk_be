@@ -11,16 +11,7 @@ Deploy Staging:
   variables:
     SEEDER_CLASS:
       value: ""
-      options:
-        - ""
-        - "Database\\Seeders\\ActionCodeSeeder"
-        - "Database\\Seeders\\BranchSeeder"
-        - "Database\\Seeders\\CategorySeeder"
-        - "Database\\Seeders\\ModuleSeeder"
-        - "Database\\Seeders\\PermissionSeeder"
-        - "Database\\Seeders\\RoleSeeder"
-        - "Database\\Seeders\\RefTableSeeder"
-        - "Database\\Seeders\\ReportSeeder"
+      description: "Comma-separated seeder names (e.g. RoleSeeder,PermissionSeeder)"
   script:
     - echo "Deploying to Staging..."
     - cd /var/www/html/helpdesk_be  
@@ -32,12 +23,35 @@ Deploy Staging:
     - php artisan migrate --force
     - php artisan migrate --path=database/migrations/alter_table --force
     - |
-      if [ -n "$SEEDER_CLASS" ]; then
-        echo "Running seeder: $SEEDER_CLASS"
-        php artisan db:seed --class="$SEEDER_CLASS" --force
-      else
-        echo "No seeder selected. Skipping seeding."
+      if [ -z "$SEEDER" ]; then
+        echo "No seeder selected. Skipping."
+        exit 0
       fi
+
+      IFS=',' read -ra SEEDERS <<< "$SEEDER"
+
+      for S in "${SEEDERS[@]}"; do
+        S=$(echo "$S" | xargs) # trim spaces
+
+        case "$S" in
+          "ActionCodeSeeder" | \
+          "BranchSeeder" | \
+          "CategorySeeder" | \
+          "ModuleSeeder" | \
+          "PermissionSeeder" | \
+          "RoleSeeder" | \
+          "RefTableSeeder" | \
+          "ReportSeeder")
+            SEEDER_CLASS="Database\\Seeders\\$S"
+            echo "Running seeder: $SEEDER_CLASS"
+            php artisan db:seed --class="$SEEDER_CLASS" --force
+            ;;
+          *)
+            echo "❌ Seeder NOT allowed: $S"
+            exit 1
+            ;;
+        esac
+      done
   when: manual
   only:
     - staging
