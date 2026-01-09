@@ -178,26 +178,31 @@ class ReportServices
                                 })
                                 ->get();
 
-        $incident_counts = Incident::select('category_id', DB::raw('COUNT(*) as total'))
+        $incident_counts = Incident::select('incidents.category_id', 'sla_template.severity_id', DB::raw('COUNT(*) as total'))
+                                    ->join('sla', 'incidents.code_sla', '=', 'sla.code')  // Adjust column name if needed
+                                    ->join('sla_template', 'sla.sla_template_id', '=', 'sla_template.id')  // Adjust column name if needed
                                     ->when($request->branch_id, function ($query)use($request) {
-                                        return $query->where('branch_id',$request->branch_id);
+                                        return $query->where('incidents.branch_id',$request->branch_id);
                                     })
                                     ->when($request->contractor_id, function ($query)use($request) {
-                                        return $query->where('assign_group_id',$request->contractor_id);
+                                        return $query->where('incidents.assign_group_id',$request->contractor_id);
                                     })
-                                    ->where('status',Incident::OPEN)
-                                    ->groupBy('category_id')
-                                    ->pluck('total', 'category_id'); 
+                                    ->where('incidents.status',Incident::OPEN)
+                                    ->groupBy('incidents.category_id', 'sla_template.severity_id')
+                                    ->get()
+                                    ->groupBy('severity_id');
 
         foreach($ref_tables as $idx => $reference){
-
+            
             $format['name'] = 'Severity '.$reference->ref_code; 
             $format['level'] = $reference->ref_code;
             $format['categories'] = [];
 
+            $severity_counts = $incident_counts->get($reference->ref_code, collect())->pluck('total', 'category_id');  
+
             foreach($get_category as $category){
                 $format_categories['name'] = $category->name;
-                $format_categories['count'] = $incident_counts[$category->id] ?? 0;
+                $format_categories['count'] = $severity_counts[$category->id] ?? 0;
 
                 $format['categories'][] = $format_categories;
             }
