@@ -11,7 +11,6 @@ Deploy Staging:
   variables:
     SEEDER_CLASS:
       value: ""
-      description: "Comma-separated seeder names (e.g. RoleSeeder,PermissionSeeder)"
   script:
     - echo "Deploying to Staging..."
     - cd /var/www/html/helpdesk_be  
