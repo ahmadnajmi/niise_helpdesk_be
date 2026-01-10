@@ -359,7 +359,8 @@ class Incident extends BaseModel
     public static function filterIncident($request){
         $limit = $request->limit ? $request->limit : 15;
 
-        $data =  Incident::applyFilters($request)
+        $data =  Incident::select('id','incident_no','branch_id','information','status','incident_date','actual_end_date','code_sla','complaint_user_id')
+                        // ->applyFilters($request)
                         ->when($request->status, function ($query) use ($request) {
                             if (is_array($request->status)) {
                                 return $query->whereIn('status', $request->status);
