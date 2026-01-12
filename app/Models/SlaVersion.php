@@ -66,4 +66,8 @@ class SlaVersion extends BaseModel
         return $this->hasOne(RefTable::class,'ref_code','verify_resolution_time_penalty_type')->where('code_category', 'sla_type');
     }
 
+    public function verifyResolutionTimeTypeDescription(){
+        return $this->hasOne(RefTable::class,'ref_code','verify_resolution_time_type')->where('code_category', 'sla_type');
+    }
+
 }

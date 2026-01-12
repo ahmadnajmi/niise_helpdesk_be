@@ -734,26 +734,7 @@ class IncidentServices
         $data['penalty_prt'] = self::penaltyProblemResolutionTime($incident,$get_sla_version);
         $data['penalty_vprt'] = self::penaltyVerifyProblemResolutionTime($incident,$get_sla_version);
 
-        return $data;
-
-        // $actual   = Carbon::parse($incident->actual_end_date);
-        // $expected = Carbon::parse($incident->expected_end_date);
-
-        // if ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_MINUTE) {
-        //     $total_sla_time = $expected->diffInMinutes($actual); 
-        // }
-        // elseif ($get_sla_version->response_time_type == SlaTemplate::SLA_TYPE_HOUR) {
-        //     $total_sla_time = $expected->diffInHours($actual);
-        // }
-        // else {
-        //     $total_sla_time = $expected->diffInDays($actual);
-        // }
-        // $interval_count = intdiv($total_sla_time, $get_sla_version->response_time);
-        // $penalty = $interval_count * $get_sla_version->response_time_penalty;
-
-        // $data_penalty['total_response_time_penalty_minute'] =  $total_sla_time;
-        // $data_penalty['total_response_time_penalty_price'] =  $penalty;
-        
+        return $data;        
     }
 
     private static function penaltyInitialResponseTime($incident, $get_sla_version){
@@ -763,11 +744,23 @@ class IncidentServices
                                         ->where('action_codes', ActionCode::INITIAL)
                                         ->first();
 
-        if($get_init && $get_sla_version){
-            $start_date = Carbon::parse($incident->incident_date);
-            $end_date = Carbon::parse($get_init->pickup_date);
+        $get_escalate = IncidentResolution::where('incident_id', $incident->id)
+                                        ->where('action_codes', ActionCode::ESCALATE)
+                                        ->orderBy('created_at', 'asc')
+                                        ->first();
 
-            $penalty_irt = self::formulaCalculation($start_date,$end_date,$get_sla_version,'irt');
+        if($get_init->pickup_date && $get_escalate && $get_sla_version){
+            $start_date = Carbon::parse($get_init->pickup_date);
+            $end_date = Carbon::parse($get_escalate->created_at);
+
+            // $penalty_irt = self::formulaCalculation($start_date,$end_date,$get_sla_version,'irt');
+            $penalty_irt = self::formulaCalculationWithOperatingHours(
+                $start_date,
+                $end_date,
+                $get_sla_version,
+                'irt',
+                $incident->branch_id
+            );
         }
 
         return $penalty_irt;
@@ -789,7 +782,14 @@ class IncidentServices
             $start_date = Carbon::parse($get_escalate_contractor->created_at);
             $end_date = Carbon::parse($get_onsite->created_at);
 
-            $penalty_ort = self::formulaCalculation($start_date,$end_date,$get_sla_version,'ort');
+        // $penalty_ort = self::formulaCalculation($start_date,$end_date,$get_sla_version,'ort');
+            $penalty_ort = self::formulaCalculationWithOperatingHours(
+                $start_date,
+                $end_date,
+                $get_sla_version,
+                'ort',
+                $incident->branch_id
+            );
         }
 
         return $penalty_ort;
@@ -806,11 +806,19 @@ class IncidentServices
                                         ->where('action_codes', ActionCode::ESCALATE)
                                         ->where('group_id', $incident->assign_group_id)
                                         ->first();
+
         if($end_date && $start_date && $get_sla_version){
             $start_date = Carbon::parse($start_date->created_at);
             $end_date = Carbon::parse($end_date->created_at);
 
-            $penalty_prt = self::formulaCalculation($start_date,$end_date,$get_sla_version,'prt');
+            // $penalty_prt = self::formulaCalculation($start_date,$end_date,$get_sla_version,'prt');
+            $penalty_prt = self::formulaCalculationWithOperatingHours(
+                $start_date,
+                $end_date,
+                $get_sla_version,
+                'prt',
+                $incident->branch_id
+            );
         }
 
 
@@ -821,11 +829,11 @@ class IncidentServices
     private static function penaltyVerifyProblemResolutionTime($incident,$get_sla_version){
         $penalty_vprt = 0;
 
-        $end_date = IncidentResolution::where('incident_id', $incident->id)
+        $start_date = IncidentResolution::where('incident_id', $incident->id)
                                         ->where('action_codes', ActionCode::ACTR)
                                         ->first();
         
-        $start_date = IncidentResolution::where('incident_id', $incident->id)
+        $end_date = IncidentResolution::where('incident_id', $incident->id)
                                         ->where('action_codes', ActionCode::VERIFY)
                                         ->first();
 
@@ -833,7 +841,14 @@ class IncidentServices
             $start_date = Carbon::parse($start_date->created_at);
             $end_date = Carbon::parse($end_date->created_at);
 
-            $penalty_vprt = self::formulaCalculation($start_date,$end_date,$get_sla_version,'vprt');
+            // $penalty_vprt = self::formulaCalculation($start_date,$end_date,$get_sla_version,'vprt');
+            $penalty_vprt = self::formulaCalculationWithOperatingHours(
+                $start_date,
+                $end_date,
+                $get_sla_version,
+                'vprt',
+                $incident->branch_id
+            );
         }
 
 
@@ -841,44 +856,137 @@ class IncidentServices
         
     }
 
-    private static function formulaCalculation($start_date,$end_date,$sla_version,$type){
+    // private static function formulaCalculationWithOperatingHours($start_date, $end_date, $sla_version, $type, $branch_id){
+    //     $get_penalty_details = self::penaltyDetails($sla_version, $type);
 
-        $get_penalty_details = self::penaltyDetails($sla_version,$type);
+    //     if (collect($get_penalty_details)->contains(fn ($v) => $v === null || $v === '')) {
+    //         return 0;
+    //     }
 
-        if (collect($get_penalty_details)->contains(fn ($v) => $v === null || $v === '')) {
-            return 0;
-        }
+    //     $operating_times = self::getOperatingTime($branch_id);
+    //     $public_holidays = self::getPublicHoliday($branch_id);
+    //     $is24Hour = self::is24HourOperation($operating_times);
 
-        $actualSeconds = $start_date->diffInSeconds($end_date);
+    //     $actualSeconds = self::calculateWorkingSeconds($start_date, $end_date, $operating_times, $public_holidays, $is24Hour);
 
-        $type = (int) $get_penalty_details['time_type'];
+    //     $time_type = (int) $get_penalty_details['time_type'];
 
-        $slaLimitSeconds = match ($type) {
-            SlaTemplate::SLA_TYPE_MINUTE => $get_penalty_details['time'] * 60,
-            SlaTemplate::SLA_TYPE_HOUR   => $get_penalty_details['time'] * 3600,
-            SlaTemplate::SLA_TYPE_DAY    => $get_penalty_details['time'] * 86400,
-        };
+    //     $slaLimitSeconds = match ($time_type) {
+    //         SlaTemplate::SLA_TYPE_MINUTE => $get_penalty_details['time'] * 60,
+    //         SlaTemplate::SLA_TYPE_HOUR   => $get_penalty_details['time'] * 3600,
+    //         SlaTemplate::SLA_TYPE_DAY    => $get_penalty_details['time'] * 86400,
+    //     };
 
-        $lateSeconds = max(0, $actualSeconds - $slaLimitSeconds);
+    //     $lateSeconds = max(0, $actualSeconds - $slaLimitSeconds);
+    //     if($type == 'vprt')dd($start_date,$end_date,$operating_times);
+    //     if ($lateSeconds === 0) {
+    //         return 0;
+    //     }
+
+    //     $penalty_time_type = (int) $get_penalty_details['penalty_type'];
+
+    //     $penaltyUnitSeconds = match ($penalty_time_type) {
+    //         SlaTemplate::SLA_TYPE_MINUTE => 60,
+    //         SlaTemplate::SLA_TYPE_HOUR   => 3600,
+    //         SlaTemplate::SLA_TYPE_DAY    => 86400,
+    //     };
+
+    //     $lateUnits = $lateSeconds / $penaltyUnitSeconds;
+
+    //     $penalty_price = round($lateUnits * $get_penalty_details['penalty'], 2);
+
+    //     return $penalty_price;
+    // }
+
+    // private static function calculateWorkingSeconds($start_date, $end_date, $operating_times, $public_holidays, $is24Hour = false){
+    //     $totalSeconds = 0;
+    //     $current = $start_date->copy();
+    //     $loop_guard = 0;
+
+    //     while ($current->lt($end_date) && $loop_guard++ < 365) {
+    //         $date_str = $current->toDateString();
+    //         $current_day = $current->isoWeekday();
+
+    //         if (!$is24Hour && in_array($date_str, $public_holidays)) {
+    //             $current->addDay()->startOfDay();
+    //             continue;
+    //         }
+
+    //         $period = $operating_times->first(function ($op) use ($current_day) {
+    //             return self::isWithinOperatingDays($current_day, $op->day_start, $op->day_end);
+    //         });
+
+    //         if (!$period) {
+    //             $current->addDay()->startOfDay();
+    //             continue;
+    //         }
+
+    //         $opStart = $current->copy()->setTimeFromTimeString($period->operation_start);
+    //         $opEnd = $current->copy()->setTimeFromTimeString($period->operation_end);
+
+    //         if (self::isOvernightShift($period->operation_start, $period->operation_end)) {
+    //             $opEnd->addDay();
+    //         }
+
+    //         $periodStart = $current->lt($opStart) ? $opStart : $current;
+    //         $periodEnd = $end_date->lt($opEnd) ? $end_date : $opEnd;
+
+    //         if ($periodStart->lt($periodEnd)) {
+    //             $totalSeconds += $periodStart->diffInSeconds($periodEnd);
+    //         }
+
+    //         if ($end_date->gt($opEnd)) {
+    //             $current = $opEnd->copy()->addSecond();
+
+    //             if ($current->format('H:i:s') !== '00:00:00' && $current->gt($opEnd)) {
+    //                 $current->startOfDay();
+    //             }
+    //         } else {
+    //             break;
+    //         }
+    //     }
+
+    //     return $totalSeconds;
+    // }
+
+    // private static function formulaCalculation($start_date,$end_date,$sla_version,$type){
+
+    //     $get_penalty_details = self::penaltyDetails($sla_version,$type);
+
+    //     if (collect($get_penalty_details)->contains(fn ($v) => $v === null || $v === '')) {
+    //         return 0;
+    //     }
+
+    //     $actualSeconds = $start_date->diffInSeconds($end_date);
+
+    //     $type = (int) $get_penalty_details['time_type'];
+
+    //     $slaLimitSeconds = match ($type) {
+    //         SlaTemplate::SLA_TYPE_MINUTE => $get_penalty_details['time'] * 60,
+    //         SlaTemplate::SLA_TYPE_HOUR   => $get_penalty_details['time'] * 3600,
+    //         SlaTemplate::SLA_TYPE_DAY    => $get_penalty_details['time'] * 86400,
+    //     };
+
+    //     $lateSeconds = max(0, $actualSeconds - $slaLimitSeconds);
         
-        if ($lateSeconds === 0) {
-            return 0;
-        }
+    //     if ($lateSeconds === 0) {
+    //         return 0;
+    //     }
 
-        $penalty_time_type = (int) $get_penalty_details['penalty_type'];
+    //     $penalty_time_type = (int) $get_penalty_details['penalty_type'];
 
-        $penaltyUnitSeconds = match ($penalty_time_type) {
-            SlaTemplate::SLA_TYPE_MINUTE => 60,
-            SlaTemplate::SLA_TYPE_HOUR   => 3600,
-            SlaTemplate::SLA_TYPE_DAY    => 86400,
-        };
+    //     $penaltyUnitSeconds = match ($penalty_time_type) {
+    //         SlaTemplate::SLA_TYPE_MINUTE => 60,
+    //         SlaTemplate::SLA_TYPE_HOUR   => 3600,
+    //         SlaTemplate::SLA_TYPE_DAY    => 86400,
+    //     };
 
-        $lateUnits = $lateSeconds / $penaltyUnitSeconds;
+    //     $lateUnits = $lateSeconds / $penaltyUnitSeconds;
 
-        $penalty_price = round($lateUnits * $get_penalty_details['penalty'], 2);
+    //     $penalty_price = round($lateUnits * $get_penalty_details['penalty'], 2);
 
-        return $penalty_price;
-    }
+    //     return $penalty_price;
+    // }
 
     private static function penaltyDetails($get_sla_version,$type){
         $data = [
@@ -908,14 +1016,344 @@ class IncidentServices
             $data['penalty_type'] = $get_sla_version->response_time_location_penalty_type; 
         }
         elseif($type == 'vprt'){
-            $data['time'] = $get_sla_version->resolution_time_location;
-            $data['time_type'] = $get_sla_version->resolution_time_location_type;
-            $data['penalty'] = $get_sla_version->resolution_time_location_penalty;
-            $data['penalty_type'] = $get_sla_version->resolution_time_location_penalty_type; 
+            $data['time'] = $get_sla_version->verify_resolution_time;
+            $data['time_type'] = $get_sla_version->verify_resolution_time_type;
+            $data['penalty'] = $get_sla_version->verify_resolution_time_penalty;
+            $data['penalty_type'] = $get_sla_version->verify_resolution_time_penalty_type; 
+
         }
 
        
         return $data;
+    }
+
+
+
+
+
+    // private static function formulaCalculationWithOperatingHours($start_date, $end_date, $sla_version, $type, $branch_id){
+    //     $get_penalty_details = self::penaltyDetails($sla_version, $type);
+
+    //     if (collect($get_penalty_details)->contains(fn ($v) => $v === null || $v === '')) {
+    //         return 0;
+    //     }
+
+    //     // Ignore seconds - set to 00
+    //     $start_date = $start_date->copy()->setSeconds(0);
+    //     $end_date = $end_date->copy()->setSeconds(0);
+
+    //     // Get operating times and holidays
+    //     $operating_times = self::getOperatingTime($branch_id);
+    //     $public_holidays = self::getPublicHoliday($branch_id);
+    //     $is24Hour = self::is24HourOperation($operating_times);
+
+    //     // Calculate actual working seconds between start and end date
+    //     $actualSeconds = self::calculateWorkingSeconds($start_date, $end_date, $operating_times, $public_holidays, $is24Hour);
+
+    //     Log::info('Penalty Calculation Debug', [
+    //         'type' => $type,
+    //         'start_date' => $start_date->format('Y-m-d H:i:s'),
+    //         'end_date' => $end_date->format('Y-m-d H:i:s'),
+    //         'actual_working_seconds' => $actualSeconds,
+    //         'actual_working_minutes' => round($actualSeconds / 60, 2),
+    //         'penalty_details' => $get_penalty_details
+    //     ]);
+
+    //     $time_type = (int) $get_penalty_details['time_type'];
+
+    //     $slaLimitSeconds = match ($time_type) {
+    //         SlaTemplate::SLA_TYPE_MINUTE => $get_penalty_details['time'] * 60,
+    //         SlaTemplate::SLA_TYPE_HOUR   => $get_penalty_details['time'] * 3600,
+    //         SlaTemplate::SLA_TYPE_DAY    => $get_penalty_details['time'] * 86400,
+    //     };
+
+    //     $lateSeconds = max(0, $actualSeconds - $slaLimitSeconds);
+        
+    //     Log::info('Penalty Calculation Result', [
+    //         'type' => $type,
+    //         'sla_limit_seconds' => $slaLimitSeconds,
+    //         'late_seconds' => $lateSeconds,
+    //         'late_minutes' => round($lateSeconds / 60, 2)
+    //     ]);
+        
+    //     if ($lateSeconds === 0) {
+    //         return 0;
+    //     }
+
+    //     $penalty_time_type = (int) $get_penalty_details['penalty_type'];
+
+    //     $penaltyUnitSeconds = match ($penalty_time_type) {
+    //         SlaTemplate::SLA_TYPE_MINUTE => 60,
+    //         SlaTemplate::SLA_TYPE_HOUR   => 3600,
+    //         SlaTemplate::SLA_TYPE_DAY    => 86400,
+    //     };
+
+    //     $lateUnits = $lateSeconds / $penaltyUnitSeconds;
+
+    //     $penalty_price = round($lateUnits * $get_penalty_details['penalty'], 2);
+
+    //     Log::info('Final Penalty', [
+    //         'type' => $type,
+    //         'late_units' => $lateUnits,
+    //         'penalty_per_unit' => $get_penalty_details['penalty'],
+    //         'total_penalty' => $penalty_price
+    //     ]);
+
+    //     return $penalty_price;
+    // }
+
+    // private static function calculateWorkingSeconds($start_date, $end_date, $operating_times, $public_holidays, $is24Hour = false){
+    //     $totalSeconds = 0;
+    //     $current = $start_date->copy();
+    //     $loop_guard = 0;
+
+    //     Log::info('calculateWorkingSeconds - Start', [
+    //         'start_date' => $start_date->format('Y-m-d H:i:s'),
+    //         'end_date' => $end_date->format('Y-m-d H:i:s'),
+    //         'is_24_hour' => $is24Hour
+    //     ]);
+
+    //     while ($current->lt($end_date) && $loop_guard++ < 365) {
+    //         $date_str = $current->toDateString();
+    //         $current_day = $current->isoWeekday();
+
+    //         // Skip public holidays for non-24-hour operations
+    //         if (!$is24Hour && in_array($date_str, $public_holidays)) {
+    //             Log::info('Skipping public holiday', ['date' => $date_str]);
+    //             $current->addDay()->startOfDay();
+    //             continue;
+    //         }
+
+    //         // Find the operating period for this day
+    //         $period = $operating_times->first(function ($op) use ($current_day) {
+    //             return self::isWithinOperatingDays($current_day, $op->day_start, $op->day_end);
+    //         });
+
+    //         // Skip non-operating days
+    //         if (!$period) {
+    //             Log::info('No operating period', ['date' => $date_str, 'day' => $current_day]);
+    //             $current->addDay()->startOfDay();
+    //             continue;
+    //         }
+
+    //         $opStart = $current->copy()->setTimeFromTimeString($period->operation_start);
+    //         $opEnd = $current->copy()->setTimeFromTimeString($period->operation_end);
+
+    //         // Handle overnight shift
+    //         if (self::isOvernightShift($period->operation_start, $period->operation_end)) {
+    //             $opEnd->addDay();
+    //         }
+
+    //         // Determine the effective start and end times for this period
+    //         $periodStart = $current->lt($opStart) ? $opStart : $current;
+    //         $periodEnd = $end_date->lt($opEnd) ? $end_date : $opEnd;
+
+    //         // If the period start is before the period end, add the seconds
+    //         if ($periodStart->lt($periodEnd)) {
+    //             $secondsInPeriod = $periodStart->diffInSeconds($periodEnd);
+    //             $totalSeconds += $secondsInPeriod;
+                
+    //             Log::info('Adding working time', [
+    //                 'date' => $date_str,
+    //                 'period_start' => $periodStart->format('Y-m-d H:i:s'),
+    //                 'period_end' => $periodEnd->format('Y-m-d H:i:s'),
+    //                 'seconds_added' => $secondsInPeriod,
+    //                 'total_so_far' => $totalSeconds
+    //             ]);
+    //         }
+
+    //         // Move to the start of next day
+    //         $nextDay = $current->copy()->addDay()->startOfDay();
+            
+    //         // If end_date is still after the next day start, continue loop
+    //         if ($end_date->gt($nextDay)) {
+    //             $current = $nextDay;
+    //         } else {
+    //             // We're done
+    //             break;
+    //         }
+    //     }
+
+    //     Log::info('calculateWorkingSeconds - End', [
+    //         'total_seconds' => $totalSeconds,
+    //         'total_minutes' => round($totalSeconds / 60, 2),
+    //         'total_hours' => round($totalSeconds / 3600, 2)
+    //     ]);
+
+    //     return $totalSeconds;
+    // }
+
+
+
+
+    private static function formulaCalculationWithOperatingHours($start_date, $end_date, $sla_version, $type, $branch_id){
+        $get_penalty_details = self::penaltyDetails($sla_version, $type);
+
+        if (collect($get_penalty_details)->contains(fn ($v) => $v === null || $v === '')) {
+            return 0;
+        }
+
+        // Store original dates for logging
+        $original_start = $start_date->format('Y-m-d H:i:s');
+        $original_end = $end_date->format('Y-m-d H:i:s');
+
+        // Ignore seconds - set to 00
+        $start_date = $start_date->copy()->setSeconds(0);
+        $end_date = $end_date->copy()->setSeconds(0);
+
+        // Check if dates are in wrong order (end before start means data issue)
+        if ($end_date->lte($start_date)) {
+            Log::warning('Invalid date order in penalty calculation', [
+                'type' => $type,
+                'original_start' => $original_start,
+                'original_end' => $original_end,
+                'start_after_seconds_removed' => $start_date->format('Y-m-d H:i:s'),
+                'end_after_seconds_removed' => $end_date->format('Y-m-d H:i:s')
+            ]);
+            return 0;
+        }
+
+        // Get operating times and holidays
+        $operating_times = self::getOperatingTime($branch_id);
+        $public_holidays = self::getPublicHoliday($branch_id);
+        $is24Hour = self::is24HourOperation($operating_times);
+
+        // Calculate actual working seconds between start and end date
+        $actualSeconds = self::calculateWorkingSeconds($start_date, $end_date, $operating_times, $public_holidays, $is24Hour);
+
+        Log::info('Penalty Calculation Debug', [
+            'type' => $type,
+            'original_start' => $original_start,
+            'original_end' => $original_end,
+            'start_date' => $start_date->format('Y-m-d H:i:s'),
+            'end_date' => $end_date->format('Y-m-d H:i:s'),
+            'actual_working_seconds' => $actualSeconds,
+            'actual_working_minutes' => round($actualSeconds / 60, 2),
+            'penalty_details' => $get_penalty_details
+        ]);
+
+        $time_type = (int) $get_penalty_details['time_type'];
+
+        $slaLimitSeconds = match ($time_type) {
+            SlaTemplate::SLA_TYPE_MINUTE => $get_penalty_details['time'] * 60,
+            SlaTemplate::SLA_TYPE_HOUR   => $get_penalty_details['time'] * 3600,
+            SlaTemplate::SLA_TYPE_DAY    => $get_penalty_details['time'] * 86400,
+        };
+
+        $lateSeconds = max(0, $actualSeconds - $slaLimitSeconds);
+        
+        Log::info('Penalty Calculation Result', [
+            'type' => $type,
+            'sla_limit_seconds' => $slaLimitSeconds,
+            'late_seconds' => $lateSeconds,
+            'late_minutes' => round($lateSeconds / 60, 2)
+        ]);
+        
+        if ($lateSeconds === 0) {
+            return 0;
+        }
+
+        $penalty_time_type = (int) $get_penalty_details['penalty_type'];
+
+        $penaltyUnitSeconds = match ($penalty_time_type) {
+            SlaTemplate::SLA_TYPE_MINUTE => 60,
+            SlaTemplate::SLA_TYPE_HOUR   => 3600,
+            SlaTemplate::SLA_TYPE_DAY    => 86400,
+        };
+
+        $lateUnits = $lateSeconds / $penaltyUnitSeconds;
+
+        $penalty_price = round($lateUnits * $get_penalty_details['penalty'], 2);
+
+        Log::info('Final Penalty', [
+            'type' => $type,
+            'late_units' => $lateUnits,
+            'penalty_per_unit' => $get_penalty_details['penalty'],
+            'total_penalty' => $penalty_price
+        ]);
+
+        return $penalty_price;
+    }
+
+    private static function calculateWorkingSeconds($start_date, $end_date, $operating_times, $public_holidays, $is24Hour = false){
+        $totalSeconds = 0;
+        $current = $start_date->copy();
+        $loop_guard = 0;
+
+        Log::info('calculateWorkingSeconds - Start', [
+            'start_date' => $start_date->format('Y-m-d H:i:s'),
+            'end_date' => $end_date->format('Y-m-d H:i:s'),
+            'is_24_hour' => $is24Hour
+        ]);
+
+        while ($current->lt($end_date) && $loop_guard++ < 365) {
+            $date_str = $current->toDateString();
+            $current_day = $current->isoWeekday();
+
+            // Skip public holidays for non-24-hour operations
+            if (!$is24Hour && in_array($date_str, $public_holidays)) {
+                Log::info('Skipping public holiday', ['date' => $date_str]);
+                $current->addDay()->startOfDay();
+                continue;
+            }
+
+            // Find the operating period for this day
+            $period = $operating_times->first(function ($op) use ($current_day) {
+                return self::isWithinOperatingDays($current_day, $op->day_start, $op->day_end);
+            });
+
+            // Skip non-operating days
+            if (!$period) {
+                Log::info('No operating period', ['date' => $date_str, 'day' => $current_day]);
+                $current->addDay()->startOfDay();
+                continue;
+            }
+
+            $opStart = $current->copy()->setTimeFromTimeString($period->operation_start);
+            $opEnd = $current->copy()->setTimeFromTimeString($period->operation_end);
+
+            // Handle overnight shift
+            if (self::isOvernightShift($period->operation_start, $period->operation_end)) {
+                $opEnd->addDay();
+            }
+
+            // Determine the effective start and end times for this period
+            $periodStart = $current->lt($opStart) ? $opStart : $current;
+            $periodEnd = $end_date->lt($opEnd) ? $end_date : $opEnd;
+
+            // If the period start is before the period end, add the seconds
+            if ($periodStart->lt($periodEnd)) {
+                $secondsInPeriod = $periodStart->diffInSeconds($periodEnd);
+                $totalSeconds += $secondsInPeriod;
+                
+                Log::info('Adding working time', [
+                    'date' => $date_str,
+                    'period_start' => $periodStart->format('Y-m-d H:i:s'),
+                    'period_end' => $periodEnd->format('Y-m-d H:i:s'),
+                    'seconds_added' => $secondsInPeriod,
+                    'total_so_far' => $totalSeconds
+                ]);
+            }
+
+            // Move to the start of next day
+            $nextDay = $current->copy()->addDay()->startOfDay();
+            
+            // If end_date is still after the next day start, continue loop
+            if ($end_date->gt($nextDay)) {
+                $current = $nextDay;
+            } else {
+                // We're done
+                break;
+            }
+        }
+
+        Log::info('calculateWorkingSeconds - End', [
+            'total_seconds' => $totalSeconds,
+            'total_minutes' => round($totalSeconds / 60, 2),
+            'total_hours' => round($totalSeconds / 3600, 2)
+        ]);
+
+        return $totalSeconds;
     }
 }
 
