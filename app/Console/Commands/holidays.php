@@ -31,6 +31,9 @@ class holidays extends Command
     public function handle()
     {
         $year = $this->argument('year');
+
+        Log::info('Scheduler ran at ' . now());
+
         Calendar::truncate();
 
         if (DB::getDriverName() === 'oracle') {
@@ -79,8 +82,17 @@ class holidays extends Command
                                 $data_calendar['end_date'] = $year['date'];
                                 $data_calendar['description'] = $year['description'];
                                 $data_calendar['state_id'] = json_encode([(int) $get_state->ref_code]);
+                                
 
-                                $create = Calendar::create($data_calendar);
+                                $get_calendar = Calendar::where('name',$data_calendar['name'])
+                                                        ->where('start_date',$data_calendar['start_date'])
+                                                        ->where('end_date',$data_calendar['end_date'])
+                                                        ->where('state_id',$data_calendar['state_id'])
+                                                        ->first();
+                                
+                                if(!$get_calendar){
+                                    $create = Calendar::create($data_calendar);
+                                }
                             }
 
                             
@@ -106,6 +118,8 @@ class holidays extends Command
             Log::critical("Unexpected scheduler failure: " . $e->getMessage());
             return Command::FAILURE;
         }
+
+        Log::info('Scheduler ran done at ' . now());
        
     }
 }
