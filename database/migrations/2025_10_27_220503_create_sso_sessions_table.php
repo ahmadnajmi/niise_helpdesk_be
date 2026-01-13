@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('sso_sessions', function (Blueprint $table) {
             $table->id();
-            $table->string('user_id');
+            $table->uuid('user_id')->index();
             $table->string('id_token',3000)->unique();
             $table->string('access_token',3000)->unique();
             $table->string('session_id')->nullable();

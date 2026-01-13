@@ -23,5 +23,7 @@ class DatabaseSeeder extends Seeder
         $this->call(EmailTemplateSeeder::class);
         $this->call(ActionCodeSeeder::class);
         $this->call(CompanySeeder::class);
+        $this->call(ReportSeeder::class);
+
     }
 }

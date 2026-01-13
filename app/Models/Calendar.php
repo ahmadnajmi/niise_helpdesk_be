@@ -21,6 +21,10 @@ class Calendar extends BaseModel
         'end_date' => 'datetime:Y-m-d',
     ];
 
+    protected array $defaultSort = [
+        'start_date' => 'asc'
+    ];
+
     protected array $filterable = ['name','start_date','end_date','state_id','is_active'];
 
 

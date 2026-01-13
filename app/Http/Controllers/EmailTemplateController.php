@@ -8,6 +8,7 @@ use App\Http\Traits\ResponseTrait;
 use App\Http\Collection\EmailTemplateCollection;
 use App\Http\Resources\EmailTemplateResources;
 use App\Http\Requests\EmailTemplateRequest;
+use App\Http\Services\EmailTemplateServices;
 
 class EmailTemplateController extends Controller
 {
@@ -24,18 +25,11 @@ class EmailTemplateController extends Controller
 
     public function store(EmailTemplateRequest $request)
     {
-        try {
-            $data = $request->all();
+        $data = $request->all();
 
-            $create = EmailTemplate::create($data);
+        $data = EmailTemplateServices::create($data);
            
-            $data = new EmailTemplateResources($create);
-
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return $data; 
     }
 
     public function show(EmailTemplate $email_template)
@@ -47,24 +41,17 @@ class EmailTemplateController extends Controller
 
     public function update(EmailTemplateRequest $request, EmailTemplate $email_template)
     {
-        try {
-            $data = $request->all();
+        $data = $request->all();
 
-            $update = $email_template->update($data);
+        $data = EmailTemplateServices::update($email_template,$data);
 
-            $data = new EmailTemplateResources($email_template);
-
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return $data;
     }
 
     public function destroy(EmailTemplate $email_template)
     {
-        $email_template->delete();
+        $data = EmailTemplateServices::delete($email_template);
 
-        return $this->success('Success', null);
+        return $data;
     }
 }

@@ -11,7 +11,8 @@ class Report extends BaseModel
 
     protected $fillable = [ 
         'code',
-        'file_name',
+        'jasper_file_name',
+        'output_name',
     ];
 
 }

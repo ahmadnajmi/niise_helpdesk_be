@@ -15,7 +15,11 @@ class Incident extends BaseModel
 {
     use HasFactory;
     protected $table = 'incidents';
-
+    
+    public $incrementing = false;
+    protected $keyType = 'string';
+    public $usesUuid = true;
+    
     protected $fillable = [ 
         'incident_no',
         'code_sla',
@@ -62,7 +66,8 @@ class Incident extends BaseModel
         'information' => 'information',
         'branch' => 'branch.name', 
         'severity' => 'sla.slaTemplate.severityDescription.name',
-        'phone_no' => 'complaint.phone_no'
+        'phone_no' => 'complaint.phone_no',
+        'status' => 'status.statusDesc.name',
     ];
 
     const OPEN = 1;
@@ -70,6 +75,7 @@ class Incident extends BaseModel
     const CLOSED = 3;
     const CANCEL_DUPLICATE = 4;
     const ON_HOLD = 5;
+    const TEMPORARY_FIX = 6;
     
     const RECIEVED_PHONE = 1;
     const RECIEVED_EMAIL = 2;
@@ -83,9 +89,28 @@ class Incident extends BaseModel
         });
     }
 
-    public static function generateIncidentNo(){
-        $get_incident = self::orderBy('incident_no','desc')->first();
+    // public static function generateIncidentNo(){
+    //     $get_incident = self::orderBy('incident_no','desc')->first();
 
+    //     if($get_incident){
+    //         $code = $get_incident->incident_no;
+    //         $old_code = substr($code, -5);
+    //         $incremented = (int)$old_code + 1;
+    //         $next_number = str_pad($incremented, 5, '0', STR_PAD_LEFT);
+    //     } else {
+    //         $next_number = '00001';
+    //     }
+
+    //     return 'TN'.date('Ymd').$next_number;
+    // }
+    public static function generateIncidentNo(){
+        $today = date('Ymd');
+        $prefix = 'TN' . $today;
+        
+        $get_incident = self::where('incident_no', 'LIKE', $prefix . '%')
+                            ->orderBy('incident_no', 'desc')
+                            ->first();
+        
         if($get_incident){
             $code = $get_incident->incident_no;
             $old_code = substr($code, -5);
@@ -94,8 +119,8 @@ class Incident extends BaseModel
         } else {
             $next_number = '00001';
         }
-
-        return 'TN'.date('Ymd').$next_number;
+        
+        return $prefix . $next_number;
     }
 
     public function branch(){
@@ -134,9 +159,10 @@ class Incident extends BaseModel
         return $this->hasOne(IncidentResolution::class, 'incident_id','id')->orderBy('created_at', 'desc'); 
     }
 
-    public function incidentResolutionEscalateLatest(){
-        return $this->hasOne(IncidentResolution::class, 'incident_id','id')->where('action_codes',ActionCode::ESCALATE)->ofMany('id', 'max');
+    public function incidentResolutionActr(){
+        return $this->hasOne(IncidentResolution::class, 'incident_id','id')->where('action_codes',ActionCode::ACTR)->orderBy('created_at','asc');
     }
+
 
     public function incidentDocumentAppendix(){
         return $this->hasMany(IncidentDocument::class, 'incident_id','id')->where('type',IncidentDocument::APPENDIX)->orderBy('created_at','desc');
@@ -168,6 +194,10 @@ class Incident extends BaseModel
 
     public function workbasket(){
         return $this->hasOne(Workbasket::class,'incident_id','id');
+    }
+
+    public function incidentPenalty(){
+        return $this->hasOne(IncidentPenalty::class,'incident_id','id');
     }
 
     public function scopeSearch($query, $keyword){
@@ -248,6 +278,13 @@ class Incident extends BaseModel
                                 ->select('incidents.*')
                                 ->orderBy("user.$column", $direction);
                     }
+                    elseif($field === 'status') {
+                        $query->leftJoin('ref_table', function ($join) {
+                            $join->on('ref_table.ref_code', '=', 'incidents.status')
+                                ->where('ref_table.code_category', '=', 'incident_status');
+                        })
+                        ->orderByRaw("LOWER(ref_table.name) {$direction}");
+                    }
                 } 
                
                 else {
@@ -275,10 +312,11 @@ class Incident extends BaseModel
     protected function calculateCountDownSettlement(): Attribute{
         return Attribute::get(function () {
 
-            if(!$this->actual_end_date){
-                $diff = $this->incident_date->diff($this->expected_end_date);
+            if(!$this->actual_end_date && $this->expected_end_date){
+                $now  = now(); 
+                $diff = $now->lessThan($this->expected_end_date)? $now->diff($this->expected_end_date): null;
 
-                return $diff->d .' Hari : ' . $diff->h . ' Jam : ' .$diff->i  .' Minit';
+                return $diff ? $diff->d .' Hari : ' . $diff->h . ' Jam : ' .$diff->i  .' Minit' : '00 Hari : 00 Jam : 00 Minit';
             }
             else{
                 return '00 Hari : 00 Jam : 00 Minit';
@@ -288,12 +326,13 @@ class Incident extends BaseModel
 
     protected function calculateBreachTime(): Attribute{
         return Attribute::get(function () {
+            $date_actr = $this->incidentResolutionActr?->created_at;
 
-            if (!$this->actual_end_date || $this->actual_end_date->lessThanOrEqualTo($this->expected_end_date)) {
+            if (!$date_actr || $date_actr->lessThanOrEqualTo($this->expected_end_date)) {
                 return '00 Hari : 00 Jam : 00 Minit';
             }
             else{
-                $diff = $this->expected_end_date->diff($this->actual_end_date);
+                $diff = $this->expected_end_date->diff($date_actr);
 
                 return $diff->d .' Hari : ' . $diff->h . ' Jam : ' .$diff->i  .' Minit';
             }
@@ -320,7 +359,8 @@ class Incident extends BaseModel
     public static function filterIncident($request){
         $limit = $request->limit ? $request->limit : 15;
 
-        $data =  Incident::applyFilters($request)
+        $data =  Incident::select('id','incident_no','branch_id','information','status','incident_date','actual_end_date','code_sla','complaint_user_id')
+                        // ->applyFilters($request)
                         ->when($request->status, function ($query) use ($request) {
                             if (is_array($request->status)) {
                                 return $query->whereIn('status', $request->status);
@@ -416,12 +456,12 @@ class Incident extends BaseModel
                             $query->where('asset_siri_no',$request->asset_siri_no);
                         })
                         ->when($request->incident_no, function ($query) use ($request){
-                            $query->whereRaw('LOWER(incident_no) LIKE ?', ["%{$request->incident_no}%"]);
+                            // $query->whereRaw('LOWER(incident_no) LIKE ?', ["%{$request->incident_no}%"]);
+                            $query->where('incident_no', 'LIKE', "%{$request->incident_no}%");
+
                         })
                         ->when($request->group_id, function ($query)use($request){
-                            return $query->whereHas('incidentResolution', function ($query)use($request) {
-                                $query->where('group_id',$request->group_id); 
-                            });
+                            $query->where('assign_group_id',$request->group_id); 
                         })
                         ->when($request->status_workbasket, function ($query) use ($request) {
                             return $query->whereHas('workbasket', function ($query)use($request) {

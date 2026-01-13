@@ -9,6 +9,7 @@ class CompanyContract extends BaseModel
 {
     protected $fillable = [ 
         'name',
+        'contract_no',
         'start_date',
         'end_date',
         'company_id',

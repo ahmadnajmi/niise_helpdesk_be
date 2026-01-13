@@ -59,9 +59,10 @@ class IncidentController extends Controller
     
     public function downloadFile($filename){
         $filePath = 'incident/'.$filename; 
+        $disk = config('filesystems.default');
 
-        if (Storage::disk('local')->exists($filePath)) { 
-            return Storage::disk('local')->download($filePath);
+        if (Storage::disk($disk)->exists($filePath)) { 
+            return Storage::disk($disk)->download($filePath);
         }
 
         return $this->error('File not found');

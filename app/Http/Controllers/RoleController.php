@@ -21,7 +21,7 @@ class RoleController extends Controller
     public function index(Request $request){
         $limit = $request->limit ? $request->limit : 15;
 
-        $data =  Role::paginate($limit);
+        $data =  Role::hideSuperAdmin()->paginate($limit);
 
         return new RoleCollection($data);
     }

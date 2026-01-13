@@ -23,9 +23,11 @@ class SlaTemplateResources extends JsonResource
 
             'company_id' => $this->company_id,
             'company_name' => $this->company?->name,
+            'company_description' => $this->company?->description,
 
             'company_contract_id' => $this->company_contract_id,
             'company_contract_name' => $this->companyContract?->name,
+            'company_contract_no' => $this->companyContract?->contract_no,
             'company_contract_details' => $this->companyContract ? new CompanyContractResources($this->companyContract) : null,
 
             'response_time' => $this->response_time,
@@ -56,9 +58,12 @@ class SlaTemplateResources extends JsonResource
             'temporary_resolution_time_penalty_type' => $this->temporary_resolution_time_penalty_type,
             'temporary_resolution_time_penalty_type_desc' => $this->temporaryResolutionTimePenaltyTypeDescription?->name,
 
-            'dispatch_time' => $this->dispatch_time,
-            'dispatch_time_type' => $this->dispatch_time_type,
-            'dispatch_time_type_desc' => $this->dispatchTimeTypeDescription?->name,
+            'verify_resolution_time' => $this->verify_resolution_time,
+            'verify_resolution_time_type' => $this->verify_resolution_time_type,
+            'verify_resolution_time_type_desc' => $this->verifyResolutionTimeTypeDescription?->name,
+            'verify_resolution_time_penalty' => $this->verify_resolution_time_penalty,
+            'verify_resolution_time_penalty_type' => $this->verify_resolution_time_penalty_type,
+            'verify_resolution_time_penalty_type_desc' => $this->verifyResolutionTimePenaltyTypeDescription?->name,
 
             'notes' => $this->notes,
             'created_by' => $this->createdBy?->name .' - '. $this->createdBy?->email ,

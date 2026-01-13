@@ -19,6 +19,7 @@ class Company extends BaseModel
         'city',
         'state_id',
         'fax_no',
+        'description',
         'is_active',
     ];
 

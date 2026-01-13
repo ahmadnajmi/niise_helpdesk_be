@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('workbasket', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('incident_id')->nullable(); 
+            $table->uuid('incident_id')->nullable(); 
             $table->date('date');
             $table->smallInteger('status')->default(1);
             $table->smallInteger('status_complaint')->default(1);

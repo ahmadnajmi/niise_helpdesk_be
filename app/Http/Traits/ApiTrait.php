@@ -71,7 +71,9 @@ trait ApiTrait {
 
                 if ($call_api->getStatusCode() >= 200 && $call_api->getStatusCode() < 300) {
                     return [
-                        'data' => response($response->getBody()->getContents(), 200)->header('Content-Type', $contentType)->header('Content-Disposition', 'attachment; filename="'.$filename.'"')
+                        'data' => $response,
+                        'filename' => $filename,
+                        'contentType' => $contentType
                     ]; 
                 }
                 else{

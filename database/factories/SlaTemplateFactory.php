@@ -32,8 +32,10 @@ class SlaTemplateFactory extends Factory
             'temporary_resolution_time'=> fake()->numberBetween(10,60),
             'temporary_resolution_time_type'=> fake()->numberBetween(1,3),
             'temporary_resolution_time_penalty'=> fake()->numberBetween(100,1000),
-            'dispatch_time'=> fake()->numberBetween(1,5),
-            'dispatch_time_type'=> fake()->numberBetween(1,5),
+            'verify_resolution_time'=> fake()->numberBetween(10,60),
+            'verify_resolution_time_type'=> fake()->numberBetween(1,3),
+            'verify_resolution_time_penalty'=> fake()->numberBetween(100,1000),
+            'verify_resolution_time_penalty_type'=> fake()->numberBetween(1,3),
             'notes' => fake()->sentence(15),
         ];
     }

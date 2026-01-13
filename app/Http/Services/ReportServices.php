@@ -10,6 +10,8 @@ use App\Models\Incident;
 use App\Models\SlaTemplate;
 use App\Models\RefTable;
 use App\Models\Report;
+use App\Models\User;
+use App\Models\Role;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use App\Http\Traits\ApiTrait;
@@ -17,15 +19,19 @@ use App\Http\Traits\ApiTrait;
 class ReportServices
 {
     use ApiTrait;
-    public function __construct(){
-        // $this->beUrl = config('app.url');
-        $this->beUrl = '/var/www/html/helpdesk/jasper_report/reports';
-    }
-
+ 
     public static function index($request){
 
+        $role = User::getUserRole(Auth::user()->id);
+
+        if($role?->role == Role::CONTRACTOR){
+            $request->merge([
+                'contractor_id' => Auth::user()->company_id
+            ]);
+        }
+
         $data['to_be_breach'] = self::toBeBreach($request);
-        $data['total_incident'] = self::totalIncident($request);
+        $data['total_incident'] = self::idleReport($request);
         $data['total_incident_status'] = self::totalIncidentStatus($request);
         $data['outstanding_incident'] = self::outstandingIncident($request);
 
@@ -34,7 +40,20 @@ class ReportServices
 
     public static function toBeBreach($request){
         $data = [];
-        $get_category = Category::select('id','category_id','name')->whereDoesntHave('childCategory')->get();
+        $get_category = Category::select('id','category_id','name')
+                                // ->whereDoesntHave('childCategory')
+                                ->whereHas('incidents', function ($query) use ($request){
+                                    $query->where('status',Incident::OPEN)
+                                            ->whereDate('expected_end_date', '<=', now()->addDays(4))
+                                            ->whereDate('expected_end_date', '>', now())
+                                            ->when($request->branch_id, function ($query)use($request) {
+                                                return $query->where('branch_id',$request->branch_id);
+                                            })
+                                            ->when($request->contractor_id, function ($query)use($request) {
+                                                return $query->where('assign_group_id',$request->contractor_id);
+                                            });
+                                })
+                                ->get();
 
         $severity = [SlaTemplate::SEVERITY_CRITICAL,SlaTemplate::SEVERITY_IMPORTANT,SlaTemplate::SEVERITY_MEDIUM];
 
@@ -48,16 +67,19 @@ class ReportServices
 
             $get_incident = Incident::with('sla.slaTemplate')
                                     ->whereHas('sla', function ($query)use($severity) {
-                                    $query->whereHas('slaTemplate', function ($query)use($severity) {
+                                        $query->whereHas('slaTemplate', function ($query)use($severity) {
                                             $query->whereIn('severity_id',$severity);});
                                     })
                                     ->when($request->branch_id, function ($query)use($request) {
                                         return $query->where('branch_id',$request->branch_id);
                                     })
                                     ->when($request->contractor_id, function ($query)use($request) {
-                                        return $query->where('group_id',$request->contractor_id);
+                                        return $query->where('assign_group_id',$request->contractor_id);
                                     })
                                     ->where('category_id',$category->id)
+                                    ->where('status',Incident::OPEN)
+                                    ->whereDate('expected_end_date', '<=', now()->addDays(4))
+                                    ->whereDate('expected_end_date', '>', now())
                                     ->get();
 
             $counts = $get_incident->groupBy('sla.slaTemplate.severity_id')->map->count();
@@ -74,9 +96,22 @@ class ReportServices
         return $data;
     }
 
-    public static function totalIncident($request){
+    public static function idleReport($request){
         $data = [];
-        $get_category = Category::whereDoesntHave('childCategory')->get();
+        $get_category = Category::whereDoesntHave('childCategory')
+                                ->whereHas('incidents', function ($query) use ($request) {
+                                    $query->whereIn('status',[Incident::OPEN,Incident::TEMPORARY_FIX,Incident::RESOLVED,Incident::ON_HOLD])
+                                            ->whereHas('incidentResolutionLatest', function ($query) use ($request) {
+                                                    $query->whereDate('updated_at', '<', now()->subDays(4));
+                                            })
+                                            ->when($request->branch_id, function ($query)use($request) {
+                                                return $query->where('branch_id',$request->branch_id);
+                                            })
+                                            ->when($request->contractor_id, function ($query)use($request) {
+                                                return $query->where('assign_group_id',$request->contractor_id);
+                                            });
+                                })
+                                ->get();
 
         foreach($get_category as $category){
 
@@ -85,7 +120,11 @@ class ReportServices
                                         return $query->where('branch_id',$request->branch_id);
                                     })
                                     ->when($request->contractor_id, function ($query)use($request) {
-                                        return $query->where('group_id',$request->contractor_id);
+                                        return $query->where('assign_group_id',$request->contractor_id);
+                                    })
+                                    ->whereIn('status',[Incident::OPEN,Incident::TEMPORARY_FIX,Incident::RESOLVED,Incident::ON_HOLD])
+                                    ->whereHas('incidentResolutionLatest', function ($query) use ($request) {
+                                        $query->whereDate('updated_at', '<', now()->subDays(4));
                                     })
                                     ->count();
 
@@ -107,7 +146,7 @@ class ReportServices
                                 $query->where('branch_id', $request->branch_id);
                             }
                             if ($request->contractor_id) {
-                                $query->where('group_id', $request->contractor_id);
+                                $query->where('assign_group_id', $request->contractor_id);
                             }
                         }])
                         ->get()
@@ -126,27 +165,44 @@ class ReportServices
         $data = [];
 
         $ref_tables = RefTable::where('code_category','severity')->orderBy('ref_code','asc')->get();
-        $get_category = Category::select('id','category_id','name')->whereDoesntHave('childCategory')->get();
+        $get_category = Category::select('id','category_id','name')
+                                ->whereDoesntHave('childCategory')
+                                ->whereHas('incidents', function ($query) use ($request) {
+                                    $query->where('status',Incident::OPEN)
+                                        ->when($request->branch_id, function ($query)use($request) {
+                                            return $query->where('branch_id',$request->branch_id);
+                                        })
+                                        ->when($request->contractor_id, function ($query)use($request) {
+                                            return $query->where('assign_group_id',$request->contractor_id);
+                                        });
+                                })
+                                ->get();
 
-        $incident_counts = Incident::select('category_id', DB::raw('COUNT(*) as total'))
+        $incident_counts = Incident::select('incidents.category_id', 'sla_template.severity_id', DB::raw('COUNT(*) as total'))
+                                    ->join('sla', 'incidents.code_sla', '=', 'sla.code')  // Adjust column name if needed
+                                    ->join('sla_template', 'sla.sla_template_id', '=', 'sla_template.id')  // Adjust column name if needed
                                     ->when($request->branch_id, function ($query)use($request) {
-                                        return $query->where('branch_id',$request->branch_id);
+                                        return $query->where('incidents.branch_id',$request->branch_id);
                                     })
                                     ->when($request->contractor_id, function ($query)use($request) {
-                                        return $query->where('group_id',$request->contractor_id);
+                                        return $query->where('incidents.assign_group_id',$request->contractor_id);
                                     })
-                                    ->groupBy('category_id')
-                                    ->pluck('total', 'category_id'); 
+                                    ->where('incidents.status',Incident::OPEN)
+                                    ->groupBy('incidents.category_id', 'sla_template.severity_id')
+                                    ->get()
+                                    ->groupBy('severity_id');
 
         foreach($ref_tables as $idx => $reference){
-
+            
             $format['name'] = 'Severity '.$reference->ref_code; 
             $format['level'] = $reference->ref_code;
             $format['categories'] = [];
 
+            $severity_counts = $incident_counts->get($reference->ref_code, collect())->pluck('total', 'category_id');  
+
             foreach($get_category as $category){
                 $format_categories['name'] = $category->name;
-                $format_categories['count'] = $incident_counts[$category->id] ?? 0;
+                $format_categories['count'] = $severity_counts[$category->id] ?? 0;
 
                 $format['categories'][] = $format_categories;
             }
@@ -160,27 +216,40 @@ class ReportServices
 
         $report = Report::where('code',$request->report_category)->first();
 
-        $file = $report ? $report->file_name : 'unattendedDailyReport';
+        $file = $report ? $report->jasper_file_name : 'outstanding';
        
         $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'csv' ;
 
         $chart_image = $this->uploadDoc($request);
 
         $parameter  = [
-            "logo_background" => $this->beUrl."/background.png",
-            "logo_tittle" => $this->beUrl."/logo_immigration.png",
+            // "logo_background" => public_path("background.png"),
+            "logo_tittle" => public_path("logo_immigration.png"),
             "user_name" => Auth::user()->name,
-            "graph_picture" => $chart_image,
         ];
+
+        $parameter = array_merge($request->only(['start_date', 'end_date','close_start_date','close_end_date','branch_id','severity_id','status','state_id','company_id']), $parameter);
+
+        if($chart_image && $request->report_category != 'TO_BREACH'){
+            $parameter['graph_picture'] = $chart_image;
+        }
+
+        if($request->report_category == 'STATUS'){
+            $file_name = 'Laporan Jumlah Insiden (Status)';
+        }
+        else if($request->report_category == 'SEVERITY'){
+            $file_name = 'Laporan Jumlah Insiden (Status)';
+        }
+
+        $output_file_name = $report->output_name ? $report->output_name : $report->jasper_file_name;
 
         $data = [
             'reportTemplate' => $file.'/'.$file.'.jasper',
-            'outputFileName' => $request->name.'.'.$fileExtension,
-            'reportTitle' => $request->tittle,
-            'report_format' => $fileExtension,
+            'outputFileName' => $output_file_name.'.'.$fileExtension,
+            'report_format' => $fileExtension == 'csv' ? 'excel' : 'pdf',
             'parameters' => $parameter
-        ];        
-        $generate = self::callApi('jasper','testing/generate','POST',$data);
+        ]; 
+        $generate = self::callApi('jasper','reports/generate','POST',$data);
         
         return $generate;
     }
@@ -189,8 +258,7 @@ class ReportServices
         
         $destination = storage_path('app/public/report'); 
 
-        $file_name = asset("empty.png");
-        $file_name = '/var/www/html/helpdesk/jasper_report/reports/empty.png';
+        $file_name = null;
 
         if (!file_exists($destination)) {
             mkdir($destination, 0777, true);
@@ -207,10 +275,8 @@ class ReportServices
         
             file_put_contents($destination . '/' . $file_name, $fileContents);
 
-            $file_name = asset('storage/report/' . $file_name);
-        }
-        // $file_name = $this->beUrl."/empty.png";
-        
+            $file_name = public_path('storage/report/' . $file_name);
+        }        
         return $file_name;
     }
 }

@@ -19,27 +19,18 @@ class ReportController extends Controller
     }
     
     public function generateReport(ReportRequest $request){
-
-        $filePath = 'dummy-pdf_2.pdf'; 
-
         $report_service = new ReportServices();
-
 
         $return = $report_service->generateReport($request);
         
         if($return['data']){
-            return $return['data'];
+            $response =  $return['data'];
+
+            return response($response->getBody()->getContents(), 200)->header('Content-Type', $return['contentType'])->header('Content-Disposition', 'attachment; filename="'.$return['filename'].'"');
         }
         else{
             return $this->error($return['message']);
         }
-
-        // if (Storage::disk('local')->exists($filePath)) { 
-        //     return Storage::disk('local')->download($filePath);
-        // }
-
-        // return $this->error('File failed to generate');
-
     }
 
 }
