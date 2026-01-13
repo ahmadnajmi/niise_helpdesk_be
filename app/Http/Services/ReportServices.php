@@ -228,7 +228,7 @@ class ReportServices
             "user_name" => Auth::user()->name,
         ];
 
-        $parameter = array_merge($request->only(['start_date', 'end_date','branch_id','severity_id','status','state_id','company_id']), $parameter);
+        $parameter = array_merge($request->only(['start_date', 'end_date','close_start_date','close_end_date','branch_id','severity_id','status','state_id','company_id']), $parameter);
 
         if($chart_image && $request->report_category != 'TO_BREACH'){
             $parameter['graph_picture'] = $chart_image;
