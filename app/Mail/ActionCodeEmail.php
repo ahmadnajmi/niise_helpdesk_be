@@ -27,8 +27,12 @@ class ActionCodeEmail extends Mailable implements  ShouldQueue
      */
     public function envelope(): Envelope
     {
+        $from = $this->email_template
+        ? new Address($this->email_template->sender_email, $this->email_template->sender_name)
+        : new Address(config('mail.from.address'), config('mail.from.name'));
+
         return new Envelope(
-            from: new Address($this->email_template?->sender_email, $this->email_template?->sender_name),
+            from: $from,
             subject: 'Penyaluran Insiden -'.$this->incident->incident_no.' '.$this->incident->complaintUser?->branch?->name,
         );
     }

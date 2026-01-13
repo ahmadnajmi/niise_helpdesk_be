@@ -11,6 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('incident_penalty');
+
         Schema::create('incident_penalty', function (Blueprint $table) {
             $table->id();
             $table->uuid('incident_id')->nullable(); 

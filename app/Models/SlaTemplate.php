@@ -30,6 +30,11 @@ class SlaTemplate extends BaseModel
         'resolution_time_penalty',
         'resolution_time_penalty_type',
 
+        'verify_resolution_time',
+        'verify_resolution_time_type',
+        'verify_resolution_time_penalty',
+        'verify_resolution_time_penalty_type',
+
         'response_time_location',
         'response_time_location_type',
         'response_time_location_penalty',
@@ -40,8 +45,6 @@ class SlaTemplate extends BaseModel
         'temporary_resolution_time_penalty',
         'temporary_resolution_time_penalty_type',
 
-        'dispatch_time',
-        'dispatch_time_type',
 
         'notes'
     ];
@@ -104,6 +107,10 @@ class SlaTemplate extends BaseModel
                 $q->orWhereHas('companyContract', function ($search) use ($keyword) {
                     $search->whereRaw('LOWER(name) LIKE ?', ["%{$keyword}%"]);
                 });
+
+                $q->orWhereHas('companyContract', function ($search) use ($keyword) {
+                    $search->whereRaw('LOWER(contract_no) LIKE ?', ["%{$keyword}%"]);
+                });
             });
         }
         return $query;
@@ -116,6 +123,12 @@ class SlaTemplate extends BaseModel
                         })
                         ->when(request('severity_id'), function ($query) {
                             $query->where('severity_id',request('severity_id'));
+                        })
+                        ->when(request('contract_no'), function ($query) {
+                            $query->WhereHas('companyContract', function ($search) {
+                                $keyword = request('contract_no');
+                                $search->whereRaw('LOWER(contract_no) LIKE ?', ["%{$keyword}%"]);;
+                            });
                         });
 
         return $query;
@@ -226,8 +239,12 @@ class SlaTemplate extends BaseModel
         return $this->hasOne(RefTable::class,'ref_code','temporary_resolution_time_penalty_type')->where('code_category', 'sla_type');
     }
 
-    public function dispatchTimeTypeDescription(){
-        return $this->hasOne(RefTable::class,'ref_code','dispatch_time_type')->where('code_category', 'sla_type');
+    public function verifyResolutionTimeTypeDescription(){
+        return $this->hasOne(RefTable::class,'ref_code','verify_resolution_time_type')->where('code_category', 'sla_type');
+    }
+
+    public function verifyResolutionTimePenaltyTypeDescription(){
+        return $this->hasOne(RefTable::class,'ref_code','verify_resolution_time_penalty_type')->where('code_category', 'sla_type');
     }
     
 }

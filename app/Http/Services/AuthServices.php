@@ -95,6 +95,8 @@ class AuthServices
             $user->failed_attempts = 0 ;
             $user->save();
 
+            Auth::user()->tokens()->update(['revoked' => true]);
+
             return ['status' => true, 'data' => $credentials];
         }
         else{

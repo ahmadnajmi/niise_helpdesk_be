@@ -28,10 +28,8 @@ class ReportRequest extends FormRequest
         return [
             'start_date' => 'required',
             'end_date' => 'required',
-            'name' => 'nullable',
-            'tittle' => 'nullable',
-            'report_type' => 'required',
-            'report_format' => 'required'
+            'report_format' => 'required',
+            'report_category' => 'required'
         ];
     }
 

@@ -1,20 +1,56 @@
 stages:
-  - deploy
+  - Deploy Staging 
+  - Deploy SIT & INTERIM
+  - Deploy Production
   
 # Deploy to Staging
 Deploy Staging:
-  stage: deploy
+  stage: Deploy Staging 
   tags:
     - server_staging  
+  variables:
+    SEEDER_CLASS:
+      value: ""
   script:
     - echo "Deploying to Staging..."
     - cd /var/www/html/helpdesk_be  
     - git pull origin staging
+    - rm -rf node_modules package-lock.json
     - npm install
+    - php artisan optimize
     - npm run build
     - php artisan migrate --force
-    - php artisan optimize
-    - echo "Staging deployment completed!"
+    - php artisan migrate --path=database/migrations/alter_table --force
+    - |
+      if [ -z "$SEEDER" ]; then
+        echo "No seeder selected. Skipping."
+        exit 0
+      fi
+
+      IFS=',' read -ra SEEDERS <<< "$SEEDER"
+
+      for S in "${SEEDERS[@]}"; do
+        S=$(echo "$S" | xargs) # trim spaces
+
+        case "$S" in
+          "ActionCodeSeeder" | \
+          "BranchSeeder" | \
+          "CategorySeeder" | \
+          "ModuleSeeder" | \
+          "PermissionSeeder" | \
+          "RoleSeeder" | \
+          "RefTableSeeder" | \
+          "ReportSeeder")
+            SEEDER_CLASS="Database\\Seeders\\$S"
+            echo "Running seeder: $SEEDER_CLASS"
+            php artisan db:seed --class="$SEEDER_CLASS" --force
+            ;;
+          *)
+            echo "❌ Seeder NOT allowed: $S"
+            exit 1
+            ;;
+        esac
+      done
   when: manual
   only:
     - staging
@@ -22,19 +58,54 @@ Deploy Staging:
     name: staging
 
 # Deploy to Pre Prod 1 - SIT
-Deploy Preprod 1 Staging:
-  stage: deploy
+Deploy Preprod 1 SIT:
+  stage: Deploy SIT & INTERIM
   tags:
     - server_preprod1  
+  variables:
+    SEEDER_CLASS:
+      value: ""
   script:
     - echo "Deploying to Pre Prod 1 - SIT ..."
     - cd /var/www/html/helpdesk/be  
     - git pull origin staging
+    - rm -rf node_modules package-lock.json
     - npm install
+    - php artisan optimize
     - npm run build
     - php artisan migrate --force
-    - php artisan optimize
     - echo "Pre Prod 1 - SIT deployment completed!"
+    - php artisan migrate --path=database/migrations/alter_table --force
+    - |
+      if [ -z "$SEEDER" ]; then
+        echo "No seeder selected. Skipping."
+        exit 0
+      fi
+
+      IFS=',' read -ra SEEDERS <<< "$SEEDER"
+
+      for S in "${SEEDERS[@]}"; do
+        S=$(echo "$S" | xargs) # trim spaces
+
+        case "$S" in
+          "ActionCodeSeeder" | \
+          "BranchSeeder" | \
+          "CategorySeeder" | \
+          "ModuleSeeder" | \
+          "PermissionSeeder" | \
+          "RoleSeeder" | \
+          "RefTableSeeder" | \
+          "ReportSeeder")
+            SEEDER_CLASS="Database\\Seeders\\$S"
+            echo "Running seeder: $SEEDER_CLASS"
+            php artisan db:seed --class="$SEEDER_CLASS" --force
+            ;;
+          *)
+            echo "❌ Seeder NOT allowed: $S"
+            exit 1
+            ;;
+        esac
+      done
   when: manual
   only:
     - staging
@@ -43,18 +114,53 @@ Deploy Preprod 1 Staging:
 
 # Deploy to Pre Prod 1 - INTERIM
 Deploy Preprod 1 INTERIM:
-  stage: deploy
+  stage: Deploy SIT & INTERIM
   tags:
-    - server_preprod1  
+    - server_preprod1 
+  variables:
+    SEEDER_CLASS:
+      value: "" 
   script:
     - echo "Deploying to Pre Prod 1 - INTERIM ..."
     - cd /var/www/html/interim/be  
     - git pull origin staging
+    - rm -rf node_modules package-lock.json
     - npm install
+    - php artisan optimize
     - npm run build
     - php artisan migrate --force
-    - php artisan optimize
     - echo "Pre Prod 1 - INTERIM deployment completed!"
+    - php artisan migrate --path=database/migrations/alter_table --force
+    - |
+      if [ -z "$SEEDER" ]; then
+        echo "No seeder selected. Skipping."
+        exit 0
+      fi
+
+      IFS=',' read -ra SEEDERS <<< "$SEEDER"
+
+      for S in "${SEEDERS[@]}"; do
+        S=$(echo "$S" | xargs) # trim spaces
+
+        case "$S" in
+          "ActionCodeSeeder" | \
+          "BranchSeeder" | \
+          "CategorySeeder" | \
+          "ModuleSeeder" | \
+          "PermissionSeeder" | \
+          "RoleSeeder" | \
+          "RefTableSeeder" | \
+          "ReportSeeder")
+            SEEDER_CLASS="Database\\Seeders\\$S"
+            echo "Running seeder: $SEEDER_CLASS"
+            php artisan db:seed --class="$SEEDER_CLASS" --force
+            ;;
+          *)
+            echo "❌ Seeder NOT allowed: $S"
+            exit 1
+            ;;
+        esac
+      done
   when: manual
   only:
     - staging
@@ -63,18 +169,20 @@ Deploy Preprod 1 INTERIM:
 
 # Deploy to Pre Prod 2 - SIT
 Deploy Preprod 2 SIT:
-  stage: deploy
+  stage: Deploy SIT & INTERIM
   tags:
     - server_preprod2
   script:
     - echo "Deploying to Pre Prod 2 - SIT ..."
     - cd /var/www/html/helpdesk/be  
     - git pull origin staging
+    - rm -rf node_modules package-lock.json
     - npm install
+    - php artisan optimize
     - npm run build
     - php artisan migrate --force
-    - php artisan optimize
     - echo "Pre Prod 2 - SIT deployment completed!"
+    - php artisan migrate --path=database/migrations/alter_table --force
   when: manual
   only:
     - staging
@@ -83,41 +191,45 @@ Deploy Preprod 2 SIT:
 
 # Deploy to Production 1
 Deploy Production 1:
-  stage: deploy
+  stage: Deploy Production
   tags:
     - server_production_1
   script:
     - echo "Deploying to Production 1 ..."
     - cd /var/www/html/helpdesk/be  
-    - git pull origin master
+    - git pull origin main
+    - rm -rf node_modules package-lock.json
     - npm install
+    - php artisan optimize
     - npm run build
     - php artisan migrate --force
-    - php artisan optimize
     - echo "Production 1 - deployment completed!"
+    - php artisan migrate --path=database/migrations/alter_table --force
   when: manual
   only:
-    - master
+    - main
   environment:
     name: production1
 
 # Deploy to Production 2
 Deploy Production 2:
-  stage: deploy
+  stage: Deploy Production
   tags:
     - server_production_2
   script:
     - echo "Deploying to Production 2 ..."
     - cd /var/www/html/helpdesk/be  
-    - git pull origin master
+    - git pull origin main
+    - rm -rf node_modules package-lock.json
     - npm install
+    - php artisan optimize
     - npm run build
     - php artisan migrate --force
-    - php artisan optimize
     - echo "Production 2 - deployment completed!"
+    - php artisan migrate --path=database/migrations/alter_table --force
   when: manual
   only:
-    - master
+    - main
   environment:
     name: production2
 

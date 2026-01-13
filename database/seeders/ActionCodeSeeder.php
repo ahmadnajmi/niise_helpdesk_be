@@ -23,6 +23,8 @@ class ActionCodeSeeder extends Seeder
 
         $frontliner = Role::where('role','FRONTLINER')->first()?->id;
         $contractor = Role::where('role','CONTRACTOR')->first()?->id;
+        $btmr = Role::where('role','BTMR')->first()?->id;
+
 
         $action_codes = [
             [   
@@ -31,7 +33,7 @@ class ActionCodeSeeder extends Seeder
                 'description' => 'Menyalurkan insiden kepada juruteknik atau kumpulan yang berkaitan',
                 'send_email' => 1,
                 'email_recipient_id' => 3,
-                'role_id' => [$frontliner]
+                'role_id' => [$frontliner,$btmr]
             ],
             [   
                 "name" => "Penyelesaian Sebenar",
@@ -39,14 +41,14 @@ class ActionCodeSeeder extends Seeder
                 'description' => 'Log telah diselesaikan',
                 'send_email' => 1,
                 'email_recipient_id' => 2,
-                'role_id' => [$frontliner,$contractor]
+                'role_id' => [$frontliner,$contractor,$btmr]
             ],
             [   
                 "name" => "Tutup",
                 "nickname" => "CLSD",
                 'description' => 'Log insiden ditutup',
                 'send_email' => 0,
-                'role_id' => [$frontliner]
+                'role_id' => [$frontliner,$btmr]
             ],
             [   
                 "name" => "Log insiden bermula",
@@ -60,7 +62,7 @@ class ActionCodeSeeder extends Seeder
                 'description' => 'Kemaskini status terkini',
                 'send_email' => 1,
                 'email_recipient_id' => 1,
-                'role_id' => [$frontliner]
+                'role_id' => [$frontliner,$contractor,$btmr]
 
             ],
             [
@@ -68,49 +70,49 @@ class ActionCodeSeeder extends Seeder
                 "nickname" => "VRFY",
                 'description' => 'Log yang verify',
                 'send_email' => 0,
-                'role_id' => [$frontliner]
+                'role_id' => [$frontliner,$btmr]
             ],
             [
                 "name" => "Jurutera berada di lapangan",
                 "nickname" => "ONSITE",
                 'description' => 'Jurutera pergi ke lapangan untuk membaik pulih',
                 'send_email' => 0,
-                'role_id' => [$frontliner,$contractor]
+                'role_id' => [$frontliner,$contractor,$btmr]
             ],
             [
                 "name" => "Dalam Tindakan",
                 "nickname" => "PROG",
                 'description' => 'Tindakan yang di ambil',
                 'send_email' => 0,
-                'role_id' => [$frontliner,$contractor]
+                'role_id' => [$frontliner,$contractor,$btmr]
             ],
             [
                 "name" => "Kembalikan kepada Helpdesk ICT",
                 "nickname" => "RETURN",
                 'description' => 'Insiden yang di kembalikan kepada helpdek ICT',
                 'send_email' => 0,
-                'role_id' => [$frontliner,$contractor]
+                'role_id' => [$frontliner,$contractor,$btmr]
             ],
             [
                 "name" => "Pengecualian",
                 "nickname" => "DISC",
                 'description' => 'Pengecualian yang singkat. Contoh : User tiada di lapangan, Gagal menghubungi user,  dan sebagainya.',
                 'send_email' => 0,
-                'role_id' => [$frontliner,$contractor]
+                'role_id' => [$frontliner,$contractor,$btmr]
             ],
             [
                 "name" => "Pengecualian bermula",
                 "nickname" => "STARTD",
                 'description' => 'Pengecualian yang panjang. Contoh Memasang alat ganti, berlaku bencana alam, dan sebagainya.',
                 'send_email' => 0,
-                'role_id' => [$frontliner,$contractor]
+                'role_id' => [$frontliner,$contractor,$btmr]
             ],
             [
                 "name" => "Pengecualian tamat",
                 "nickname" => "STOPD",
                 'description' => 'Pengecualian telah selesai.',
                 'send_email' => 0,
-                'role_id' => [$frontliner,$contractor]
+                'role_id' => [$frontliner,$contractor,$btmr]
             ],
         ];
 

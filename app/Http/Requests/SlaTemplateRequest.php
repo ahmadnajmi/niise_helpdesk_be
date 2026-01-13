@@ -27,7 +27,7 @@ class SlaTemplateRequest extends FormRequest
     {
         return [
             'severity_id' => 'required',
-            'service_level' => 'required',
+            'service_level' => 'nullable',
             'response_time' => 'nullable',
             'response_time_type' => 'nullable',
             'response_time_penalty' => 'nullable',
@@ -40,8 +40,10 @@ class SlaTemplateRequest extends FormRequest
             'temporary_resolution_time'=> 'nullable',
             'temporary_resolution_time_type'=> 'nullable',
             'temporary_resolution_time_penalty'=> 'nullable',
-            'dispatch_time'=> 'nullable',
-            'dispatch_time_type'=> 'nullable',
+            'verify_resolution_time'=> 'nullable',
+            'verify_resolution_time_type'=> 'nullable',
+            'verify_resolution_time_penalty'=> 'nullable',
+            'verify_resolution_time_penalty_type'=> 'nullable',
             'notes' => 'nullable'
         ];
     }

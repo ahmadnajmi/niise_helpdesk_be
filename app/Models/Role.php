@@ -21,6 +21,11 @@ class Role extends BaseModel
     const FRONTLINER = 'FRONTLINER';
     const BTMR = 'BTMR';
     const CONTRACTOR = 'CONTRACTOR';
+    const SUPER_ADMIN = 'SUPER_ADMIN';
+
+    public function scopeHideSuperAdmin($query){
+        return $query->whereNot('role', Role::SUPER_ADMIN);
+    }
 
     public function users(){
         return $this->belongsToMany(User::class, 'user_role');

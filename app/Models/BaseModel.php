@@ -156,9 +156,15 @@ class BaseModel extends Model implements Auditable
             }
         }
 
-        if (!$hasSorting && $this->timestamps) {
-            $query->orderByDesc('updated_at');
+        if (!$hasSorting) {
+            if (property_exists($this, 'defaultSort') && !empty($this->defaultSort)) {
+                foreach ($this->defaultSort as $field => $direction) {
+                    $query->orderBy($field, $direction);
+                }
+            } elseif ($this->timestamps) {
+                $query->orderByDesc('updated_at');
         }
+    }
 
         return $query;
     }
@@ -197,6 +203,13 @@ class BaseModel extends Model implements Auditable
                     $model->created_by = 1;
                     $model->updated_by = 1;
                 }
+            }
+
+            if (property_exists($model, 'usesUuid') && $model->usesUuid && empty($model->{$model->getKeyName()}) ) {
+                $uuid = (string) Str::orderedUuid();
+                $model->{$model->getKeyName()} = $uuid;
+                
+                $model->setAttribute($model->getKeyName(), $uuid);
             }
             
         });

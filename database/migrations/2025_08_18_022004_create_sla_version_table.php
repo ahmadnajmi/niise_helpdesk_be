@@ -16,16 +16,30 @@ return new class extends Migration
             $table->unsignedBigInteger('sla_template_id')->nullable(); 
             $table->integer('version');
             $table->string('response_time')->nullable();
+
             $table->smallInteger('response_time_type')->nullable();
             $table->string('response_time_penalty',20)->nullable();
+            $table->smallInteger('response_time_penalty_type')->nullable();
+
+            $table->string('response_time_location')->nullable();
+            $table->smallInteger('response_time_location_type')->nullable();
+            $table->string('response_time_location_penalty',20)->nullable();
+            $table->smallInteger('response_time_location_penalty_type')->nullable();
+
             $table->string('resolution_time')->nullable();
             $table->smallInteger('resolution_time_type')->nullable();
             $table->string('resolution_time_penalty',20)->nullable();
+            $table->smallInteger('resolution_time_penalty_type')->nullable();
+
+            $table->string('verify_resolution_time')->nullable();
+            $table->smallInteger('verify_resolution_time_type')->nullable();
+            $table->string('verify_resolution_time_penalty',20)->nullable();
+            $table->smallInteger('verify_resolution_time_penalty_type')->nullable();
+
 
             $table->log();
         });
     }
-
     /**
      * Reverse the migrations.
      */

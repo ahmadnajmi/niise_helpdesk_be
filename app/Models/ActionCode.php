@@ -23,7 +23,6 @@ class ActionCode extends BaseModel
     const INITIAL = 'INIT';
     const ESCALATE = 'ESCL';
     const ACTR = 'ACTR';
-    const CLOSED = 'CLSD';
     const UPDATE = 'UPDT';
     const VERIFY = 'VRFY';
     const PROG = 'PROG';
@@ -32,8 +31,7 @@ class ActionCode extends BaseModel
     const ONSITE = 'ONSITE';
     const STARTD = 'STARTD';
     const STOPD = 'STOPD';
-
-
+    const CLOSED = 'CLSD';
 
     const SEND_TO_COMPLAINT = 1;
     const SEND_TO_GROUP = 2;

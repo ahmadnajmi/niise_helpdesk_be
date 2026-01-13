@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('city',100)->nullable(); 
             $table->integer('state_id')->nullable(); 
             $table->string('fax_no',100)->nullable(); 
+            $table->string('description',1000)->nullable();
             $table->boolean('is_active')->default(true);
             $table->log();
         });

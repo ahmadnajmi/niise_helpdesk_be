@@ -15,7 +15,10 @@ class User extends Authenticatable
     use HasApiTokens;
 
     protected $table = 'users';
-
+    public $incrementing = false;
+    protected $keyType = 'string';
+    public $usesUuid = true;
+    
     protected $fillable = [
         'ic_no',
         'name',
@@ -43,6 +46,16 @@ class User extends Authenticatable
     const FROM_HDS = 2;
     const FROM_COMPLAINT = 3;
 
+    protected static function boot() {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (property_exists($model, 'usesUuid') && $model->usesUuid && empty($model->{$model->getKeyName()})) {
+                $model->{$model->getKeyName()} = (string) Str::orderedUuid();
+            }
+        });
+    }
+
     protected static $sortable = [
         'name' => 'name',
         'ic_no' => 'ic_no',
@@ -50,6 +63,13 @@ class User extends Authenticatable
         'is_active' => 'is_active',
         'branch_id' => 'branch.name'
     ];
+
+    public function scopeHideSuperAdmin($query){
+        return $query->whereDoesntHave('roles', function ($query) {
+            $query->where('role', Role::SUPER_ADMIN);
+        });
+    }
+
 
     public function scopeSearch($query, $keyword){
         if (!empty($keyword)) {

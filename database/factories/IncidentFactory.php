@@ -66,7 +66,11 @@ class IncidentFactory extends Factory
             IncidentResolution::create($data_reso);
 
             if($incident->status == Incident::OPEN){
-                IncidentServices::createWorkbasket($incident->id);
+                $data['date'] = date('Y-m-d H:i:s');
+                $data['incident_id'] = $incident->id;
+                $data['escalate_frontliner'] = true;
+
+                Workbasket::create($data);
             }
             elseif($incident->status == Incident::RESOLVED){
                 $data_reso['action_codes'] = ActionCode::ACTR;

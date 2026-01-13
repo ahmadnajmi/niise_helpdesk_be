@@ -43,6 +43,32 @@ class Category extends BaseModel
     public function incidents(){
         return $this->hasOne(Incident::class, 'category_id','id');
     }
+
+    public static function buildCategoryHierarchy($categories){
+        $hierarchy = collect();
+        $childrenMap = $categories->groupBy('category_id');
+
+        foreach ($categories as $category) {
+            $descendants = collect([$category->id]);
+            $toProcess = collect([$category->id]);
+
+            while ($toProcess->isNotEmpty()) {
+                $currentId = $toProcess->shift();
+                $children = $childrenMap->get($currentId, collect());
+                
+                foreach ($children as $child) {
+                    if (!$descendants->contains($child->id)) {
+                        $descendants->push($child->id);
+                        $toProcess->push($child->id);
+                    }
+                }
+            }
+
+            $hierarchy->put($category->id, $descendants);
+        }
+
+        return $hierarchy;
+    }
 }
 
 
