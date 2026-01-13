@@ -61,7 +61,7 @@ class Module extends BaseModel
                                 $q->whereIn('id', $get_permission)
                                 ->with(['subModuleRecursive' => function ($q2) use ($get_permission) {
                                     $q2->whereIn('id', $get_permission);
-                                }, 'route']);
+                                }, 'route'])->orderBy('order_by', 'asc');
                             },
                             'route:id,module_id,name'
                         ])
