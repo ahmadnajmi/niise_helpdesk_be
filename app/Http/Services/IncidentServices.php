@@ -749,10 +749,10 @@ class IncidentServices
                                         ->orderBy('created_at', 'asc')
                                         ->first();
 
-        if($get_init->pickup_date && $get_escalate && $get_sla_version){
-            $start_date = Carbon::parse($get_init->pickup_date);
+        if($get_init && $get_escalate && $get_sla_version){
+            $start_date = Carbon::parse($get_init->created_at);
             $end_date = Carbon::parse($get_escalate->created_at);
-
+            dd($start_date,$end_date);
             // $penalty_irt = self::formulaCalculation($start_date,$end_date,$get_sla_version,'irt');
             $penalty_irt = self::formulaCalculationWithOperatingHours(
                 $start_date,
