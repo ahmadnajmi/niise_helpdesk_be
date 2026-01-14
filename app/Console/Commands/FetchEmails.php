@@ -66,10 +66,14 @@ class FetchEmails extends Command
 
             Log::info('Success Get Folder IMAP ' . now());
 
-            $count = $folder->messages()->all()->count();
+            $query = $folder->messages()
+                            ->from('user@example.com')
+                            ->all();
+
+            $count = $query->count();
             Log::info('Message count: ' . $count);
 
-            $messages = $folder->messages()->all()->get();
+            $messages = $query->get();
 
             foreach ($messages as $message) {
                 Log::info($message->getSubject());
