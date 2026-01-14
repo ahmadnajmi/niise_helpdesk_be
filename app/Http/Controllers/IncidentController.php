@@ -27,7 +27,7 @@ class IncidentController extends Controller
     {
         $data = $request->all();
 
-        $data = IncidentServices::create($data,$request);
+        $data = IncidentServices::create($data);
 
         return $data; 
     }

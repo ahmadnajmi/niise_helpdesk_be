@@ -6,6 +6,9 @@ use Illuminate\Console\Command;
 use Webklex\IMAP\Facades\Client;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
+use App\Http\Services\IncidentServices;
+use App\Models\Incident;
+use App\Models\User;
 
 class FetchEmails extends Command
 {
@@ -51,39 +54,90 @@ class FetchEmails extends Command
         //     ];
 
         // }
-
-        Log::info('Test Email IMAP ' . now());
+        $log = [];
+        $log['step 1'] = 'Email IMAP Start Now At : ' . now();
 
         try {
-
-            $client = Client::account('default');  // uses config/imap.php or .env
+            $client = Client::account('default');  
 
             $client->connect();
 
-            Log::info('Success Connect IMAP ' . now());
+            $log['step 2'] = 'Connected IMAP';
 
             $folder = $client->getFolder('INBOX');
 
-            Log::info('Success Get Folder IMAP ' . now());
+            $log['step 3'] = 'INBOX loaded';
 
-            $query = $folder->messages()
-                            ->from('user@example.com')
-                            ->all();
+            $query = $folder->messages()->all();
 
             $count = $query->count();
-            Log::info('Message count: ' . $count);
+
+            $log["step 4"] = 'Message count: ' . $count;
 
             $messages = $query->get();
+            $idx = 0;
 
             foreach ($messages as $message) {
-                Log::info($message->getSubject());
+                $idx++;
+
+                $step = 'step 5.' . ($idx);
+
+                $firstSender = $message->getFrom()->first();
+
+                $log[$step . '.1']  = 'From Email: ' . $firstSender->mail;
+
+                $create_incident = $this->createIncident($firstSender,$message);
+
+                if(isset($create_incident['data'])){
+                    $incident = $create_incident['data'];
+
+                    $log[$step . '.2'] = 'Incident created for '.$incident->incident_no;
+                }
+                else{
+                    $log[$step . '.2'] = 'Incident created failed';
+                }
+
+                
             }
+
+            $log["step 6"] = 'IMAP done';
         } 
         catch (\Throwable $e) {
-            Log::critical("Unexpected scheduler failure: " . $e->getMessage());
+            $log['Error'] = 'ERROR: ' . $e->getMessage();
+
+            Log::channel('scheduler')->error('IMAP job', [
+                'time'  => now()->toDateTimeString(),
+                'steps' => $log,
+            ]);
+
             return Command::FAILURE;
         }
 
-        Log::info('Test Email IMAP done at ' . now());
+        Log::channel('scheduler')->info('IMAP job', [
+            'time'  => now()->toDateTimeString(),
+            'steps' => $log,
+        ]);
+
     }
+
+    public function createIncident($firstSender,$message){
+        $get_user = User::where('email',$firstSender->mail)->first();
+
+        if($get_user){
+            $data['complaint_user_id'] = $get_user?->id;
+        }
+        else{
+            $data['name'] = $firstSender->personal;
+            $data['email'] = $firstSender->mail;
+        }
+
+        $data['received_via'] = Incident::RECIEVED_EMAIL;
+        $data['information'] = $message->getTextBody(); 
+        // $data['information'] = $message->getHTMLBody(true) ?? $message->getTextBody();
+
+        $incident = IncidentServices::createIncident($data);
+        
+        return $incident;
+    }
+    
 }

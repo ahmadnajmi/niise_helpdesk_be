@@ -145,6 +145,12 @@ return [
             'level' => 'debug',
         ],
 
+        'scheduler' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/scheduler.log'),
+            'level' => 'debug',
+        ],
+
     ],
 
 ];
