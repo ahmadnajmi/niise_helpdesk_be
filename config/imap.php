@@ -150,7 +150,11 @@ return [
     | The provided masks below are used as the default masks.
      */
     'masks' => [
-        'message' => \Webklex\IMAP\Support\Masks\MessageMask::class,
-        'attachment' => \Webklex\IMAP\Support\Masks\AttachmentMask::class
+        // 'message' => \Webklex\IMAP\Support\Masks\MessageMask::class,
+        // 'attachment' => \Webklex\IMAP\Support\Masks\AttachmentMask::class,
+        // 'folder' => Webklex\PHPIMAP\Support\Masks\FolderMask::class,
+        'message'    => \Webklex\PHPIMAP\Support\Masks\MessageMask::class,
+        'attachment' => \Webklex\PHPIMAP\Support\Masks\AttachmentMask::class,
+        'folder'     => \Webklex\PHPIMAP\Support\Masks\FolderMask::class,
     ]
 ];
