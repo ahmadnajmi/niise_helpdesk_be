@@ -11,6 +11,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('holidays', [date('Y')])->yearlyOn(12, 30, '00:00');
         $schedule->command('holidays', [date('Y')])->dailyAt('18:50');
+        $schedule->command('read_emails_incident')->everyFiveMinutes();
 
 
     }

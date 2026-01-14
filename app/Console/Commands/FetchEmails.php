@@ -17,14 +17,14 @@ class FetchEmails extends Command
      *
      * @var string
      */
-    protected $signature = 'emails';
+    protected $signature = 'read_emails_incident';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Generate incident from content email.';
 
     /**
      * Execute the console command.
@@ -92,13 +92,14 @@ class FetchEmails extends Command
                     $incident = $create_incident['data'];
 
                     $log[$step . '.2'] = 'Incident created for '.$incident->incident_no;
+
+                    $message->delete(); 
                 }
                 else{
                     $log[$step . '.2'] = 'Incident created failed';
-                }
-
-                
+                } 
             }
+            $folder->expunge();
 
             $log["step 6"] = 'IMAP done';
         } 
