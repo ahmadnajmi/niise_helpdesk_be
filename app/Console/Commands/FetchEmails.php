@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Webklex\IMAP\Facades\Client;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class FetchEmails extends Command
 {
@@ -27,13 +28,14 @@ class FetchEmails extends Command
      */
     public function handle()
     {
+        Log::info('Test Email IMAP ' . now());
+
         // Mail::raw('Hello World!', function($msg) {$msg->to('myemail@gmail.com')->subject('Test Email'); });
 
         // $client = Client::account('gmail');
         $client = Client::account('default');  // uses config/imap.php or .env
 
         $client->connect();
-        // $folder = $client->getFolder('INBOX');
 
         // $messages = $folder->query()
         //             // ->from('najmi@gmail.com')
@@ -52,18 +54,16 @@ class FetchEmails extends Command
 
         // }
 
-        $folders = $client->getFolders();
 
-        foreach ($folders as $folder) {
-            echo $folder->name . "\n";
-            
-            $messages = $folder->messages()->all()->get();
+        $folder = $client->getFolder('INBOX');
 
-            foreach ($messages as $message) {
-                echo $message->getSubject() . "\n";
-            }
+        $messages = $folder->messages()->all()->get();
+        Log::info('Total messages: ' . $messages->count());
+
+        foreach ($messages as $message) {
+            Log::info($message->getSubject());
         }
 
-        // dd($emailData,'ya');
+        Log::info('Test Email IMAP done at ' . now());
     }
 }
