@@ -28,16 +28,12 @@ class FetchEmails extends Command
      */
     public function handle()
     {
-        Log::info('Test Email IMAP ' . now());
-
-        try {
+       
 
         // Mail::raw('Hello World!', function($msg) {$msg->to('myemail@gmail.com')->subject('Test Email'); });
 
         // $client = Client::account('gmail');
-        $client = Client::account('default');  // uses config/imap.php or .env
-
-        $client->connect();
+     
 
         // $messages = $folder->query()
         //             // ->from('najmi@gmail.com')
@@ -56,10 +52,22 @@ class FetchEmails extends Command
 
         // }
 
+        Log::info('Test Email IMAP ' . now());
+
+        try {
+
+            $client = Client::account('default');  // uses config/imap.php or .env
+
+            $client->connect();
+
+            Log::info('Success Connect IMAP ' . now());
 
             $folder = $client->getFolder('INBOX');
 
+            Log::info('Success Get Folder IMAP ' . now());
+
             $messages = $folder->messages()->all()->get();
+            
             Log::info('Total messages: ' . $messages->count());
 
             foreach ($messages as $message) {
