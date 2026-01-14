@@ -30,6 +30,8 @@ class FetchEmails extends Command
     {
         Log::info('Test Email IMAP ' . now());
 
+        try {
+
         // Mail::raw('Hello World!', function($msg) {$msg->to('myemail@gmail.com')->subject('Test Email'); });
 
         // $client = Client::account('gmail');
@@ -55,13 +57,18 @@ class FetchEmails extends Command
         // }
 
 
-        $folder = $client->getFolder('INBOX');
+            $folder = $client->getFolder('INBOX');
 
-        $messages = $folder->messages()->all()->get();
-        Log::info('Total messages: ' . $messages->count());
+            $messages = $folder->messages()->all()->get();
+            Log::info('Total messages: ' . $messages->count());
 
-        foreach ($messages as $message) {
-            Log::info($message->getSubject());
+            foreach ($messages as $message) {
+                Log::info($message->getSubject());
+            }
+        } 
+        catch (\Throwable $e) {
+            Log::critical("Unexpected scheduler failure: " . $e->getMessage());
+            return Command::FAILURE;
         }
 
         Log::info('Test Email IMAP done at ' . now());
