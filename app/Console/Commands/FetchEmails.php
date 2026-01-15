@@ -99,7 +99,7 @@ class FetchEmails extends Command
                     $log[$step . '.2'] = 'Incident created failed';
                 } 
             }
-            $folder->expunge();
+            // $folder->expunge();
 
             $log["step 6"] = 'IMAP done';
         } 
