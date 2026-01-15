@@ -30,10 +30,10 @@ use App\Http\Controllers\IncidentResolutionController;
 use App\Http\Controllers\TestingController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\IncidentDocumentController;
+use App\Http\Controllers\LogViewerController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout-callback', [AuthController::class, 'logoutCallback']);
-
 
 Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
@@ -84,8 +84,10 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::post('report/generate', [ReportController::class, 'generateReport'])->name('report.generate');
     Route::get('report', [ReportController::class, 'index'])->name('report.index');
 
+    Route::middleware(['admin.access'])->prefix('admin')->group(function () {
+        Route::get('log-viewer', [LogViewerController::class, 'index'])->name('log-viewer.url');
+    });
 });
-
 
 Route::prefix('iasset')->middleware('client.passport')->name('iasset.')->group(function () {
     Route::get('incidents/download_asset/{incident_no}', [IncidentController::class, 'downloadAssetFile'])->name('incidents.download_asset');

@@ -62,7 +62,7 @@ return [
     |
     */
 
-    'back_to_system_url' => config('app.url', null),
+    'back_to_system_url' => config('app.fe_url', null),
 
     'back_to_system_label' => null, // Displayed by default: "Back to {{ app.name }}"
 
@@ -98,6 +98,7 @@ return [
     'middleware' => [
         'web',
         \Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer::class,
+        'web.log-viewer-access'
     ],
 
     /*
