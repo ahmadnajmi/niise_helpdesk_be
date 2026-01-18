@@ -34,11 +34,11 @@ class holidays extends Command
 
         Log::info('Scheduler ran at ' . now());
 
-        Calendar::truncate();
+        // Calendar::truncate();
 
-        if (DB::getDriverName() === 'oracle') {
-            DB::statement("ALTER SEQUENCE CALENDARS_ID_SEQ RESTART START WITH 1");
-        } 
+        // if (DB::getDriverName() === 'oracle') {
+        //     DB::statement("ALTER SEQUENCE CALENDARS_ID_SEQ RESTART START WITH 1");
+        // } 
         try {
             $holiday = new MalaysiaHoliday;
             $result = $holiday->fromState(MalaysiaHoliday::$region_array,$year)->get();
@@ -64,7 +64,10 @@ class holidays extends Command
 
                         foreach($year['data'] as $year){
         
-                            $get_calendar = Calendar::where('name',$year['name'])->where('start_date',$year['date'])->first();
+                            $get_calendar = Calendar::where('name',$year['name'])
+                                                    ->where('start_date',$year['date'])
+                                                    ->where('end_date',$year['date'])
+                                                    ->first();
 
                             if($get_calendar){
                                 $old_state = json_decode($get_calendar->state_id, true) ?? [];
@@ -82,13 +85,6 @@ class holidays extends Command
                                 $data_calendar['end_date'] = $year['date'];
                                 $data_calendar['description'] = $year['description'];
                                 $data_calendar['state_id'] = json_encode([(int) $get_state->ref_code]);
-                                
-
-                                $get_calendar = Calendar::where('name',$data_calendar['name'])
-                                                        ->where('start_date',$data_calendar['start_date'])
-                                                        ->where('end_date',$data_calendar['end_date'])
-                                                        ->where('state_id',$data_calendar['state_id'])
-                                                        ->first();
                                 
                                 if(!$get_calendar){
                                     $create = Calendar::create($data_calendar);

@@ -49,4 +49,16 @@ class Calendar extends BaseModel
         
         return $ordered;
     }
+
+    public static function getPublicHoliday($state_id, $year){
+
+        $public_holiday = Calendar::where(function($query) use ($state_id) {
+                                    $query->whereRaw("JSON_EXISTS(state_id, '$?(@ == 0)')") 
+                                    ->orWhereRaw("JSON_EXISTS(state_id, '$?(@ == $state_id)')"); 
+                                })
+                                ->whereYear('start_date', $year)
+                                ->get();
+
+        return $public_holiday;
+    }
 }

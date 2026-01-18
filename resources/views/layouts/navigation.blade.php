@@ -22,9 +22,7 @@
                     <x-nav-link :href="route('web.incident.generate_duedate')" :active="request()->routeIs('web.incident.generate_duedate')">
                         {{ __('Generate Due Date') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('web.logs')" :active="request()->routeIs('web.logs')" target="_blank">
-                        {{ __('Log') }}
-                    </x-nav-link>
+                  
                 </div>
             </div>
 

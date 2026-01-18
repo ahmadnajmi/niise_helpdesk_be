@@ -88,6 +88,9 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
 
     Route::middleware(['admin.access'])->prefix('admin')->group(function () {
         Route::get('log-viewer', [LogViewerController::class, 'index'])->name('log-viewer.url');
+        Route::get('incident/{incident}', [IncidentController::class, 'incidentInternal'])->name('incident.internal');
+        Route::post('incident/{incident}/generate_end_date', [IncidentController::class, 'generateEndDate'])->name('incident.generate_end_date');
+        Route::post('incident/{incident}/generate_penalty', [IncidentController::class, 'generatePenalty'])->name('incident.generate_penalty');
     });
 });
 

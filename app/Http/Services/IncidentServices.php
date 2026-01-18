@@ -204,6 +204,13 @@ class IncidentServices
         return self::success('Success', true);
     }
 
+    public static function generateEndDate($incident){
+        $incident->expected_end_date = self::calculateDueDateIncident($incident);
+        $incident->save();
+
+        return self::success('Success', true);
+    }
+
     public static function downloadAssetFile($incident_no){
 
         $incident =  Incident::where('incident_no',$incident_no)->first();
