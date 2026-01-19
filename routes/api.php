@@ -32,6 +32,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\IncidentDocumentController;
 use App\Http\Controllers\LogViewerController;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\TestMail;
 
 
 Route::post('login', [AuthController::class, 'login']);
@@ -113,15 +114,6 @@ Route::post('auth/reset_password', [AuthController::class, 'resetPassword'])->na
 Broadcast::routes(['middleware' => ['auth:api']]);
 
 Route::get('/test-email', function () {
-    $details = [
-        'title' => 'Test Email',
-        'body' => 'This is a test email from Laravel SMTP.'
-    ];
-
-    Mail::raw($details['body'], function ($message) use ($details) {
-        $message->to('najmiemon4223@gmail.com')
-                ->subject($details['title']);
-    });
-
-    return 'Email sent!';
+    Mail::to('najmiemon4223@gmail.com')->send(new TestMail());
+    return 'Email sent';
 });
