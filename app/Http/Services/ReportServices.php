@@ -98,8 +98,7 @@ class ReportServices
 
     public static function idleReport($request){
         $data = [];
-        $get_category = Category::whereDoesntHave('childCategory')
-                                ->whereHas('incidents', function ($query) use ($request) {
+        $get_category = Category::whereHas('incidents', function ($query) use ($request) {
                                     $query->whereIn('status',[Incident::OPEN,Incident::TEMPORARY_FIX,Incident::RESOLVED,Incident::ON_HOLD])
                                             ->whereHas('incidentResolutionLatest', function ($query) use ($request) {
                                                     $query->whereDate('updated_at', '<', now()->subDays(4));
