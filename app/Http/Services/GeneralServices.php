@@ -29,8 +29,9 @@ class GeneralServices
             if($code == 'role'){
                 $data[$code] = Cache::rememberForever("dynamic_option_{$code}", function () {
                     return Role::select('id','name','name_en')
-                                    ->orderBy('name','asc')
-                                    ->get();
+                                ->whereNot('role', ROLE::SUPER_ADMIN)
+                                ->orderBy('name','asc')
+                                ->get();
                 });
             }
 

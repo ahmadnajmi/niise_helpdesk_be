@@ -38,7 +38,14 @@ class Module extends BaseModel
     }
 
     public function route(){
-        return $this->hasOne(Permission::class,'module_id','id')->where('name', 'like', '%index%');
+        return $this->hasOne(Permission::class,'module_id','id')
+                    ->where('name', 'like', '%index%')
+                    ->orderByRaw("CASE 
+                            WHEN name = 'incident.index' THEN 1 
+                            WHEN name = 'resolution.index' THEN 2 
+                            ELSE 3 
+                    END");
+
     }
 
     public function getTotalSubModuleCountAttribute(){
@@ -75,38 +82,7 @@ class Module extends BaseModel
                         })
                         ->orderBy('order_by', 'asc')
                         ->get();
-
-    return $data;
     
         return $data;
-    }
-
-    public static function getUserDetailsbaru(){
-        $get_permission = Permission::getUserDetails('module_id');
-
-        $data = Module::select('id','code','module_id','name','name_en','svg_path')
-                        ->with(['subModuleRecursive' => function ($query) use ($get_permission) {
-                            $query->whereIn('id', $get_permission);
-                        },
-                        'route'])
-                ->whereIn('id', $get_permission)
-                ->whereNull('module_id')
-                ->where('is_active', true)
-                ->get();
-
-        $grouped = $data->mapWithKeys(function ($module) {
-            $return =  [$module->code => [$module]];
-
-            if(count($module->subModuleRecursive) > 0) {
-
-                foreach($module->subModuleRecursive as $sub_module){
-                    $return[$module->code][$sub_module->code] =  $sub_module;
-                }
-            }
-            return $return;
-        });
-
-        return $grouped;
-
     }
 }
