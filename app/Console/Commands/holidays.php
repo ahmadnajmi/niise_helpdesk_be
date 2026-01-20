@@ -31,11 +31,14 @@ class holidays extends Command
     public function handle()
     {
         $year = $this->argument('year');
-        Calendar::truncate();
 
-        if (DB::getDriverName() === 'oracle') {
-            DB::statement("ALTER SEQUENCE CALENDARS_ID_SEQ RESTART START WITH 1");
-        } 
+        Log::info('Scheduler ran at ' . now());
+
+        // Calendar::truncate();
+
+        // if (DB::getDriverName() === 'oracle') {
+        //     DB::statement("ALTER SEQUENCE CALENDARS_ID_SEQ RESTART START WITH 1");
+        // } 
         try {
             $holiday = new MalaysiaHoliday;
             $result = $holiday->fromState(MalaysiaHoliday::$region_array,$year)->get();
@@ -61,7 +64,10 @@ class holidays extends Command
 
                         foreach($year['data'] as $year){
         
-                            $get_calendar = Calendar::where('name',$year['name'])->where('start_date',$year['date'])->first();
+                            $get_calendar = Calendar::where('name',$year['name'])
+                                                    ->where('start_date',$year['date'])
+                                                    ->where('end_date',$year['date'])
+                                                    ->first();
 
                             if($get_calendar){
                                 $old_state = json_decode($get_calendar->state_id, true) ?? [];
@@ -79,8 +85,10 @@ class holidays extends Command
                                 $data_calendar['end_date'] = $year['date'];
                                 $data_calendar['description'] = $year['description'];
                                 $data_calendar['state_id'] = json_encode([(int) $get_state->ref_code]);
-
-                                $create = Calendar::create($data_calendar);
+                                
+                                if(!$get_calendar){
+                                    $create = Calendar::create($data_calendar);
+                                }
                             }
 
                             
@@ -106,6 +114,8 @@ class holidays extends Command
             Log::critical("Unexpected scheduler failure: " . $e->getMessage());
             return Command::FAILURE;
         }
+
+        Log::info('Scheduler ran done at ' . now());
        
     }
 }

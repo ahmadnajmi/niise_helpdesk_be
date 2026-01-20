@@ -20,8 +20,9 @@ class PermissionImport implements ToModel
         // $list_permission[] = isset($row[6]) ? 'delete' : null;
         // $list_permission[] = isset($row[7]) ? 'replicate' : null;
         // $list_permission[] = isset($row[8]) ? 'generate' : null;
+        // $list_permission[] = isset($row[9]) ? 'internal' : null;
 
-        $actions = ['index','create','view','update','delete','replicate','generate'];
+        $actions = ['index','create','view','update','delete','replicate','generate','internal'];
         $list_permission = [];
 
         foreach ($actions as $key => $action) {
@@ -61,6 +62,9 @@ class PermissionImport implements ToModel
             }
             elseif($permission == 'generate'){
                 $list_role = isset($row[8]) ? $row[8] : null;
+            }
+            elseif($permission == 'internal'){
+                $list_role = isset($row[9]) ? $row[9] : null;
             }
 
             if(isset($list_role)){

@@ -31,20 +31,22 @@ class RoleServices
         try{
             $update = $role->update($data);
 
-            if($data['is_allow'] == true){
-                $exits = RolePermission::where('permission_id',$data['permission_id'])->where('role_id',$role->id)->exists();
+            // $is_allow = isset($data['is_allow']) ? $data['is_allow'] : false;
 
-                if(!$exits){
-                    $data['role_id'] = $role->id;
+            // if($is_allow){
+            //     $exits = RolePermission::where('permission_id',$data['permission_id'])->where('role_id',$role->id)->exists();
 
-                    $create = RolePermission::create($data);
-                }
-            }
-            else{
-                $delete = RolePermission::where('permission_id',$data['permission_id'])->where('role_id',$role->id)->delete();
+            //     if(!$exits){
+            //         $data['role_id'] = $role->id;
 
-                self::checkParentPermission();
-            }
+            //         $create = RolePermission::create($data);
+            //     }
+            // }
+            // else{
+            //     $delete = RolePermission::where('permission_id',$data['permission_id'])->where('role_id',$role->id)->delete();
+
+            //     self::checkParentPermission();
+            // }
 
             $return = new RoleResources($role);
 

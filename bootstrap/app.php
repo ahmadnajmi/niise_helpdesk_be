@@ -7,7 +7,8 @@ use App\Http\Middleware\LogRequestResponse;
 use App\Http\Middleware\SetLocaleFromHeader;
 use App\Http\Middleware\ClientAuthMiddleware;
 use App\Http\Middleware\CustomAuthenticate;
-use App\Http\Middleware\WebTokenkMiddleware;
+use App\Http\Middleware\AdminAccess;
+use App\Http\Middleware\LogViewerAccess;
 
 use Illuminate\Routing\Middleware\SubstituteBindings;
 
@@ -27,7 +28,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'client.passport' => ClientAuthMiddleware::class,
             'auth.check' => CustomAuthenticate::class,
-            'web.token' => WebTokenkMiddleware::class,
+            'web.log-viewer-access' => LogViewerAccess::class,
+            'admin.access' => AdminAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

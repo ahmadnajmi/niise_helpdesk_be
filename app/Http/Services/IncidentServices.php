@@ -40,63 +40,67 @@ class IncidentServices
         return $data;
     }
     
-    public static function create($data,$request){
+    public static function create($data){
 
         try{
-            $category_code = isset($data['category']) ? $data['category'] : null;
-            $received_via = null;
-
-            DB::beginTransaction();
-
-            if(!isset($data['complaint_user_id'])){
-
-                $data['user_type'] = User::FROM_COMPLAINT;
-
-                $complaint = User::create($data);
-
-                $data['complaint_user_id'] =  $complaint->id;
-            }
-
-            if($category_code){
-                $category = Category::whereRaw('LOWER(name) = ?', [strtolower($category_code)])->first();
-
-                $data['category_id'] = $category?->id;
-
-                if($category_code == Category::MOBILE) {
-                    $received_via = Incident::RECIEVED_PHONE;
-                }
-                elseif($category_code == Category::SISTEM) {
-                    $received_via = Incident::RECIEVED_SYSTEM;
-                } 
-            }
-
-            $data['incident_no'] = Incident::generateIncidentNo();
-            $data['incident_date'] = Carbon::now();
-            $data['sla_version_id'] = self::getSlaVersion($data);
-            $data['expected_end_date'] = self::calculateDueDateIncident($data);
-
-            // $data['service_recipient_id'] = $data['service_recipient_id'] ?? $data['operation_user_id'] ?? null;
-            $data['received_via'] = $data['received_via'] ?? $received_via ?? null;
-            $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
-
-
-            $create = Incident::create($data);
-
-            $create_document = self::uploadDoc($data,$create);
-
-            $create_resolution = self::createResolution($create->id);
-
-            $create_workbasket = self::createWorkbasket($create);
-
-            $create->refresh();
-
-            $return = self::callAssetIncident($create);
+            $return = self::createIncident($data);
 
             return self::generalResponse($return);
         }
         catch (\Throwable $th) {
             return self::error($th->getMessage());
         }
+    }
+
+    public static function createIncident($data){
+        $category_code = isset($data['category']) ? $data['category'] : null;
+        $received_via = null;
+
+        DB::beginTransaction();
+
+        if(!isset($data['complaint_user_id'])){
+
+            $data['user_type'] = User::FROM_COMPLAINT;
+
+            $complaint = User::create($data);
+
+            $data['complaint_user_id'] =  $complaint->id;
+        }
+
+        if($category_code){
+            $category = Category::whereRaw('LOWER(name) = ?', [strtolower($category_code)])->first();
+
+            $data['category_id'] = $category?->id;
+
+            if($category_code == Category::MOBILE) {
+                $received_via = Incident::RECIEVED_PHONE;
+            }
+            elseif($category_code == Category::SISTEM) {
+                $received_via = Incident::RECIEVED_SYSTEM;
+            } 
+        }
+
+        $data['incident_no'] = Incident::generateIncidentNo();
+        $data['incident_date'] = Carbon::now();
+        $data['sla_version_id'] = self::getSlaVersion($data);
+        $data['expected_end_date'] = self::calculateDueDateIncident($data);
+
+        // $data['service_recipient_id'] = $data['service_recipient_id'] ?? $data['operation_user_id'] ?? null;
+        $data['received_via'] = $data['received_via'] ?? $received_via ?? null;
+        $data['asset_component_id'] = isset($data['asset_component_id']) ? json_encode($data['asset_component_id']) : null;
+
+        $create = Incident::create($data);
+
+        $create_document = self::uploadDoc($data,$create);
+
+        $create_resolution = self::createResolution($create->id);
+
+        $create_workbasket = self::createWorkbasket($create);
+        $create->refresh();
+
+        $return = self::callAssetIncident($create);
+
+        return $return;
     }
 
     public static function update(Incident $incident,$data,$request){
@@ -200,6 +204,13 @@ class IncidentServices
         return self::success('Success', true);
     }
 
+    public static function generateEndDate($incident){
+        $incident->expected_end_date = self::calculateDueDateIncident($incident);
+        $incident->save();
+
+        return self::success('Success', true);
+    }
+
     public static function downloadAssetFile($incident_no){
 
         $incident =  Incident::where('incident_no',$incident_no)->first();
@@ -248,43 +259,6 @@ class IncidentServices
 
         return true;
     }
-
-    // public static function createIncidentDocument($data,$document_type,$incident_id){
-
-    //     if($document_type == IncidentDocument::APPENDIX){
-    //         $folder = 'appendix';
-    //     }
-    //     else{
-    //         $folder = 'asset';
-    //     }
-
-    //     $data_document['incident_id']  = $incident_id;
-
-    //     $destination = storage_path('app/private/incident/'.$folder); 
-
-    //     if (!file_exists($destination)) {
-    //         mkdir($destination, 0777, true);
-    //     }
-
-    //     foreach($data as $document){
-    //         if($document instanceof \Illuminate\Http\UploadedFile && $document->isValid()) {
-
-    //             $mimeType = $document->getClientOriginalExtension();
-    //             $file_name = time() . '_' . Str::random(10).'.'.$mimeType;
-
-    //             $fileContents = file_get_contents($document->getRealPath());
-        
-    //             file_put_contents($destination . '/' . $file_name, $fileContents);
-            
-    //             $data_document['path'] = 'incident/'.$folder.'/'.$file_name;
-    //             $data_document['type'] = $document_type;
-
-    //             IncidentDocument::create($data_document);
-    //         }
-    //     }
-
-    //     return true;
-    // }
 
     public static function createIncidentDocument($data,$document_type,$incident_id){
 
@@ -340,8 +314,6 @@ class IncidentServices
 
         Workbasket::create($data);
 
-        $role = User::getUserRole(Auth::user()->id);
-
         $trigger_workbasket = [
             'frontliner' => true,
             'contractor' => false,
@@ -349,14 +321,19 @@ class IncidentServices
             'jim' => false
         ];
 
-        if($role?->role == Role::BTMR){
-            $trigger_workbasket['btmr'] = true;
-        }
-        elseif($role?->role == Role::JIM){
-            $trigger_workbasket['jim'] = true;
+        if(auth()->check()){
+            $role = User::getUserRole(Auth::user()->id);
+
+            if($role?->role == Role::BTMR){
+                $trigger_workbasket['btmr'] = true;
+            }
+            elseif($role?->role == Role::JIM){
+                $trigger_workbasket['jim'] = true;
+            }
         }
 
         event(new WorkbasketUpdated($incident,$trigger_workbasket));
+
 
         return true;
     }

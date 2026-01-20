@@ -9,6 +9,7 @@ use App\Http\Traits\ResponseTrait;
 use App\Http\Collection\IncidentCollection;
 use App\Http\Resources\IncidentResources;
 use App\Http\Requests\IncidentRequest;
+use App\Http\Resources\IncidentInternalResources;
 use App\Http\Services\IncidentServices;
 use Illuminate\Support\Facades\Storage;
 
@@ -27,7 +28,7 @@ class IncidentController extends Controller
     {
         $data = $request->all();
 
-        $data = IncidentServices::create($data,$request);
+        $data = IncidentServices::create($data);
 
         return $data; 
     }
@@ -72,5 +73,24 @@ class IncidentController extends Controller
         $data = IncidentServices::downloadAssetFile($incident_no);
 
         return $data;
+    }
+
+    public function incidentInternal(Incident $incident){
+
+        $data = new IncidentInternalResources($incident);
+
+        return self::success('Success', $data);
+    }
+
+    public function generateEndDate(Incident $incident){
+        $data = IncidentServices::generateEndDate($incident);
+
+        return $data;
+    }
+
+    public function generatePenalty(Incident $incident){
+        $data = IncidentServices::generatePenalty($incident);
+
+        return self::success('Success', $data);
     }
 }

@@ -15,42 +15,58 @@ class UsersImport implements ToModel
 {
     public function model(array $row)
     {
+        /** 
+         * $row 0 = name
+         * $row 1 = nickname
+         * $row 2 = ic
+         * $row 3 = email
+         * $row 4 = phone_no
+         * $row 5 = branch
+         * $row 6 = role
+        **/ 
         $role = isset($row[6]) ? $row[6] : null;
+        
         if($row[6] != 'SUPER_ADMIN'){
-            $state = RefTable::inRandomOrder()->where('code_category','state')->first();
-            $get_branch = Branch::where('state_id', $state?->ref_code)->inRandomOrder()->first();
 
-            $data['branch_id'] = $get_branch ? $get_branch->id : null;
-            $data['state_id'] = $state?->ref_code;
-        }       
+            if(isset($row[5])){
+                $get_branch = Branch::where('name', $row[5])->first();
+
+                $data['branch_id'] = $get_branch?->id;
+                $data['state_id'] = $get_branch?->state_id;
+            }
+            else{
+                $state = RefTable::inRandomOrder()->where('code_category','state')->first();
+                $get_branch = Branch::where('state_id', $state?->ref_code)->inRandomOrder()->first();
+
+                $data['branch_id'] = $get_branch ? $get_branch->id : null;
+                $data['state_id'] = $state?->ref_code;
+            }
+           
+        }    
 
         $data['name']  = $row[0];
-        $data['nickname']  = $row[0];
+        $data['nickname']  = isset($row[1]) ? $row[1] : null;
         $data['password']  = Hash::make('P@ssw0rd');
-        $data['position']    = $row[1];
         $data['email'] =   $row[3];
         $data['phone_no'] =   $row[4];
-        $data['category_office'] =   $row[5];
-        $data['first_time_password'] = isset($row[8]) ? false : true;
       
-        if(isset($row[7])){
-            $data['ic_no'] =   $row[7];
+        if(isset($row[2])){
+            $data['ic_no'] =   $row[2];
         }
         else{
             $data['ic_no'] =   $this->generateDummyIC();
         }
-
         $create = User::create($data);
 
-        if(isset($row[6])){
-            $role = Role::where('role',$row[6])->first();
+        if($role){
+            $role = Role::where('role',$role)->first();
             $role = $role?->id;
         }
         else{
             $role = Role::inRandomOrder()->first();
             $role =  $role->id;
         }
-       
+        // dd($role,$row);
         $data_userrole['user_id'] = $create->id;
         $data_userrole['role_id'] = $role;
 
