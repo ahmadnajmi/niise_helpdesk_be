@@ -73,13 +73,6 @@ class TwoFactorServices
        
         return $user->save();
     }
-
-    public function disableTwoFactor(User $user): bool {
-        $user->two_fa_secret = null;
-        $user->two_fa_enabled = false;
-        
-        return $user->save();
-    }
     
     public function getDecryptedSecret(User $user): ?string{
         if (!$user->two_fa_secret) {

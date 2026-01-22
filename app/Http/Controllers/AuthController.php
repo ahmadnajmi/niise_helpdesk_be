@@ -76,4 +76,11 @@ class AuthController extends Controller
            
         return $data;
     }
+
+    public function disableTwoFactor(){
+
+        $data = AuthServices::disableTwoFactor();
+           
+        return $data;
+    }
 }

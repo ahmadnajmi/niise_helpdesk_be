@@ -47,6 +47,7 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
         Route::get('token', [AuthController::class, 'authToken'])->name('token');
         Route::post('update_password', [AuthController::class, 'updatePassword'])->name('update_password');
         Route::get('details', [AuthController::class, 'getAuthDetails'])->name('details');
+        Route::post('disable_two_factor', [AuthController::class, 'disableTwoFactor'])->name('disable_two_factor');
     });
 
     Route::apiResource('module', ModuleController::class);

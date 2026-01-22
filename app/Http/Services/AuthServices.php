@@ -259,4 +259,13 @@ class AuthServices
         }
 
     }
+
+    public static function disableTwoFactor(){
+        $user = Auth::user();
+        $user->two_fa_enabled = null;
+        $user->two_fa_secret = null;
+        $user->save();
+
+        return self::success('Success', true);
+    }
 }
