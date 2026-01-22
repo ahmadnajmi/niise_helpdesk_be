@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Resources\UserResources;
+use App\Http\Services\TwoFactorServices;
 use App\Models\User;
 use App\Models\SsoSession;
 use App\Models\UserRole;
@@ -43,7 +44,7 @@ class AuthServices
             return self::success('Success Netiq', $data);
         }
         else{
-            return self::error('Login failed. Invalid credentials.');
+            return self::error(__('user.message.user_invalid_credentials'));
         }
     }
 
@@ -51,20 +52,28 @@ class AuthServices
         $user = self::logAttemptLogin($request);
 
         if($user['status']){
-            $token = self::generatePassportToken($user['data']);
 
-            if(!$token['status']) {
-                return self::error($token['message']);
+            if(Auth::user()->two_fa_enabled){
+                $data = [
+                    'two_fa_enabled' => true,
+                ];
             }
+            else{
+                $token = self::generatePassportToken($user['data']);
 
-            $data = [
-                'user' => new UserResources(Auth::user()),
-                'token' => $token['data']->access_token,
-                'role' => UserRole::getUserDetails(),
-                'permission' => Permission::getPermission(),
-                'module' => Module::getUserDetails(),
-            ];
-            
+                if(!$token['status']) {
+                    return self::error($token['message']);
+                }
+
+                $data = [
+                    'two_fa_enabled' => false,
+                    'user' => new UserResources(Auth::user()),
+                    'token' => $token['data']->access_token,
+                    'role' => UserRole::getUserDetails(),
+                    'permission' => Permission::getPermission(),
+                    'module' => Module::getUserDetails(),
+                ];
+            }
             return self::success('Success', $data);
         }
         else{
@@ -78,11 +87,11 @@ class AuthServices
         $user = User::where('ic_no', $request->ic_no)->first();
 
         if(!$user){
-            return ['status' => false, 'message' => 'Login failed. Invalid credentials.'];
+            return ['status' => false, 'message' => __('user.message.user_invalid_credentials')];
         }
 
         if($user->is_disabled){
-            return ['status' => false, 'message' => 'Login failed. Your account is disabled.'];
+            return ['status' => false, 'message' => __('user.message.user_disabled')];
         }
 
         $credentials = [
@@ -93,11 +102,14 @@ class AuthServices
         if(Auth::attempt($credentials)){
             $user = Auth::user();
             $user->failed_attempts = 0 ;
-            $user->save();
 
-            Auth::user()->tokens()->update(['revoked' => true]);
+            if(!$user->two_fa_enabled){
+                $user->save();
+                Auth::user()->tokens()->update(['revoked' => true]);
+            }
 
             return ['status' => true, 'data' => $credentials];
+
         }
         else{
             $user->failed_attempts += 1;
@@ -109,7 +121,7 @@ class AuthServices
 
             $attemptsLeft = ($maxAttempts + 1) - $user->failed_attempts;
 
-            return ['status' => false, 'message' => 'Login failed. Invalid credentials.Attempts left: '.$attemptsLeft];
+            return ['status' => false, 'message' => __('user.message.user_invalid_credentials').__('user.message.user_attempts_left').$attemptsLeft];
         }
     }
     
@@ -213,5 +225,38 @@ class AuthServices
         else{
             return self::error('Change Password Failed.Old Password Not same.');
         }
+    }
+
+    public static function generateQrCode(){
+
+        try{
+            $google2fa = new TwoFactorServices();
+
+            $process_2fa = $google2fa->processTwoFactor();
+
+            return self::success('Success', $process_2fa);
+        }
+        catch(\Exception $e){
+            return self::error($e->getMessage());
+        }
+       
+
+    }
+
+    public static function verifyCode($code){
+        $google2fa = new TwoFactorServices();
+
+        $process_2fa = $google2fa->verifyCode($code);
+
+        if($process_2fa){
+
+            $data = new UserResources(Auth::user());
+
+            return self::success('Success', $data);
+        }
+        else{
+            return self::error('Failed');
+        }
+
     }
 }

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Traits\ResponseTrait;
 use App\Http\Services\AuthServices;
 use App\Http\Requests\AuthRequest;
+use App\Http\Resources\UserResources;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -19,6 +21,12 @@ class AuthController extends Controller
         $data = AuthServices::login($request);
            
         return $data;  
+    }
+
+    public function getAuthDetails(){
+        $data = new UserResources(Auth::user());
+
+        return $this->success('Success', $data);
     }
 
     public function logout(){
@@ -55,6 +63,17 @@ class AuthController extends Controller
         $data = AuthServices::updatePassword($data);
            
         return $data;
+    }
 
+    public function generateQrCode(){
+        $data = AuthServices::generateQrCode();
+           
+        return $data;
+    }
+
+    public function verifyCode($code){
+        $data = AuthServices::verifyCode($code);
+           
+        return $data;
     }
 }

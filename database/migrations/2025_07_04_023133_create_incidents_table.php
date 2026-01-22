@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('branch_id')->nullable(); 
             $table->unsignedBigInteger('category_id')->nullable(); 
             $table->uuid('complaint_user_id')->nullable()->index(); 
-            $table->string('information',1200)->nullable(); 
+            $table->mediumText('information')->nullable(); 
             $table->unsignedBigInteger('knowledge_base_id')->nullable(); 
             $table->smallInteger('received_via')->nullable();
             $table->string('report_no',100)->nullable(); 

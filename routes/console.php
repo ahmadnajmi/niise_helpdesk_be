@@ -9,4 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::command('read_emails_incident')->everyFiveMinutes();
-Schedule::command('holidays', [date('Y')])->dailyAt('18:50');
+Schedule::command('holidays', [date('Y')])->yearlyOn(12, 30, '18:50');

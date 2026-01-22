@@ -41,8 +41,13 @@ Route::get('logout-callback', [AuthController::class, 'logoutCallback']);
 Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
-    Route::get('auth/token', [AuthController::class, 'authToken'])->name('auth.token');
-    Route::post('auth/update_password', [AuthController::class, 'updatePassword'])->name('auth.update_password');
+    Route::prefix('auth')->group(function () {
+        Route::post('generate_qrcode', [AuthController::class, 'generateQrCode'])->name('generate_qrcode');
+        Route::post('verify_code/{code}', [AuthController::class, 'verifyCode'])->name('verify_code');
+        Route::get('token', [AuthController::class, 'authToken'])->name('token');
+        Route::post('update_password', [AuthController::class, 'updatePassword'])->name('update_password');
+        Route::get('details', [AuthController::class, 'getAuthDetails'])->name('details');
+    });
 
     Route::apiResource('module', ModuleController::class);
     Route::apiResource('permission', PermissionController::class);
