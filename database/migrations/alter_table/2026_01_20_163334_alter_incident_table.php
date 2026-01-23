@@ -19,6 +19,10 @@ return new class extends Migration
 
         DB::statement('ALTER TABLE INCIDENTS RENAME COLUMN information_temp TO information');
 
+        Schema::table('incidents', function (Blueprint $table) {
+            $table->unsignedBigInteger('assign_company_id')->nullable(); 
+        });
+
     }
 
     /**
@@ -26,6 +30,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-       
+        Schema::table('incidents', function (Blueprint $table) {
+            $table->dropColumn('assign_company_id');
+        });
     }
 };

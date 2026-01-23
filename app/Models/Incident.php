@@ -46,7 +46,8 @@ class Incident extends BaseModel
         'sla_version_id',
         'service_recipient_id',
         'resolved_user_id',
-        'assign_group_id'
+        'assign_group_id',
+        'assign_company_id'
     ];
 
     protected $casts = [

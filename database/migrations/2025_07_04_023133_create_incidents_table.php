@@ -39,6 +39,7 @@ return new class extends Migration
             $table->smallInteger('status')->default(1);
             $table->uuid('resolved_user_id')->nullable()->index(); 
             $table->unsignedBigInteger('assign_group_id')->nullable(); 
+            $table->unsignedBigInteger('assign_company_id')->nullable(); 
             $table->unsignedBigInteger('sla_version_id')->nullable(); 
             $table->log();
         });
