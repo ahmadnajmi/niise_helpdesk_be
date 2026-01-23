@@ -16,7 +16,7 @@ Deploy Staging:
     - cd /var/www/html/helpdesk_be  
     - git pull origin staging
     - rm -rf node_modules package-lock.json
-    - composer install --no-ansi --no-interaction --no-progress --prefer-dist --optimize-autoloader
+    - composer update --no-ansi --no-interaction --no-progress --prefer-dist --optimize-autoloader
     - npm install
     - php artisan optimize
     - npm run build
@@ -71,7 +71,7 @@ Deploy Preprod 1 SIT:
     - cd /var/www/html/helpdesk/be  
     - git pull origin staging
     - rm -rf node_modules package-lock.json
-    - composer install --no-ansi --no-interaction --no-progress --prefer-dist --optimize-autoloader
+    - composer update --no-ansi --no-interaction --no-progress --prefer-dist --optimize-autoloader
     - npm install
     - php artisan optimize
     - npm run build
@@ -127,7 +127,7 @@ Deploy Preprod 1 INTERIM:
     - cd /var/www/html/interim/be  
     - git pull origin staging
     - rm -rf node_modules package-lock.json
-    - composer install --no-ansi --no-interaction --no-progress --prefer-dist --optimize-autoloader
+    - composer update --no-ansi --no-interaction --no-progress --prefer-dist --optimize-autoloader
     - npm install
     - php artisan optimize
     - npm run build
@@ -180,7 +180,7 @@ Deploy Preprod 2 SIT:
     - cd /var/www/html/helpdesk/be  
     - git pull origin staging
     - rm -rf node_modules package-lock.json
-    - composer install --no-ansi --no-interaction --no-progress --prefer-dist --optimize-autoloader
+    - composer update --no-ansi --no-interaction --no-progress --prefer-dist --optimize-autoloader
     - npm install
     - php artisan optimize
     - npm run build
@@ -203,7 +203,7 @@ Deploy Production 1:
     - cd /var/www/html/helpdesk/be  
     - git pull origin main
     - rm -rf node_modules package-lock.json
-    - composer install --no-ansi --no-interaction --no-progress --prefer-dist --optimize-autoloader
+    - composer update --no-ansi --no-interaction --no-progress --prefer-dist --optimize-autoloader
     - npm install
     - php artisan optimize
     - npm run build
@@ -226,7 +226,7 @@ Deploy Production 2:
     - cd /var/www/html/helpdesk/be  
     - git pull origin main
     - rm -rf node_modules package-lock.json
-    - composer install --no-ansi --no-interaction --no-progress --prefer-dist --optimize-autoloader
+    - composer update --no-ansi --no-interaction --no-progress --prefer-dist --optimize-autoloader
     - npm install
     - php artisan optimize
     - npm run build
