@@ -49,36 +49,81 @@ class AuthServices
     }
 
     public static function login($request){
-        $user = self::logAttemptLogin($request);
 
-        if($user['status']){
+        try{
+            $user = self::logAttemptLogin($request);
 
-            if(Auth::user()->two_fa_enabled){
-                $data = [
-                    'two_fa_enabled' => true,
-                ];
+            if($user['status']){
+
+                if($user['two_fa_enabled']){
+                    $data = [
+                        'two_fa_enabled' => true,
+                        'user_id' =>Auth::user()->id
+                    ];
+                }
+                else{
+                    $token = self::generatePassportToken($user['data']);
+        
+                    if(!$token['status']) {
+                        return self::error($token);
+                    }
+
+                    $data = self::successLogin($token['data']->access_token);
+
+                    if(!$data['status']){
+                        return self::error($data['message']);
+                    }
+
+                    $data = $data['data'];
+                }
+                return self::success('Success', $data);
             }
             else{
-                $token = self::generatePassportToken($user['data']);
-
-                if(!$token['status']) {
-                    return self::error($token['message']);
-                }
-
-                $data = [
-                    'two_fa_enabled' => false,
-                    'user' => new UserResources(Auth::user()),
-                    'token' => $token['data']->access_token,
-                    'role' => UserRole::getUserDetails(),
-                    'permission' => Permission::getPermission(),
-                    'module' => Module::getUserDetails(),
-                ];
+                return self::error($user['message']);
             }
-            return self::success('Success', $data);
+        }
+        catch(\Exception $e){
+            return self::error($e->getMessage());
+        }
+    }
+
+    public static function verifyToken($request){
+
+        $google2fa = new TwoFactorServices();
+
+        $process_2fa = $google2fa->verifyCode($request->code,$request->user_id);
+
+        if($process_2fa){
+
+            $user = User::where('id',$request->user_id)->first();
+
+            Auth::loginUsingId($user->id);
+
+            $token = $user->createToken('system-token')->accessToken;
+
+            $data = self::successLogin($token);
+
+            if(!$data['status']){
+                return self::error($data['message']);
+            }
+
+            return self::success('Success', $data['data']);
         }
         else{
-            return self::error($user['message']);
+            return self::error(__('user.message.user_invalid_token'));
         }
+    }
+
+    public static function successLogin($token){
+        $data = [
+            'user' => new UserResources(Auth::user()),
+            'token' => $token,
+            'role' => UserRole::getUserDetails(),
+            'permission' => Permission::getPermission(),
+            'module' => Module::getUserDetails(),
+            'two_fa_enabled' => null,
+        ];
+        return ['status' => true, 'data' => $data];
     }
 
     public static function logAttemptLogin($request){
@@ -102,13 +147,13 @@ class AuthServices
         if(Auth::attempt($credentials)){
             $user = Auth::user();
             $user->failed_attempts = 0 ;
+            $user->save();
 
             if(!$user->two_fa_enabled){
-                $user->save();
                 Auth::user()->tokens()->update(['revoked' => true]);
             }
 
-            return ['status' => true, 'data' => $credentials];
+            return ['status' => true, 'data' => $credentials,'two_fa_enabled' => $user->two_fa_enabled];
 
         }
         else{
@@ -246,9 +291,10 @@ class AuthServices
     public static function verifyCode($code){
         $google2fa = new TwoFactorServices();
 
-        $process_2fa = $google2fa->verifyCode($code);
+        $verify_code = $google2fa->verifyCode($code);
 
-        if($process_2fa){
+        if($verify_code){
+            $google2fa->enableTwoFactor();
 
             $data = new UserResources(Auth::user());
 
@@ -257,7 +303,6 @@ class AuthServices
         else{
             return self::error('Failed');
         }
-
     }
 
     public static function disableTwoFactor(){

@@ -37,6 +37,7 @@ use App\Mail\TestMail;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout-callback', [AuthController::class, 'logoutCallback']);
+Route::post('verify_2fa', [AuthController::class, 'verifyToken']);
 
 Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);

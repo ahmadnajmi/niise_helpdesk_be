@@ -23,6 +23,12 @@ class AuthController extends Controller
         return $data;  
     }
 
+    public function verifyToken(Request $request){
+        $data = AuthServices::verifyToken($request);
+           
+        return $data; 
+    }
+
     public function getAuthDetails(){
         $data = new UserResources(Auth::user());
 

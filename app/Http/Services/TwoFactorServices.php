@@ -46,15 +46,25 @@ class TwoFactorServices
         return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 
-    public function verifyCode(string $code): bool{
-        $verify_code =  $this->google2fa->verifyKey(decrypt(Auth::user()->two_fa_secret), $code);
+    public function verifyCode(string $code,$user_id = null): bool{
 
-        if($verify_code){
-            $this->enableTwoFactor();
-            return true;
+        if($user_id){
+            $user = User::where('id',$user_id)->first();
+
+            $secret_key = decrypt($user->two_fa_secret);
+        }
+        else{
+           $secret_key = decrypt(Auth::user()->two_fa_secret);
         }
 
-        return false;
+        $verify_code =  $this->google2fa->verifyKey($secret_key, $code);
+
+        if($verify_code){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     public function updateTwoFactor(string $secret): bool{
