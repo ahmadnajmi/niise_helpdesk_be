@@ -5,6 +5,7 @@ use Illuminate\Testing\Exceptions\InvalidArgumentException;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Models\LogExternalApi;
 
 trait ApiTrait {
 
@@ -63,6 +64,16 @@ trait ApiTrait {
             Log::channel('external_api')->info("API Response: {$call_api->getStatusCode()},{$url}{$api_url}", [
                 'user_id' => Auth::user()?->id,
                 'body' => $response,
+            ]);
+
+            self::logApiHelper([
+                'service_name' => $function,
+                'endpoint' => $url.$api_url,
+                'is_success' => $call_api->getStatusCode() >= 200 && $call_api->getStatusCode() < 300,
+                'status_code' => $call_api->getStatusCode(),
+                'request' => json_encode($json),
+                'response' => json_encode($response),
+                'error_message' => $call_api->getStatusCode() >= 200 && $call_api->getStatusCode() < 300 ? null : $response,
             ]);
 
             if($function == 'jasper'){
@@ -144,6 +155,20 @@ trait ApiTrait {
             return ['data' => null,'status' =>null,'message' => $message];
 
         }
+    }
+
+    public static function logApiHelper($data){
+
+        $log = [
+            'service_name' => $data['service_name'],
+            'endpoint' => $data['endpoint'],
+            'is_success' => $data['is_success'],
+            'status_code' => $data['status_code'],
+            'request' => $data['request'],
+            'response' => $data['response'],
+            'error_message' => $data['error_message'],
+        ];
+        LogExternalApi::create($log);
     }
 }
 

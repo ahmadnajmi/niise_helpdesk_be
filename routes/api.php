@@ -27,17 +27,15 @@ use App\Http\Controllers\KnowledgeBaseController;
 use App\Http\Controllers\OperatingTimeController;
 use App\Http\Controllers\CompanyContractController;
 use App\Http\Controllers\IncidentResolutionController;
-use App\Http\Controllers\TestingController;
+use App\Http\Controllers\Admin\TestingController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\IncidentDocumentController;
 use App\Http\Controllers\LogViewerController;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\TestMail;
-
 
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout-callback', [AuthController::class, 'logoutCallback']);
 Route::post('verify_2fa', [AuthController::class, 'verifyToken']);
+Route::post('auth/reset_password', [AuthController::class, 'resetPassword'])->name('auth.reset_password');
 
 Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
@@ -99,6 +97,9 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
         Route::get('incident/{incident}', [IncidentController::class, 'incidentInternal'])->name('incident.internal');
         Route::post('incident/{incident}/generate_end_date', [IncidentController::class, 'generateEndDate'])->name('incident.generate_end_date');
         Route::post('incident/{incident}/generate_penalty', [IncidentController::class, 'generatePenalty'])->name('incident.generate_penalty');
+        Route::post('test_smtp', [TestingController::class, 'testEmail'])->name('testing.test_smtp');
+        Route::get('test_imap', [TestingController::class, 'testImap'])->name('testing.test_imap');
+
     });
 });
 
@@ -116,11 +117,5 @@ Route::apiResource('dashboard-all', DashboardController::class)->only('index');
 Route::get('dashboard_graph-all', [DashboardController::class, 'dashboardGraph'])->name('dashboard.graph-all');
 Route::get('dynamic_option-all', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option-all');
 
-Route::post('auth/reset_password', [AuthController::class, 'resetPassword'])->name('auth.reset_password');
 
 Broadcast::routes(['middleware' => ['auth:api']]);
-
-Route::get('/test-email', function () {
-    Mail::to('najmiemon4223@gmail.com')->send(new TestMail());
-    return 'Email sent';
-});

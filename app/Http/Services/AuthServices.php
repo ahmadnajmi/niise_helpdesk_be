@@ -242,6 +242,10 @@ class AuthServices
 
             $data['password'] = Hash::make($first.$last);
             $data['first_time_password'] = true;
+            // $data['is_disabled'] = false;
+            $data['failed_attempts'] = 0;
+            $data['two_fa_enabled'] = false;
+            $data['two_fa_secret'] = null;
 
             $update = $get_user->update($data);
 

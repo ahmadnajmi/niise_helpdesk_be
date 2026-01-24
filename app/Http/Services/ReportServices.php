@@ -15,6 +15,7 @@ use App\Models\Role;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use App\Http\Traits\ApiTrait;
+use App\Models\LogExternalApi;
 
 class ReportServices
 {
@@ -248,7 +249,7 @@ class ReportServices
             'report_format' => $fileExtension == 'csv' ? 'excel' : 'pdf',
             'parameters' => $parameter
         ]; 
-        $generate = self::callApi('jasper','reports/generate','POST',$data);
+        $generate = self::callApi(LogExternalApi::JASPER,'reports/generate','POST',$data);
         
         return $generate;
     }
