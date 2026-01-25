@@ -10,9 +10,12 @@ class Report extends BaseModel
     protected $table = 'report';
 
     protected $fillable = [ 
+        'name',
         'code',
-        'jasper_file_name',
         'output_name',
+        'file_name',
+        'path',
+        'is_default',
     ];
 
 }

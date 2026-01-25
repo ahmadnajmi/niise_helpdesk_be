@@ -22,7 +22,7 @@ trait ApiTrait {
 
     public static function callApi($function,$api_url,$method,$json) {
 
-        if($function == 'asset'){
+        if($function == LogExternalApi::ASSET){
             $url = config('app.asset.url');
 
             $postData = [
@@ -34,23 +34,26 @@ trait ApiTrait {
                 ],
             ];
         }
-        elseif($function == 'jasper'){
+        elseif($function == LogExternalApi::JASPER){
             $url = config('app.microservices.url');
 
         }
 
         $client = self::getClient($url);
 
-        if (strtoupper($method) === 'GET') {
+        if($function == LogExternalApi::JASPER){
+            $postData['multipart'] = $json;
+        }
+        elseif (strtoupper($method) === 'GET') {
             $postData['query'] = $json; 
         } else {
             $postData['json'] = $json; 
         }
 
-        Log::channel('external_api')->info("API Request: {$method},{$url}{$api_url}", [
-            'body' => $json,
-        ]);
-        
+        // Log::channel('external_api')->info("API Request: {$method},{$url}{$api_url}", [
+        //     'body' => $json,
+        // ]);
+        dd($postData);
         try{
             $call_api = $client->$method($api_url, $postData);
 
@@ -61,10 +64,10 @@ trait ApiTrait {
                 $response = $call_api;
             }
 
-            Log::channel('external_api')->info("API Response: {$call_api->getStatusCode()},{$url}{$api_url}", [
-                'user_id' => Auth::user()?->id,
-                'body' => $response,
-            ]);
+            // Log::channel('external_api')->info("API Response: {$call_api->getStatusCode()},{$url}{$api_url}", [
+            //     'user_id' => Auth::user()?->id,
+            //     'body' => $response,
+            // ]);
 
             self::logApiHelper([
                 'service_name' => $function,
@@ -76,7 +79,7 @@ trait ApiTrait {
                 'error_message' => $call_api->getStatusCode() >= 200 && $call_api->getStatusCode() < 300 ? null : $response,
             ]);
 
-            if($function == 'jasper'){
+            if($function == LogExternalApi::JASPER){
                 $contentType = self::getContentType($json['report_format']);
                 $filename = $json['outputFileName'];
 

@@ -215,8 +215,6 @@ class ReportServices
     public function generateReport($request){
 
         $report = Report::where('code',$request->report_category)->first();
-
-        $file = $report ? $report->jasper_file_name : 'outstanding';
        
         $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'csv' ;
 
@@ -230,25 +228,34 @@ class ReportServices
 
         $parameter = array_merge($request->only(['start_date', 'end_date','close_start_date','close_end_date','branch_id','severity_id','status','state_id','company_id']), $parameter);
 
-        if($chart_image && $request->report_category != 'TO_BREACH'){
+        if($chart_image && $report->code != 'TO_BREACH'){
             $parameter['graph_picture'] = $chart_image;
         }
 
-        if($request->report_category == 'STATUS'){
-            $file_name = 'Laporan Jumlah Insiden (Status)';
-        }
-        else if($request->report_category == 'SEVERITY'){
-            $file_name = 'Laporan Jumlah Insiden (Status)';
-        }
+        $jasperPath = storage_path('app/private/'.$report->path); 
 
         $output_file_name = $report->output_name ? $report->output_name : $report->jasper_file_name;
 
         $data = [
-            'reportTemplate' => $file.'/'.$file.'.jasper',
-            'outputFileName' => $output_file_name.'.'.$fileExtension,
-            'report_format' => $fileExtension == 'csv' ? 'excel' : 'pdf',
-            'parameters' => $parameter
+            [
+                'name'     => 'reportTemplate',
+                'contents' => fopen($jasperPath, 'r'),
+                'filename' => $report->file_name,
+            ],
+            [
+                'name'     => 'outputFileName',
+                'contents' => $output_file_name.'.'.$fileExtension,
+            ],
+            [
+                'name'     => 'report_format',
+                'contents' => $fileExtension == 'csv' ? 'excel' : 'pdf',
+            ],
+            [
+                'name'     => 'parameters',
+                'contents' => json_encode($parameter),
+            ],
         ]; 
+
         $generate = self::callApi(LogExternalApi::JASPER,'reports/generate','POST',$data);
         
         return $generate;
