@@ -42,18 +42,17 @@ trait ApiTrait {
         $client = self::getClient($url);
 
         if($function == LogExternalApi::JASPER){
-            $postData['multipart'] = $json;
+            $postData['multipart'] = $request = $json['multipart'];
         }
         elseif (strtoupper($method) === 'GET') {
-            $postData['query'] = $json; 
+            $postData['query'] = $request = $json; 
         } else {
-            $postData['json'] = $json; 
+            $postData['json'] = $request = $json; 
         }
 
         // Log::channel('external_api')->info("API Request: {$method},{$url}{$api_url}", [
         //     'body' => $json,
         // ]);
-        dd($postData);
         try{
             $call_api = $client->$method($api_url, $postData);
 
@@ -74,7 +73,7 @@ trait ApiTrait {
                 'endpoint' => $url.$api_url,
                 'is_success' => $call_api->getStatusCode() >= 200 && $call_api->getStatusCode() < 300,
                 'status_code' => $call_api->getStatusCode(),
-                'request' => json_encode($json),
+                'request' => json_encode($request),
                 'response' => json_encode($response),
                 'error_message' => $call_api->getStatusCode() >= 200 && $call_api->getStatusCode() < 300 ? null : $response,
             ]);

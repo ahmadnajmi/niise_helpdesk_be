@@ -217,7 +217,7 @@ class ReportServices
         $report = Report::where('code',$request->report_category)->first();
        
         $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'csv' ;
-
+        $report_format = $fileExtension == 'csv' ? 'excel' : 'pdf';
         $chart_image = $this->uploadDoc($request);
 
         $parameter  = [
@@ -235,8 +235,9 @@ class ReportServices
         $jasperPath = storage_path('app/private/'.$report->path); 
 
         $output_file_name = $report->output_name ? $report->output_name : $report->jasper_file_name;
-
-        $data = [
+        $output_file_name = $output_file_name.'.'.$fileExtension;
+        
+        $data['multipart'] = [
             [
                 'name'     => 'reportTemplate',
                 'contents' => fopen($jasperPath, 'r'),
@@ -244,17 +245,20 @@ class ReportServices
             ],
             [
                 'name'     => 'outputFileName',
-                'contents' => $output_file_name.'.'.$fileExtension,
+                'contents' => $output_file_name,
             ],
             [
                 'name'     => 'report_format',
-                'contents' => $fileExtension == 'csv' ? 'excel' : 'pdf',
+                'contents' => $report_format,
             ],
             [
                 'name'     => 'parameters',
                 'contents' => json_encode($parameter),
             ],
         ]; 
+
+        $data['report_format'] = $report_format;
+        $data['outputFileName'] = $output_file_name;
 
         $generate = self::callApi(LogExternalApi::JASPER,'reports/generate','POST',$data);
         
