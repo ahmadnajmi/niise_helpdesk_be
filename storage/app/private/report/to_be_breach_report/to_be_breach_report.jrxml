@@ -1,0 +1,836 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="To Be Breach Report" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5d213999-4952-4013-9d1a-3d681fe6caa6" summaryWithPageHeaderAndFooter="true">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Oracle Localhost"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<dataset name="INCIDENT RESOLUTION" uuid="28fb5f61-fe94-4c60-b03f-e7563d585dd2">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Oracle Localhost"/>
+		<parameter name="incident_id" class="java.lang.String"/>
+		<parameter name="close_end_date" class="java.lang.String"/>
+		<parameter name="close_start_date" class="java.lang.String"/>
+		<query language="SQL"><![CDATA[SELECT SOLUTION_NOTES,ACTION_CODES,CREATED_AT,PICKUP_DATE FROM INCIDENT_RESOLUTION where incident_id = $P{incident_id} ORDER BY CREATED_AT ASC]]></query>
+		<field name="SOLUTION_NOTES" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="SOLUTION_NOTES"/>
+			<property name="com.jaspersoft.studio.field.label" value="SOLUTION_NOTES"/>
+		</field>
+		<field name="ACTION_CODES" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="ACTION_CODES"/>
+			<property name="com.jaspersoft.studio.field.label" value="ACTION_CODES"/>
+		</field>
+		<field name="CREATED_AT" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="CREATED_AT"/>
+			<property name="com.jaspersoft.studio.field.label" value="CREATED_AT"/>
+		</field>
+		<field name="PICKUP_DATE" class="java.sql.Timestamp">
+			<property name="com.jaspersoft.studio.field.name" value="PICKUP_DATE"/>
+			<property name="com.jaspersoft.studio.field.label" value="PICKUP_DATE"/>
+		</field>
+		<group name="SOLUTION_NOTES">
+			<expression><![CDATA[$F{SOLUTION_NOTES}]]></expression>
+		</group>
+	</dataset>
+	<dataset name="Total Insiden" uuid="78edd639-f6d9-4327-80cc-c3c67e08ebae">
+		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Oracle Localhost"/>
+		<parameter name="branch_id" class="java.lang.String"/>
+		<parameter name="state_id" class="java.lang.String"/>
+		<parameter name="severity_id" class="java.lang.String">
+			<defaultValueExpression><![CDATA[$P{severity_id}]]></defaultValueExpression>
+		</parameter>
+		<parameter name="status" class="java.lang.String"/>
+		<parameter name="company_id" class="java.lang.String"/>
+		<parameter name="start_date" class="java.lang.String"/>
+		<parameter name="end_date" class="java.lang.String"/>
+		<parameter name="close_end_date" class="java.lang.String"/>
+		<parameter name="close_start_date" class="java.lang.String"/>
+		<query language="SQL"><![CDATA[SELECT 
+    ROW_NUMBER() OVER (ORDER BY b.name, c.name) AS No,
+    b.name AS Cawangan,
+     CP.NAME AS CONTRACTOR,
+    c.name AS Category,
+    COUNT(i.id) AS Total_Insiden
+FROM incidents i
+
+JOIN branch b ON i.branch_id = b.id
+JOIN categories c ON i.category_id = c.id
+LEFT JOIN users csc ON csc.id = i.resolved_user_id
+    LEFT JOIN companies cp ON cp.id = csc.company_id
+LEFT JOIN sla_version sv ON sv.id = i.sla_version_id
+LEFT JOIN sla_template st ON st.id = sv.sla_template_id
+WHERE i.status = 1
+AND i.expected_end_date > SYSDATE
+AND i.expected_end_date <= SYSDATE + 4
+AND ($P{branch_id} IS NULL OR i.branch_id = $P{branch_id})
+AND ($P{severity_id} IS NULL OR st.SEVERITY_ID = $P{severity_id})
+AND ($P{status} IS NULL OR i.status = $P{status})
+AND ($P{state_id} IS NULL OR b.state_id = $P{state_id})
+AND ($P{company_id} IS NULL OR cp.id = $P{company_id})
+AND ( $P{start_date} IS NULL OR i.incident_date >= TO_DATE($P{start_date}, 'YYYY-MM-DD'))
+AND ($P{end_date} IS NULL OR i.incident_date < TO_DATE($P{end_date}, 'YYYY-MM-DD') + 1)
+AND ($P{close_start_date} IS NULL OR i.actual_end_date >= TO_DATE($P{close_start_date}, 'YYYY-MM-DD'))
+	AND ($P{close_end_date} IS NULL OR i.actual_end_date < TO_DATE($P{close_end_date}, 'YYYY-MM-DD') + 1)
+GROUP BY b.name, cp.name,c.name
+HAVING COUNT(i.id) > 0
+ORDER BY b.name, c.name]]></query>
+		<field name="NO" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="NO"/>
+			<property name="com.jaspersoft.studio.field.label" value="NO"/>
+		</field>
+		<field name="CAWANGAN" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="CAWANGAN"/>
+			<property name="com.jaspersoft.studio.field.label" value="CAWANGAN"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="branch"/>
+		</field>
+		<field name="CONTRACTOR" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="CONTRACTOR"/>
+			<property name="com.jaspersoft.studio.field.label" value="CONTRACTOR"/>
+		</field>
+		<field name="CATEGORY" class="java.lang.String">
+			<property name="com.jaspersoft.studio.field.name" value="CATEGORY"/>
+			<property name="com.jaspersoft.studio.field.label" value="CATEGORY"/>
+			<property name="com.jaspersoft.studio.field.tree.path" value="categories"/>
+		</field>
+		<field name="TOTAL_INSIDEN" class="java.math.BigDecimal">
+			<property name="com.jaspersoft.studio.field.name" value="TOTAL_INSIDEN"/>
+			<property name="com.jaspersoft.studio.field.label" value="TOTAL_INSIDEN"/>
+		</field>
+		<group name="NO">
+			<expression><![CDATA[$F{NO}]]></expression>
+		</group>
+		<group name="CAWANGAN">
+			<expression><![CDATA[$F{CAWANGAN}]]></expression>
+		</group>
+		<group name="CATEGORY">
+			<expression><![CDATA[$F{CATEGORY}]]></expression>
+		</group>
+		<group name="TOTAL_INSIDEN">
+			<expression><![CDATA[$F{TOTAL_INSIDEN}]]></expression>
+		</group>
+	</dataset>
+	<parameter name="logo_background" class="java.lang.String"/>
+	<parameter name="logo_tittle" class="java.lang.String"/>
+	<parameter name="user_name" class="java.lang.String"/>
+	<parameter name="graph_picture" class="java.lang.String"/>
+	<parameter name="branch_id" class="java.lang.String"/>
+	<parameter name="state_id" class="java.lang.String"/>
+	<parameter name="severity_id" class="java.lang.String"/>
+	<parameter name="status" class="java.lang.String"/>
+	<parameter name="company_id" class="java.lang.String"/>
+	<parameter name="start_date" class="java.lang.String"/>
+	<parameter name="end_date" class="java.lang.String"/>
+	<parameter name="close_end_date" class="java.lang.String"/>
+	<parameter name="close_start_date" class="java.lang.String"/>
+	<query language="sql"><![CDATA[SELECT i.ID AS INCIDENT_ID,
+       INCIDENT_NO,
+       B.NAME AS BRANCH_NAME,
+       CS.NAME AS COMPLAINT_NAME,
+       CS.PHONE_NO AS COMPLAINT_PHONE_NO,
+       INCIDENT_DATE,
+       ACTUAL_END_DATE,
+       EXPECTED_END_DATE,
+       ST.SEVERITY_ID,
+       CY.NAME AS CATEGORY_NAME,
+       INFORMATION,
+       RT.NAME AS STATUS_NAME,
+       CP.NAME AS CONTRACTOR_NAME
+FROM incidents i
+LEFT JOIN branch b ON b.id = i.branch_id
+LEFT JOIN users cs ON cs.id = i.complaint_user_id
+LEFT JOIN sla_version sv ON sv.id = i.sla_version_id
+LEFT JOIN sla_template st ON st.id = sv.sla_template_id
+LEFT JOIN categories cy ON cy.id = i.category_id
+LEFT JOIN ref_table rt ON rt.ref_code = i.status AND rt.code_category = 'incident_status'
+LEFT JOIN users csc ON csc.id = i.resolved_user_id
+    LEFT JOIN companies cp ON cp.id = csc.company_id
+WHERE i.status = 1
+AND i.expected_end_date > SYSDATE
+AND i.expected_end_date <= SYSDATE + 4
+AND ($P{branch_id} IS NULL OR i.branch_id = $P{branch_id})
+AND ($P{severity_id} IS NULL OR st.SEVERITY_ID = $P{severity_id})
+AND ($P{status} IS NULL OR i.status = $P{status})
+AND ($P{state_id} IS NULL OR b.state_id = $P{state_id})
+AND ($P{company_id} IS NULL OR cp.id = $P{company_id})
+AND ( $P{start_date} IS NULL OR i.incident_date >= TO_DATE($P{start_date}, 'YYYY-MM-DD'))
+AND ($P{end_date} IS NULL OR i.incident_date < TO_DATE($P{end_date}, 'YYYY-MM-DD') + 1)
+AND ($P{close_start_date} IS NULL OR i.actual_end_date >= TO_DATE($P{close_start_date}, 'YYYY-MM-DD'))
+AND ($P{close_end_date} IS NULL OR i.actual_end_date < TO_DATE($P{close_end_date}, 'YYYY-MM-DD') + 1)
+ORDER BY cy.name ASC]]></query>
+	<field name="INCIDENT_ID" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="INCIDENT_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="INCIDENT_ID"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="incidents"/>
+	</field>
+	<field name="INCIDENT_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="INCIDENT_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="INCIDENT_NO"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="incidents"/>
+	</field>
+	<field name="BRANCH_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="BRANCH_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="BRANCH_NAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="branch"/>
+	</field>
+	<field name="COMPLAINT_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="COMPLAINT_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="COMPLAINT_NAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="users"/>
+	</field>
+	<field name="COMPLAINT_PHONE_NO" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="COMPLAINT_PHONE_NO"/>
+		<property name="com.jaspersoft.studio.field.label" value="COMPLAINT_PHONE_NO"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="users"/>
+	</field>
+	<field name="INCIDENT_DATE" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="INCIDENT_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="INCIDENT_DATE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="incidents"/>
+	</field>
+	<field name="ACTUAL_END_DATE" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="ACTUAL_END_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="ACTUAL_END_DATE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="incidents"/>
+	</field>
+	<field name="EXPECTED_END_DATE" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.name" value="EXPECTED_END_DATE"/>
+		<property name="com.jaspersoft.studio.field.label" value="EXPECTED_END_DATE"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="incidents"/>
+	</field>
+	<field name="SEVERITY_ID" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.name" value="SEVERITY_ID"/>
+		<property name="com.jaspersoft.studio.field.label" value="SEVERITY_ID"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="sla_template"/>
+	</field>
+	<field name="CATEGORY_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CATEGORY_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="CATEGORY_NAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="categories"/>
+	</field>
+	<field name="INFORMATION" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="INFORMATION"/>
+		<property name="com.jaspersoft.studio.field.label" value="INFORMATION"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="incidents"/>
+	</field>
+	<field name="STATUS_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="STATUS_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="STATUS_NAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="ref_table"/>
+	</field>
+	<field name="CONTRACTOR_NAME" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.name" value="CONTRACTOR_NAME"/>
+		<property name="com.jaspersoft.studio.field.label" value="CONTRACTOR_NAME"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="companies"/>
+	</field>
+	<background height="383" splitType="Stretch">
+		<element kind="image" uuid="9cb628a8-dbb7-4c4c-8c82-6d2b06ca111b" x="279" y="200" width="240" height="100" forecolor="#BFBFBF" scaleImage="RealSize" onErrorType="Blank" hImageAlign="Center" vImageAlign="Middle">
+			<expression><![CDATA[$P{logo_background}]]></expression>
+		</element>
+		<property name="com.jaspersoft.studio.unit.height" value="px"/>
+	</background>
+	<title height="212" splitType="Stretch">
+		<element kind="staticText" uuid="c18ed6ed-73fa-4220-9c7c-14b31a2c4355" x="0" y="50" width="800" height="20" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[JABATAN IMIGRESEN MALAYSIA]]></text>
+		</element>
+		<element kind="staticText" uuid="d110b8a8-30fd-45dc-b28d-9e90244baed0" x="0" y="70" width="800" height="30" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[]]></text>
+		</element>
+		<element kind="staticText" uuid="c2d1943d-01de-4210-b4a1-9bc5f86cc698" x="1" y="70" width="800" height="30" fontSize="11.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[LAPORAN AKAN MELEBIHI MASA SLA]]></text>
+		</element>
+		<element kind="image" uuid="7c4d96ca-a4fa-4d96-b48b-6e7625951be4" x="0" y="0" width="800" height="50" onErrorType="Blank" hImageAlign="Center">
+			<expression><![CDATA[$P{logo_tittle}]]></expression>
+		</element>
+		<element kind="staticText" uuid="36bd9479-e7a6-4bf1-a732-43e48335d5da" x="750" y="-15" width="50" height="22" forecolor="#615E5E" hTextAlign="Right" vTextAlign="Middle">
+			<text><![CDATA[SULIT]]></text>
+			<property name="com.jaspersoft.studio.unit.y" value="px"/>
+		</element>
+		<element kind="frame" uuid="16bb0b5c-a13f-4d5c-af2b-389d2cdc2b80" stretchType="NoStretch" x="0" y="140" width="801" height="70" removeLineWhenBlank="true">
+			<element kind="component" uuid="c54816fa-d3b8-499d-98d1-6e45f066c423" x="0" y="20" width="435" height="20" printInFirstWholeBand="true" removeLineWhenBlank="true">
+				<component kind="list">
+					<datasetRun uuid="79db249d-b08b-44f7-bc4c-e218223d0033" subDataset="Total Insiden">
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<parameter name="severity_id">
+							<expression><![CDATA[$P{severity_id}]]></expression>
+						</parameter>
+						<parameter name="branch_id">
+							<expression><![CDATA[$P{branch_id}]]></expression>
+						</parameter>
+						<parameter name="company_id">
+							<expression><![CDATA[$P{company_id}]]></expression>
+						</parameter>
+						<parameter name="end_date">
+							<expression><![CDATA[$P{end_date}]]></expression>
+						</parameter>
+						<parameter name="start_date">
+							<expression><![CDATA[$P{start_date}]]></expression>
+						</parameter>
+						<parameter name="state_id">
+							<expression><![CDATA[$P{state_id}]]></expression>
+						</parameter>
+						<parameter name="status">
+							<expression><![CDATA[$P{status}]]></expression>
+						</parameter>
+					</datasetRun>
+					<contents height="20" width="435">
+						<element kind="textField" uuid="9438b87f-20c3-4b05-bc2c-f2d00b01fada" x="0" y="0" width="20" height="20" fontSize="6.0" hTextAlign="Center" vTextAlign="Middle">
+							<expression><![CDATA[$F{NO}]]></expression>
+							<box>
+								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</element>
+						<element kind="textField" uuid="09716617-dd71-4670-9312-88793406d692" x="20" y="0" width="200" height="20" fontSize="6.0" hTextAlign="Left" vTextAlign="Middle">
+							<paragraph leftIndent="3" rightIndent="3"/>
+							<expression><![CDATA[$F{CAWANGAN}]]></expression>
+							<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+							<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+							<box>
+								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</element>
+						<element kind="textField" uuid="867a4488-30d4-4915-902f-1872055f815c" x="310" y="0" width="70" height="20" fontSize="6.0" hTextAlign="Center" vTextAlign="Middle">
+							<expression><![CDATA[$F{CATEGORY}]]></expression>
+							<box>
+								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</element>
+						<element kind="textField" uuid="0ad30c2b-eaee-488e-b67f-c3064584e110" x="380" y="0" width="55" height="20" fontSize="6.0" hTextAlign="Center" vTextAlign="Middle">
+							<expression><![CDATA[$F{TOTAL_INSIDEN}]]></expression>
+							<box>
+								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</element>
+						<element kind="textField" uuid="77fe3db2-15d1-46c0-84e8-f5517d48eaa8" x="220" y="0" width="90" height="20" fontSize="6.0" blankWhenNull="true" hTextAlign="Center" vTextAlign="Middle">
+							<expression><![CDATA[$F{CONTRACTOR} != null ? $F{CONTRACTOR} : "Helpdesk ICT"]]></expression>
+							<box>
+								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</element>
+					</contents>
+				</component>
+				<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+			</element>
+			<element kind="staticText" uuid="56f97900-a33c-4e07-9185-d5f79da69463" mode="Opaque" x="380" y="0" width="55" height="20" forecolor="#050505" backcolor="#C2C2C2" fontSize="6.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+				<text><![CDATA[Jumlah Insiden]]></text>
+				<box padding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="staticText" uuid="8e1bf30a-fb70-4a73-96b1-6669b07cda18" mode="Opaque" x="310" y="0" width="70" height="20" forecolor="#050505" backcolor="#C2C2C2" fontSize="6.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+				<text><![CDATA[Kategori]]></text>
+				<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				<box padding="1">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				</box>
+			</element>
+			<element kind="staticText" uuid="6d045fad-028c-4301-8399-18f9ed4af353" mode="Opaque" x="0" y="0" width="20" height="20" forecolor="#050505" backcolor="#C2C2C2" fontSize="6.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+				<text><![CDATA[No]]></text>
+				<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				<box padding="1">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				</box>
+			</element>
+			<element kind="staticText" uuid="014d86bd-198d-4cbe-8cb6-b1bfd99ddefc" mode="Opaque" x="20" y="0" width="200" height="20" forecolor="#050505" backcolor="#C2C2C2" fontSize="6.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+				<text><![CDATA[Cawangan]]></text>
+				<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				<box padding="1">
+					<pen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				</box>
+			</element>
+			<element kind="image" uuid="91c05e60-3611-4429-87ce-741e4ad66ee1" stretchType="ContainerHeight" x="475" y="0" width="255" height="60" forecolor="#FFFFFF" backcolor="#FFFFFF" scaleImage="FillFrame" onErrorType="Blank" hImageAlign="Center" vImageAlign="Middle" style="Table_CH">
+				<expression><![CDATA[$P{graph_picture}]]></expression>
+				<box style="Table_CH">
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="staticText" uuid="e4c05170-638d-436b-bfea-2e5531013cea" mode="Opaque" x="220" y="0" width="90" height="20" forecolor="#050505" backcolor="#C2C2C2" fontSize="6.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+				<text><![CDATA[Kontraktor]]></text>
+				<box padding="1">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+		</element>
+	</title>
+	<pageHeader height="23" splitType="Stretch">
+		<element kind="staticText" uuid="123f8adf-5e9b-4c68-a261-3fa8658e2827" x="750" y="0" width="50" height="22" forecolor="#615E5E" printInFirstWholeBand="true" hTextAlign="Right">
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER} != 1]]></printWhenExpression>
+			<text><![CDATA[SULIT]]></text>
+		</element>
+	</pageHeader>
+	<columnHeader height="21" splitType="Stretch">
+		<element kind="staticText" uuid="38e2871c-49b4-43b3-9e96-8f57f7c2ff78" mode="Opaque" x="20" y="0" width="53" height="21" forecolor="#050505" backcolor="#C2C2C2" fontSize="5.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Insiden No]]></text>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<box padding="1">
+				<pen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="a9c4aa96-dde7-4b56-a4d0-0c832a1dec7e" mode="Opaque" x="123" y="0" width="67" height="21" forecolor="#050505" backcolor="#C2C2C2" fontSize="5.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Cawangan]]></text>
+			<box padding="1">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="66e7e5dc-75c9-4884-95a9-a6966add0062" mode="Opaque" x="270" y="0" width="40" height="21" forecolor="#050505" backcolor="#C2C2C2" fontSize="5.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Tarikh Aduan]]></text>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="b2d7f9b5-7a40-4b43-bfc8-7d01f26fdad3" mode="Opaque" x="310" y="0" width="40" height="21" forecolor="#050505" backcolor="#C2C2C2" fontSize="5.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Tarikh & Masa SLA Tamat]]></text>
+			<box padding="1">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="4de46a63-2906-4e39-8569-03d2a39acbfb" mode="Opaque" x="350" y="0" width="43" height="21" forecolor="#050505" backcolor="#C2C2C2" fontSize="5.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Tarikh Jangkaan Selesai]]></text>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<box padding="1">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="08c996a5-22d1-41b7-93c4-4c46dcb1d3b4" mode="Opaque" x="393" y="0" width="32" height="21" forecolor="#050505" backcolor="#C2C2C2" fontSize="6.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Severiti]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<box padding="1">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="fa2f1f9e-3a34-4f91-8f69-8f891a16a1a1" mode="Opaque" x="471" y="0" width="112" height="21" forecolor="#050505" backcolor="#C2C2C2" fontSize="6.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Keterangan Masalah]]></text>
+			<box padding="1">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="eca6a9f9-73cf-4c4f-af81-d5d2259ffe29" mode="Opaque" x="190" y="0" width="80" height="21" forecolor="#050505" backcolor="#C2C2C2" fontSize="5.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Pengadu / No Tel]]></text>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="d8795a93-2925-4e90-baa6-503fdef32958" mode="Opaque" x="425" y="0" width="46" height="21" forecolor="#050505" backcolor="#C2C2C2" fontSize="5.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Kategori]]></text>
+			<box padding="1">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="198b5aed-fb5d-4c12-b65d-9099453edc68" mode="Opaque" x="0" y="0" width="20" height="21" forecolor="#050505" backcolor="#C2C2C2" fontSize="5.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[No]]></text>
+			<property name="com.jaspersoft.studio.unit.x" value="px"/>
+			<box padding="1">
+				<pen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#050505"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="2ac542a3-99bf-4a4a-b547-82fce2e26180" mode="Opaque" x="73" y="0" width="50" height="21" forecolor="#050505" backcolor="#C2C2C2" fontSize="5.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Kontraktor]]></text>
+			<box padding="1">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="49ecc610-8aa9-47b3-adc3-37a3bcacdafc" mode="Opaque" x="583" y="0" width="218" height="8" forecolor="#050505" backcolor="#C2C2C2" fontSize="4.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Resolusi Masalah]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<box padding="1">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="7ecc1039-7739-461a-bf29-526f5a47e66e" mode="Opaque" x="583" y="8" width="39" height="13" forecolor="#050505" backcolor="#C2C2C2" fontSize="4.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Tarikh mula]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<box padding="1">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="17aaa63c-2805-46e8-b6a8-635a8106c683" mode="Opaque" x="622" y="8" width="41" height="13" forecolor="#050505" backcolor="#C2C2C2" fontSize="4.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Tarikh 
+pengambilan]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<box padding="1">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="80051163-8b86-4fea-950c-bea0ed6858f1" mode="Opaque" x="663" y="8" width="32" height="13" forecolor="#050505" backcolor="#C2C2C2" fontSize="4.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Action Code]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<box padding="1">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+		<element kind="staticText" uuid="97492f3a-335e-47dc-b9bf-80c79018dbf5" mode="Opaque" x="695" y="8" width="106" height="13" forecolor="#050505" backcolor="#C2C2C2" fontSize="4.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<text><![CDATA[Penyelesaian]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<box padding="1">
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<element kind="textField" uuid="ebda1130-d040-4826-92aa-b0db534b20e2" x="20" y="0" width="53" height="18" printWhenGroupChanges="Category" fontSize="6.0" printRepeatedValues="false">
+				<paragraph spacingBefore="1"/>
+				<expression><![CDATA[$F{INCIDENT_NO}]]></expression>
+				<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="dd8f005a-018d-427a-b4ec-e242b3359b97" x="123" y="0" width="67" height="22" printWhenGroupChanges="Category" fontSize="6.0" hTextAlign="Center">
+				<paragraph spacingBefore="1"/>
+				<expression><![CDATA[$F{BRANCH_NAME}.toLowerCase()]]></expression>
+				<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="f1c423c1-6249-4b2c-9b7b-9fd88762b5df" stretchType="ContainerHeight" x="190" y="0" width="80" height="22" printWhenGroupChanges="Category" fontSize="6.0" textAdjust="StretchHeight" blankWhenNull="true" printRepeatedValues="false" hTextAlign="Center" vTextAlign="Top">
+				<paragraph spacingBefore="1"/>
+				<expression><![CDATA[$F{COMPLAINT_NAME} +  "\n"  + $F{COMPLAINT_PHONE_NO} ]]></expression>
+				<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="5c9e631f-3bc5-42ba-8bc1-764133d339ba" x="270" y="0" width="40" height="18" printWhenGroupChanges="Category" fontSize="6.0" hTextAlign="Center">
+				<paragraph spacingBefore="1"/>
+				<expression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy\nhh:mm a").format((java.util.Date)$F{INCIDENT_DATE})
+]]></expression>
+				<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="24e21b5d-6972-4c22-9fc2-cd3cc0a9538e" x="310" y="0" width="40" height="23" printWhenGroupChanges="Category" fontSize="6.0" blankWhenNull="true" hTextAlign="Center">
+				<paragraph spacingBefore="1"/>
+				<expression><![CDATA[(
+  (
+    java.time.Duration.between(java.time.LocalDateTime.now(), ((java.sql.Timestamp)$F{EXPECTED_END_DATE}).toLocalDateTime())
+  ).toDays() > 0 ? 
+    (
+      java.time.Duration.between(java.time.LocalDateTime.now(), ((java.sql.Timestamp)$F{EXPECTED_END_DATE}).toLocalDateTime()).toDays() + " days\n"
+    ) : ""
+) +
+(
+  (
+    java.time.Duration.between(java.time.LocalDateTime.now(), ((java.sql.Timestamp)$F{EXPECTED_END_DATE}).toLocalDateTime())
+  ).toHoursPart() > 0 ? 
+    (
+      java.time.Duration.between(java.time.LocalDateTime.now(), ((java.sql.Timestamp)$F{EXPECTED_END_DATE}).toLocalDateTime()).toHoursPart() + " hours\n"
+    ) : ""
+) +
+(
+  (
+    java.time.Duration.between(java.time.LocalDateTime.now(), ((java.sql.Timestamp)$F{EXPECTED_END_DATE}).toLocalDateTime())
+  ).toMinutesPart() > 0 ? 
+    (
+      java.time.Duration.between(java.time.LocalDateTime.now(), ((java.sql.Timestamp)$F{EXPECTED_END_DATE}).toLocalDateTime()).toMinutesPart() + " minutes"
+    ) : ""
+)
+]]></expression>
+				<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="01c1f6cd-5a58-4e54-a73a-cf38e269856a" x="350" y="0" width="43" height="18" printWhenGroupChanges="Category" fontSize="6.0" blankWhenNull="true" hTextAlign="Center">
+				<paragraph spacingBefore="1"/>
+				<expression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy\nhh:mm a").format((java.util.Date)$F{EXPECTED_END_DATE})
+]]></expression>
+				<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="d45fc244-5cd3-4b93-aa76-dd1ae0c11262" x="393" y="0" width="32" height="18" printWhenGroupChanges="Category" fontSize="6.0" hTextAlign="Center">
+				<paragraph spacingBefore="1"/>
+				<expression><![CDATA[$F{SEVERITY_ID}.equals(5) ? "0" : $F{SEVERITY_ID}.toString()
+]]></expression>
+				<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="9d020359-855c-405c-9d87-f7aee7e7dff3" x="471" y="0" width="112" height="23" printWhenGroupChanges="Category" fontSize="6.0">
+				<paragraph leftIndent="3" rightIndent="3" spacingBefore="1"/>
+				<expression><![CDATA[$F{INFORMATION}]]></expression>
+				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+				<property name="com.jaspersoft.studio.unit.rightIndent" value="px"/>
+				<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="component" uuid="777618a4-de66-4abc-b759-639d41b00a0e" x="583" y="0" width="218" height="22" printWhenGroupChanges="Category" printRepeatedValues="false">
+				<component kind="list">
+					<datasetRun uuid="23e11c1e-39df-4a7b-85b0-8b69f3f5cac1" subDataset="INCIDENT RESOLUTION">
+						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+						<parameter name="incident_id">
+							<expression><![CDATA[$F{INCIDENT_ID}]]></expression>
+						</parameter>
+					</datasetRun>
+					<contents height="22" width="218">
+						<element kind="textField" uuid="167f2511-09e6-4153-865b-7391c137588a" x="112" y="0" width="106" height="15" fontSize="5.0" blankWhenNull="true" removeLineWhenBlank="true">
+							<paragraph firstLineIndent="0" leftIndent="3" spacingBefore="1"/>
+							<expression><![CDATA[$F{SOLUTION_NOTES}]]></expression>
+							<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+							<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+							<property name="com.jaspersoft.studio.unit.height" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+							<box>
+								<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</element>
+						<element kind="textField" uuid="b648080e-f0c9-4be1-9976-ab7d1a0d7d41" x="80" y="0" width="32" height="15" fontSize="5.0" blankWhenNull="true" removeLineWhenBlank="true" hTextAlign="Center" vTextAlign="Top">
+							<paragraph firstLineIndent="3" leftIndent="3" spacingBefore="1"/>
+							<expression><![CDATA[$F{ACTION_CODES}]]></expression>
+							<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+							<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+							<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+							<box>
+								<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</element>
+						<element kind="textField" uuid="8195dc48-7ca3-44bc-8299-4984edefe2a1" x="39" y="0" width="41" height="22" fontSize="5.0" blankWhenNull="true" removeLineWhenBlank="true" hTextAlign="Center" vTextAlign="Top">
+							<paragraph firstLineIndent="3" leftIndent="3" spacingBefore="1"/>
+							<expression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy\nhh:mm a").format((java.util.Date)$F{PICKUP_DATE})]]></expression>
+							<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+							<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+							<box>
+								<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</element>
+						<element kind="textField" uuid="dfc0c4c9-9e0f-403a-aa97-6ea94b4e1bdd" x="0" y="0" width="39" height="22" fontSize="5.0" blankWhenNull="true" removeLineWhenBlank="true" hTextAlign="Center" vTextAlign="Top">
+							<paragraph lineSpacing="Single" firstLineIndent="3" leftIndent="3" spacingBefore="1"/>
+							<expression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy\nhh:mm a").format((java.util.Date)$F{CREATED_AT})]]></expression>
+							<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
+							<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
+							<property name="com.jaspersoft.studio.unit.width" value="px"/>
+							<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+							<box>
+								<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+							</box>
+						</element>
+					</contents>
+				</component>
+				<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+			</element>
+			<element kind="textField" uuid="627cf84b-c4f1-46a3-a11d-d957b3da7a31" x="425" y="0" width="46" height="18" printWhenGroupChanges="Category" fontSize="6.0" hTextAlign="Center">
+				<paragraph spacingBefore="1"/>
+				<expression><![CDATA[$F{CATEGORY_NAME}]]></expression>
+				<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="ebc8f529-8aa9-4a05-8b50-2e32b0b63774" x="0" y="0" width="20" height="18" printWhenGroupChanges="Category" fontSize="6.0" printRepeatedValues="false" hTextAlign="Center" vTextAlign="Top">
+				<paragraph spacingBefore="1"/>
+				<expression><![CDATA[$V{REPORT_COUNT}]]></expression>
+				<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+			<element kind="textField" uuid="e96e7afc-4f80-4d7c-b1fe-05eef7d0f741" x="73" y="0" width="50" height="22" printWhenGroupChanges="Category" fontSize="6.0" blankWhenNull="true" hTextAlign="Center">
+				<paragraph spacingBefore="1"/>
+				<expression><![CDATA[$F{CONTRACTOR_NAME} != null ? $F{CONTRACTOR_NAME} : "Helpdesk ICT"]]></expression>
+				<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				<property name="com.jaspersoft.studio.unit.x" value="px"/>
+				<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</element>
+		</band>
+	</detail>
+	<pageFooter height="23" splitType="Stretch">
+		<element kind="textField" uuid="5da9bb20-d9f9-4809-85e6-4f1dc2af77e1" x="680" y="4" width="100" height="18" fontSize="6.0" evaluationTime="Page" hTextAlign="Right" vTextAlign="Bottom">
+			<expression><![CDATA["Muka surat " +  $V{PAGE_NUMBER} + " dari "]]></expression>
+		</element>
+		<element kind="textField" uuid="e547beae-1dd2-4232-90c5-24e2601d5312" x="0" y="10" width="580" height="12" fontSize="5.0" linkType="None" linkTarget="Self" vTextAlign="Bottom">
+			<expression><![CDATA["Dicetak oleh " + $P{user_name}.toUpperCase() + " - " + java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a").withZone(java.time.ZoneId.of("Asia/Kuala_Lumpur")).format(java.time.Instant.now()).toUpperCase()
+]]></expression>
+		</element>
+		<element kind="textField" uuid="048d992b-7a2a-4382-8e67-320cd85abd3b" x="780" y="4" width="20" height="18" fontSize="6.0" evaluationTime="Report" hTextAlign="Left" vTextAlign="Bottom">
+			<expression><![CDATA["  "+ $V{PAGE_NUMBER}]]></expression>
+		</element>
+	</pageFooter>
+	<summary height="18">
+		<element kind="textField" uuid="42aefcdc-dfc0-4989-b88f-d7cb1e16ad47" key="" x="0" y="0" width="801" height="16" fontSize="6.0" evaluationTime="Column" linkTarget="Self" blankWhenNull="true" printRepeatedValues="false" printWhenDetailOverflows="true" removeLineWhenBlank="true" hTextAlign="Center" vTextAlign="Middle">
+			<printWhenExpression><![CDATA[$V{REPORT_COUNT}  == 0]]></printWhenExpression>
+			<expression><![CDATA["TIADA DATA"]]></expression>
+			<box>
+				<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+			</box>
+		</element>
+	</summary>
+</jasperReport>
