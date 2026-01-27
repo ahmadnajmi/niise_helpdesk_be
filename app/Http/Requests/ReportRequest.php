@@ -29,7 +29,8 @@ class ReportRequest extends FormRequest
             'start_date' => 'required',
             'end_date' => 'required',
             'report_format' => 'required',
-            'report_category' => 'required'
+            'report_category' => 'sometimes',
+            'report_id' => 'sometimes'
         ];
     }
 
