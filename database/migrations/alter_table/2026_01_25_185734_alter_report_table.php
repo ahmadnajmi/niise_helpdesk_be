@@ -15,12 +15,14 @@ return new class extends Migration
         
         Schema::create('report', function (Blueprint $table) {
             $table->id();
-            $table->string('name',100)->nullable();           
+            $table->string('name',100)->nullable();   
+            $table->string('name_en',100)->nullable();           
             $table->string('code',30)->nullable();
             $table->string('output_name')->nullable();  
             $table->string('path')->nullable();           
             $table->string('file_name',100)->nullable();           
-            $table->boolean('is_default')->default(false);           
+            $table->boolean('is_default')->default(false)->nullable();           
+            $table->boolean('is_active')->default(true);         
             $table->log();
         });
     }

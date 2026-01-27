@@ -214,7 +214,11 @@ class ReportServices
 
     public function generateReport($request){
 
-        $report = Report::where('code',$request->report_category)->first();
+        if($request->report_id){
+            $report = Report::where('id',$request->report_id)->first();
+        }else{
+            $report = Report::where('code',$request->report_category)->first();
+        }
        
         $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'csv' ;
         $report_format = $fileExtension == 'csv' ? 'excel' : 'pdf';

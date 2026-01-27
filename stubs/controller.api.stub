@@ -15,8 +15,7 @@ class {{ class }} extends Controller
 {
     use ResponseTrait;
 
-    public function index(Request $request)
-    {
+    public function index(Request $request){
         $limit = $request->limit ? $request->limit : 15;
         
         $data =  {{ class_name }}::paginate($limit);
@@ -24,47 +23,29 @@ class {{ class }} extends Controller
         return new {{ class_name }}Collection($data);
     }
 
-    public function store({{ class_name }}Request $request)
-    {
-        try {
-            $data = $request->all();
+    public function store({{ class_name }}Request $request){
+        $data = $request->all();
 
-            $create = {{ class_name }}::create($data);
-           
-            $data = new {{ class_name }}Resources($create);
-
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        $create = {{ class_name }}Services::create($data);
+        
+        return $create;
     }
 
-    public function show({{ class_name }} ${{ snake_class_name }})
-    {
+    public function show({{ class_name }} ${{ snake_class_name }}) {
         $data = new {{ class_name }}Resources(${{ snake_class_name }});
 
         return $this->success('Success', $data);
     }
 
-    public function update({{ class_name }}Request $request, {{ class_name }} ${{ snake_class_name }})
-    {
-        try {
-            $data = $request->all();
+    public function update({{ class_name }}Request $request, {{ class_name }} ${{ snake_class_name }}){
+        $data = $request->all();
 
-            $update = ${{ snake_class_name }}->update($data);
+        $update = {{ class_name }}Services::update(${{ snake_class_name }}, $data);
 
-            $data = new {{ class_name }}Resources(${{ snake_class_name }});
-
-            return $this->success('Success', $data);
-          
-        } catch (\Throwable $th) {
-            return $this->error($th->getMessage());
-        }
+        return $update;
     }
 
-    public function destroy({{ class_name }} ${{ snake_class_name }})
-    {
+    public function destroy({{ class_name }} ${{ snake_class_name }}){
         ${{ snake_class_name }}->delete();
 
         return $this->success('Success', null);

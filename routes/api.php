@@ -31,6 +31,7 @@ use App\Http\Controllers\Admin\TestingController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\IncidentDocumentController;
 use App\Http\Controllers\LogViewerController;
+use App\Http\Controllers\AdhocReportController;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::get('logout-callback', [AuthController::class, 'logoutCallback']);
@@ -72,8 +73,10 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::apiResource('audit', AuditController::class)->only('index','show');
     Route::apiResource('workbasket', WorkbasketController::class)->only('index');
     Route::apiResource('incident_document', IncidentDocumentController::class)->only('destroy','show');
+    Route::apiResource('adhoc_report', AdhocReportController::class);
 
     Route::get('incidents/download/{filename}', [IncidentController::class, 'downloadFile'])->name('incidents.download');
+    Route::get('adhoc_report/download/{filename}', [AdhocReportController::class, 'downloadFile'])->name('adhoc_report.download');
 
     Route::get('dynamic_option', [GeneralController::class, 'dynamicOption'])->name('general.dynamic_option');
     Route::get('dashboard_graph', [DashboardController::class, 'dashboardGraph'])->name('dashboard.graph');
@@ -98,7 +101,7 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
         Route::post('incident/{incident}/generate_end_date', [IncidentController::class, 'generateEndDate'])->name('incident.generate_end_date');
         Route::post('incident/{incident}/generate_penalty', [IncidentController::class, 'generatePenalty'])->name('incident.generate_penalty');
         Route::post('test_smtp', [TestingController::class, 'testEmail'])->name('testing.test_smtp');
-        Route::get('test_imap', [TestingController::class, 'testImap'])->name('testing.test_imap');
+        Route::post('test_imap', [TestingController::class, 'testImap'])->name('testing.test_imap');
 
     });
 });

@@ -11,11 +11,13 @@ class Report extends BaseModel
 
     protected $fillable = [ 
         'name',
+        'name_en',
         'code',
         'output_name',
         'file_name',
         'path',
         'is_default',
+        'is_active',
     ];
 
 }
