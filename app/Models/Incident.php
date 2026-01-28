@@ -329,6 +329,10 @@ class Incident extends BaseModel
         return Attribute::get(function () {
             $date_actr = $this->incidentResolutionActr?->created_at;
 
+            if(!$this->expected_end_date){
+                return '00 Hari : 00 Jam : 00 Minit';
+            }
+
             if (!$date_actr || $date_actr->lessThanOrEqualTo($this->expected_end_date)) {
                 return '00 Hari : 00 Jam : 00 Minit';
             }
