@@ -19,9 +19,9 @@ return new class extends Migration
             $table->dateTime('pickup_date')->nullable();
             $table->string('report_contractor_no',100)->nullable(); 
             $table->string('action_codes',20)->nullable();
-            $table->string('notes')->nullable();
-            $table->string('solution_notes')->nullable();
-            $table->log();
+            $table->text('notes')->nullable();
+            $table->text('solution_notes')->nullable();
+            $table->log();  
         });
     }
 
