@@ -98,6 +98,7 @@ Deploy Preprod 1 SIT:
           "PermissionSeeder" | \
           "RoleSeeder" | \
           "RefTableSeeder" | \
+          "UserSeeder" | \
           "ReportSeeder")
             SEEDER_CLASS="Database\\Seeders\\$S"
             echo "Running seeder: $SEEDER_CLASS"
@@ -154,6 +155,7 @@ Deploy Preprod 1 INTERIM:
           "PermissionSeeder" | \
           "RoleSeeder" | \
           "RefTableSeeder" | \
+          "UserSeeder" | \
           "ReportSeeder")
             SEEDER_CLASS="Database\\Seeders\\$S"
             echo "Running seeder: $SEEDER_CLASS"
@@ -211,6 +213,37 @@ Deploy Production 1:
     - php artisan migrate --force
     - echo "Production 1 - deployment completed!"
     - php artisan migrate --path=database/migrations/alter_table --force
+    - |
+      if [ -z "$SEEDER" ]; then
+        echo "No seeder selected. Skipping."
+        exit 0
+      fi
+
+      IFS=',' read -ra SEEDERS <<< "$SEEDER"
+
+      for S in "${SEEDERS[@]}"; do
+        S=$(echo "$S" | xargs) # trim spaces
+
+        case "$S" in
+          "ActionCodeSeeder" | \
+          "BranchSeeder" | \
+          "CategorySeeder" | \
+          "ModuleSeeder" | \
+          "PermissionSeeder" | \
+          "RoleSeeder" | \
+          "RefTableSeeder" | \
+          "UserSeeder" | \
+          "ReportSeeder")
+            SEEDER_CLASS="Database\\Seeders\\$S"
+            echo "Running seeder: $SEEDER_CLASS"
+            php artisan db:seed --class="$SEEDER_CLASS" --force
+            ;;
+          *)
+            echo "❌ Seeder NOT allowed: $S"
+            exit 1
+            ;;
+        esac
+      done
   when: manual
   only:
     - main
