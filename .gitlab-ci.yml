@@ -41,6 +41,7 @@ Deploy Staging:
           "PermissionSeeder" | \
           "RoleSeeder" | \
           "RefTableSeeder" | \
+          "UserSeeder" | \
           "ReportSeeder")
             SEEDER_CLASS="Database\\Seeders\\$S"
             echo "Running seeder: $SEEDER_CLASS"
