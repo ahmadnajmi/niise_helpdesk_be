@@ -25,12 +25,10 @@ class User extends Authenticatable
         'nickname',
         'password',
         'first_time_password',
-        // 'position',
         'branch_id',
         'company_id',
         'email',
         'phone_no',
-        // 'category_office',
         'address',
         'postcode',
         'city',
@@ -40,6 +38,12 @@ class User extends Authenticatable
         'user_type',
         'is_disabled',
         'failed_attempts',
+        'two_fa_secret',
+        'two_fa_enabled',
+    ];
+
+    protected $casts = [
+        'two_fa_enabled' => 'datetime:Y-m-d',
     ];
 
     const FROM_IDM = 1;

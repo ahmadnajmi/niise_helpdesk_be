@@ -5,6 +5,7 @@ use Illuminate\Testing\Exceptions\InvalidArgumentException;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use App\Models\LogExternalApi;
 
 trait ApiTrait {
 
@@ -21,7 +22,7 @@ trait ApiTrait {
 
     public static function callApi($function,$api_url,$method,$json) {
 
-        if($function == 'asset'){
+        if($function == LogExternalApi::ASSET){
             $url = config('app.asset.url');
 
             $postData = [
@@ -33,23 +34,25 @@ trait ApiTrait {
                 ],
             ];
         }
-        elseif($function == 'jasper'){
+        elseif($function == LogExternalApi::JASPER){
             $url = config('app.microservices.url');
 
         }
 
         $client = self::getClient($url);
 
-        if (strtoupper($method) === 'GET') {
-            $postData['query'] = $json; 
+        if($function == LogExternalApi::JASPER){
+            $postData['multipart'] = $request = $json['multipart'];
+        }
+        elseif (strtoupper($method) === 'GET') {
+            $postData['query'] = $request = $json; 
         } else {
-            $postData['json'] = $json; 
+            $postData['json'] = $request = $json; 
         }
 
-        Log::channel('external_api')->info("API Request: {$method},{$url}{$api_url}", [
-            'body' => $json,
-        ]);
-        
+        // Log::channel('external_api')->info("API Request: {$method},{$url}{$api_url}", [
+        //     'body' => $json,
+        // ]);
         try{
             $call_api = $client->$method($api_url, $postData);
 
@@ -60,12 +63,22 @@ trait ApiTrait {
                 $response = $call_api;
             }
 
-            Log::channel('external_api')->info("API Response: {$call_api->getStatusCode()},{$url}{$api_url}", [
-                'user_id' => Auth::user()?->id,
-                'body' => $response,
+            // Log::channel('external_api')->info("API Response: {$call_api->getStatusCode()},{$url}{$api_url}", [
+            //     'user_id' => Auth::user()?->id,
+            //     'body' => $response,
+            // ]);
+
+            self::logApiHelper([
+                'service_name' => $function,
+                'endpoint' => $url.$api_url,
+                'is_success' => $call_api->getStatusCode() >= 200 && $call_api->getStatusCode() < 300,
+                'status_code' => $call_api->getStatusCode(),
+                'request' => json_encode($request),
+                'response' => json_encode($response),
+                'error_message' => $call_api->getStatusCode() >= 200 && $call_api->getStatusCode() < 300 ? null : $response,
             ]);
 
-            if($function == 'jasper'){
+            if($function == LogExternalApi::JASPER){
                 $contentType = self::getContentType($json['report_format']);
                 $filename = $json['outputFileName'];
 
@@ -144,6 +157,20 @@ trait ApiTrait {
             return ['data' => null,'status' =>null,'message' => $message];
 
         }
+    }
+
+    public static function logApiHelper($data){
+
+        $log = [
+            'service_name' => $data['service_name'],
+            'endpoint' => $data['endpoint'],
+            'is_success' => $data['is_success'],
+            'status_code' => $data['status_code'],
+            'request' => $data['request'],
+            'response' => $data['response'],
+            'error_message' => $data['error_message'],
+        ];
+        LogExternalApi::create($log);
     }
 }
 

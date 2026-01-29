@@ -15,6 +15,7 @@ use App\Models\Role;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use App\Http\Traits\ApiTrait;
+use App\Models\LogExternalApi;
 
 class ReportServices
 {
@@ -213,12 +214,14 @@ class ReportServices
 
     public function generateReport($request){
 
-        $report = Report::where('code',$request->report_category)->first();
-
-        $file = $report ? $report->jasper_file_name : 'outstanding';
+        if($request->report_id){
+            $report = Report::where('id',$request->report_id)->first();
+        }else{
+            $report = Report::where('code',$request->report_category)->first();
+        }
        
         $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'csv' ;
-
+        $report_format = $fileExtension == 'csv' ? 'excel' : 'pdf';
         $chart_image = $this->uploadDoc($request);
 
         $parameter  = [
@@ -229,26 +232,39 @@ class ReportServices
 
         $parameter = array_merge($request->only(['start_date', 'end_date','close_start_date','close_end_date','branch_id','severity_id','status','state_id','company_id']), $parameter);
 
-        if($chart_image && $request->report_category != 'TO_BREACH'){
+        if($chart_image && $report->code != 'TO_BREACH'){
             $parameter['graph_picture'] = $chart_image;
         }
 
-        if($request->report_category == 'STATUS'){
-            $file_name = 'Laporan Jumlah Insiden (Status)';
-        }
-        else if($request->report_category == 'SEVERITY'){
-            $file_name = 'Laporan Jumlah Insiden (Status)';
-        }
+        $jasperPath = storage_path('app/private/'.$report->path); 
 
         $output_file_name = $report->output_name ? $report->output_name : $report->jasper_file_name;
-
-        $data = [
-            'reportTemplate' => $file.'/'.$file.'.jasper',
-            'outputFileName' => $output_file_name.'.'.$fileExtension,
-            'report_format' => $fileExtension == 'csv' ? 'excel' : 'pdf',
-            'parameters' => $parameter
+        $output_file_name = $output_file_name.'.'.$fileExtension;
+        
+        $data['multipart'] = [
+            [
+                'name'     => 'reportTemplate',
+                'contents' => fopen($jasperPath, 'r'),
+                'filename' => $report->file_name,
+            ],
+            [
+                'name'     => 'outputFileName',
+                'contents' => $output_file_name,
+            ],
+            [
+                'name'     => 'report_format',
+                'contents' => $report_format,
+            ],
+            [
+                'name'     => 'parameters',
+                'contents' => json_encode($parameter),
+            ],
         ]; 
-        $generate = self::callApi('jasper','reports/generate','POST',$data);
+
+        $data['report_format'] = $report_format;
+        $data['outputFileName'] = $output_file_name;
+
+        $generate = self::callApi(LogExternalApi::JASPER,'reports/generate','POST',$data);
         
         return $generate;
     }

@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Http\Services;
+use App\Models\{{ class_name }};
+use App\Http\Resources\{{ class_name }}Resources;
+use App\Http\Traits\ResponseTrait;
+
+class {{ class_name }}Services
+{
+    use ResponseTrait;
+    
+    public static function create($data){
+
+        try{
+            $create = {{ class_name }}::create($data);
+
+            $return = new {{ class_name }}Resources($create);
+
+            return self::success('Success', $return);
+        } 
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
+    }
+
+    public static function update({{ class_name }} ${{ snake_class_name }},$data){
+
+        try{
+            $update = ${{ snake_class_name }}->update($data);
+
+            $return = new {{ class_name }}Resources(${{ snake_class_name }});
+
+            return self::success('Success', $return);
+        } 
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
+    }
+
+    public static function delete({{ class_name }} ${{ snake_class_name }}){
+        ${{ snake_class_name }}->delete();
+
+        return self::success('Success', true);
+    }
+}

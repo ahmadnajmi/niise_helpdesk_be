@@ -16,6 +16,7 @@ use App\Models\Sla;
 use App\Models\CompanyContract;
 use App\Models\OperatingTime;
 use App\Models\ActionCode;
+use App\Models\Report;
 
 class GeneralServices
 {
@@ -233,6 +234,14 @@ class GeneralServices
                                         ->where('is_active',true)
                                         ->orderBy('name','asc')
                                         ->get();
+            }
+
+            if($code == 'report_type'){
+                $data[$code] = Cache::remember("dynamic_option_{$code}", $one_hour, function () {
+                    return Report::select('id','name','name_en','name_en')
+                                    ->orderBy('name','asc')
+                                    ->get();
+                });
             }
         }
         return $data;

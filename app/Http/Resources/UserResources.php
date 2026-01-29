@@ -20,6 +20,7 @@ class UserResources extends JsonResource
             'name' => $this->name,
             'nickname'  =>$this->nickname,
             'first_time_password' => $this->first_time_password == 1,
+            'two_fa_enabled' => $this->two_fa_enabled?->format('d-m-Y H:i:s'),
             'position' => $this->position,
             'branch' => $this->branch,
             'email' => $this->email,

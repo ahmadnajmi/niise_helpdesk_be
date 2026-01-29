@@ -45,7 +45,13 @@
     <tr>
         <td style="white-space:nowrap;width:29%"><strong>{{ $resolution->created_at?->locale('ms')->format('d/m/Y H:i:s') }}</strong></td>
         <td style="width:1%">:</td>
-        <td style="white-space:nowrap;width:70%;">{{ $resolution->solution_notes }}</td>
+        <td style="white-space:nowrap;width:70%;">
+          @if($resolution->action_codes == App\Models\ActionCode::INITIAL)
+          Initial Response
+          @else
+        {{ $resolution->solution_notes }}
+          @endif
+        </td>
     </tr>
     @endforeach
 </table>

@@ -7,6 +7,10 @@ return [
         'user_exists_adm' => 'Nombor IC ditemui dalam IDM & ADM. Anda boleh teruskan',
         'user_not_exists' => 'Nombor IC tidak ditemui dalam IDM & ADM. Anda tidak boleh teruskan',
         'user_contractor_exists' => 'Nombor IC tidak ditemui dalam IDM & ADM',
+        'user_invalid_credentials' => 'Login gagal. Kelayakan tidak sah.',
+        'user_attempts_left' => 'Percubaan baki: ',
+        'user_disabled' => 'Login gagal. Akaun anda telah disahaktifkan.',
+        'user_invalid_token' => 'Kod pengesahan tidak sah. Sila cuba lagi.',
 
     ]
 ];

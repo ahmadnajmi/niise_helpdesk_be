@@ -9,18 +9,27 @@ use Illuminate\Support\Str;
 
 class MakeFullCommand extends Command
 {
-    protected $signature = 'make:full {name}';
+    protected $signature = 'make:full {name} {--ignore-model}';
     protected $description = 'Create model, migration, controller, request, resource, and collection';
 
     public function handle()
     {
         $name = $this->argument('name');
+        $ignoreModel = $this->option('ignore-model');
 
-        $this->callSilent('make:model', [
-            'name' => $name,
-            '--migration' => true,
-        ]);
 
+        if(!$ignoreModel){
+            $this->callSilent('make:model', [
+                'name' => $name,
+                '--migration' => true,
+            ]);
+
+        }
+        else{
+            $this->info("⏭️ Skipped model and migration creation.");
+        }
+
+       
         $this->info("✅ Model and migration created.");
 
         $this->createController($name);
@@ -38,6 +47,10 @@ class MakeFullCommand extends Command
         $this->info("✅ Resource created.");
 
         $this->createCollection($name);
+
+        $this->info("✅ Collection created.");
+
+        $this->createService($name);
 
         $this->info("🎉 All files for '{$name}' generated successfully!");
     }
@@ -65,6 +78,33 @@ class MakeFullCommand extends Command
   
         $this->info("✅ Controller {$className}Controller generated successfully!");
     }
+
+    public function createService($name){
+        $className = ucfirst($name);
+        $snake_class_name = Str::snake($name);
+
+        $serviceName = "{$className}Service";
+        $serviceDir = app_path('Http/Services');
+        $servicePath = "{$serviceDir}/{$serviceName}.php";
+
+        if (!File::exists($serviceDir)) {
+            File::makeDirectory($serviceDir, 0755, true);
+        }
+
+        if (File::exists($servicePath)) {
+            $this->warn("⚠️ Service {$serviceName} already exists.");
+            return;
+        }
+
+        $stub = File::get(base_path('stubs/service.stub')); 
+
+        $stub = str_replace('{{ class_name }}', $serviceName, $stub);
+        $stub = str_replace('{{ snake_class_name }}', $snake_class_name, $stub);
+
+        File::put($servicePath, $stub);
+
+        $this->info("✅ Service {$serviceName} created successfully!");
+    }   
 
     public function createCollection($name){
 

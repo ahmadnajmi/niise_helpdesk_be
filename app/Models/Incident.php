@@ -46,7 +46,8 @@ class Incident extends BaseModel
         'sla_version_id',
         'service_recipient_id',
         'resolved_user_id',
-        'assign_group_id'
+        'assign_group_id',
+        'assign_company_id'
     ];
 
     protected $casts = [
@@ -328,6 +329,10 @@ class Incident extends BaseModel
         return Attribute::get(function () {
             $date_actr = $this->incidentResolutionActr?->created_at;
 
+            if(!$this->expected_end_date){
+                return '00 Hari : 00 Jam : 00 Minit';
+            }
+
             if (!$date_actr || $date_actr->lessThanOrEqualTo($this->expected_end_date)) {
                 return '00 Hari : 00 Jam : 00 Minit';
             }
@@ -360,7 +365,7 @@ class Incident extends BaseModel
         $limit = $request->limit ? $request->limit : 15;
 
         $data =  Incident::select('id','incident_no','branch_id','information','status','incident_date','actual_end_date','code_sla','complaint_user_id')
-                        // ->applyFilters($request)
+                        ->applyFilters($request)
                         ->when($request->status, function ($query) use ($request) {
                             if (is_array($request->status)) {
                                 return $query->whereIn('status', $request->status);

@@ -21,7 +21,8 @@ return new class extends Migration
             $table->boolean('first_time_password')->default(true);
             $table->smallInteger('failed_attempts')->default(0);
             $table->boolean('is_disabled')->default(false);
-            $table->string('position',100)->nullable(); 
+            $table->string('two_fa_secret')->nullable();
+            $table->dateTime('two_fa_enabled')->nullable();
             $table->unsignedBigInteger('branch_id')->nullable(); 
             $table->unsignedBigInteger('company_id')->nullable();
             $table->string('phone_no',20)->nullable(); 
@@ -30,7 +31,6 @@ return new class extends Migration
             $table->string('city',100)->nullable(); 
             $table->integer('state_id')->nullable(); 
             $table->string('fax_no',100)->nullable(); 
-            $table->string('category_office',100)->nullable();
             $table->smallInteger('user_type')->nullable();
             $table->boolean('is_active')->default(true);
             $table->timestamps();

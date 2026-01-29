@@ -22,34 +22,51 @@ class ReportSeeder extends Seeder
 
         $reports = [ 
             [
+                "name" => 'Laporan Insiden Tanpa Tindakan',
+                "name_en" => 'Idle Report',
                 "code" => "IDLE", 
-                "jasper_file_name" => "idle_report",
+                "path" => "report/idle_report/idle_report.jasper",
+                "file_name" => "idle_report.jasper",
                 "output_name" => 'Laporan insiden tanpa tindakan'
             ],
             [
+                "name" => 'Laporan Belum Selesai',
+                "name_en" => 'Outstanding Report',
                 "code" => "OUTSTANDING",
-                "jasper_file_name" => "outstanding",
+                "path" => "report/outstanding/outstanding.jasper",
+                "file_name" => "outstanding.jasper",
                 "output_name" => 'Laporan belum selesai'
             ],
             [
+                "name" => 'Laporan Akan Melebihi SLA',
+                "name_en" => 'To Be Breach Report',
                 "code" => "TO_BREACH",
-                "jasper_file_name" => "to_be_breach_report",
+                "path" => "report/to_be_breach_report/to_be_breach_report.jasper",
+                "file_name" => "to_be_breach_report.jasper",
                 "output_name" => 'Laporan akan melebihi masa sla'
             ],
             [
+                "name" => 'Laporan Melebihi SLA',
+                "name_en" => 'SLA Breach Report',
                 "code" => "SLA_BREACH" ,
-                "jasper_file_name" => "sla_breach_report",
+                "path" => "report/sla_breach_report/sla_breach_report.jasper",
+                "file_name" => "sla_breach_report.jasper",
                 "output_name" => 'Laporan yang melebihi masa sla'
             ],
             [
+                "name" => 'Laporan Jumlah Insiden (Status)',
+                "name_en" => 'Status Report',
                 "code" => "STATUS" ,
-                "jasper_file_name" => "status_report",
+                "path" => "report/status_report/status_report.jasper",
+                "file_name" => "status_report.jasper",
                 "output_name" => 'Laporan Jumlah Insiden (Status)'
             ],
 
         ];
 
         foreach($reports as $report){
+
+            $report['is_default'] = true;
 
             $create = Report::create($report);
         }

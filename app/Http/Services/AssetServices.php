@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use App\Http\Traits\ApiTrait;
+use App\Models\LogExternalApi;
 
 class AssetServices
 {
@@ -30,7 +31,7 @@ class AssetServices
         $data_asset["police_report_reference"] =  $data->report_police_no;
 
         // $call_api = $this->callApiAsset('ext/logIncidentFromHelpDesk','POST',$data_asset);
-        $call_api = self::callApi('asset','ext/logIncidentFromHelpDesk','POST',$data_asset);
+        $call_api = self::callApi(LogExternalApi::ASSET,'ext/logIncidentFromHelpDesk','POST',$data_asset);
 
         return $call_api;
     }
@@ -38,7 +39,7 @@ class AssetServices
     public function getAsset($id){
         $parameter['spec_batch_item_id'] = $id;
 
-        $call_api = self::callApi('asset','ext/getAsset','GET',$parameter);
+        $call_api = self::callApi(LogExternalApi::ASSET,'ext/getAsset','GET',$parameter);
 
         if($call_api['data']){
             $data = $call_api['data'];

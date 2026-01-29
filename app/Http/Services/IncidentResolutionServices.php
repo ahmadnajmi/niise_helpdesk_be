@@ -81,6 +81,7 @@ class IncidentResolutionServices
             if($data->action_codes == ActionCode::ACTR){
                 $data_incident['status']  =  Incident::RESOLVED; 
                 $data_incident['resolved_user_id'] = auth()->user()->id;
+                $data_incident['assign_company_id'] = auth()->user()->company_id;
 
                 $data_workbasket['escalate_frontliner'] = true;
                 $data_workbasket['status'] = Workbasket::NEW;
@@ -104,6 +105,7 @@ class IncidentResolutionServices
             if($data->action_codes == ActionCode::ACTR){
                 $data_incident['status']  =  Incident::RESOLVED; 
                 $data_incident['resolved_user_id'] = auth()->user()->id;
+                $data_incident['assign_company_id'] = auth()->user()->company_id;
             }
             else{
                 $data_incident['assign_group_id'] = $data->group_id;
