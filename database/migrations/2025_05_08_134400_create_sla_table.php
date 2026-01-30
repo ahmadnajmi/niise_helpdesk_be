@@ -17,7 +17,8 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id')->nullable(); 
             $table->json('branch_id')->nullable();
             $table->unsignedBigInteger('sla_template_id')->nullable(); 
-            $table->unsignedBigInteger('group_id')->nullable(); 
+            $table->uuid('groups_id')->nullable()->index(); 
+
             $table->boolean('is_active')->default(true);
             $table->log();
             $table->softDeletes();

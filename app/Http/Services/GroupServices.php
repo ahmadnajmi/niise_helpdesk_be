@@ -51,33 +51,17 @@ class GroupServices
         if(isset($request['users'])){
             UserGroup::where('groups_id',$group_id)->delete();
 
+            $data['groups_id'] = $group_id;
+
             foreach($request['users'] as $user){
 
-                $user_id = isset($user['id']) ? $user['id'] : null;
+                $data['user_type'] = $user['user_type'];
+                $data['ic_no'] = $user['ic_no'];
+                $data['name'] = $user['name'];
+                $data['email'] = $user['email'];
+                $data['company_id'] = $user['company_id'];
 
-                if(!$user_id){
-                    $user['user_type'] = User::FROM_IDM;
-
-                    $create = User::create($user);
-
-                    $user_id = $create->id;
-
-                    $role  = Role::where('role',Role::CONTRACTOR)->first();
-
-                    $user_role['user_id'] = $user_id;
-                    $user_role['role_id'] = $role?->id;
-
-                    UserRole::disableAuditing();
-
-                    UserRole::create($user_role);
-                }
-
-                $data['user_id'] = $user_id;
-                $data['groups_id'] = $group_id;
-
-                UserGroup::create($data);
-
-                
+                UserGroup::create($data); 
             }
         }
     }

@@ -10,6 +10,10 @@ class Group extends BaseModel
 {
     protected $table = 'groups';
 
+    public $incrementing = false;
+    protected $keyType = 'string';
+    public $usesUuid = true;
+
     protected $fillable = [ 
         'name',
         'description',
