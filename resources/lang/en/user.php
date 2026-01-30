@@ -11,6 +11,7 @@ return [
         'user_attempts_left' => 'Attempts left: ',
         'user_disabled' => 'Login failed. Your account is disabled.',
         'user_invalid_token' => 'The verification code is invalid. Please try again.',
+        'user_found' => 'User found',
     ]
 
 ];

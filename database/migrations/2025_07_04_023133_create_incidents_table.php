@@ -32,7 +32,7 @@ return new class extends Migration
             $table->unsignedBigInteger('asset_parent_id')->nullable(); 
             $table->json('asset_component_id')->nullable(); 
             $table->uuid('service_recipient_id')->nullable(); 
-            $table->unsignedBigInteger('group_id')->nullable(); 
+            $table->uuid('groups_id')->nullable()->index(); 
             $table->uuid('operation_user_id')->nullable()->index(); 
             $table->dateTime('expected_end_date')->nullable();
             $table->dateTime('actual_end_date')->nullable();

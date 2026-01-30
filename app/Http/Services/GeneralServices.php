@@ -123,7 +123,6 @@ class GeneralServices
                
                 $data[$code] = Group::select('id','name','description')
                                     ->where('is_active',true)
-                                    // ->whereHas('userGroup.userDetails')
                                     ->when($contractor && $request->own_group, function ($query) {
                                         return $query->where(function ($subQuery) {
                                             $subQuery->whereHas('userGroup', function ($q)  {

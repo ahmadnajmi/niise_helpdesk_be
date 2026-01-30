@@ -40,10 +40,10 @@ class UserResources extends JsonResource
             'updated_at' => $this->updated_at?->format('d-m-Y'),
         ];
 
-        if($request->route()->getName() != 'group_management.show'){
-            $return['group'] = UserGroupResources::collection($this->group) ;
-            $return['group_access'] = UserGroupAccessResources::collection($this->groupAccess);
-        }
+        // if($request->route()->getName() != 'group_management.show'){
+        //     $return['group'] = UserGroupResources::collection($this->group) ;
+        //     $return['group_access'] = UserGroupAccessResources::collection($this->groupAccess);
+        // }
         return $return;
     }
 }

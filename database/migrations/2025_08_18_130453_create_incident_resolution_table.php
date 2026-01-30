@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('incident_resolution', function (Blueprint $table) {
             $table->id();
             $table->uuid('incident_id')->nullable();
-            $table->unsignedBigInteger('group_id')->nullable(); 
+            $table->uuid('group_id')->nullable()->index(); 
             $table->uuid('operation_user_id')->nullable()->index(); 
             $table->dateTime('pickup_date')->nullable();
             $table->string('report_contractor_no',100)->nullable(); 
