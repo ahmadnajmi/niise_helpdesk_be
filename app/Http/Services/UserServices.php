@@ -130,13 +130,13 @@ class UserServices
     }
 
     public static function searchIcNo($request){
-        $user = User::filter()->first();
-
+        $user = User::with('company')->hideSuperAdmin()->filter()->first();
+        
         if($user){
             $return  = [
-                'message' => __('user.message.user_exists'),
-                'data' => null,
-            ]; 
+                'message' => __('user.message.user_found'),
+                'data' => $user,
+            ];  
         }
         else{
             $return = self::checkSystemIDM($request);

@@ -16,12 +16,13 @@ class UserGroupResources extends JsonResource
     {
         $return  = [
             'groups_id' => $this->groups_id,
-            'user_id' => $this->user_id,
+            'user_type' => $this->user_type,
+            'ic_no' => $this->ic_no,
+            'name' => $this->name,
+            'email' => $this->email,
+            'company_id' => $this->company_id,
         ];
 
-        if($request->route()->getName() == 'group_management.show'){
-            $return['user_details'] = $this->userDetails ? new UserResources($this->userDetails) : null ;
-        }
 
         if($request->route()->getName() == 'user.show'){
             $return['group_details'] = new GroupResources($this->groupDetails);

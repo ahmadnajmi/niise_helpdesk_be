@@ -28,7 +28,13 @@ class GroupRequest extends FormRequest
             'name' => 'required',
             'description' => 'nullable',
             'is_active' => 'nullable',
-            'users' => 'nullable|array'
+            'users' => 'nullable|array',
+            'users.*.user_type' => 'required',
+            'users.*.ic_no' => 'sometimes',
+            'users.*.name' => 'sometimes',
+            'users.*.email' => 'sometimes',
+            'users.*.company_id' => 'nullable',
+            
         ];
     }
 
