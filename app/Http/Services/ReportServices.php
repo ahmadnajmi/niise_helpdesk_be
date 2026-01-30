@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Category;
 use App\Models\Incident;
 use App\Models\SlaTemplate;
@@ -235,8 +236,9 @@ class ReportServices
         if($chart_image && $report->code != 'TO_BREACH'){
             $parameter['graph_picture'] = $chart_image;
         }
+        $disk = config('filesystems.default');
 
-        $jasperPath = storage_path('app/private/'.$report->path); 
+        $jasperPath = Storage::disk($disk)->path($report->path);
 
         $output_file_name = $report->output_name ? $report->output_name : $report->jasper_file_name;
         $output_file_name = $output_file_name.'.'.$fileExtension;

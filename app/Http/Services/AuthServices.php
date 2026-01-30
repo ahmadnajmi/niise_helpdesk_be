@@ -150,7 +150,7 @@ class AuthServices
             $user->save();
 
             if(!$user->two_fa_enabled){
-                Auth::user()->tokens()->update(['revoked' => true]);
+                // Auth::user()->tokens()->update(['revoked' => true]);
             }
 
             return ['status' => true, 'data' => $credentials,'two_fa_enabled' => $user->two_fa_enabled];
