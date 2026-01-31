@@ -17,6 +17,7 @@ use App\Models\CompanyContract;
 use App\Models\OperatingTime;
 use App\Models\ActionCode;
 use App\Models\Report;
+use App\Models\UserGroup;
 
 class GeneralServices
 {
@@ -126,13 +127,22 @@ class GeneralServices
                                     ->when($contractor && $request->own_group, function ($query) {
                                         return $query->where(function ($subQuery) {
                                             $subQuery->whereHas('userGroup', function ($q)  {
-                                                $q->where('user_id', Auth::user()->id);
+                                                $q->where('ic_no', Auth::user()->ic_no);
                                             })
                                             ->orWhereHas('userGroupAccess', function ($q)  {
                                                 $q->where('user_id', Auth::user()->id);
                                             });
                                         ;})
                                     ;})
+                                    ->orderBy('name','asc')
+                                    ->get();
+            }
+
+            if($code == 'user_group'){
+                $data[$code] = UserGroup::select('id','name')
+                                    ->when($request->group_id, function ($query) use ($request) {
+                                        return $query->where('groups_id',$request->group_id); 
+                                    })
                                     ->orderBy('name','asc')
                                     ->get();
             }
