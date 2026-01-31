@@ -12,6 +12,7 @@ class CategoryImport implements ToModel
     public function model(array $row)
     {
         $data['name'] = $row[0];
+        $data['description'] = $row[0];
 
         if(isset($row[1])){
 

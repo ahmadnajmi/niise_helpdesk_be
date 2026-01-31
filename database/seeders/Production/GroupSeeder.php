@@ -13,6 +13,8 @@ class GroupSeeder extends Seeder
      */
     public function run(): void
     {
+        Group::truncate();
+
         $data['name'] = 'IT Care';
 
         Group::create($data);

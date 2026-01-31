@@ -34,13 +34,13 @@ class UsersImport implements ToModel
                 $data['branch_id'] = $get_branch?->id;
                 $data['state_id'] = $get_branch?->state_id;
             }
-            else{
-                $state = RefTable::inRandomOrder()->where('code_category','state')->first();
-                $get_branch = Branch::where('state_id', $state?->ref_code)->inRandomOrder()->first();
+            // else{
+            //     $state = RefTable::inRandomOrder()->where('code_category','state')->first();
+            //     $get_branch = Branch::where('state_id', $state?->ref_code)->inRandomOrder()->first();
 
-                $data['branch_id'] = $get_branch ? $get_branch->id : null;
-                $data['state_id'] = $state?->ref_code;
-            }
+            //     $data['branch_id'] = $get_branch ? $get_branch->id : null;
+            //     $data['state_id'] = $state?->ref_code;
+            // }
            
         }    
 
@@ -53,9 +53,9 @@ class UsersImport implements ToModel
         if(isset($row[2])){
             $data['ic_no'] =   $row[2];
         }
-        else{
-            $data['ic_no'] =   $this->generateDummyIC();
-        }
+        // else{
+        //     $data['ic_no'] =   $this->generateDummyIC();
+        // }
         $create = User::create($data);
 
         if($role){
