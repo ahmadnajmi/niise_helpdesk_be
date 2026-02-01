@@ -43,6 +43,10 @@ Deploy Staging:
           "RefTableSeeder" | \
           "UserSeeder" | \
           "Production\\ProdSeeder" | \
+          "Production\\CategorySeeder" | \
+          "Production\\GroupSeeder" | \
+          "Production\\SlaSeeder" | \
+          "Production\\UserProdSeeder" | \
           "ReportSeeder")
             SEEDER_CLASS="Database\\Seeders\\$S"
             echo "Running seeder: $SEEDER_CLASS"
@@ -101,6 +105,10 @@ Deploy Preprod 1 SIT:
           "RefTableSeeder" | \
           "UserSeeder" | \
           "Production\\ProdSeeder" | \
+          "Production\\CategorySeeder" | \
+          "Production\\GroupSeeder" | \
+          "Production\\SlaSeeder" | \
+          "Production\\UserProdSeeder" | \
           "ReportSeeder")
             SEEDER_CLASS="Database\\Seeders\\$S"
             echo "Running seeder: $SEEDER_CLASS"
@@ -159,6 +167,10 @@ Deploy Preprod 1 INTERIM:
           "RefTableSeeder" | \
           "UserSeeder" | \
           "Production\\ProdSeeder" | \
+          "Production\\CategorySeeder" | \
+          "Production\\GroupSeeder" | \
+          "Production\\SlaSeeder" | \
+          "Production\\UserProdSeeder" | \
           "ReportSeeder")
             SEEDER_CLASS="Database\\Seeders\\$S"
             echo "Running seeder: $SEEDER_CLASS"
@@ -237,6 +249,10 @@ Deploy Production 1:
           "RefTableSeeder" | \
           "UserSeeder" | \
           "Production\\ProdSeeder" | \
+          "Production\\CategorySeeder" | \
+          "Production\\GroupSeeder" | \
+          "Production\\SlaSeeder" | \
+          "Production\\UserProdSeeder" | \
           "ReportSeeder")
             SEEDER_CLASS="Database\\Seeders\\$S"
             echo "Running seeder: $SEEDER_CLASS"
