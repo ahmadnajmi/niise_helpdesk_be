@@ -488,16 +488,12 @@ class Incident extends BaseModel
                 $query->where('complaint_user_id',Auth::user()->id);
             })
             ->when($role?->role == Role::CONTRACTOR, function ($query){
-                $group_id = UserGroup::where('user_id',Auth::user()->id)->pluck('groups_id');
+                $group_id = UserGroup::where('ic_no',Auth::user()->ic_no)->pluck('groups_id');
 
                 return $query->whereIn('incidents.assign_group_id',$group_id);
             })
             ->when($request->company_id, function ($query) use ($request) {
-                return $query->whereHas('assignGroup', function ($query)use($request) {
-                    $query->whereHas('users', function ($query)use($request) {
-                        $query->where('company_id',$request->company_id); 
-                    }); 
-                });
+                return $query->where('incidents.assign_company_id',$request->company_id);
             })
             ->when($request->branch_id, function ($query) use ($request) {
                 return $query->where('incidents.branch_id',$request->branch_id);

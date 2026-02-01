@@ -21,4 +21,8 @@ class UserGroup extends BaseModel
     public function groupDetails(){
         return $this->belongsTo(Group::class, 'groups_id');
     }
+
+    public function company(){
+        return $this->belongsTo(Company::class, 'company_id');
+    }
 }

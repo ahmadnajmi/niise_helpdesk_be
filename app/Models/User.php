@@ -49,6 +49,7 @@ class User extends Authenticatable
     const FROM_IDM = 1;
     const FROM_HDS = 2;
     const FROM_COMPLAINT = 3;
+    const SUPER_ADMIN_IC_NO = ['981230430001','981230430002','981230430003','981230430004','981230430005','981230430006'];
 
     protected static function boot() {
         parent::boot();
@@ -71,7 +72,8 @@ class User extends Authenticatable
     public function scopeHideSuperAdmin($query){
         return $query->whereDoesntHave('roles', function ($query) {
             $query->where('role', Role::SUPER_ADMIN);
-        });
+        })
+        ->whereNotIn('ic_no', User::SUPER_ADMIN_IC_NO);
     }
 
 

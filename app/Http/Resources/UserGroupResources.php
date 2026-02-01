@@ -15,12 +15,14 @@ class UserGroupResources extends JsonResource
     public function toArray(Request $request): array
     {
         $return  = [
+            'id' => $this->id,
             'groups_id' => $this->groups_id,
             'user_type' => $this->user_type,
             'ic_no' => $this->ic_no,
             'name' => $this->name,
             'email' => $this->email,
             'company_id' => $this->company_id,
+            'company_name' => $this->company?->name,
         ];
 
 

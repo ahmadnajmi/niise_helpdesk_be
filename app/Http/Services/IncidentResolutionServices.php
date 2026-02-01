@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\Workbasket;
 use App\Models\EmailTemplate;
 use App\Models\Role;
+use App\Models\UserGroup;
 use App\Http\Resources\IncidentResolutionResources;
 use App\Mail\ActionCodeEmail;
 use App\Events\WorkbasketUpdated;
@@ -149,9 +150,7 @@ class IncidentResolutionServices
 
     public static function sendEmail($data){
 
-        $group_member =  User::whereHas('group', function ($query)use($data) {
-                                        $query->where('groups_id',$data->group_id);
-                                })
+        $group_member =  UserGroup::where('groups_id',$data->group_id)
                                 ->pluck('email');
 
         $user_operation = User::where('id',$data->operation_user_id)->first();
