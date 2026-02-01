@@ -5,6 +5,8 @@ namespace Database\Seeders\Production;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Group;
+use App\Models\User;
+use App\Models\UserGroup;
 
 class GroupSeeder extends Seeder
 {
@@ -14,9 +16,56 @@ class GroupSeeder extends Seeder
     public function run(): void
     {
         Group::truncate();
+        UserGroup::truncate();
 
-        $data['name'] = 'IT Care';
+        if (DB::getDriverName() === 'oracle') {
+            DB::statement("ALTER SEQUENCE USER_GROUPS_ID_SEQ RESTART START WITH 1");
+        }
 
-        Group::create($data);
+
+        $datas[] = [
+            'name' => 'IT Care',
+            'description' => 'IT CARE TEAM ( HELPDESK)',            
+        ];
+
+        $datas[] = [
+            'name' => 'IMPLEMENTATION ANALYST',
+            'description' => 'IMPLEMENTATION ANALYST',
+            'users' => ['810621105767','010311100324','010313131239','910324035019','010210040027','960301106131','010221060293','010807100475',
+            '000721050076','000205070353','021113101493','850914105097','020804030511','020227140859','961215145884']
+        ];
+
+        $datas[] = [
+            'name' => 'FRONTLINER HELPDESK ICT',
+            'description' => 'FRONTLINER HELPDESK ICT',
+            'users' => ['950327065340','001201050237','950314105489','970225025303','870321566005','000223101985',
+                '860106525789','020124100993','000402060330','991105105870','010629011233','950806036221','980103036441',
+                '810220105459','880530235121'
+            ]
+        ];
+
+        foreach($datas as $data) {
+            $create =  Group::create($data);
+
+
+            if (isset($data['users'])){
+                $data_user['group_id'] = $create->id;
+
+                foreach($data['users'] as $user){
+
+                    $user = User::where('ic_no',$user)->first();
+                    
+                    $data_user['ic_no'] = $user;
+                    $data_user['user_type'] = 1;
+                    $data_user['name'] = $user->name;
+                    $data_user['email'] = $user->email;
+                    $data_user['company_id'] = $user->company_id;
+
+                    UserGroup::create($data_user);
+                }
+
+                
+            }
+        }
     }
 }
