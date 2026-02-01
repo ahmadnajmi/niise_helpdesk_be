@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('incidents', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
             $table->string('incident_no',20)->nullable()->index(); 
-            $table->string('code_sla',20)->nullable(); 
+            $table->string('code_sla',100)->nullable(); 
             $table->date('incident_date')->nullable();
             $table->string('barcode',100)->nullable(); 
             $table->unsignedBigInteger('branch_id')->nullable(); 

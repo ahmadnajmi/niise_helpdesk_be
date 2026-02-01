@@ -65,7 +65,7 @@ class AuthServices
                     $token = self::generatePassportToken($user['data']);
         
                     if(!$token['status']) {
-                        return self::error($token);
+                        return self::error($token['message']);
                     }
 
                     $data = self::successLogin($token['data']->access_token);

@@ -31,5 +31,7 @@ class ProdSeeder extends Seeder
         $this->call(ActionCodeSeeder::class);
         $this->call(ReportSeeder::class);
         $this->call(GroupSeeder::class);
+        $this->call(SlaSeeder::class);
+        
     }
 }

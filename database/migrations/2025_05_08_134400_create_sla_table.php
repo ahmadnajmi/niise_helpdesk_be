@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('sla', function (Blueprint $table) {
             $table->id();
-            $table->string('code',50)->nullable();
+            $table->string('code',100)->nullable();
             $table->unsignedBigInteger('category_id')->nullable(); 
             $table->json('branch_id')->nullable();
             $table->unsignedBigInteger('sla_template_id')->nullable(); 
