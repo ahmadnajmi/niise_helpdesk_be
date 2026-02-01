@@ -22,6 +22,7 @@ class UserProdSeeder extends Seeder
         User::truncate();
         UserRole::truncate();
         Company::truncate();
+        CompanyContract::truncate();
 
         if (DB::getDriverName() === 'oracle') {
             DB::statement("ALTER SEQUENCE COMPANIES_ID_SEQ RESTART START WITH 1");
