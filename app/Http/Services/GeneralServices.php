@@ -232,11 +232,19 @@ class GeneralServices
                                                         return $query->whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $request->branch_id)')");
                                                     });
                                         }])
-                                        ->with(['childCategoryRecursive' => function ($query) {
+                                        ->with(['childCategoryRecursive' => function ($query) use ($request) {
                                             $query->select('id','category_id','name','level','code')
-                                                ->with(['sla' => function ($query) {
-                                                    $query->select('id','code','category_id');
+                                                ->with(['sla' => function ($query) use ($request) {
+                                                    $query->select('id','code','category_id')
+                                                        ->when($request->branch_id, function ($query) use ($request) {
+                                                            return $query->whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $request->branch_id)')");
+                                                        });
                                                 }])
+                                                ->when($request->branch_id, function ($query) use ($request) {
+                                                    return $query->whereHas('sla', function ($query)use($request) {
+                                                        $query->whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $request->branch_id)')");
+                                                    });
+                                                })
                                                 ->where('is_active',true);
                                         }])
                                         ->whereNull('category_id')

@@ -25,7 +25,12 @@ class Category extends BaseModel
 
     public function childCategoryRecursive(){
         return $this->hasMany(Category::class, 'category_id', 'id')
-                    ->with('childCategoryRecursive');
+                    ->with('childCategoryRecursive')
+                    ->when(request()->branch_id, function ($query) {
+                        return $query->whereHas('sla', function ($query) {
+                            $query->whereRaw("JSON_EXISTS(branch_id, '\$[*]?(@ == " . request()->branch_id . ")')");
+                        });
+                    });
     }
 
     public function mainCategory(){
