@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_groups', function (Blueprint $table) {
-            $table->uuid('id')->unique()->primary();
+            $table->id();
             $table->uuid('groups_id')->nullable()->index(); 
             $table->smallInteger('user_type')->nullable();
             $table->string('ic_no',12)->nullable()->index(); 

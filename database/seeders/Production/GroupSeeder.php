@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Group;
 use App\Models\User;
 use App\Models\UserGroup;
+use Illuminate\Support\Facades\DB;
 
 class GroupSeeder extends Seeder
 {
@@ -18,9 +19,9 @@ class GroupSeeder extends Seeder
         Group::truncate();
         UserGroup::truncate();
 
-        if (DB::getDriverName() === 'oracle') {
-            DB::statement("ALTER SEQUENCE USER_GROUPS_ID_SEQ RESTART START WITH 1");
-        }
+        // if (DB::getDriverName() === 'oracle') {
+        //     DB::statement("ALTER SEQUENCE USER_GROUPS_ID_SEQ RESTART START WITH 1");
+        // }
 
 
         $datas[] = [
@@ -45,21 +46,25 @@ class GroupSeeder extends Seeder
         ];
 
         foreach($datas as $data) {
-            $create =  Group::create($data);
+
+            $data_group = $data;
+            unset($data_group['users']);
+            
+            $create =  Group::create($data_group);
 
 
             if (isset($data['users'])){
-                $data_user['group_id'] = $create->id;
+                $data_user['groups_id'] = $create->id;
 
-                foreach($data['users'] as $user){
+                foreach($data['users'] as $ic_no){
 
-                    $user = User::where('ic_no',$user)->first();
+                    $get_user = User::where('ic_no',$ic_no)->first();
                     
-                    $data_user['ic_no'] = $user;
+                    $data_user['ic_no'] = $ic_no;
                     $data_user['user_type'] = 1;
-                    $data_user['name'] = $user->name;
-                    $data_user['email'] = $user->email;
-                    $data_user['company_id'] = $user->company_id;
+                    $data_user['name'] = $get_user->name;
+                    $data_user['email'] = $get_user->email;
+                    $data_user['company_id'] = $get_user->company_id;
 
                     UserGroup::create($data_user);
                 }
