@@ -22,6 +22,7 @@ class SlaServices
             }
 
             foreach($data['sla_category'] as $sla_category){
+                $validBranches = [];
                 foreach($branchIds as $branch_id){
                     $sla_exists = Sla::where('category_id',$sla_category)
                                 ->where(function ($q) use ($branch_id) {
