@@ -83,7 +83,7 @@ class SlaSeeder extends Seeder
 
         foreach($data as $data_sla){
             $data_sla['sla_template_id'] =  $sla_template->id;
-            $data_sla['branch_id'] = json_encode(['101000000']);
+            $data_sla['branch_id'] = json_encode(['1000000']);
 
 
 
