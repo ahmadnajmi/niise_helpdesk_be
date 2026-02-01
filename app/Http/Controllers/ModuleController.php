@@ -17,7 +17,7 @@ class ModuleController extends Controller
     {
         $limit = $request->limit ? $request->limit : 15;
         // $data =  ModuleCollection::collection(Module::whereNull('module_id')->paginate(15));
-        $data =  Module::whereNull('module_id')->paginate($limit);
+        $data =  Module::hideSuperAdmin()->whereNull('module_id')->paginate($limit);
 
         return new ModuleCollection($data);
     }
