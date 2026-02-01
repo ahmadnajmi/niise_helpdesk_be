@@ -42,6 +42,7 @@ Deploy Staging:
           "RoleSeeder" | \
           "RefTableSeeder" | \
           "UserSeeder" | \
+          "Production\\ProdSeeder" | \
           "ReportSeeder")
             SEEDER_CLASS="Database\\Seeders\\$S"
             echo "Running seeder: $SEEDER_CLASS"
@@ -99,6 +100,7 @@ Deploy Preprod 1 SIT:
           "RoleSeeder" | \
           "RefTableSeeder" | \
           "UserSeeder" | \
+          "Production\\ProdSeeder" | \
           "ReportSeeder")
             SEEDER_CLASS="Database\\Seeders\\$S"
             echo "Running seeder: $SEEDER_CLASS"
@@ -156,6 +158,7 @@ Deploy Preprod 1 INTERIM:
           "RoleSeeder" | \
           "RefTableSeeder" | \
           "UserSeeder" | \
+          "Production\\ProdSeeder" | \
           "ReportSeeder")
             SEEDER_CLASS="Database\\Seeders\\$S"
             echo "Running seeder: $SEEDER_CLASS"
@@ -233,6 +236,7 @@ Deploy Production 1:
           "RoleSeeder" | \
           "RefTableSeeder" | \
           "UserSeeder" | \
+          "Production\\ProdSeeder" | \
           "ReportSeeder")
             SEEDER_CLASS="Database\\Seeders\\$S"
             echo "Running seeder: $SEEDER_CLASS"
