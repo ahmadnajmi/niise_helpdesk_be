@@ -36,7 +36,7 @@ class ReportRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        $response = $this->error($validator->errors(),[],422);
+        $response = $this->error($validator->errors()->all(),[],422);
       
         throw new HttpResponseException($response);
     }

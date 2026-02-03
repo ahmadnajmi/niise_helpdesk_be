@@ -27,7 +27,7 @@ class IncidentResolutionResources extends JsonResource
                 $permission_edit = false;
             } 
             else{
-                $group_id = UserGroup::where('user_id',$this->created_by)->where('groups_id',$this->group_id)->exists();
+                $group_id = UserGroup::where('ic_no',$this->updatedBy?->ic_no)->where('groups_id',$this->group_id)->exists();
 
                 $permission_edit = $group_id ? true : false;
             }
