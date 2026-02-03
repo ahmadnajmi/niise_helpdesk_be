@@ -261,7 +261,7 @@ class DashboardServices
         $get_group = Group::select('id','name')
                             ->when($role?->role == Role::CONTRACTOR, function ($query) use ($request){
                                 $query->whereHas('userGroup', function ($query) {
-                                    $query->where('user_id', Auth::user()->id);
+                                    $query->where('ic_no', Auth::user()->ic_no);
                                 });
                             })
                             ->whereHas('incidents')
@@ -270,7 +270,7 @@ class DashboardServices
         $data = [];
 
         foreach($get_group as $group){
-            $incidentCounts = Incident::applyFilters($request) ->where('assign_group_id', $group->id);
+            $incidentCounts = Incident::applyFilters($request)->where('assign_group_id', $group->id);
 
             $total_incident = $incidentCounts->count();
 

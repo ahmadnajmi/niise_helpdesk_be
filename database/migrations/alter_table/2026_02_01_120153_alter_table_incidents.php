@@ -11,6 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('incidents');
+
         Schema::create('incidents', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
             $table->string('incident_no',20)->nullable()->index(); 

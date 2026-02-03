@@ -10,6 +10,9 @@ class LogViewerController extends Controller
     use ResponseTrait;
 
     public function index(Request $request){
+
+        URL::forceRootUrl(config('app.admin_url'));
+
         $url = URL::temporarySignedRoute(
                         'web.log-viewer.url',
                         now()->addMinutes(5),

@@ -37,7 +37,7 @@ class GroupServices
 
             $return = new GroupResources($group_management);
 
-             self::addUserGroup($data,$group_management->id);
+             self::addUserGroup($data,$group_management->id,true);
 
             return self::success('Success', $return);
         }
@@ -46,39 +46,39 @@ class GroupServices
         }
     }
 
-    public static function addUserGroup($request,$group_id){
+    public static function addUserGroup($request,$group_id,$is_update = false){
+        $undeleted_user = [];
 
         if(isset($request['users'])){
-            UserGroup::where('groups_id',$group_id)->delete();
+            // UserGroup::where('groups_id',$group_id)->delete();
+
+            $data['groups_id'] = $group_id;
 
             foreach($request['users'] as $user){
 
-                $user_id = isset($user['id']) ? $user['id'] : null;
-
-                if(!$user_id){
-                    $user['user_type'] = User::FROM_IDM;
-
-                    $create = User::create($user);
-
-                    $user_id = $create->id;
-
-                    $role  = Role::where('role',Role::CONTRACTOR)->first();
-
-                    $user_role['user_id'] = $user_id;
-                    $user_role['role_id'] = $role?->id;
-
-                    UserRole::disableAuditing();
-
-                    UserRole::create($user_role);
+                if($is_update && isset($user['id'])){
+                   $undeleted_user[] =  $user['id'];
                 }
+                else{
+                    $data['user_type'] = $user['user_type'];
+                    $data['ic_no'] = $user['ic_no'];
+                    $data['name'] = $user['name'];
+                    $data['email'] = $user['email'];
+                    $data['company_id'] = $user['company_id'];
 
-                $data['user_id'] = $user_id;
-                $data['groups_id'] = $group_id;
+                   $create = UserGroup::create($data);
 
-                UserGroup::create($data);
-
-                
+                   $undeleted_user[] = $create->id;
+                }
             }
+        }
+
+        if($is_update){
+            UserGroup::where('groups_id',$group_id)
+                        ->when(count($undeleted_user) > 0, function ($query) use ($undeleted_user) {
+                            $query->whereNotIn('id',$undeleted_user);
+                        })
+                        ->delete();
         }
     }
 

@@ -11,6 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('groups');
+
         Schema::create('groups', function (Blueprint $table) {
             $table->uuid('id')->unique()->primary();
             $table->string('name')->nullable();
@@ -26,5 +28,13 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('groups');
+
+        Schema::create('groups', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->nullable();
+            $table->string('description')->nullable();
+            $table->boolean('is_active')->default(true);
+            $table->log();
+        });
     }
 };

@@ -11,10 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-       
         Schema::table('users', function (Blueprint $table) {
-            $table->string('two_fa_secret')->nullable();
-            $table->dateTime('two_fa_enabled')->nullable();
+            $table->json('category_id')->nullable();
         });
     }
 
@@ -24,9 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('two_fa_secret');
-            $table->dropColumn('two_fa_enabled');
-            $table->dropColumn('two_fa_confirmed');
+            $table->dropColumn('category_id');
         });
     }
 };

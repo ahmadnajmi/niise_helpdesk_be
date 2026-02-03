@@ -17,6 +17,7 @@ use App\Models\CompanyContract;
 use App\Models\OperatingTime;
 use App\Models\ActionCode;
 use App\Models\Report;
+use App\Models\UserGroup;
 
 class GeneralServices
 {
@@ -29,7 +30,7 @@ class GeneralServices
 
             if($code == 'role'){
                 $data[$code] = Cache::rememberForever("dynamic_option_{$code}", function () {
-                    return Role::select('id','name','name_en')
+                    return Role::select('id','name','name_en','role')
                                 ->whereNot('role', ROLE::SUPER_ADMIN)
                                 ->orderBy('name','asc')
                                 ->get();
@@ -123,17 +124,25 @@ class GeneralServices
                
                 $data[$code] = Group::select('id','name','description')
                                     ->where('is_active',true)
-                                    // ->whereHas('userGroup.userDetails')
                                     ->when($contractor && $request->own_group, function ($query) {
                                         return $query->where(function ($subQuery) {
                                             $subQuery->whereHas('userGroup', function ($q)  {
-                                                $q->where('user_id', Auth::user()->id);
+                                                $q->where('ic_no', Auth::user()->ic_no);
                                             })
                                             ->orWhereHas('userGroupAccess', function ($q)  {
                                                 $q->where('user_id', Auth::user()->id);
                                             });
                                         ;})
                                     ;})
+                                    ->orderBy('name','asc')
+                                    ->get();
+            }
+
+            if($code == 'user_group'){
+                $data[$code] = UserGroup::select('id','name')
+                                    ->when($request->group_id, function ($query) use ($request) {
+                                        return $query->where('groups_id',$request->group_id); 
+                                    })
                                     ->orderBy('name','asc')
                                     ->get();
             }
@@ -223,11 +232,19 @@ class GeneralServices
                                                         return $query->whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $request->branch_id)')");
                                                     });
                                         }])
-                                        ->with(['childCategoryRecursive' => function ($query) {
+                                        ->with(['childCategoryRecursive' => function ($query) use ($request) {
                                             $query->select('id','category_id','name','level','code')
-                                                ->with(['sla' => function ($query) {
-                                                    $query->select('id','code','category_id');
+                                                ->with(['sla' => function ($query) use ($request) {
+                                                    $query->select('id','code','category_id')
+                                                        ->when($request->branch_id, function ($query) use ($request) {
+                                                            return $query->whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $request->branch_id)')");
+                                                        });
                                                 }])
+                                                ->when($request->branch_id, function ($query) use ($request) {
+                                                    return $query->whereHas('sla', function ($query)use($request) {
+                                                        $query->whereRaw("JSON_EXISTS(branch_id, '\$[*] ? (@ == $request->branch_id)')");
+                                                    });
+                                                })
                                                 ->where('is_active',true);
                                         }])
                                         ->whereNull('category_id')

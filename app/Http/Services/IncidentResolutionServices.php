@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\Workbasket;
 use App\Models\EmailTemplate;
 use App\Models\Role;
+use App\Models\UserGroup;
 use App\Http\Resources\IncidentResolutionResources;
 use App\Mail\ActionCodeEmail;
 use App\Events\WorkbasketUpdated;
@@ -32,8 +33,6 @@ class IncidentResolutionServices
 
             self::actionCode($create);
 
-            // self::checkPenalty($create);
-
             $return = new IncidentResolutionResources($create);
 
             return self::success('Success', $return);
@@ -48,9 +47,7 @@ class IncidentResolutionServices
         try{
             $create = $incident_solution->update($data);
 
-            // self::actionCode($incident_solution);
-
-            // self::checkPenalty($incident_solution);
+            self::actionCode($incident_solution);
 
             $return = new IncidentResolutionResources($incident_solution);
 
@@ -129,6 +126,7 @@ class IncidentResolutionServices
         }
         else{
             $data_workbasket['status'] = Workbasket::IN_PROGRESS;
+            $data_incident['status'] = Incident::OPEN;
         }
 
         if(isset($data_incident)){
@@ -149,9 +147,7 @@ class IncidentResolutionServices
 
     public static function sendEmail($data){
 
-        $group_member =  User::whereHas('group', function ($query)use($data) {
-                                        $query->where('groups_id',$data->group_id);
-                                })
+        $group_member =  UserGroup::where('groups_id',$data->group_id)
                                 ->pluck('email');
 
         $user_operation = User::where('id',$data->operation_user_id)->first();

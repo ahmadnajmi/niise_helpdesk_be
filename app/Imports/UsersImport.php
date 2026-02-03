@@ -7,6 +7,7 @@ use App\Models\Branch;
 use App\Models\Role;
 use App\Models\UserRole;
 use App\Models\RefTable;
+use App\Models\Company;
 
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -23,6 +24,7 @@ class UsersImport implements ToModel
          * $row 4 = phone_no
          * $row 5 = branch
          * $row 6 = role
+         * $row 7 = company
         **/ 
         $role = isset($row[6]) ? $row[6] : null;
         
@@ -34,13 +36,13 @@ class UsersImport implements ToModel
                 $data['branch_id'] = $get_branch?->id;
                 $data['state_id'] = $get_branch?->state_id;
             }
-            else{
-                $state = RefTable::inRandomOrder()->where('code_category','state')->first();
-                $get_branch = Branch::where('state_id', $state?->ref_code)->inRandomOrder()->first();
+            // else{
+            //     $state = RefTable::inRandomOrder()->where('code_category','state')->first();
+            //     $get_branch = Branch::where('state_id', $state?->ref_code)->inRandomOrder()->first();
 
-                $data['branch_id'] = $get_branch ? $get_branch->id : null;
-                $data['state_id'] = $state?->ref_code;
-            }
+            //     $data['branch_id'] = $get_branch ? $get_branch->id : null;
+            //     $data['state_id'] = $state?->ref_code;
+            // }
            
         }    
 
@@ -49,13 +51,19 @@ class UsersImport implements ToModel
         $data['password']  = Hash::make('P@ssw0rd');
         $data['email'] =   $row[3];
         $data['phone_no'] =   $row[4];
+
+        if(isset($row[7])){
+            $get_company = Company::where('nickname',$row[7])->first();
+
+            $data['company_id'] = $get_company?->id;
+        }
       
         if(isset($row[2])){
             $data['ic_no'] =   $row[2];
         }
-        else{
-            $data['ic_no'] =   $this->generateDummyIC();
-        }
+        // else{
+        //     $data['ic_no'] =   $this->generateDummyIC();
+        // }
         $create = User::create($data);
 
         if($role){

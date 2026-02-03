@@ -12,7 +12,7 @@ class SlaServices
     use ResponseTrait;
 
     public static function create($data){
-        // try{
+        try{
             $sla_id = $messages = $validBranches =  [];
 
             $branchIds = $data['branch_id'];
@@ -22,6 +22,8 @@ class SlaServices
             }
 
             foreach($data['sla_category'] as $sla_category){
+                $validBranches = [];
+
                 foreach($branchIds as $branch_id){
                     $sla_exists = Sla::where('category_id',$sla_category)
                                 ->where(function ($q) use ($branch_id) {
@@ -71,10 +73,10 @@ class SlaServices
             ]; 
             
             return self::generalResponse($return);
-        // }
-        // catch (\Throwable $th) {
-        //     return self::error($th->getMessage());
-        // }
+        }
+        catch (\Throwable $th) {
+            return self::error($th->getMessage());
+        }
 
         return $return;
     }

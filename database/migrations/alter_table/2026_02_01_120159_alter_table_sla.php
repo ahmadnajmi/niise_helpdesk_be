@@ -11,6 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('sla');
+
         Schema::create('sla', function (Blueprint $table) {
             $table->id();
             $table->string('code',100)->nullable();

@@ -21,6 +21,10 @@ class Module extends BaseModel
         'order_by'
     ];
 
+    public function scopeHideSuperAdmin($query){
+        return $query->where('code','!=','admin');
+    }
+
     public function subModule(){
         return $this->hasMany(Module::class, 'module_id','id')->where('is_active',true);
     }
