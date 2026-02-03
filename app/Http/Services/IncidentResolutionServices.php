@@ -150,7 +150,11 @@ class IncidentResolutionServices
         $group_member =  UserGroup::where('groups_id',$data->group_id)
                                 ->pluck('email');
 
-        $user_operation = User::where('id',$data->operation_user_id)->first();
+        $user_operation = UserGroup::where('id',$data->operation_user_id)->first();
+
+        if(!$user_operation){
+            $user_operation = User::where('id',$user_operation->user_id)->first();
+        }
 
         $email_complaint = [$data->incident->complaintUser?->email];
         
