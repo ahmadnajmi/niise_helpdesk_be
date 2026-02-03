@@ -33,7 +33,7 @@ class IncidentResolutionCollection extends BaseResource
                         $permission_edit = false;
                     } 
                     else{
-                        $group_id = UserGroup::where('user_id',$query->created_by)->where('groups_id',$query->group_id)->exists();
+                        $group_id = UserGroup::where('ic_no',$query->createdBy?->ic_no)->where('groups_id',$query->group_id)->exists();
 
                         $permission_edit = $group_id ? true : false;
                     }
