@@ -35,15 +35,16 @@ class UserResources extends JsonResource
             'fax_no' => $this->fax_no,
             'is_active' => $this->is_active,
             'user_type' => $this->user_type,
+            'category_id' => json_decode($this->category_id),
             'role' => $this->id ? $this->getUserRole($this->id) : null,
             'created_at' => $this->created_at?->format('d-m-Y'),
             'updated_at' => $this->updated_at?->format('d-m-Y'),
         ];
 
-        // if($request->route()->getName() != 'group_management.show'){
-        //     $return['group'] = UserGroupResources::collection($this->group) ;
-        //     $return['group_access'] = UserGroupAccessResources::collection($this->groupAccess);
-        // }
+        if($request->route()->getName() != 'group_management.show'){
+            $return['group'] = UserGroupResources::collection($this->group) ;
+            $return['group_access'] = UserGroupAccessResources::collection($this->groupAccess);
+        }
         return $return;
     }
 }

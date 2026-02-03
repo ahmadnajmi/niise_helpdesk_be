@@ -233,23 +233,41 @@ class AuthServices
     }
 
     public static function resetPassword($request){
-        $get_user = User::where('ic_no',$request['ic_no'])->first();
+        $admin = false;
+
+        if($request['id']){
+            $get_user = User::where('id',$request['id'])->first();
+            $admin = true;
+        }
+        else{
+            $get_user = User::where('ic_no',$request['ic_no'])->first();
+        }
 
         if($get_user){
             $clean_name = strtoupper(str_replace(' ', '', $get_user->name));  
             $first    = substr($clean_name, 0, 6);
             $last = substr($get_user->ic_no, -6);
 
-            $data['password'] = Hash::make($first.$last);
+            if($admin){
+                $data['password'] = Hash::make('P@ssw0rd');
+            }
+            else{
+                $clean_name = strtoupper(str_replace(' ', '', $get_user->name));  
+                $first    = substr($clean_name, 0, 6);
+                $last = substr($get_user->ic_no, -6);
+
+                $data['password'] = Hash::make($first.$last);
+            }
+
             $data['first_time_password'] = true;
-            // $data['is_disabled'] = false;
+            $data['is_disabled'] = false;
             $data['failed_attempts'] = 0;
-            $data['two_fa_enabled'] = false;
+            $data['two_fa_enabled'] = null;
             $data['two_fa_secret'] = null;
 
             $update = $get_user->update($data);
 
-            if($get_user->email){
+            if($get_user->email && !$admin){
                 Mail::to($get_user->email)->queue(new ForgetPasswordEmail());
             }
 

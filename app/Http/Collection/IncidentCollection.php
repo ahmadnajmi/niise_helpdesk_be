@@ -29,6 +29,7 @@ class IncidentCollection extends BaseResource
                 'phone_no' =>$query->complaintUser?->phone_no,
                 'actual_end_date' => $query->actual_end_date?->format('d-m-Y H:i:s'),
                 'status_desc' => $query->statusDesc?->name,
+                'status' => $query->status,
                 'created_at' => $query->created_at?->format('d-m-Y'),
                 'updated_at' => $query->updated_at?->format('d-m-Y'),
                 'created_by' => $query->createdBy?->name .' - '. $query->createdBy?->email ,

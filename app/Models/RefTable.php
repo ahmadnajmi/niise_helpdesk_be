@@ -24,6 +24,8 @@ class RefTable extends BaseModel
     const SEVERITY_CRITICAL = 1;
     const SEVERITY_IMPORTANT = 2;
     const SEVERITY_MEDIUM = 3;
+    const USER_TYPE_USER = 1;
+    const USER_TYPE_GROUP_EMAIL = 2;
 
     
     public function incidentsStatus(){
