@@ -6,6 +6,7 @@ use App\Http\Traits\ResponseTrait;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\Rule;
 
 class GroupRequest extends FormRequest
 {
@@ -25,7 +26,10 @@ class GroupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
+            'name' => [
+                'required',
+                Rule::unique('groups', 'name'),
+            ],
             'description' => 'nullable',
             'is_active' => 'nullable',
             'users' => 'nullable|array',
@@ -40,8 +44,14 @@ class GroupRequest extends FormRequest
 
     protected function failedValidation(Validator $validator)
     {
-        $response = $this->error($validator->errors(),[],422);
+        $response = $this->error($validator->errors()->all(),[],422);
       
         throw new HttpResponseException($response);
+    }
+
+    public function messages(): array{
+        return [
+            'name.unique' => __('validation.group_name_exists'),
+        ];
     }
 }

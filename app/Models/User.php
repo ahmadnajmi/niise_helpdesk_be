@@ -40,6 +40,7 @@ class User extends Authenticatable
         'failed_attempts',
         'two_fa_secret',
         'two_fa_enabled',
+        'category_id'
     ];
 
     protected $casts = [
@@ -183,7 +184,7 @@ class User extends Authenticatable
     }
 
     public function group(){
-        return $this->hasMany(UserGroup::class,'user_id','id');
+        return $this->hasMany(UserGroup::class,'ic_no','ic_no');
     }
 
     public function groupAccess(){
