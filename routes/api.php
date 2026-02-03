@@ -96,7 +96,7 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
     Route::post('report/generate', [ReportController::class, 'generateReport'])->name('report.generate');
     Route::get('report', [ReportController::class, 'index'])->name('report.index');
 
-    // Route::post('mini_report/generate', [MiniReportController::class, 'generate'])->name('mini_report.generate');
+    Route::get('mini_report/generate', [MiniReportController::class, 'generate'])->name('mini_report.generate');
 
     Route::middleware(['admin.access'])->prefix('admin')->group(function () {
         Route::get('log-viewer', [LogViewerController::class, 'index'])->name('log-viewer.url');

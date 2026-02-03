@@ -32,9 +32,6 @@ Route::middleware(['signed']) ->prefix('admin') ->group(function () {
 
 Route::get('testing', [TestingController::class, 'testing'])->name('testing');
 
-
-Route::get('mini_report/generate', [MiniReportController::class, 'generate'])->name('mini_report.generate');
-
 // Route::middleware(['web.token'])->group(function () {
 //         // Route::get('/logs', function () { return redirect('/log-viewer');})->name('logs');
 

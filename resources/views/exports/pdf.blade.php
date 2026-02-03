@@ -61,14 +61,16 @@
             <table>
                 <thead>
                     <tr>
+                        <th style="text-align: center; width: 2%; padding: 8px 8px; ">No.</th>
                         @foreach ($columns as $column)
                             <th style="text-align: left;">{{ $column }}</th>
                         @endforeach
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($rows as $row)
+                    @foreach ($rows as $i => $row)
                         <tr>
+                            <td style="text-align: center;">{{ $i+1 }}</td>
                             @foreach ($columns as $key)
                                 <td>
                                     @if(is_array($row[$key]))
@@ -76,7 +78,7 @@
                                             <div>{{ $subItem ?? '' }}</div>
                                         @endforeach
                                     @else
-                                        {{ $row[$key] ?? '' }}
+                                        {!! $row[$key] ?? '' !!}
                                     @endif
                                 </td>
                             @endforeach
@@ -94,7 +96,7 @@
                     @foreach ($transposed as $row)
                         <tr>
                             <th style="padding-right: 15px; text-align: left;">{{ $row[0] }}</th>
-                            <td>{{ is_array($row[1]) ? json_encode($row[1]) : $row[1] }}</td>
+                            <td>{!! is_array($row[1]) ? json_encode($row[1]) : $row[1] !!}</td>
                         </tr>
                     @endforeach
                 </tbody>
