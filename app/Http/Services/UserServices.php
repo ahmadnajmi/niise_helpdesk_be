@@ -38,9 +38,13 @@ class UserServices
                     $data['user_type'] = User::FROM_HDS;
                 }
 
+                if(isset($data['category_id'])){
+                    $data['category_id'] = json_encode($data['category_id']);
+                }
+
                 $create = User::create($data);
 
-                $group_user = self::groupUser($data,$create->id);
+                $group_user = self::groupUser($data,$create);
 
                 if($data['role']){
                     $user_role['user_id'] = $create->id;
@@ -76,10 +80,14 @@ class UserServices
                 $data['is_disabled'] = false;
                 $data['failed_attempts'] = 0;
             }
+            
+            if(isset($data['category_id'])){
+                $data['category_id'] = json_encode($data['category_id']);
+            }
 
             $update = $user->update($data);
 
-            $data = self::groupUser($data,$user->id);
+            $data = self::groupUser($data,$user);
 
             $return = new UserResources($user);
 
@@ -90,26 +98,30 @@ class UserServices
         }
     }
 
-    public static function groupUser($data,$user_id){
+    public static function groupUser($data,$user){
 
         if(isset($data['group_user'])){
-            UserGroup::where('user_id',$user_id)->delete();
+            UserGroup::where('ic_no',$data['ic_no'])->delete();
 
             foreach($data['group_user'] as $group_id){
 
-                $data_group_user['user_id'] = $user_id;
                 $data_group_user['groups_id'] = $group_id;
+                $data_group_user['user_type'] = RefTable::USER_TYPE_USER;
+                $data_group_user['ic_no'] = $user->ic_no;
+                $data_group_user['name'] = $user->name;
+                $data_group_user['email'] = $user->email;
+                $data_group_user['company_id'] = $user->company_id;
     
                 UserGroup::create($data_group_user);
             }
         }
 
         if(isset($data['group_user_access'])){
-            UserGroupAccess::where('user_id',$user_id)->delete();
+            UserGroupAccess::where('user_id',$user->id)->delete();
 
             foreach($data['group_user_access'] as $access_group_id){
 
-                $data_group_user_access['user_id'] = $user_id;
+                $data_group_user_access['user_id'] = $user->id;
                 $data_group_user_access['groups_id'] = $access_group_id;
     
                 UserGroupAccess::create($data_group_user_access);

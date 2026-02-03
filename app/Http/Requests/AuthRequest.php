@@ -28,7 +28,8 @@ class AuthRequest extends FormRequest
             'old_password' => 'sometimes',
             'password' => 'sometimes',
             'confirm_password' => 'sometimes|same:password',
-            'ic_no' => 'sometimes'
+            'ic_no' => 'sometimes',
+            'id' => 'sometimes',
         ];
     }
 

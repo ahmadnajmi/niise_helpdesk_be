@@ -33,8 +33,6 @@ class IncidentResolutionServices
 
             self::actionCode($create);
 
-            // self::checkPenalty($create);
-
             $return = new IncidentResolutionResources($create);
 
             return self::success('Success', $return);
@@ -49,9 +47,7 @@ class IncidentResolutionServices
         try{
             $create = $incident_solution->update($data);
 
-            // self::actionCode($incident_solution);
-
-            // self::checkPenalty($incident_solution);
+            self::actionCode($incident_solution);
 
             $return = new IncidentResolutionResources($incident_solution);
 
@@ -130,6 +126,7 @@ class IncidentResolutionServices
         }
         else{
             $data_workbasket['status'] = Workbasket::IN_PROGRESS;
+            $data_incident['status'] = Incident::OPEN;
         }
 
         if(isset($data_incident)){
