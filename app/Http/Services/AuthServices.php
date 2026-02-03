@@ -235,7 +235,7 @@ class AuthServices
     public static function resetPassword($request){
         $admin = false;
 
-        if($request['id']){
+        if(isset($request['id'])){
             $get_user = User::where('id',$request['id'])->first();
             $admin = true;
         }
