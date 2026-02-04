@@ -102,11 +102,17 @@ class IncidentResolutionServices
             if($data->action_codes == ActionCode::ACTR){
                 $data_incident['status']  =  Incident::RESOLVED; 
                 $data_incident['resolved_user_id'] = auth()->user()->id;
-                $data_incident['assign_company_id'] = auth()->user()->company_id;
             }
             else{
+                $get_operation = UserGroup::where('id',$data->operation_user_id)->first();
+
+                if(!$get_operation){
+                    $get_operation = User::where('id',$data->operation_user_id)->first();
+                }
+
                 $data_incident['assign_group_id'] = $data->group_id;
                 $data_workbasket['status'] = Workbasket::NEW;
+                $data_incident['assign_company_id'] = $get_operation?->company_id;
 
                 $trigger_workbasket['contractor'] = true;
             }

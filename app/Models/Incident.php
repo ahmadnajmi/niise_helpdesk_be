@@ -495,6 +495,11 @@ class Incident extends BaseModel
 
                 return $query->whereIn('incidents.assign_group_id',$group_id);
             })
+            ->when($role?->role == Role::BTMR_SECOND_LEVEL, function ($query){
+                $category_id = json_decode(Auth::user()->category_id);
+
+                return $query->whereIn('incidents.category_id',$category_id);
+            })
             ->when($request->company_id, function ($query) use ($request) {
                 return $query->where('incidents.assign_company_id',$request->company_id);
             })
