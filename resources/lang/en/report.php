@@ -16,7 +16,7 @@ return [
     ],
 
     'individuals' => [
-        'item_title' => 'Individual',
+        'item_title' => 'Individual Information',
         'list_title' => 'List of Individuals',
 
         'ic_no' => 'ID',
@@ -32,7 +32,7 @@ return [
     ],
 
     'groups' => [
-        'item_title' => 'Group',
+        'item_title' => 'Group Information',
         'list_title' => 'List of Groups',
 
         'name' => 'Name',
@@ -42,7 +42,7 @@ return [
     ],
 
     'contractors' => [
-        'item_title' => 'Contractor',
+        'item_title' => 'Contractor Information',
         'list_title' => 'List of Contractors',
 
         'name' => 'Contractor Name',
@@ -54,7 +54,7 @@ return [
     ],
 
     'calendar' => [
-        'item_title' => 'Holiday',
+        'item_title' => 'Holiday Information',
         'list_title' => 'List of Holidays',
 
         'name' => 'Name',
@@ -66,7 +66,7 @@ return [
     ],
 
     'operation_times' => [
-        'item_title' => 'Operation Time',
+        'item_title' => 'Operation Time Information',
         'list_title' => 'List of Operation Times',
 
         'branch' => 'Branch',
@@ -78,7 +78,7 @@ return [
     ],
 
     'categories' => [
-        'item_title' => 'Category',
+        'item_title' => 'Category Information',
         'list_title' => 'List of Categories',
 
         'code' => 'Code',
@@ -89,7 +89,7 @@ return [
     ],
 
     'email_templates' => [
-        'item_title' => 'Email Template',
+        'item_title' => 'Email Template Information',
         'list_title' => 'List of Email Templates',
 
         'name' => 'Template Name',
@@ -100,7 +100,7 @@ return [
     ],
 
     'action_codes' => [
-        'item_title' => 'Action Code',
+        'item_title' => 'Action Code Information',
         'list_title' => 'List of Action Codes',
 
         'abbreviation' => 'Abbreviation',
@@ -114,7 +114,7 @@ return [
     ],
 
     'incidents' => [
-        'item_title' => 'Incident',
+        'item_title' => 'Incident Information',
         'list_title' => 'List of Incidents',
 
         'incident_no' => 'Incident No.',
@@ -128,7 +128,7 @@ return [
     ],
 
     'sla' => [
-        'item_title' => 'SLA Settings',
+        'item_title' => 'SLA Setting Information',
         'list_title' => 'List of SLA Settings',
 
         'sla_code' => 'SLA Code',
@@ -181,7 +181,7 @@ return [
     ],
 
     'sla_template' => [
-        'item_title' => 'SLA Template',
+        'item_title' => 'SLA Template Information',
         'list_title' => 'List of SLA Templates',
 
         'sla_code' => 'SLA Code',
@@ -220,7 +220,7 @@ return [
 
     'global_settings' => [
         'list_title' => 'Global Settings List',
-        'item_title' => 'Global Setting',
+        'item_title' => 'Global Setting Information',
 
         'id' => 'ID',
         'category' => 'Category',
@@ -263,7 +263,7 @@ return [
     ],
 
     'audit_trails' => [
-        'item_title' => 'Audit Trail',
+        'item_title' => 'Audit Trail Information',
         'list_title' => 'List of Audit Trails',
 
         'date' => 'Date',
@@ -276,7 +276,7 @@ return [
     ],
 
     'knowledge_base' => [
-        'item_title' => 'Knowledge Base Entry',
+        'item_title' => 'Knowledge Base Entry Information',
         'list_title' => 'List of Knowledge Base Entries',
 
         'keywords' => 'Keywords',

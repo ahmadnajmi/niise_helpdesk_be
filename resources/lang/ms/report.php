@@ -16,7 +16,7 @@ return [
     ],
 
     'individuals' => [
-        'item_title' => 'Individu',
+        'item_title' => 'Informasi Individu',
         'list_title' => 'Senarai Individu',
 
         'ic_no' => 'ID',
@@ -32,7 +32,7 @@ return [
     ],
 
     'group' => [
-        'item_title' => 'Kumpulan',
+        'item_title' => 'Informasi Kumpulan',
         'list_title' => 'Senarai Kumpulan',
 
         'name' => 'Nama',
@@ -42,7 +42,7 @@ return [
     ],
 
     'contractors' => [
-        'item_title' => 'Kontraktor',
+        'item_title' => 'Informasi Kontraktor',
         'list_title' => 'Senarai Kontraktor',
 
         'name' => 'Nama Kontraktor',
@@ -54,7 +54,7 @@ return [
     ],
 
     'calendar' => [
-        'item_title' => 'Cuti',
+        'item_title' => 'Informasi Cuti',
         'list_title' => 'Senarai Cuti',
 
         'name' => 'Nama',
@@ -66,7 +66,7 @@ return [
     ],
 
     'operation_times' => [
-        'item_title' => 'Masa Operasi',
+        'item_title' => 'Informasi Masa Operasi',
         'list_title' => 'Senarai Masa Operasi',
 
         'branch' => 'Cawangan',
@@ -78,7 +78,7 @@ return [
     ],
 
     'categories' => [
-        'item_title' => 'Kategori',
+        'item_title' => 'Informasi Kategori',
         'list_title' => 'Senarai Kategori',
 
         'code' => 'Kod',
@@ -89,7 +89,7 @@ return [
     ],
 
     'email_templates' => [
-        'item_title' => 'Templat Emel',
+        'item_title' => 'Informasi Templat Emel',
         'list_title' => 'Senarai Templat Emel',
 
         'name' => 'Nama Templat',
@@ -100,7 +100,7 @@ return [
     ],
 
     'action_codes' => [
-        'item_title' => 'Kod Tindakan',
+        'item_title' => 'Informasi Kod Tindakan',
         'list_title' => 'Senarai Kod Tindakan',
 
         'abbreviation' => 'Nama Singkatan',
@@ -114,7 +114,7 @@ return [
     ],
 
     'incidents' => [
-        'item_title' => 'Insiden',
+        'item_title' => 'Informasi Insiden',
         'list_title' => 'Senarai Insiden',
 
         'incident_no' => 'No. Insiden',
@@ -128,7 +128,7 @@ return [
     ],
 
     'sla' => [
-        'item_title' => 'Tetapan SLA',
+        'item_title' => 'Informasi Tetapan SLA',
         'list_title' => 'Senarai Tetapan SLA',
 
         'sla_code' => 'Kod SLA',
@@ -180,7 +180,7 @@ return [
     ],
 
     'sla_template' => [
-        'item_title' => 'Templat SLA',
+        'item_title' => 'Informasi Templat SLA',
         'list_title' => 'Senarai Templat SLA',
 
         'sla_code' => 'Kod SLA',
@@ -219,7 +219,7 @@ return [
 
     'global_settings' => [
         'list_title' => 'Senarai Tetapan Global',
-        'item_title' => 'Tetapan Global',
+        'item_title' => 'Informasi Tetapan Global',
 
         'id' => 'ID',
         'category' => 'Kategori',
@@ -262,7 +262,7 @@ return [
     ],
 
     'audit_trails' => [
-        'item_title' => 'Jejak Audit',
+        'item_title' => 'Informasi Jejak Audit',
         'list_title' => 'Senarai Jejak Audit',
 
         'date' => 'Tarikh',
@@ -275,7 +275,7 @@ return [
     ],
 
     'knowledge_base' => [
-        'item_title' => 'Entri Knowledge Base',
+        'item_title' => 'Informasi Entri Knowledge Base',
         'list_title' => 'Senarai Entri Knowledge Base',
 
         'keywords' => 'Kata Kunci',

@@ -30,32 +30,36 @@ class MiniReportServices
 {
     public static function export($request) {
         try {
-            $items = self::fetchData($request);
+            $data = self::fetchData($request);
+            $items = $data['items'];
+            $extras = $data['extras'];
 
             $format = $request->input('report_format') ?: 'excel';
             $module = str_replace('-', '_', $request->input('report_module') ?: '');
             $type = $request->input('report_type') ?? 'list';
 
-            $title = $type == 'list'
+            $title = strtoupper($type == 'list'
                 ? __("report.$module.list_title")
-                : __("report.$module.item_title");
+                : __("report.$module.item_title"));
 
-            $filename = $module . '_mini_report_' . date('Ymd_His') . '.' . ($format == 'excel' ? 'xlsx' : 'pdf');
+            $filename = strtolower($title) . '_' . date('Ymd_His') . '.' . ($format == 'excel' ? 'xlsx' : 'pdf');
             $template = '';
 
             switch ($format) {
                 case 'excel':
                     switch ($module) {
-                        case 'incidents':
-
                         default:
+                            if($extras != [] || $extras != null) {
+                                // merge extras into items
+                            }
+
                             return Excel::download(
                                 new GeneralExport($items, $title),
                                 $filename,
                             );
                     }
-                    break;
 
+                    break;
                 case 'pdf':
                 default:
                     if($module == 'incidents') {
@@ -84,9 +88,10 @@ class MiniReportServices
                         $template = 'exports.pdf';
                     }
 
-                    return response()->streamDownload(function () use ($items, $type, $title, $template) {
+                    return response()->streamDownload(function () use ($items, $type, $title, $template, $extras) {
                         echo Pdf::loadView($template, [
                             'items' => $items,
+                            'extras' => $extras,
                             'type' => $type,
                             'title' => $title,
                         ])
@@ -159,7 +164,7 @@ class MiniReportServices
                     $data = User::with($relations)->hideSuperAdmin()->filter()->search(keyword: $request->search)->sortByField($request)->get()
                     ->map(function ($item) use ($lang) {
                         return [
-                            'ic_no' => '*'.substr($item->ic_no, -4),
+                            'ic_no' => str_repeat('*', 8).substr($item->ic_no, -4),
                             'name' => $item->name,
                             'phone_no' => $item->phone_no,
                             'role' => $lang == 'en'
@@ -176,7 +181,7 @@ class MiniReportServices
                     $data = User::with($relations)->hideSuperAdmin()->where('id', $request->input('id'))->get()
                     ->map(function ($item) use ($lang) {
                         return [
-                            'ic_no' => '*'.substr($item->ic_no, -4),
+                            'ic_no' => str_repeat('*', 8).substr($item->ic_no, -4),
                             'name' => $item->name,
                             'nickname' => $item->nickname,
                             'phone_no' => $item->phone_no,
@@ -986,12 +991,12 @@ class MiniReportServices
             $items = [ $columns, ...$rows ];
         } else {
             $items = self::transpose($columns, $rows);
-
-            if($extras != null) {
-
-            }
         }
-        return $items;
+
+        return [
+            'items' => $items,
+            'extras' => $extras,
+        ];
     }
 
     public static function selectOnly(array $fields, array $items) {
