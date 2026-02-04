@@ -36,7 +36,7 @@ class RoleResources extends JsonResource
 
         }
         elseif($request->route()->getName() == 'role.show'){
-            $return['modules'] = ModuleResources::collection(Module::whereNull('module_id')->get());
+            $return['modules'] = ModuleResources::collection(Module::whereNull('module_id')->hideSuperAdmin()->get());
             $return['permissions'] = $this->permissions;
             // $return['list_user'] = UserCollection::collection(User::whereIn('id',$user_role)->get());
         }

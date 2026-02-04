@@ -287,6 +287,9 @@ class Incident extends BaseModel
                         ->orderByRaw("LOWER(ref_table.name) {$direction}");
                     }
                 } 
+                elseif($field === 'information') {
+                    $query->orderByRaw("TO_CHAR(SUBSTR(information, 1, 4000)) {$direction}");
+                }
                
                 else {
                     $query->orderBy($sortable, $direction);
