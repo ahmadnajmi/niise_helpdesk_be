@@ -26,10 +26,12 @@ class CompanyRequest extends FormRequest
      */
     public function rules(): array
     {
+        $company_id = $this->route('company')?->id;
+        
         return [
             'name' => [
                 'required',
-                Rule::unique('companies', 'name'),
+                Rule::unique('companies', 'name')->ignore($company_id),
             ],
             'nickname' => 'nullable',
             'email' => 'nullable',
