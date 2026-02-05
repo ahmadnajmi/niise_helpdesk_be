@@ -155,6 +155,7 @@ class DashboardServices
         $total_incident = Incident::query()
                                 ->selectRaw('branch_id, COUNT(*) as total_incident')
                                 ->applyFilters($request)
+                                ->where('status', Incident::OPEN)
                                 ->groupBy('branch_id');
 
         $critical_incident = Incident::query()->selectRaw('branch_id, COUNT(*) as total_incident_critical')
@@ -162,6 +163,7 @@ class DashboardServices
                                         $query->where('severity_id', RefTable::SEVERITY_CRITICAL);
                                     })
                                     ->applyFilters($request)
+                                    ->where('status', Incident::OPEN)
                                     ->groupBy('branch_id');
 
         $total_incident = $total_incident->pluck('total_incident', 'branch_id');
