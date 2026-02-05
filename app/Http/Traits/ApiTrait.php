@@ -50,13 +50,19 @@ trait ApiTrait {
             $postData['json'] = $request = $json; 
         }
 
+        $log =self::logApiHelper([
+            'service_name' => $function,
+            'endpoint' => $url.$api_url,
+            'request' => json_encode($request),
+        ]);
+
         // Log::channel('external_api')->info("API Request: {$method},{$url}{$api_url}", [
         //     'body' => $json,
         // ]);
         try{
             $call_api = $client->$method($api_url, $postData);
 
-            if($function == 'asset'){
+            if($function == LogExternalApi::ASSET){
                 $response = json_decode($call_api->getBody()->getContents(),true);
             }
             else{
@@ -69,11 +75,9 @@ trait ApiTrait {
             // ]);
 
             self::logApiHelper([
-                'service_name' => $function,
-                'endpoint' => $url.$api_url,
+                'id' => $log->id,
                 'is_success' => $call_api->getStatusCode() >= 200 && $call_api->getStatusCode() < 300,
                 'status_code' => $call_api->getStatusCode(),
-                'request' => json_encode($request),
                 'response' => json_encode($response),
                 'error_message' => $call_api->getStatusCode() >= 200 && $call_api->getStatusCode() < 300 ? null : $response,
             ]);
@@ -161,16 +165,15 @@ trait ApiTrait {
 
     public static function logApiHelper($data){
 
-        $log = [
-            'service_name' => $data['service_name'],
-            'endpoint' => $data['endpoint'],
-            'is_success' => $data['is_success'],
-            'status_code' => $data['status_code'],
-            'request' => $data['request'],
-            'response' => $data['response'],
-            'error_message' => $data['error_message'],
-        ];
-        LogExternalApi::create($log);
+        if(isset($data['id'])){
+            $create = LogExternalApi::where('id', $data['id'])->update($data);
+        }else{
+            $data['is_success'] = false;
+            $data['status_code'] = 0;
+            $create = LogExternalApi::create($data); 
+        }
+
+        return $create;
     }
 }
 

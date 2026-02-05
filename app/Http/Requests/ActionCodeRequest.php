@@ -35,7 +35,7 @@ class ActionCodeRequest extends FormRequest
             'role_id' => 'nullable'
         ];
 
-          if ($this->routeIs('action_code.store')) {
+        if ($this->routeIs('action_code.store')) {
             $rules['nickname'] .= '|required'; 
 
         }

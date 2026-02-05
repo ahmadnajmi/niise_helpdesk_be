@@ -105,7 +105,16 @@ class IncidentResolutionServices
                 $data_incident['assign_company_id'] = auth()->user()->company_id;
             }
             else{
+                $get_operation = UserGroup::where('id',$data->operation_user_id)->first();
+
+                if(!$get_operation){
+                    $get_operation = User::where('id',$data->operation_user_id)->first();
+                }
+
                 $data_incident['assign_group_id'] = $data->group_id;
+                $data_incident['assign_company_id'] = $get_operation?->company_id;
+                $data_incident['status'] = Incident::OPEN;
+
                 $data_workbasket['status'] = Workbasket::NEW;
 
                 $trigger_workbasket['contractor'] = true;
