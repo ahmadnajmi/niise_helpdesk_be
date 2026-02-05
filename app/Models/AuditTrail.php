@@ -21,11 +21,10 @@ class AuditTrail extends BaseAudit
         if (!$keyword)   return $query;
 
         return $query->where(function ($q) use ($keyword) {
-          
-            $q->orWhere('event', 'like', "%{$keyword}%");
+            $q->orWhereRaw('LOWER("EVENT") LIKE ?', ['%' . strtolower($keyword) . '%']);
             $q->orWhereDate('created_at', 'like', "%{$keyword}%");
             $q->orWhereHas('user', function ($query)use($keyword) {
-                $query->where('ic_no', 'like', '%' . strtolower($keyword) . '%'); 
+                $query->where('ic_no', 'like', '%' . strtolower($keyword) . '%');
             });
         });
     }
@@ -63,9 +62,9 @@ class AuditTrail extends BaseAudit
 
             if (Str::endsWith($key, '_sort')) {
                 $field = str_replace('_sort', '', $key);
-                
+
                 $direction = strtolower($direction);
-                    
+
                 if (!in_array($direction, ['asc', 'desc'])) continue;
 
                 $hasSorting = true;
@@ -84,7 +83,7 @@ class AuditTrail extends BaseAudit
                 else{
                     $query->orderBy($field, $direction);
                 }
-                
+
             }
         }
 
