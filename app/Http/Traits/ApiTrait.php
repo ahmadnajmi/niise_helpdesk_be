@@ -168,6 +168,8 @@ trait ApiTrait {
         if(isset($data['id'])){
             $create = LogExternalApi::where('id', $data['id'])->update($data);
         }else{
+            $data['is_success'] = false;
+            $data['status_code'] = 0;
             $create = LogExternalApi::create($data); 
         }
 
