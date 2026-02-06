@@ -133,10 +133,16 @@ class IncidentResolutionServices
 
             IncidentServices::generatePenalty($incident);
         }
-        else{
+        elseif($data->action_codes == ActionCode::CNCLDUP){
+            $data_incident['status']  =  Incident::CANCEL_DUPLICATE; 
+            $incident->workbasket?->delete();
+        }
+        elseif($data->action_codes != ActionCode::DISC){
             $data_workbasket['status'] = Workbasket::IN_PROGRESS;
             $data_incident['status'] = Incident::OPEN;
         }
+
+
 
         if(isset($data_incident)){
             $incident->update($data_incident);
