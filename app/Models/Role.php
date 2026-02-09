@@ -22,6 +22,7 @@ class Role extends BaseModel
     const BTMR = 'BTMR';
     const CONTRACTOR = 'CONTRACTOR';
     const SUPER_ADMIN = 'SUPER_ADMIN';
+    const BTMR_SECOND_LEVEL = 'BTMR_LEVEL_2';
 
     public function scopeHideSuperAdmin($query){
         return $query->whereNot('role', Role::SUPER_ADMIN);

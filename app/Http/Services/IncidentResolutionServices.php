@@ -105,7 +105,16 @@ class IncidentResolutionServices
                 $data_incident['assign_company_id'] = auth()->user()->company_id;
             }
             else{
+                $get_operation = UserGroup::where('id',$data->operation_user_id)->first();
+
+                if(!$get_operation){
+                    $get_operation = User::where('id',$data->operation_user_id)->first();
+                }
+
                 $data_incident['assign_group_id'] = $data->group_id;
+                $data_incident['assign_company_id'] = $get_operation?->company_id;
+                $data_incident['status'] = Incident::OPEN;
+
                 $data_workbasket['status'] = Workbasket::NEW;
 
                 $trigger_workbasket['contractor'] = true;
@@ -124,10 +133,16 @@ class IncidentResolutionServices
 
             IncidentServices::generatePenalty($incident);
         }
-        else{
+        elseif($data->action_codes == ActionCode::CNCLDUP){
+            $data_incident['status']  =  Incident::CANCEL_DUPLICATE; 
+            $incident->workbasket?->delete();
+        }
+        elseif($data->action_codes != ActionCode::DISC){
             $data_workbasket['status'] = Workbasket::IN_PROGRESS;
             $data_incident['status'] = Incident::OPEN;
         }
+
+
 
         if(isset($data_incident)){
             $incident->update($data_incident);

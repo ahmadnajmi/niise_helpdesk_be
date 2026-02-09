@@ -36,5 +36,9 @@ class Company extends BaseModel
     public function user(){
         return $this->hasMany(User::class,'company_id','id');
     }
+
+    public function incidents(){
+        return $this->hasMany(Incident::class,'assign_company_id','id');
+    }
     
 }

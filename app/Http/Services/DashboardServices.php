@@ -32,6 +32,11 @@ class DashboardServices
                 'branch_id' => Auth::user()->branch_id
             ]);
         }
+        elseif($role?->role == Role::BTMR_SECOND_LEVEL){
+            $request->merge([
+                'category_id' => Auth::user()->category_id ? json_decode(Auth::user()->category_id) : []
+            ]);
+        }
         
         if($request->code == 'by_branch'){
             $data = self::incidentByBranch($request);
@@ -65,6 +70,12 @@ class DashboardServices
         if($role?->role == Role::JIM){
             $request->merge([
                 'branch_id' => Auth::user()->branch_id
+            ]);
+        }
+        elseif($role?->role == Role::BTMR_SECOND_LEVEL){
+            $request->merge([
+                'category_id' => Auth::user()->category_id ? json_decode(Auth::user()->category_id) : []
+
             ]);
         }
 
@@ -145,6 +156,7 @@ class DashboardServices
         $total_incident = Incident::query()
                                 ->selectRaw('branch_id, COUNT(*) as total_incident')
                                 ->applyFilters($request)
+                                ->where('status', Incident::OPEN)
                                 ->groupBy('branch_id');
 
         $critical_incident = Incident::query()->selectRaw('branch_id, COUNT(*) as total_incident_critical')
@@ -152,6 +164,7 @@ class DashboardServices
                                         $query->where('severity_id', RefTable::SEVERITY_CRITICAL);
                                     })
                                     ->applyFilters($request)
+                                    ->where('status', Incident::OPEN)
                                     ->groupBy('branch_id');
 
         $total_incident = $total_incident->pluck('total_incident', 'branch_id');
@@ -258,19 +271,17 @@ class DashboardServices
     public static function incidentByContractor($request){
         $role = User::getUserRole(Auth::user()->id);
 
-        $get_group = Group::select('id','name')
+        $get_company = Company::select('id','name')
                             ->when($role?->role == Role::CONTRACTOR, function ($query) use ($request){
-                                $query->whereHas('userGroup', function ($query) {
-                                    $query->where('ic_no', Auth::user()->ic_no);
-                                });
+                                $query->where('id', Auth::user()->company_id);
                             })
                             ->whereHas('incidents')
                             ->get();
 
         $data = [];
 
-        foreach($get_group as $group){
-            $incidentCounts = Incident::applyFilters($request)->where('assign_group_id', $group->id);
+        foreach($get_company as $company){
+            $incidentCounts = Incident::applyFilters($request)->where('assign_company_id', $company->id);
 
             $total_incident = $incidentCounts->count();
 
@@ -282,8 +293,8 @@ class DashboardServices
                                                 ->count();
 
             $data[] = [
-                'id' => $group->id,
-                'name' => $group->name,
+                'id' => $company->id,
+                'name' => $company->name,
                 'total_incident' => $total_incident,
                 'total_incident_critical' => $critical_incident,
             ];
@@ -351,10 +362,14 @@ class DashboardServices
     }
 
     public static function incidentByCategory($request){
+        
         $allCategories = Category::select('id', 'category_id', 'name')
                                 ->whereHas('incidents', function ($query) use ($request) {
                                     $query->applyFilters($request); 
                                 })     
+                                ->when($request->category_id, function ($query)use ($request){
+                                    return $query->whereIn('id',$request->category_id);
+                                })
                                 ->get()
                                 ->keyBy('id');
 

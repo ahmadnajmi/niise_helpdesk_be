@@ -25,10 +25,12 @@ class GroupRequest extends FormRequest
      */
     public function rules(): array
     {
+        $group_id = $this->route('group_management')?->id;
+
         return [
             'name' => [
                 'required',
-                Rule::unique('groups', 'name'),
+                Rule::unique('groups', 'name')->ignore($group_id),
             ],
             'description' => 'nullable',
             'is_active' => 'nullable',

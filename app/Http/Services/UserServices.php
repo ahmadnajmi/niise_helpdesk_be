@@ -60,7 +60,7 @@ class UserServices
               
             }
             else{
-                $return = null;
+               return self::error(__('user.message.user_exists'));
             }
 
             return self::success('Success', $return);
@@ -87,7 +87,7 @@ class UserServices
 
             $update = $user->update($data);
 
-            $data = self::groupUser($data,$user);
+            $data = self::groupUser($data,$user,true);
 
             $return = new UserResources($user);
 
@@ -98,21 +98,36 @@ class UserServices
         }
     }
 
-    public static function groupUser($data,$user){
+    public static function groupUser($data,$user,$is_update = false){
 
         if(isset($data['group_user'])){
-            UserGroup::where('ic_no',$data['ic_no'])->delete();
 
             foreach($data['group_user'] as $group_id){
 
-                $data_group_user['groups_id'] = $group_id;
-                $data_group_user['user_type'] = RefTable::USER_TYPE_USER;
-                $data_group_user['ic_no'] = $user->ic_no;
-                $data_group_user['name'] = $user->name;
-                $data_group_user['email'] = $user->email;
-                $data_group_user['company_id'] = $user->company_id;
+                $get_user_group = UserGroup::where('ic_no',$user->ic_no)->where('groups_id',$group_id)->exists();
+
+                if($is_update){
+                   $undeleted_group[] =  $group_id;
+                }
+
+                if(!$get_user_group){
+                    $data_group_user['groups_id'] = $group_id;
+                    $data_group_user['user_type'] = RefTable::USER_TYPE_USER;
+                    $data_group_user['ic_no'] = $user->ic_no;
+                    $data_group_user['name'] = $user->name;
+                    $data_group_user['email'] = $user->email;
+                    $data_group_user['company_id'] = $user->company_id;
     
-                UserGroup::create($data_group_user);
+                    UserGroup::create($data_group_user);
+                }
+            }
+
+            if($is_update){
+                UserGroup::where('ic_no',$user->ic_no)
+                            ->when(count($undeleted_group) > 0, function ($query) use ($undeleted_group) {
+                                $query->whereNotIn('groups_id',$undeleted_group);
+                            })
+                            ->delete();
             }
         }
 
@@ -142,7 +157,7 @@ class UserServices
     }
 
     public static function searchIcNo($request){
-        $user = User::with('company')->hideSuperAdmin()->filter()->first();
+        $user = User::with('company')->hideSuperAdmin()->where('ic_no',$request->ic_no)->first();
         
         if($user){
             $return  = [

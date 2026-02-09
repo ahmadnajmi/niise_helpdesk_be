@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MiniReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SlaController;
@@ -83,7 +84,7 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
 
     Route::post('role_permission', [RoleController::class,'updateRolePermission'])->name('role.role_permission');
     Route::get('navigation', [ModuleController::class,'index'])->name('navigation.index');
-    
+
     Route::get('ref_table_dropdown', [RefTableController::class, 'dropdownIndex'])->name('ref_table.dropdown');
     Route::get('ref_table_dropdown_value', [RefTableController::class, 'dropdownValueIndex'])->name('ref_table.dropdown_value');
     Route::get('user_search', [UserController::class, 'searchIcNo'])->name('user.search');
@@ -94,6 +95,8 @@ Route::middleware(['api','auth.check','auth:api'])->group(function () {
 
     Route::post('report/generate', [ReportController::class, 'generateReport'])->name('report.generate');
     Route::get('report', [ReportController::class, 'index'])->name('report.index');
+
+    Route::get('mini_report/generate', [MiniReportController::class, 'generate'])->name('mini_report.generate');
 
     Route::middleware(['admin.access'])->prefix('admin')->group(function () {
         Route::get('log-viewer', [LogViewerController::class, 'index'])->name('log-viewer.url');
