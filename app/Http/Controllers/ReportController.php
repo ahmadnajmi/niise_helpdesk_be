@@ -17,12 +17,12 @@ class ReportController extends Controller
 
         return $this->success('Success', $data);
     }
-    
+
     public function generateReport(ReportRequest $request){
         $report_service = new ReportServices();
 
         $return = $report_service->generateReport($request);
-        
+
         if($return['data']){
             $response =  $return['data'];
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\TestingController;
 use App\Http\Controllers\Web\IncidentController;
 use App\Http\Controllers\Web\QueueController;
 use App\Http\Controllers\LogViewerController;
+use App\Http\Controllers\MiniReportController;
 
 Route::get('/', function () {
     return redirect()->route('welcome');

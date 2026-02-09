@@ -287,6 +287,9 @@ class Incident extends BaseModel
                         ->orderByRaw("LOWER(ref_table.name) {$direction}");
                     }
                 } 
+                elseif($field === 'information') {
+                    $query->orderByRaw("TO_CHAR(SUBSTR(information, 1, 4000)) {$direction}");
+                }
                
                 else {
                     $query->orderBy($sortable, $direction);
@@ -364,7 +367,7 @@ class Incident extends BaseModel
     public static function filterIncident($request){
         $limit = $request->limit ? $request->limit : 15;
 
-        $data =  Incident::select('id','incident_no','branch_id','information','status','incident_date','actual_end_date','code_sla','complaint_user_id')
+        $data =  Incident::select('id','incident_no','branch_id','information','status','incident_date','actual_end_date','code_sla','complaint_user_id','created_at','updated_at','created_by','updated_by')
                         ->applyFilters($request)
                         ->when($request->status, function ($query) use ($request) {
                             if (is_array($request->status)) {
@@ -491,6 +494,11 @@ class Incident extends BaseModel
                 $group_id = UserGroup::where('ic_no',Auth::user()->ic_no)->pluck('groups_id');
 
                 return $query->whereIn('incidents.assign_group_id',$group_id);
+            })
+            ->when($role?->role == Role::BTMR_SECOND_LEVEL, function ($query){
+                $category_id = json_decode(Auth::user()->category_id);
+
+                return $query->whereIn('incidents.category_id',$category_id);
             })
             ->when($request->company_id, function ($query) use ($request) {
                 return $query->where('incidents.assign_company_id',$request->company_id);
