@@ -56,7 +56,7 @@
 	</dataset>
 	<dataset name="Total Insiden" uuid="78edd639-f6d9-4327-80cc-c3c67e08ebae">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Oracle Localhost"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Helpdesk Oracle Pre Prod"/>
 		<parameter name="branch_id" class="java.lang.String"/>
 		<parameter name="state_id" class="java.lang.String"/>
 		<parameter name="severity_id" class="java.lang.String"/>
@@ -76,7 +76,7 @@
 		JOIN branch b ON i.branch_id = b.id
 		JOIN categories c ON i.category_id = c.id
 		LEFT JOIN users csc ON csc.id = i.resolved_user_id
-        LEFT JOIN companies cp ON cp.id = csc.company_id
+        LEFT JOIN companies cp ON cp.id = i.assign_company_id
 		LEFT JOIN sla_version sv ON sv.id = i.sla_version_id
 		LEFT JOIN sla_template st ON st.id = sv.sla_template_id
 		WHERE i.status IN (2,3)
@@ -85,7 +85,7 @@
 		AND ($P{severity_id} IS NULL OR st.SEVERITY_ID = $P{severity_id})
 		AND ($P{status} IS NULL OR i.status = $P{status})
 		AND ($P{state_id} IS NULL OR b.state_id = $P{state_id})
-		AND ($P{company_id} IS NULL OR cp.id = $P{company_id})
+		AND ($P{company_id} IS NULL OR i.assign_company_id = $P{company_id})
 		AND ( $P{start_date} IS NULL OR i.incident_date >= TO_DATE($P{start_date}, 'YYYY-MM-DD'))
 		AND ($P{end_date} IS NULL OR i.incident_date < TO_DATE($P{end_date}, 'YYYY-MM-DD') + 1)
 		AND ($P{close_start_date} IS NULL OR i.actual_end_date >= TO_DATE($P{close_start_date}, 'YYYY-MM-DD'))
@@ -151,8 +151,7 @@
 	LEFT JOIN sla_template st ON st.id = sv.sla_template_id
 	LEFT JOIN categories cy ON cy.id = i.category_id
 	LEFT JOIN ref_table rt ON rt.ref_code = i.status AND rt.code_category = 'incident_status'
-    LEFT JOIN users csc ON csc.id = i.resolved_user_id
-    LEFT JOIN companies cp ON cp.id = csc.company_id
+    LEFT JOIN companies cp ON cp.id = i.assign_company_id
 	LEFT JOIN incident_penalty ip ON ip.incident_id = i.id
 	WHERE i.status IN (2,3)
 	AND actual_end_date > expected_end_date
@@ -160,7 +159,7 @@
 	AND ($P{severity_id} IS NULL OR st.SEVERITY_ID = $P{severity_id})
 	AND ($P{status} IS NULL OR i.status = $P{status})
 	AND ($P{state_id} IS NULL OR b.state_id = $P{state_id})
-	AND ($P{company_id} IS NULL OR cp.id = $P{company_id})
+	AND ($P{company_id} IS NULL OR i.assign_company_id = $P{company_id})
 	AND ( $P{start_date} IS NULL OR i.incident_date >= TO_DATE($P{start_date}, 'YYYY-MM-DD'))
 	AND ($P{end_date} IS NULL OR i.incident_date < TO_DATE($P{end_date}, 'YYYY-MM-DD') + 1)
 	AND ($P{close_start_date} IS NULL OR i.actual_end_date >= TO_DATE($P{close_start_date}, 'YYYY-MM-DD'))
@@ -252,7 +251,7 @@
 		<expression><![CDATA[$F{CONTRACTOR_NAME}]]></expression>
 		<groupHeader>
 			<band height="14">
-				<element kind="textField" uuid="b5eea650-512a-471d-97d1-a1870c69930f" mode="Opaque" x="0" y="0" width="801" height="14" backcolor="#D1F0F0" printWhenGroupChanges="Group1" fontSize="6.0" linkType="None" linkTarget="Self" blankWhenNull="true" removeLineWhenBlank="true" printRepeatedValues="false" bold="true" hTextAlign="Left" vTextAlign="Middle">
+				<element kind="textField" uuid="b5eea650-512a-471d-97d1-a1870c69930f" mode="Opaque" x="0" y="0" width="801" height="14" backcolor="#D1F0F0" printWhenGroupChanges="Group1" fontSize="6.0" linkType="None" linkTarget="Self" blankWhenNull="true" printRepeatedValues="false" removeLineWhenBlank="true" bold="true" hTextAlign="Left" vTextAlign="Middle">
 					<printWhenExpression><![CDATA[$V{previous_contractor_name} == null || !$V{previous_contractor_name}.equals($F{CONTRACTOR_NAME})
 ]]></printWhenExpression>
 					<paragraph leftIndent="10"/>
@@ -273,7 +272,7 @@
 		<expression><![CDATA[$F{CATEGORY_NAME}]]></expression>
 		<groupHeader>
 			<band height="15">
-				<element kind="textField" uuid="cefea3c9-99a9-4782-8390-99882e695e39" mode="Opaque" x="0" y="0" width="801" height="15" backcolor="#D1F0F0" printWhenGroupChanges="Group1" fontSize="6.0" linkTarget="Self" blankWhenNull="true" removeLineWhenBlank="true" printRepeatedValues="false" bold="true" hTextAlign="Left" vTextAlign="Middle">
+				<element kind="textField" uuid="cefea3c9-99a9-4782-8390-99882e695e39" mode="Opaque" x="0" y="0" width="801" height="15" backcolor="#D1F0F0" printWhenGroupChanges="Group1" fontSize="6.0" linkTarget="Self" blankWhenNull="true" printRepeatedValues="false" removeLineWhenBlank="true" bold="true" hTextAlign="Left" vTextAlign="Middle">
 					<paragraph leftIndent="10"/>
 					<expression><![CDATA[$F{CATEGORY_NAME}]]></expression>
 					<property name="com.jaspersoft.studio.unit.x" value="px"/>
@@ -776,7 +775,7 @@ pengambilan]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="component" uuid="777618a4-de66-4abc-b759-639d41b00a0e" stretchType="NoStretch" x="430" y="0" width="218" height="24" printWhenGroupChanges="Category" printWhenDetailOverflows="true" removeLineWhenBlank="true" printRepeatedValues="false">
+			<element kind="component" uuid="777618a4-de66-4abc-b759-639d41b00a0e" stretchType="NoStretch" x="430" y="0" width="218" height="24" printWhenGroupChanges="Category" printRepeatedValues="false" printWhenDetailOverflows="true" removeLineWhenBlank="true">
 				<component kind="list">
 					<datasetRun uuid="23e11c1e-39df-4a7b-85b0-8b69f3f5cac1" subDataset="INCIDENT RESOLUTION">
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
@@ -970,7 +969,7 @@ java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a")
 		</element>
 	</pageFooter>
 	<summary height="23">
-		<element kind="textField" uuid="0342c5fd-7895-41f1-a481-643b01dd69b3" key="" x="0" y="0" width="801" height="16" fontSize="6.0" evaluationTime="Column" linkTarget="Self" blankWhenNull="true" printWhenDetailOverflows="true" removeLineWhenBlank="true" printRepeatedValues="false" hTextAlign="Center" vTextAlign="Middle">
+		<element kind="textField" uuid="0342c5fd-7895-41f1-a481-643b01dd69b3" key="" x="0" y="0" width="801" height="16" fontSize="6.0" evaluationTime="Column" linkTarget="Self" blankWhenNull="true" printRepeatedValues="false" printWhenDetailOverflows="true" removeLineWhenBlank="true" hTextAlign="Center" vTextAlign="Middle">
 			<printWhenExpression><![CDATA[$V{REPORT_COUNT}  == 0]]></printWhenExpression>
 			<expression><![CDATA["TIADA DATA"]]></expression>
 			<box>

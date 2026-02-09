@@ -1,6 +1,6 @@
-<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
 <jasperReport name="To Be Breach Report" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5d213999-4952-4013-9d1a-3d681fe6caa6" summaryWithPageHeaderAndFooter="true">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Oracle Localhost"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Helpdesk Oracle Pre Prod"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
 		<box>
@@ -58,7 +58,7 @@
 	</dataset>
 	<dataset name="Total Insiden" uuid="78edd639-f6d9-4327-80cc-c3c67e08ebae">
 		<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Oracle Localhost"/>
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Helpdesk Oracle Pre Prod"/>
 		<parameter name="branch_id" class="java.lang.String"/>
 		<parameter name="state_id" class="java.lang.String"/>
 		<parameter name="severity_id" class="java.lang.String">
@@ -80,8 +80,7 @@ FROM incidents i
 
 JOIN branch b ON i.branch_id = b.id
 JOIN categories c ON i.category_id = c.id
-LEFT JOIN users csc ON csc.id = i.resolved_user_id
-    LEFT JOIN companies cp ON cp.id = csc.company_id
+LEFT JOIN companies cp ON cp.id = i.assign_company_id
 LEFT JOIN sla_version sv ON sv.id = i.sla_version_id
 LEFT JOIN sla_template st ON st.id = sv.sla_template_id
 WHERE i.status = 1
@@ -91,7 +90,7 @@ AND ($P{branch_id} IS NULL OR i.branch_id = $P{branch_id})
 AND ($P{severity_id} IS NULL OR st.SEVERITY_ID = $P{severity_id})
 AND ($P{status} IS NULL OR i.status = $P{status})
 AND ($P{state_id} IS NULL OR b.state_id = $P{state_id})
-AND ($P{company_id} IS NULL OR cp.id = $P{company_id})
+AND ($P{company_id} IS NULL OR i.assign_company_id = $P{company_id})
 AND ( $P{start_date} IS NULL OR i.incident_date >= TO_DATE($P{start_date}, 'YYYY-MM-DD'))
 AND ($P{end_date} IS NULL OR i.incident_date < TO_DATE($P{end_date}, 'YYYY-MM-DD') + 1)
 AND ($P{close_start_date} IS NULL OR i.actual_end_date >= TO_DATE($P{close_start_date}, 'YYYY-MM-DD'))
@@ -167,8 +166,7 @@ LEFT JOIN sla_version sv ON sv.id = i.sla_version_id
 LEFT JOIN sla_template st ON st.id = sv.sla_template_id
 LEFT JOIN categories cy ON cy.id = i.category_id
 LEFT JOIN ref_table rt ON rt.ref_code = i.status AND rt.code_category = 'incident_status'
-LEFT JOIN users csc ON csc.id = i.resolved_user_id
-    LEFT JOIN companies cp ON cp.id = csc.company_id
+LEFT JOIN companies cp ON cp.id = i.assign_company_id
 WHERE i.status = 1
 AND i.expected_end_date > SYSDATE
 AND i.expected_end_date <= SYSDATE + 4
@@ -176,7 +174,7 @@ AND ($P{branch_id} IS NULL OR i.branch_id = $P{branch_id})
 AND ($P{severity_id} IS NULL OR st.SEVERITY_ID = $P{severity_id})
 AND ($P{status} IS NULL OR i.status = $P{status})
 AND ($P{state_id} IS NULL OR b.state_id = $P{state_id})
-AND ($P{company_id} IS NULL OR cp.id = $P{company_id})
+AND ($P{company_id} IS NULL OR i.assign_company_id = $P{company_id})
 AND ( $P{start_date} IS NULL OR i.incident_date >= TO_DATE($P{start_date}, 'YYYY-MM-DD'))
 AND ($P{end_date} IS NULL OR i.incident_date < TO_DATE($P{end_date}, 'YYYY-MM-DD') + 1)
 AND ($P{close_start_date} IS NULL OR i.actual_end_date >= TO_DATE($P{close_start_date}, 'YYYY-MM-DD'))
@@ -271,7 +269,7 @@ ORDER BY cy.name ASC]]></query>
 			<property name="com.jaspersoft.studio.unit.y" value="px"/>
 		</element>
 		<element kind="frame" uuid="16bb0b5c-a13f-4d5c-af2b-389d2cdc2b80" stretchType="NoStretch" x="0" y="140" width="801" height="70" removeLineWhenBlank="true">
-			<element kind="component" uuid="c54816fa-d3b8-499d-98d1-6e45f066c423" x="0" y="20" width="435" height="20" printInFirstWholeBand="true" removeLineWhenBlank="true">
+			<element kind="component" uuid="c54816fa-d3b8-499d-98d1-6e45f066c423" x="0" y="20" width="435" height="20" removeLineWhenBlank="true" printInFirstWholeBand="true">
 				<component kind="list">
 					<datasetRun uuid="79db249d-b08b-44f7-bc4c-e218223d0033" subDataset="Total Insiden">
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>

@@ -32,6 +32,7 @@ class ActionCode extends BaseModel
     const STARTD = 'STARTD';
     const STOPD = 'STOPD';
     const CLOSED = 'CLSD';
+    const CNCLDUP ='CNCLDUP';
 
     const SEND_TO_COMPLAINT = 1;
     const SEND_TO_GROUP = 2;

@@ -34,7 +34,7 @@ class DashboardServices
         }
         elseif($role?->role == Role::BTMR_SECOND_LEVEL){
             $request->merge([
-                'category_id' => json_decode(Auth::user()->category_id)
+                'category_id' => Auth::user()->category_id ? json_decode(Auth::user()->category_id) : []
             ]);
         }
         
@@ -74,7 +74,8 @@ class DashboardServices
         }
         elseif($role?->role == Role::BTMR_SECOND_LEVEL){
             $request->merge([
-                'category_id' => json_decode(Auth::user()->category_id)
+                'category_id' => Auth::user()->category_id ? json_decode(Auth::user()->category_id) : []
+
             ]);
         }
 
