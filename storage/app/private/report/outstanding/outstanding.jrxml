@@ -1,6 +1,6 @@
 <!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
 <jasperReport name="Outstanding Report" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5d213999-4952-4013-9d1a-3d681fe6caa6" summaryWithPageHeaderAndFooter="true">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Helpdesk Oracle Pre Prod"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Helpdesk Oracle Production"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="638"/>
 	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="354"/>
@@ -275,7 +275,7 @@ ORDER BY COALESCE(pc.name, c.name) ASC, c.name ASC  -- And ORDER BY]]></query>
 			<property name="com.jaspersoft.studio.unit.y" value="px"/>
 		</element>
 		<element kind="frame" uuid="16bb0b5c-a13f-4d5c-af2b-389d2cdc2b80" stretchType="NoStretch" x="0" y="140" width="801" height="70" removeLineWhenBlank="true">
-			<element kind="component" uuid="c54816fa-d3b8-499d-98d1-6e45f066c423" x="1" y="40" width="327" height="20" removeLineWhenBlank="true" printInFirstWholeBand="true">
+			<element kind="component" uuid="c54816fa-d3b8-499d-98d1-6e45f066c423" x="1" y="40" width="327" height="20" printInFirstWholeBand="true" removeLineWhenBlank="true">
 				<component kind="list">
 					<datasetRun uuid="79db249d-b08b-44f7-bc4c-e218223d0033" subDataset="Total Insiden">
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
@@ -737,7 +737,7 @@ pengambilan]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="9d020359-855c-405c-9d87-f7aee7e7dff3" x="389" y="0" width="131" height="23" printWhenGroupChanges="Category" fontSize="6.0">
+			<element kind="textField" uuid="9d020359-855c-405c-9d87-f7aee7e7dff3" stretchType="ElementGroupHeight" x="389" y="0" width="131" height="23" printWhenGroupChanges="Category" fontSize="6.0" textAdjust="StretchHeight">
 				<paragraph leftIndent="3" rightIndent="3" spacingBefore="1"/>
 				<expression><![CDATA[$F{INFORMATION}]]></expression>
 				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -800,7 +800,7 @@ pengambilan]]></text>
 								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 							</box>
 						</element>
-						<element kind="textField" uuid="069bda42-bd75-49d9-a5ec-f7a6f3d04adc" x="112" y="0" width="106" height="15" fontSize="5.0" blankWhenNull="true" removeLineWhenBlank="true">
+						<element kind="textField" uuid="069bda42-bd75-49d9-a5ec-f7a6f3d04adc" stretchType="ElementGroupHeight" x="112" y="0" width="106" height="15" fontSize="5.0" textAdjust="StretchHeight" blankWhenNull="true" removeLineWhenBlank="true">
 							<paragraph firstLineIndent="0" leftIndent="3" spacingBefore="1"/>
 							<expression><![CDATA[$F{SOLUTION_NOTES}]]></expression>
 							<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
@@ -856,12 +856,10 @@ pengambilan]]></text>
 			</element>
 			<element kind="textField" uuid="13a4d829-fc5f-4ee9-b821-07f107260bef" x="738" y="0" width="33" height="15" printWhenGroupChanges="Category" fontSize="6.0" printRepeatedValues="false" hTextAlign="Center" vTextAlign="Top">
 				<paragraph spacingBefore="1"/>
-				<expression><![CDATA[($F{INCIDENT_DATE} != null && $F{LAST_END_DATE} != null)
-? java.time.Duration.between(
-    ((java.sql.Timestamp)$F{INCIDENT_DATE}).toLocalDateTime(),
-    ((java.sql.Timestamp)$F{LAST_END_DATE}).toLocalDateTime()
-  ).toDays()
-: 0]]></expression>
+				<expression><![CDATA[java.time.temporal.ChronoUnit.DAYS.between(
+    ((java.sql.Timestamp)$F{INCIDENT_DATE}).toLocalDateTime().toLocalDate(),
+    ((java.sql.Timestamp)$F{LAST_END_DATE}).toLocalDateTime().toLocalDate()
+)]]></expression>
 				<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
