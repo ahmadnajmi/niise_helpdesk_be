@@ -275,9 +275,9 @@ class Incident extends BaseModel
                     }
                     elseif($field === 'phone_no') {
 
-                        $query->leftJoin('user', 'user.id', '=', 'incidents.complaint_user_id')
+                        $query->leftJoin('users', 'users.id', '=', 'incidents.complaint_user_id')
                                 ->select('incidents.*')
-                                ->orderBy("user.$column", $direction);
+                                ->orderBy("users.$column", $direction);
                     }
                     elseif($field === 'status') {
                         $query->leftJoin('ref_table', function ($join) {
