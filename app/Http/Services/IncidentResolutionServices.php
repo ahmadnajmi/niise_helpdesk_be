@@ -137,7 +137,7 @@ class IncidentResolutionServices
             $data_incident['status']  =  Incident::CANCEL_DUPLICATE; 
             $incident->workbasket?->delete();
         }
-        elseif($data->action_codes != ActionCode::DISC){
+        elseif($data->action_codes != ActionCode::DISC && $data->action_codes != ActionCode::VERIFY){
             $data_workbasket['status'] = Workbasket::IN_PROGRESS;
             $data_incident['status'] = Incident::OPEN;
         }

@@ -262,14 +262,15 @@ class Incident extends BaseModel
 
                         $query->leftJoin('sla', 'sla.code', '=', 'incidents.code_sla')
                             ->leftJoin('sla_template', 'sla_template.id', '=', 'sla.sla_template_id')
-                            ->leftJoin('ref_table', function ($join) {
-                                $join->on('ref_table.ref_code', '=', 'sla_template.severity_id')
-                                    ->where('ref_table.code_category', '=', 'severity');
+                            ->leftJoin('ref_table as ref_severity', function ($join) {
+                                $join->on('ref_severity.ref_code', '=', 'sla_template.severity_id')
+                                    ->where('ref_severity.code_category', '=', 'severity');
                             })
+                            ->select('incidents.*')
                             ->orderByRaw("
                                 LOWER(CASE 
-                                    WHEN ? = 'ms' THEN ref_table.name 
-                                    ELSE ref_table.name_en 
+                                    WHEN ? = 'ms' THEN ref_severity.name 
+                                    ELSE ref_severity.name_en 
                                 END) {$direction}
                             ", [$lang]);
                     }
@@ -280,11 +281,12 @@ class Incident extends BaseModel
                                 ->orderBy("users.$column", $direction);
                     }
                     elseif($field === 'status') {
-                        $query->leftJoin('ref_table', function ($join) {
-                            $join->on('ref_table.ref_code', '=', 'incidents.status')
-                                ->where('ref_table.code_category', '=', 'incident_status');
+                        $query->leftJoin('ref_table as ref_status', function ($join) {
+                            $join->on('ref_status.ref_code', '=', 'incidents.status')
+                                ->where('ref_status.code_category', '=', 'incident_status');
                         })
-                        ->orderByRaw("LOWER(ref_table.name) {$direction}");
+                        ->select('incidents.*')
+                        ->orderByRaw("LOWER(ref_status.name) {$direction}");
                     }
                 } 
                 elseif($field === 'information') {
