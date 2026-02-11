@@ -21,7 +21,7 @@ use App\Models\LogExternalApi;
 class ReportServices
 {
     use ApiTrait;
- 
+
     public static function index($request){
 
         $role = User::getUserRole(Auth::user()->id);
@@ -53,6 +53,15 @@ class ReportServices
                                             })
                                             ->when($request->contractor_id, function ($query)use($request) {
                                                 return $query->where('assign_group_id',$request->contractor_id);
+                                            })
+                                            ->when($request->start_date && $request->end_date, function ($query) use ($request) {
+                                                return $query->whereBetween('incident_date', [$request->start_date, $request->end_date]);
+                                            })
+                                            ->when($request->start_date && !$request->end_date, function ($query) use ($request) {
+                                                return $query->where('incident_date', '>=', $request->start_date);
+                                            })
+                                            ->when(!$request->start_date && $request->end_date, function ($query) use ($request) {
+                                                return $query->where('incident_date', '<=', $request->end_date);
                                             });
                                 })
                                 ->get();
@@ -78,6 +87,15 @@ class ReportServices
                                     ->when($request->contractor_id, function ($query)use($request) {
                                         return $query->where('assign_group_id',$request->contractor_id);
                                     })
+                                    ->when($request->start_date && $request->end_date, function ($query) use ($request) {
+                                        return $query->whereBetween('incident_date', [$request->start_date, $request->end_date]);
+                                    })
+                                    ->when($request->start_date && !$request->end_date, function ($query) use ($request) {
+                                        return $query->where('incident_date', '>=', $request->start_date);
+                                    })
+                                    ->when(!$request->start_date && $request->end_date, function ($query) use ($request) {
+                                        return $query->where('incident_date', '<=', $request->end_date);
+                                    })
                                     ->where('category_id',$category->id)
                                     ->where('status',Incident::OPEN)
                                     ->whereDate('expected_end_date', '<=', now()->addDays(4))
@@ -89,10 +107,10 @@ class ReportServices
             $format = $default->merge($get_incident->groupBy('sla.slaTemplate.severity_id')
                             ->map->count()
                             ->mapWithKeys(fn ($count, $id) => ['sev_' . $id => $count]));
-        
+
             $format['category'] = $category->name;
 
-            $data[] = $format;            
+            $data[] = $format;
         }
 
         return $data;
@@ -110,6 +128,15 @@ class ReportServices
                                             })
                                             ->when($request->contractor_id, function ($query)use($request) {
                                                 return $query->where('assign_group_id',$request->contractor_id);
+                                            })
+                                            ->when($request->start_date && $request->end_date, function ($query) use ($request) {
+                                                return $query->whereBetween('incident_date', [$request->start_date, $request->end_date]);
+                                            })
+                                            ->when($request->start_date && !$request->end_date, function ($query) use ($request) {
+                                                return $query->where('incident_date', '>=', $request->start_date);
+                                            })
+                                            ->when(!$request->start_date && $request->end_date, function ($query) use ($request) {
+                                                return $query->where('incident_date', '<=', $request->end_date);
                                             });
                                 })
                                 ->get();
@@ -123,6 +150,15 @@ class ReportServices
                                     ->when($request->contractor_id, function ($query)use($request) {
                                         return $query->where('assign_group_id',$request->contractor_id);
                                     })
+                                    ->when($request->start_date && $request->end_date, function ($query) use ($request) {
+                                        return $query->whereBetween('incident_date', [$request->start_date, $request->end_date]);
+                                    })
+                                    ->when($request->start_date && !$request->end_date, function ($query) use ($request) {
+                                        return $query->where('incident_date', '>=', $request->start_date);
+                                    })
+                                    ->when(!$request->start_date && $request->end_date, function ($query) use ($request) {
+                                        return $query->where('incident_date', '<=', $request->end_date);
+                                    })
                                     ->whereIn('status',[Incident::OPEN,Incident::TEMPORARY_FIX,Incident::RESOLVED,Incident::ON_HOLD])
                                     ->whereHas('incidentResolutionLatest', function ($query) use ($request) {
                                         $query->whereDate('updated_at', '<', now()->subDays(4));
@@ -132,7 +168,7 @@ class ReportServices
             $format['category'] = $category->name;
             $format['total'] = $get_incident;
 
-            $data[] = $format;            
+            $data[] = $format;
         }
 
         return $data;
@@ -148,6 +184,14 @@ class ReportServices
                             }
                             if ($request->contractor_id) {
                                 $query->where('assign_group_id', $request->contractor_id);
+                            }
+                            // Date
+                            if ($request->start_date && $request->end_date) {
+                                $query->whereBetween('incident_date', [$request->start_date, $request->end_date]);
+                            } else if($request->start_date && !$request->end_date) {
+                                $query->where('incident_date', '>=', $request->start_date);
+                            } else if(!$request->start_date && $request->end_date) {
+                                $query->where('incident_date', '<=', $request->end_date);
                             }
                         }])
                         ->get()
@@ -175,6 +219,15 @@ class ReportServices
                                         })
                                         ->when($request->contractor_id, function ($query)use($request) {
                                             return $query->where('assign_group_id',$request->contractor_id);
+                                        })
+                                        ->when($request->start_date && $request->end_date, function ($query) use ($request) {
+                                            return $query->whereBetween('incident_date', [$request->start_date, $request->end_date]);
+                                        })
+                                        ->when($request->start_date && !$request->end_date, function ($query) use ($request) {
+                                            return $query->where('incident_date', '>=', $request->start_date);
+                                        })
+                                        ->when(!$request->start_date && $request->end_date, function ($query) use ($request) {
+                                            return $query->where('incident_date', '<=', $request->end_date);
                                         });
                                 })
                                 ->get();
@@ -188,18 +241,27 @@ class ReportServices
                                     ->when($request->contractor_id, function ($query)use($request) {
                                         return $query->where('incidents.assign_group_id',$request->contractor_id);
                                     })
+                                    ->when($request->start_date && $request->end_date, function ($query) use ($request) {
+                                        return $query->whereBetween('incident_date', [$request->start_date, $request->end_date]);
+                                    })
+                                    ->when($request->start_date && !$request->end_date, function ($query) use ($request) {
+                                        return $query->where('incident_date', '>=', $request->start_date);
+                                    })
+                                    ->when(!$request->start_date && $request->end_date, function ($query) use ($request) {
+                                        return $query->where('incident_date', '<=', $request->end_date);
+                                    })
                                     ->where('incidents.status',Incident::OPEN)
                                     ->groupBy('incidents.category_id', 'sla_template.severity_id')
                                     ->get()
                                     ->groupBy('severity_id');
 
         foreach($ref_tables as $idx => $reference){
-            
-            $format['name'] = 'Severity '.$reference->ref_code; 
+
+            $format['name'] = 'Severity '.$reference->ref_code;
             $format['level'] = $reference->ref_code;
             $format['categories'] = [];
 
-            $severity_counts = $incident_counts->get($reference->ref_code, collect())->pluck('total', 'category_id');  
+            $severity_counts = $incident_counts->get($reference->ref_code, collect())->pluck('total', 'category_id');
 
             foreach($get_category as $category){
                 $format_categories['name'] = $category->name;
@@ -220,7 +282,7 @@ class ReportServices
         }else{
             $report = Report::where('code',$request->report_category)->first();
         }
-       
+
         $fileExtension = $request->report_format == RefTable::PDF ? 'pdf' : 'csv' ;
         $report_format = $fileExtension == 'csv' ? 'excel' : 'pdf';
         $chart_image = $this->uploadDoc($request);
@@ -242,7 +304,7 @@ class ReportServices
 
         $output_file_name = $report->output_name ? $report->output_name : $report->jasper_file_name;
         $output_file_name = $output_file_name.'.'.$fileExtension;
-        
+
         $data['multipart'] = [
             [
                 'name'     => 'reportTemplate',
@@ -261,19 +323,19 @@ class ReportServices
                 'name'     => 'parameters',
                 'contents' => json_encode($parameter),
             ],
-        ]; 
+        ];
 
         $data['report_format'] = $report_format;
         $data['outputFileName'] = $output_file_name;
 
         $generate = self::callApi(LogExternalApi::JASPER,'reports/generate','POST',$data);
-        
+
         return $generate;
     }
 
     public function uploadDoc($request){
-        
-        $destination = storage_path('app/public/report'); 
+
+        $destination = storage_path('app/public/report');
 
         $file_name = null;
 
@@ -289,11 +351,11 @@ class ReportServices
             $file_name = $image_name.'.'.$mimeType;
 
             $fileContents = file_get_contents($file->getRealPath());
-        
+
             file_put_contents($destination . '/' . $file_name, $fileContents);
 
             $file_name = public_path('storage/report/' . $file_name);
-        }        
+        }
         return $file_name;
     }
 }
