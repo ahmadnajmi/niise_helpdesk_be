@@ -298,7 +298,12 @@ class ReportServices
         if($chart_image && $report->code != 'TO_BREACH'){
             $parameter['graph_picture'] = $chart_image;
         }
-        $disk = config('filesystems.default');
+        if($report->is_default == 1){
+           $disk = 'local';
+        }
+        else{
+            $disk = config('filesystems.default');
+        }
 
         $jasperPath = Storage::disk($disk)->path($report->path);
 
