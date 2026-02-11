@@ -1,6 +1,6 @@
 <!-- Created with Jaspersoft Studio version 7.0.1.final using JasperReports Library version 7.0.1-573496633c2b4074e32f433154b543003f7d2498  -->
 <jasperReport name="Blank_A4_Landscape" language="java" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5d213999-4952-4013-9d1a-3d681fe6caa6">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="DB Oracle Development"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Helpdesk Oracle Production"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
 		<box>
@@ -751,7 +751,7 @@ pengambilan]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="9d020359-855c-405c-9d87-f7aee7e7dff3" x="391" y="0" width="39" height="24" printWhenGroupChanges="Category" fontSize="6.0" printWhenDetailOverflows="true" removeLineWhenBlank="true">
+			<element kind="textField" uuid="9d020359-855c-405c-9d87-f7aee7e7dff3" stretchType="ElementGroupHeight" x="391" y="0" width="39" height="24" printWhenGroupChanges="Category" fontSize="6.0" textAdjust="StretchHeight" printWhenDetailOverflows="true" removeLineWhenBlank="true">
 				<paragraph leftIndent="3" rightIndent="3" spacingBefore="1"/>
 				<expression><![CDATA[$F{INFORMATION}]]></expression>
 				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -825,7 +825,7 @@ pengambilan]]></text>
 								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 							</box>
 						</element>
-						<element kind="textField" uuid="43216940-0cc8-48fe-9ece-19df20eef9e3" x="112" y="0" width="106" height="15" fontSize="5.0" blankWhenNull="true" removeLineWhenBlank="true">
+						<element kind="textField" uuid="43216940-0cc8-48fe-9ece-19df20eef9e3" stretchType="ElementGroupHeight" x="112" y="0" width="106" height="15" fontSize="5.0" textAdjust="StretchHeight" blankWhenNull="true" removeLineWhenBlank="true">
 							<paragraph firstLineIndent="0" leftIndent="3" spacingBefore="1"/>
 							<expression><![CDATA[$F{SOLUTION_NOTES}]]></expression>
 							<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>

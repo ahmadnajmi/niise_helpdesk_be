@@ -54,6 +54,8 @@ class GroupServices
 
             $data['groups_id'] = $group_id;
 
+            $data['groups_id'] = $group_id;
+
             foreach($request['users'] as $user){
 
                 if($is_update && isset($user['id'])){

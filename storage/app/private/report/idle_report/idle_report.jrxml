@@ -3,7 +3,7 @@
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="638"/>
 	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="354"/>
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Helpdesk Oracle Pre Prod"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Helpdesk Oracle Production"/>
 	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
@@ -262,7 +262,7 @@ ORDER BY b.name, c.name]]></query>
 			<property name="com.jaspersoft.studio.unit.y" value="px"/>
 		</element>
 		<element kind="frame" uuid="16bb0b5c-a13f-4d5c-af2b-389d2cdc2b80" stretchType="NoStretch" x="0" y="140" width="801" height="70" removeLineWhenBlank="true">
-			<element kind="component" uuid="c54816fa-d3b8-499d-98d1-6e45f066c423" x="0" y="20" width="346" height="20" removeLineWhenBlank="true" printInFirstWholeBand="true">
+			<element kind="component" uuid="c54816fa-d3b8-499d-98d1-6e45f066c423" x="0" y="20" width="365" height="20" printInFirstWholeBand="true" removeLineWhenBlank="true">
 				<component kind="list">
 					<datasetRun uuid="79db249d-b08b-44f7-bc4c-e218223d0033" subDataset="Total Insiden">
 						<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
@@ -288,7 +288,7 @@ ORDER BY b.name, c.name]]></query>
 							<expression><![CDATA[$P{status}]]></expression>
 						</parameter>
 					</datasetRun>
-					<contents height="20" width="346">
+					<contents height="20" width="365">
 						<element kind="textField" uuid="9438b87f-20c3-4b05-bc2c-f2d00b01fada" x="0" y="0" width="20" height="20" fontSize="6.0" hTextAlign="Center" vTextAlign="Middle">
 							<expression><![CDATA[$F{NO}]]></expression>
 							<box>
@@ -310,7 +310,7 @@ ORDER BY b.name, c.name]]></query>
 								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 							</box>
 						</element>
-						<element kind="textField" uuid="867a4488-30d4-4915-902f-1872055f815c" x="220" y="0" width="71" height="20" fontSize="6.0" hTextAlign="Center" vTextAlign="Middle">
+						<element kind="textField" uuid="867a4488-30d4-4915-902f-1872055f815c" x="220" y="0" width="90" height="20" fontSize="6.0" hTextAlign="Center" vTextAlign="Middle">
 							<expression><![CDATA[$F{CATEGORY}]]></expression>
 							<property name="com.jaspersoft.studio.unit.width" value="px"/>
 							<box>
@@ -320,7 +320,7 @@ ORDER BY b.name, c.name]]></query>
 								<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 							</box>
 						</element>
-						<element kind="textField" uuid="0ad30c2b-eaee-488e-b67f-c3064584e110" x="291" y="0" width="55" height="20" fontSize="6.0" hTextAlign="Center" vTextAlign="Middle">
+						<element kind="textField" uuid="0ad30c2b-eaee-488e-b67f-c3064584e110" x="310" y="0" width="55" height="20" fontSize="6.0" hTextAlign="Center" vTextAlign="Middle">
 							<expression><![CDATA[$F{TOTAL_INSIDEN}]]></expression>
 							<box>
 								<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -333,7 +333,7 @@ ORDER BY b.name, c.name]]></query>
 				</component>
 				<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 			</element>
-			<element kind="staticText" uuid="56f97900-a33c-4e07-9185-d5f79da69463" mode="Opaque" x="291" y="0" width="55" height="20" forecolor="#050505" backcolor="#C2C2C2" fontSize="6.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<element kind="staticText" uuid="56f97900-a33c-4e07-9185-d5f79da69463" mode="Opaque" x="310" y="0" width="55" height="20" forecolor="#050505" backcolor="#C2C2C2" fontSize="6.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 				<text><![CDATA[Jumlah Insiden]]></text>
 				<box padding="1">
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -342,7 +342,7 @@ ORDER BY b.name, c.name]]></query>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="staticText" uuid="8e1bf30a-fb70-4a73-96b1-6669b07cda18" mode="Opaque" x="220" y="0" width="71" height="20" forecolor="#050505" backcolor="#C2C2C2" fontSize="6.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
+			<element kind="staticText" uuid="8e1bf30a-fb70-4a73-96b1-6669b07cda18" mode="Opaque" x="220" y="0" width="90" height="20" forecolor="#050505" backcolor="#C2C2C2" fontSize="6.0" bold="true" hTextAlign="Center" vTextAlign="Middle">
 				<text><![CDATA[Kategori]]></text>
 				<property name="com.jaspersoft.studio.unit.x" value="px"/>
 				<property name="com.jaspersoft.studio.unit.width" value="px"/>
@@ -614,7 +614,7 @@ pengambilan]]></text>
 					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
 			</element>
-			<element kind="textField" uuid="9d020359-855c-405c-9d87-f7aee7e7dff3" x="389" y="0" width="131" height="23" printWhenGroupChanges="Category" fontSize="6.0">
+			<element kind="textField" uuid="9d020359-855c-405c-9d87-f7aee7e7dff3" stretchType="ElementGroupHeight" x="389" y="0" width="131" height="23" printWhenGroupChanges="Category" fontSize="6.0" textAdjust="StretchHeight">
 				<paragraph leftIndent="3" rightIndent="3" spacingBefore="1"/>
 				<expression><![CDATA[$F{INFORMATION}]]></expression>
 				<property name="com.jaspersoft.studio.unit.leftIndent" value="px"/>
@@ -677,7 +677,7 @@ pengambilan]]></text>
 								<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 							</box>
 						</element>
-						<element kind="textField" uuid="27499dbc-e239-41a4-b434-916b51ca31c4" x="112" y="0" width="106" height="15" fontSize="5.0" blankWhenNull="true" removeLineWhenBlank="true">
+						<element kind="textField" uuid="27499dbc-e239-41a4-b434-916b51ca31c4" stretchType="ContainerHeight" x="112" y="0" width="106" height="15" fontSize="5.0" textAdjust="StretchHeight" blankWhenNull="true" removeLineWhenBlank="true">
 							<paragraph firstLineIndent="0" leftIndent="3" spacingBefore="1"/>
 							<expression><![CDATA[$F{SOLUTION_NOTES}]]></expression>
 							<property name="com.jaspersoft.studio.unit.firstLineIndent" value="px"/>
@@ -733,12 +733,10 @@ pengambilan]]></text>
 			</element>
 			<element kind="textField" uuid="13a4d829-fc5f-4ee9-b821-07f107260bef" x="738" y="0" width="33" height="15" printWhenGroupChanges="Category" fontSize="6.0" printRepeatedValues="false" hTextAlign="Center" vTextAlign="Top">
 				<paragraph spacingBefore="1"/>
-				<expression><![CDATA[($F{INCIDENT_DATE} != null && $F{LAST_END_DATE} != null)
-? java.time.Duration.between(
-    ((java.sql.Timestamp)$F{INCIDENT_DATE}).toLocalDateTime(),
-    ((java.sql.Timestamp)$F{LAST_END_DATE}).toLocalDateTime()
-  ).toDays()
-: 0]]></expression>
+				<expression><![CDATA[java.time.temporal.ChronoUnit.DAYS.between(
+    ((java.sql.Timestamp)$F{INCIDENT_DATE}).toLocalDateTime().toLocalDate(),
+    ((java.sql.Timestamp)$F{LAST_END_DATE}).toLocalDateTime().toLocalDate()
+)]]></expression>
 				<property name="com.jaspersoft.studio.unit.spacingBefore" value="px"/>
 				<box>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
